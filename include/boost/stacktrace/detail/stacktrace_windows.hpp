@@ -35,10 +35,10 @@ struct backtrace_holder {
         : frames_count(1)
         , process(GetCurrentProcess())
     {
-        BOOST_VALIDATE(process);
+        BOOST_VERIFY(process);
 
         const bool inited = !!SymInitialize(process, 0, true);
-        BOOST_VALIDATE(inited);
+        BOOST_VERIFY(inited);
         if (inited) {
             frames_count = CaptureStackBackTrace(0, max_size, buffer, 0);
         }
