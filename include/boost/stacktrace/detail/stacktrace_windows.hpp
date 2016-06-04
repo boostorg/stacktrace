@@ -7,6 +7,7 @@
 
 #include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
+#include <boost/assert.hpp>
 
 #include <cstring>
 #include <windows.h>
@@ -36,7 +37,7 @@ struct backtrace_holder {
     {
         BOOST_VALIDATE(process);
 
-        const bool inited = SymInitialize(process, 0, true);
+        const bool inited = !!SymInitialize(process, 0, true);
         BOOST_VALIDATE(inited);
         if (inited) {
             frames_count = CaptureStackBackTrace(0, max_size, buffer, 0);
