@@ -1,0 +1,27 @@
+#  Copyright (C) 2016, Antony Polukhin.
+#
+# Use, modification and distribution is subject to the Boost Software License,
+# Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+
+lib unwind ;
+lib dl ;
+
+project
+  : requirements
+    <toolset>msvc:<asynch-exceptions>on
+    <warnings>all
+    <debug-symbols>on
+    <define>debug
+    <test-info>always_show_run_output
+  ;
+
+test-suite stacktrace
+  :
+    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_libunwind : : : [ check-target-builds ../build//has_libunwind "has libunwind" : : <build>no ] : test_libunwind ]
+    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_backtrace : : : [ check-target-builds ../build//has_backtrace "has ::backtrace()" : : <build>no ] : test_backtrace ]
+    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_windbg : : : [ check-target-builds ../build//has_windbg "has WinDbg" : : <build>no ] : test_windbg ]
+  ;
+
+
