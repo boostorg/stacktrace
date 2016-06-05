@@ -8,6 +8,7 @@ project boost/stacktrace ;
 
 lib dl ;
 lib unwind : : <link>shared ;
+lib Dbghelp ;
 
 actions mp_simple_run_action
 {
@@ -68,6 +69,7 @@ lib boost_stacktrace_windbg
     ../src/stacktrace.cpp
   : # requirements
     <warnings>all
+    <library>Dbghelp
     <define>BOOST_STACKTRACE_USE_WINDBG=1
     [ check-target-builds ../build//has_windbg "has WinDbg" : : <build>no ]
   : # default build

@@ -13,7 +13,6 @@
 #include <windows.h>
 #include "DbgHelp.h"
 #include <WinBase.h>
-#pragma comment(lib, "Dbghelp.lib")
 
 namespace boost { namespace stacktrace { namespace detail {
 
