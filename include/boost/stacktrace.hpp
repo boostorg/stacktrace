@@ -47,3 +47,6 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 }} // namespace boost::stacktrace
 
+#if defined(BOOST_STACKTRACE_HEADER_ONLY)
+    #include <boost/stacktrace/detail/stacktrace.ipp>
+#endif
