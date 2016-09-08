@@ -1,9 +1,20 @@
+// Copyright Antony Polukhin, 2016.
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+#include <boost/config.hpp>
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#   pragma once
+#endif
+
 #include <boost/stacktrace.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_pointer.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
-
+/*
 BOOST_STATIC_CONSTEXPR char to_hex_array[] = "0123456789ABCDEF";
 
 template <class T>
@@ -28,6 +39,6 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex(T addr) BOOST_NOEXCE
     }
 
     return ret;
-}
+}*/
 
 }}} // namespace boost::stacktrace::detail

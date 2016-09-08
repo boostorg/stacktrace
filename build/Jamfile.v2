@@ -6,7 +6,7 @@
 #
 project boost/stacktrace ;
 
-lib dl ;
+lib dl : : <link>shared ;
 lib unwind : : <link>shared ;
 lib Dbghelp ;
 
@@ -24,24 +24,23 @@ rule mp-run-simple ( sources + : args * : input-files * : requirements * : targe
    alias $(target-name) : $(target-name).output ;
 }
 
-mp-run-simple has_libunwind.cpp : : : : has_libunwind ;
-explicit has_libunwind ;
+mp-run-simple has_libunwind.cpp : : : : libunwind ;
+explicit libunwind ;
 
-mp-run-simple has_backtrace.cpp : : : : has_backtrace ;
-explicit has_backtrace ;
+mp-run-simple has_backtrace.cpp : : : : backtrace ;
+explicit backtrace ;
 
-mp-run-simple has_windbg.cpp : : : : has_windbg ;
-explicit has_windbg ;
+mp-run-simple has_windbg.cpp : : : : WinDbg ;
+explicit WinDbg ;
 
 lib boost_stacktrace_libunwind
   : # sources
-    ../src/stacktrace.cpp
+    ../src/libunwind.cpp
   : # requirements
     <warnings>all
-    <link>static
     <define>BOOST_STACKTRACE_USE_LIBUNWIND=1
     <library>unwind
-    [ check-target-builds ../build//has_libunwind "has libunwind" : : <build>no ]
+    [ check-target-builds ../build//libunwind : : <build>no ]
   : # default build
   : # usage-requirements
     <link>shared:<define>BOOST_TEST_DYN_LINK=1
@@ -51,12 +50,12 @@ boost-install boost_stacktrace_libunwind ;
 
 lib boost_stacktrace_backtrace
   : # sources
-    ../src/stacktrace.cpp
+    ../src/backtrace.cpp
   : # requirements
     <warnings>all
     <define>BOOST_STACKTRACE_USE_BACKTRACE=1
     <library>dl
-    [ check-target-builds ../build//has_backtrace "has ::backtrace()" : : <build>no ]
+    [ check-target-builds ../build//backtrace : : <build>no ]
   : # default build
   : # usage-requirements
     <link>shared:<define>BOOST_TEST_DYN_LINK=1
@@ -66,12 +65,12 @@ boost-install boost_stacktrace_backtrace ;
 
 lib boost_stacktrace_windbg
   : # sources
-    ../src/stacktrace.cpp
+    ../src/windbg.cpp
   : # requirements
     <warnings>all
     <library>Dbghelp
     <define>BOOST_STACKTRACE_USE_WINDBG=1
-    [ check-target-builds ../build//has_windbg "has WinDbg" : : <build>no ]
+    [ check-target-builds ../build//WinDbg : : <build>no ]
   : # default build
   : # usage-requirements
     <link>shared:<define>BOOST_TEST_DYN_LINK=1

@@ -4,6 +4,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/config.hpp>
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#   pragma once
+#endif
 
 #include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
@@ -11,48 +15,51 @@
 
 #include <dlfcn.h>
 #include <execinfo.h>
-#include <cstddef>
-#include <cstring>
 
 namespace boost { namespace stacktrace { namespace detail {
-
-typedef boost::stacktrace::stacktrace::frame_t frame_t;
 
 struct backtrace_holder {
     std::size_t frames_count;
     BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
     void* buffer[max_size];
 
-    backtrace_holder() BOOST_NOEXCEPT {
+#ifdef BOOST_STACKTRACE_HEADER_ONLY
+    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 0u;
+#else
+    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 1u;
+#endif
+
+    inline backtrace_holder() BOOST_NOEXCEPT {
         frames_count = ::backtrace(buffer, max_size);
     }
 
-    std::size_t size() const BOOST_NOEXCEPT {
-        return frames_count;
+    inline std::size_t size() const BOOST_NOEXCEPT {
+        return frames_count > skip_frames ? frames_count - skip_frames : 1u;
     }
 
-    frame_t get_frame(std::size_t frame) const BOOST_NOEXCEPT {
-        frame_t name = {"??"};
-        name.back() = '\0';
+    inline std::string get_frame(std::size_t frame) const {
+        std::string res;
+        frame += skip_frames;
         if (frame >= frames_count) {
-            return name;
+            return res;
         }
 
         Dl_info dli;
-        if (dladdr(buffer[frame], &dli) && dli.dli_sname) {
-            boost::core::scoped_demangled_name demangled(dli.dli_sname);
-            if (demangled.get()) {
-                std::strncpy(name.data(), demangled.get(), name.size() - 1);
-            } else {
-                std::strncpy(name.data(), dli.dli_sname, name.size() - 1);
-            }
-        } else {
-            std::strncpy(name.data(), to_hex(reinterpret_cast<std::ptrdiff_t>(buffer[frame])).data(), name.size() - 1);
+        if (!dladdr(buffer[frame], &dli)) {
+            return res;
         }
 
-        return name;
-    }
+        if (dli.dli_sname) {
+            boost::core::scoped_demangled_name demangled(dli.dli_sname);
+            if (demangled.get()) {
+                res = demangled.get();
+            } else {
+                res = dli.dli_sname;
+            }
+        }
 
+        return res;
+    }
 };
 
 

@@ -1,0 +1,28 @@
+[library Boost.Stacktrace
+    [quickbook 1.6]
+    [version 1.0]
+    [copyright 2016 Antony Polukhin]
+    [category Language Features Emulation]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+]
+
+[section Motivation]
+How to display the call sequence in C++? From what function was called the current function? What call sequence lead to an exception?
+
+Boost.Stacktrace library is a simple library that provides information about call sequence in human readable form.
+
+[warning This is not an official Boost library! It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library to formal review, if community think that it is interesting!]
+
+[endsect]
+
+[section Getting Started]
+
+[endsect]
+
+
+[xinclude autodoc.xml]
+

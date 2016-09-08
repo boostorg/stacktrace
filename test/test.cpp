@@ -9,42 +9,21 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
-using namespace boost::stacktrace;
-typedef std::pair<stacktrace, stacktrace> btp;
-void foo2(int i);
-
-void foo1(int i) {
-    if (i) {
-        foo2(i - 1);
-        return;
-    }
-
-    btp ret;
-    try {
-        ret.first = stacktrace();
-        throw std::logic_error("test");
-    } catch (const std::logic_error& e) {
-        ret.second = stacktrace();
-        std::cout << e.what() << '\n';
-        throw ret;
-    }
-}
-
+using boost::stacktrace::stacktrace;
+BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo2(int i);
+BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo1(int i);
+BOOST_SYMBOL_IMPORT stacktrace return_from_nested_namespaces();
 
 
 void test_nested() {
-    btp res;
-    try {
-        foo2(15);
-    } catch(btp const r) {
-        res = r;
-    }
+    std::pair<stacktrace, stacktrace> res = foo2(15);
 
     std::stringstream ss1, ss2;
     ss1 << res.first;
     ss2 << res.second;
-    std::cout << ss1.str() << "\n\n" << ss2.str() << std::endl;
+    std::cout << "'" << ss1.str() << "'\n\n" << ss2.str() << std::endl;
     assert(!ss1.str().empty());
     assert(!ss2.str().empty());
 
@@ -58,9 +37,8 @@ void test_nested() {
     assert(ss2.str().find("main") != std::string::npos);
 }
 
-void test_from_nested_namespaces();
 
 int main() {
-    test_from_nested_namespaces();
+    std::cout << return_from_nested_namespaces();
     test_nested();
 }

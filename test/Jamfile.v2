@@ -5,23 +5,39 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
-lib unwind ;
-lib dl ;
+lib dl : : <link>shared ;
+lib unwind : : <link>shared ;
+lib Dbghelp ;
 
 project
   : requirements
     <toolset>msvc:<asynch-exceptions>on
     <warnings>all
     <debug-symbols>on
-    <define>debug
     <test-info>always_show_run_output
   ;
 
+lib test_unwind_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_libunwind [ check-target-builds ../build//libunwind : : <build>no ] ;
+lib test_backtrace_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_backtrace [ check-target-builds ../build//backtrace : : <build>no ] ;
+lib test_windbg_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_windbg [ check-target-builds ../build//WinDbg : : <build>no ] ;
+
+local HONLY_UNW = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_LIBUNWIND <library>unwind [ check-target-builds ../build//libunwind : : <build>no ] ;
+local HONLY_BT = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_BACKTRACE <library>dl [ check-target-builds ../build//backtrace : : <build>no ] ;
+local HONLY_WIND = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_WINDBG <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
+
 test-suite stacktrace
   :
-    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_libunwind : : : [ check-target-builds ../build//has_libunwind "has libunwind" : : <build>no ] : test_libunwind ]
-    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_backtrace : : : [ check-target-builds ../build//has_backtrace "has ::backtrace()" : : <build>no ] : test_backtrace ]
-    [ run test.cpp test_impl.cpp /boost/stacktrace//boost_stacktrace_windbg : : : [ check-target-builds ../build//has_windbg "has WinDbg" : : <build>no ] : test_windbg ]
+    [ run test.cpp test_impl.cpp : : : $(HONLY_UNW) : libunwind_ho ]
+    [ run test.cpp test_impl.cpp : : : $(HONLY_BT) : backtrace_ho ]
+    [ run test.cpp test_impl.cpp : : : $(HONLY_WIND) : windbg_ho ]
+
+    [ run test.cpp : : : <library>.//test_unwind_lib [ check-target-builds ../build//libunwind : : <build>no ] : libunwind_lib ]
+    [ run test.cpp : : : <library>.//test_backtrace_lib [ check-target-builds ../build//backtrace : : <build>no ] : backtrace_lib ]
+    [ run test.cpp : : : <library>.//test_windbg_lib [ check-target-builds ../build//WinDbg : : <build>no ] : windbg_lib ]
+
+    [ run ../example/getting_started.cpp : : : $(HONLY_UNW) : libunwind_getting_started ]
+    [ run ../example/getting_started.cpp : : : $(HONLY_BT) : backtrace_getting_started ]
+    [ run ../example/getting_started.cpp : : : $(HONLY_WIND) : windbg_getting_started ]
   ;
 
 

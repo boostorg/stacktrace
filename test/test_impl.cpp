@@ -7,15 +7,31 @@
 
 #include <boost/stacktrace.hpp>
 #include <stdexcept>
-#include <iostream>
-#include <sstream>
 
 using namespace boost::stacktrace;
-typedef std::pair<stacktrace, stacktrace> btp;
-void foo1(int i);
+BOOST_SYMBOL_EXPORT std::pair<stacktrace, stacktrace> foo1(int i);
+BOOST_SYMBOL_EXPORT std::pair<stacktrace, stacktrace> foo2(int i);
 
-void foo2(int i) {
-    foo1(i);
+std::pair<stacktrace, stacktrace> foo1(int i) {
+    if (i) {
+        return foo2(i - 1);
+    }
+
+    std::pair<stacktrace, stacktrace> ret;
+    try {
+        throw std::logic_error("test");
+    } catch (const std::logic_error& e) {
+        ret.second = stacktrace();
+        return ret;
+    }
+}
+
+std::pair<stacktrace, stacktrace> foo2(int i) {
+    if (i) {
+        return foo1(--i);
+    } else {
+        return foo1(i);
+    }
 }
 
 
@@ -29,16 +45,16 @@ namespace very_very_very_very_very_very_long_namespace {
 namespace very_very_very_very_very_very_long_namespace {
 namespace very_very_very_very_very_very_long_namespace {
 namespace very_very_very_very_very_very_long_namespace {
-    extern stacktrace get_backtrace_from_nested_namespaces() {
+    BOOST_SYMBOL_EXPORT stacktrace get_backtrace_from_nested_namespaces() {
         return stacktrace();
     }
 }}}}}}}}}}
 
-using namespace very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
-    ::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
-    ::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
-    ::very_very_very_very_very_very_long_namespace;
+BOOST_SYMBOL_EXPORT stacktrace return_from_nested_namespaces() {
+    using very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
+        ::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
+        ::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace::very_very_very_very_very_very_long_namespace
+        ::very_very_very_very_very_very_long_namespace::get_backtrace_from_nested_namespaces;
 
-void test_from_nested_namespaces() {
-    std::cout << get_backtrace_from_nested_namespaces() << "\n\n";
+    return get_backtrace_from_nested_namespaces();
 }

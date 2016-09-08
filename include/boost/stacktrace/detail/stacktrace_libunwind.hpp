@@ -4,77 +4,93 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/config.hpp>
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#   pragma once
+#endif
 
-#include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
 #include <boost/core/demangle.hpp>
 #include <cstring>
+#include <boost/core/no_exceptions_support.hpp>
+#include <vector>
 
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
 
 namespace boost { namespace stacktrace { namespace detail {
 
-typedef boost::stacktrace::stacktrace::frame_t frame_t;
-
 struct backtrace_holder {
-    mutable unw_context_t uc;
+    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 1u;
+    std::vector<std::string> frames;
 
     backtrace_holder() BOOST_NOEXCEPT {
-        BOOST_VERIFY(unw_getcontext(&uc) == 0);
+        unw_context_t uc;
+        if (unw_getcontext(&uc) != 0) {
+            return;
+        }
+
+        unw_cursor_t cursor;
+        if (unw_init_local(&cursor, &uc) != 0) {
+            return;
+        }
+
+        for (std::size_t i = 0; i < skip_frames; ++i) {
+            if (unw_step(&cursor) <= 0) {
+                return;
+            }
+        }
+
+        BOOST_TRY {
+            while (unw_step(&cursor) > 0){
+                frames.push_back(get_frame_impl(cursor));
+            }
+        } BOOST_CATCH(...) {}
+        BOOST_CATCH_END
     }
 
     std::size_t size() const BOOST_NOEXCEPT {
-        std::size_t frames = 0;
-        unw_cursor_t cursor;
-        BOOST_VERIFY(unw_init_local(&cursor, &uc) >= 0);
-        while (unw_step(&cursor) > 0) ++frames;
-
-        return frames - 1;
+        return frames.size();
     }
 
-    frame_t get_frame(std::size_t frame) const BOOST_NOEXCEPT {
-        frame_t name = {"??"};
-        name.back() = '\0';
-        unw_cursor_t cursor;
+    std::string get_frame(std::size_t frame) const {
+        return frames[frame];
+    }
+
+    static std::string get_frame_impl(unw_cursor_t& cursor) {
+        std::string res;
         unw_word_t offp;
+        char data[128];
+        const int ret = unw_get_proc_name (&cursor, data, sizeof(data) / sizeof(char), &offp);
 
-        const int ret_init = unw_init_local(&cursor, &uc);
-        BOOST_VERIFY(ret_init == 0);
-        if (ret_init == 0 && unw_step(&cursor) == 0) {
-            return name;
-        }
-
-        while (frame) {
-            if (unw_step(&cursor) == 0) {
-                return name;
-            }
-
-            --frame;
-        }
-
-        const int ret = unw_get_proc_name (&cursor, name.data(), sizeof(name), &offp);
-        if (ret == 0 && name[0]) {
-            boost::core::scoped_demangled_name demangled(name.data());
-            if (demangled.get()) {
-                std::strncpy(name.data(), demangled.get(), name.size() - 1);
-            }
-
-            std::strncat(name.data(), " +", name.size() - 1);
-            std::strncat(name.data(), to_hex(offp).data(), name.size() - 1);
+        if (ret == -UNW_ENOMEM) {
+            res.resize(sizeof(data) * 2);
+            do {
+                const int ret2 = unw_get_proc_name(&cursor, &res[0], res.size(), &offp);
+                if (ret2 == -UNW_ENOMEM) {
+                    res.resize(res.size() * 2);
+                } else if (ret2 == 0) {
+                    break;
+                } else {
+                    res = data;
+                    return res;
+                }
+            } while(1);
+        } else if (ret == 0) {
+            res = data;
         } else {
-            unw_proc_info_t pi;
-            const int new_ret = unw_get_proc_info(&cursor, &pi);
-            if (new_ret == 0 && pi.start_ip) {
-                std::strncpy(name.data(), to_hex(pi.start_ip).data(), name.size() - 1);
-            } else {
-                std::strncpy(name.data(), "??", name.size() - 1);
-            }
+            return res;
         }
 
-        return name;
+        boost::core::scoped_demangled_name demangled(res.data());
+        if (demangled.get()) {
+            res = demangled.get();
+        } else {
+            res.resize( std::strlen(res.data()) ); // Note: here res is \0 terminated, but size() not equal to strlen
+        }
+
+        return res;
     }
 };
 
 }}} // namespace boost::stacktrace::detail
-
