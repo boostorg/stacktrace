@@ -26,23 +26,16 @@ struct backtrace_holder {
     BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
     void* buffer[max_size];
 
-#ifdef BOOST_STACKTRACE_HEADER_ONLY
-    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 0u;
-#else
-    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 2u;
-#endif
-
-    inline backtrace_holder() BOOST_NOEXCEPT {
+    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT {
         frames_count = ::backtrace(buffer, max_size);
     }
 
     inline std::size_t size() const BOOST_NOEXCEPT {
-        return frames_count > skip_frames ? frames_count - skip_frames : 1u;
+        return frames_count;
     }
 
     inline std::string get_frame(std::size_t frame) const {
         std::string res;
-        frame += skip_frames;
         if (frame >= frames_count) {
             return res;
         }

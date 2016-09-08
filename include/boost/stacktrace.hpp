@@ -33,7 +33,7 @@ class stacktrace {
 public:
     /// @brief Stores the current function call sequence inside the class.
     ///
-    /// @b Complexity: O(N) where N is call seaquence length
+    /// @b Complexity: O(N) where N is call seaquence length, O(1) for noop backend.
     BOOST_STACKTRACE_FUNCTION stacktrace() BOOST_NOEXCEPT;
 
     /// @b Complexity: O(1)
@@ -56,7 +56,7 @@ public:
     /// @returns Function name in a human readable form.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
-    /// @b Complexity: Amortized O(1)
+    /// @b Complexity: Amortized O(1), O(1) for noop backend.
     BOOST_STACKTRACE_FUNCTION std::string operator[](std::size_t frame) const;
 };
 

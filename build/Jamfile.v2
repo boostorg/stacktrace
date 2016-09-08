@@ -33,6 +33,18 @@ explicit backtrace ;
 mp-run-simple has_windbg.cpp : : : : WinDbg ;
 explicit WinDbg ;
 
+lib boost_stacktrace_noop
+  : # sources
+    ../src/noop.cpp
+  : # requirements
+    <warnings>all
+  : # default build
+  : # usage-requirements
+    <link>shared:<define>BOOST_TEST_DYN_LINK=1
+  ;
+
+boost-install boost_stacktrace_noop ;
+
 lib boost_stacktrace_libunwind
   : # sources
     ../src/libunwind.cpp

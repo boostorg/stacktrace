@@ -20,20 +20,24 @@ project
 lib test_unwind_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_libunwind [ check-target-builds ../build//libunwind : : <build>no ] ;
 lib test_backtrace_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_backtrace [ check-target-builds ../build//backtrace : : <build>no ] ;
 lib test_windbg_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_windbg [ check-target-builds ../build//WinDbg : : <build>no ] ;
+lib test_noop_lib : test_impl.cpp : <link>shared : : <library>/boost/stacktrace//boost_stacktrace_noop ;
 
 local HONLY_UNW = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_LIBUNWIND <library>unwind [ check-target-builds ../build//libunwind : : <build>no ] ;
 local HONLY_BT = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_BACKTRACE <library>dl [ check-target-builds ../build//backtrace : : <build>no ] ;
 local HONLY_WIND = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_WINDBG <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local HONLY_NOOP = <define>BOOST_STACKTRACE_HEADER_ONLY <define>BOOST_STACKTRACE_USE_NOOP ;
 
 test-suite stacktrace
   :
     [ run test.cpp test_impl.cpp : : : $(HONLY_UNW) : libunwind_ho ]
     [ run test.cpp test_impl.cpp : : : $(HONLY_BT) : backtrace_ho ]
     [ run test.cpp test_impl.cpp : : : $(HONLY_WIND) : windbg_ho ]
+    [ run test_noop.cpp test_impl.cpp : : : $(HONLY_NOOP) : noop_ho ]
 
     [ run test.cpp : : : <library>.//test_unwind_lib [ check-target-builds ../build//libunwind : : <build>no ] : libunwind_lib ]
     [ run test.cpp : : : <library>.//test_backtrace_lib [ check-target-builds ../build//backtrace : : <build>no ] : backtrace_lib ]
     [ run test.cpp : : : <library>.//test_windbg_lib [ check-target-builds ../build//WinDbg : : <build>no ] : windbg_lib ]
+    [ run test_noop.cpp : : : <library>.//test_noop_lib : noop_lib ]
 
     [ run ../example/getting_started.cpp : : : $(HONLY_UNW) : libunwind_getting_started ]
     [ run ../example/getting_started.cpp : : : $(HONLY_BT) : backtrace_getting_started ]

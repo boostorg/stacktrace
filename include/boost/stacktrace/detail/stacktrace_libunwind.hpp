@@ -24,11 +24,10 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct backtrace_holder {
-    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 1u;
     std::size_t frames_count;
     boost::shared_ptr<std::string[]> frames;
 
-    backtrace_holder() BOOST_NOEXCEPT
+    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
         : frames_count(0)
     {
         unw_context_t uc;
@@ -44,24 +43,12 @@ struct backtrace_holder {
             while (unw_step(&cursor) > 0) {
                 ++ frames_count;
             }
-            if (frames_count <= skip_frames) {
-                frames_count = 0;
-                return;
-            }
-            frames_count -= skip_frames;
         }
 
         unw_cursor_t cursor;
         if (unw_init_local(&cursor, &uc) != 0) {
             frames_count = 0;
             return;
-        }
-
-        for (std::size_t i = 0; i < skip_frames; ++i) {
-            if (unw_step(&cursor) <= 0) {
-                frames_count = 0;
-                return;
-            }
         }
 
         BOOST_TRY {
@@ -75,11 +62,11 @@ struct backtrace_holder {
         BOOST_CATCH_END
     }
 
-    std::size_t size() const BOOST_NOEXCEPT {
+    inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
     }
 
-    std::string get_frame(std::size_t frame) const {
+    inline std::string get_frame(std::size_t frame) const {
         if (frame < frames_count) {
             return frames[frame];
         } else {
@@ -87,7 +74,7 @@ struct backtrace_holder {
         }
     }
 
-    static std::string get_frame_impl(unw_cursor_t& cursor) {
+    static inline std::string get_frame_impl(unw_cursor_t& cursor) {
         std::string res;
         unw_word_t offp;
         char data[256];

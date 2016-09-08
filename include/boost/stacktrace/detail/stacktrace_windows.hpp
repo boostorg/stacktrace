@@ -34,7 +34,7 @@ struct backtrace_holder {
     void* buffer[max_size];
     HANDLE process;
 
-    inline backtrace_holder() BOOST_NOEXCEPT
+    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
         : frames_count(0)
         , process(GetCurrentProcess())
     {

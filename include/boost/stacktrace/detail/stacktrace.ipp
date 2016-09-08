@@ -15,7 +15,9 @@
 #include <boost/stacktrace.hpp>
 #include <boost/static_assert.hpp>
 
-#if defined(BOOST_WINDOWS) || defined(BOOST_STACKTRACE_USE_WINDBG)
+#if defined(BOOST_STACKTRACE_USE_NOOP)
+#   include <boost/stacktrace/detail/stacktrace_noop.hpp>
+#elif defined(BOOST_WINDOWS) || defined(BOOST_STACKTRACE_USE_WINDBG)
 #   include <boost/stacktrace/detail/stacktrace_windows.hpp>
 #elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
 #   include <boost/stacktrace/detail/stacktrace_libunwind.hpp>
