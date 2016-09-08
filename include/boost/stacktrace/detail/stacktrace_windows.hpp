@@ -4,12 +4,17 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef BOOST_STACKTRACE_DETAIL_STACKTRACE_WINDOWS_HPP
+#define BOOST_STACKTRACE_DETAIL_STACKTRACE_WINDOWS_HPP
 
-#include <boost/stacktrace.hpp>
+#include <boost/config.hpp>
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#   pragma once
+#endif
+
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 
-#include <cstring>
 #include <windows.h>
 #include "DbgHelp.h"
 #include <WinBase.h>
@@ -17,8 +22,9 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct symbol_info_with_stack {
+    BOOST_STATIC_CONSTEXPR  std::size_t max_name_length = MAX_SYM_NAME * sizeof(char);
     SYMBOL_INFO symbol;
-    char name_part[MAX_SYM_NAME * sizeof(TCHAR)];
+    char name_part[max_name_length];
 };
 
 struct backtrace_holder {
@@ -44,7 +50,7 @@ struct backtrace_holder {
         return frames_count;
     }
 
-    inline std::string get_frame(std::size_t frame) const BOOST_NOEXCEPT {
+    inline std::string get_frame(std::size_t frame) const {
         std::string res;
 
         if (frame >= frames_count || !process) {
@@ -52,14 +58,10 @@ struct backtrace_holder {
         }
 
         symbol_info_with_stack s;
-        s.symbol.MaxNameLen = f.name.size() - 1;
+        s.symbol.MaxNameLen = symbol_info_with_stack::max_name_length;
         s.symbol.SizeOfStruct = sizeof(SYMBOL_INFO);
-
         SymFromAddr(process, reinterpret_cast<DWORD64>(buffer[frame]), 0, &s.symbol);
-        BOOST_TRY {
-            res = s.symbol.Name;
-        } BOOST_CATCH(...) {}
-        BOOST_CATCH_END
+        res = s.symbol.Name;
         return res;
     }
 
@@ -67,3 +69,4 @@ struct backtrace_holder {
 
 }}} // namespace boost::stacktrace::detail
 
+#endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_WINDOWS_HPP

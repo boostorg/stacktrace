@@ -4,15 +4,18 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef BOOST_STACKTRACE_DETAIL_STACKTRACE_IPP
+#define BOOST_STACKTRACE_DETAIL_STACKTRACE_IPP
+
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
+#include <boost/stacktrace.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/predef/os/windows.h>
 
-#if BOOST_OS_WINDOWS
+#if defined(BOOST_WINDOWS) || defined(BOOST_STACKTRACE_USE_WINDBG)
 #   include <boost/stacktrace/detail/stacktrace_windows.hpp>
 #elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
 #   include <boost/stacktrace/detail/stacktrace_libunwind.hpp>
@@ -30,15 +33,17 @@
 
 namespace boost { namespace stacktrace {
 
-template <class T>
-inline boost::stacktrace::detail::backtrace_holder& to_bt(T& data) BOOST_NOEXCEPT {
-    return *reinterpret_cast<boost::stacktrace::detail::backtrace_holder*>(&data);
-}
+namespace detail {
+    template <class T>
+    inline boost::stacktrace::detail::backtrace_holder& to_bt(T& data) BOOST_NOEXCEPT {
+        return *reinterpret_cast<boost::stacktrace::detail::backtrace_holder*>(&data);
+    }
 
-template <class T>
-inline const boost::stacktrace::detail::backtrace_holder& to_bt(const T& data) BOOST_NOEXCEPT {
-    return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(&data);
-}
+    template <class T>
+    inline const boost::stacktrace::detail::backtrace_holder& to_bt(const T& data) BOOST_NOEXCEPT {
+        return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(&data);
+    }
+} // namespace detail
 
 
 stacktrace::stacktrace() BOOST_NOEXCEPT {
@@ -46,26 +51,30 @@ stacktrace::stacktrace() BOOST_NOEXCEPT {
 }
 
 stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT {
-    new (&impl_) boost::stacktrace::detail::backtrace_holder(to_bt(bt.impl_));
+    new (&impl_) boost::stacktrace::detail::backtrace_holder(
+        boost::stacktrace::detail::to_bt(bt.impl_)
+    );
 }
 
 stacktrace& stacktrace::operator=(const stacktrace& bt) BOOST_NOEXCEPT {
-    to_bt(impl_) = to_bt(bt.impl_);
+    boost::stacktrace::detail::to_bt(impl_) = boost::stacktrace::detail::to_bt(bt.impl_);
     return *this;
 }
 
 stacktrace::~stacktrace() BOOST_NOEXCEPT {
     BOOST_STATIC_ASSERT_MSG(sizeof(impl_) >= sizeof(boost::stacktrace::detail::backtrace_holder), "Too small storage for holding backtrace");
-    to_bt(impl_).~backtrace_holder();
+    boost::stacktrace::detail::to_bt(impl_).~backtrace_holder();
 }
 
 std::size_t stacktrace::size() const BOOST_NOEXCEPT {
-    return to_bt(impl_).size();
+    return boost::stacktrace::detail::to_bt(impl_).size();
 }
 
-std::string stacktrace::operator[](std::size_t frame) const BOOST_NOEXCEPT {
-    return to_bt(impl_).get_frame(frame);
+std::string stacktrace::operator[](std::size_t frame) const {
+    return boost::stacktrace::detail::to_bt(impl_).get_frame(frame);
 }
 
 
 }}
+
+#endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_IPP

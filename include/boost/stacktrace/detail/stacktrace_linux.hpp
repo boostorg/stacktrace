@@ -4,6 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef BOOST_STACKTRACE_DETAIL_STACKTRACE_LINUX_HPP
+#define BOOST_STACKTRACE_DETAIL_STACKTRACE_LINUX_HPP
+
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
@@ -26,7 +29,7 @@ struct backtrace_holder {
 #ifdef BOOST_STACKTRACE_HEADER_ONLY
     BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 0u;
 #else
-    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 1u;
+    BOOST_STATIC_CONSTEXPR std::size_t skip_frames = 2u;
 #endif
 
     inline backtrace_holder() BOOST_NOEXCEPT {
@@ -64,3 +67,5 @@ struct backtrace_holder {
 
 
 }}} // namespace boost::stacktrace::detail
+
+#endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_LINUX_HPP

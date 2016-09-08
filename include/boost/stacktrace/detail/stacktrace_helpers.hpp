@@ -4,12 +4,14 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef BOOST_STACKTRACE_DETAIL_STACKTRACE_HELPERS_HPP
+#define BOOST_STACKTRACE_DETAIL_STACKTRACE_HELPERS_HPP
+
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <boost/stacktrace.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_pointer.hpp>
 
@@ -42,3 +44,5 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex(T addr) BOOST_NOEXCE
 }*/
 
 }}} // namespace boost::stacktrace::detail
+
+#endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_HELPERS_HPP

@@ -35,10 +35,32 @@ void test_nested() {
 
     assert(ss1.str().find("main") != std::string::npos);
     assert(ss2.str().find("main") != std::string::npos);
+
+
+    assert(ss2.str().find("stacktrace") == std::string::npos);
+
+#if !defined(BOOST_STACKTRACE_HEADER_ONLY) || !defined(BOOST_STACKTRACE_USE_BACKTRACE)
+    assert(ss1.str().find("stacktrace") != std::string::npos);
+    assert(ss1.str().find("pair") != std::string::npos);
+
+    assert(ss1.str().find("foo1") != std::string::npos);
+    assert(ss1.str().find("foo2") != std::string::npos);
+    assert(ss2.str().find("foo1") != std::string::npos);
+    assert(ss2.str().find("foo2") != std::string::npos);
+#endif
 }
 
 
 int main() {
-    std::cout << return_from_nested_namespaces();
+    std::stringstream ss;
+    ss << return_from_nested_namespaces();
+    std::cout << ss.str() << '\n';
+    assert(ss.str().find("main") != std::string::npos);
+    assert(ss.str().find("stacktrace") == std::string::npos);
+
+#if !defined(BOOST_STACKTRACE_HEADER_ONLY) || !defined(BOOST_STACKTRACE_USE_BACKTRACE)
+    assert(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
+#endif
+
     test_nested();
 }
