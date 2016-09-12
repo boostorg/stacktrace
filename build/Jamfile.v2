@@ -4,7 +4,12 @@
 # Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 #
-project boost/stacktrace ;
+
+project
+  : source-location .
+  : requirements
+    <target-os>linux:<cxxflags>"-fvisibility=hidden"
+  ;
 
 lib dl : : <link>shared ;
 lib unwind : : <link>shared ;
@@ -38,9 +43,10 @@ lib boost_stacktrace_noop
     ../src/noop.cpp
   : # requirements
     <warnings>all
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   : # default build
   : # usage-requirements
-    <link>shared:<define>BOOST_TEST_DYN_LINK=1
+    #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
 boost-install boost_stacktrace_noop ;
@@ -51,10 +57,11 @@ lib boost_stacktrace_libunwind
   : # requirements
     <warnings>all
     <library>unwind
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds ../build//libunwind : : <build>no ]
   : # default build
   : # usage-requirements
-    <link>shared:<define>BOOST_TEST_DYN_LINK=1
+    #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
 boost-install boost_stacktrace_libunwind ;
@@ -64,11 +71,12 @@ lib boost_stacktrace_backtrace
     ../src/backtrace.cpp
   : # requirements
     <warnings>all
-    <library>dl
+    <target-os>linux:<library>dl
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds ../build//backtrace : : <build>no ]
   : # default build
   : # usage-requirements
-    <link>shared:<define>BOOST_TEST_DYN_LINK=1
+    #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
 boost-install boost_stacktrace_backtrace ;
@@ -79,10 +87,11 @@ lib boost_stacktrace_windbg
   : # requirements
     <warnings>all
     <library>Dbghelp
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds ../build//WinDbg : : <build>no ]
   : # default build
   : # usage-requirements
-    <link>shared:<define>BOOST_TEST_DYN_LINK=1
+    #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
 boost-install boost_stacktrace_windbg ;

@@ -17,12 +17,22 @@
 #include <string>
 
 /// @cond
-#if defined(BOOST_STACKTRACE_HEADER_ONLY)
-#   define BOOST_STACKTRACE_FUNCTION inline
-#elif defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
-#   define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_EXPORT
+#if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
+#   define BOOST_STACKTRACE_LINK
+#endif
+
+#ifdef BOOST_STACKTRACE_LINK
+#   if defined(BOOST_STACKTRACE_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)
+#       ifdef BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_EXPORT
+#       else
+#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_IMPORT
+#       endif
+#   else
+#       define BOOST_STACKTRACE_FUNCTION
+#   endif
 #else
-#   define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_IMPORT
+#   define BOOST_STACKTRACE_FUNCTION inline
 #endif
 /// @endcond
 
@@ -90,7 +100,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 /// @cond
 #undef BOOST_STACKTRACE_FUNCTION
 
-#if defined(BOOST_STACKTRACE_HEADER_ONLY)
+#ifndef BOOST_STACKTRACE_LINK
 #   include <boost/stacktrace/detail/stacktrace.ipp>
 #endif
 /// @endcond

@@ -15,23 +15,44 @@
 #include <boost/stacktrace.hpp>
 #include <boost/static_assert.hpp>
 
-#if defined(BOOST_STACKTRACE_USE_NOOP)
+// Autodetection
+#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_LIBUNWIND) \
+    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) &&!defined(BOOST_STACKTRACE_USE_HEADER)
+
+#if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
+#   if __has_include(<libunwind.h>)
+#       define BOOST_STACKTRACE_USE_LIBUNWIND
+#   elif __has_include(<execinfo.h>)
+#       define BOOST_STACKTRACE_USE_BACKTRACE
+#   elif __has_include("DbgHelp.h")
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   endif
+#else
+#   if defined(BOOST_WINDOWS)
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   else
+#       define BOOST_STACKTRACE_USE_BACKTRACE
+#   endif
+#endif
+
+#endif
+
+
+#if defined(BOOST_STACKTRACE_USE_HEADER)
+#   include BOOST_STACKTRACE_USE_HEADER
+#elif defined(BOOST_STACKTRACE_USE_NOOP)
 #   include <boost/stacktrace/detail/stacktrace_noop.hpp>
-#elif defined(BOOST_WINDOWS) || defined(BOOST_STACKTRACE_USE_WINDBG)
+#elif defined(BOOST_STACKTRACE_USE_WINDBG)
 #   include <boost/stacktrace/detail/stacktrace_windows.hpp>
 #elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
 #   include <boost/stacktrace/detail/stacktrace_libunwind.hpp>
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
 #   include <boost/stacktrace/detail/stacktrace_linux.hpp>
-#elif defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4)
-#   if __has_include(<libunwind.h>)
-#       include <boost/stacktrace/detail/stacktrace_libunwind.hpp>
-#   elif __has_include(<execinfo.h>)
-#       include <boost/stacktrace/detail/stacktrace_linux.hpp>
-#   endif
 #else
 #   error No suitable backtrace backend found
 #endif
+
+
 
 namespace boost { namespace stacktrace {
 

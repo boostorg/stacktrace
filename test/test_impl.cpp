@@ -20,7 +20,7 @@ std::pair<stacktrace, stacktrace> foo1(int i) {
     std::pair<stacktrace, stacktrace> ret;
     try {
         throw std::logic_error("test");
-    } catch (const std::logic_error& e) {
+    } catch (const std::logic_error& /*e*/) {
         ret.second = stacktrace();
         return ret;
     }
