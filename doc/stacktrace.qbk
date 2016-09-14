@@ -23,6 +23,166 @@ Boost.Stacktrace library is a simple library that provides information about cal
 
 [section Getting Started]
 
+[import ../example/getting_started.cpp]
+[import ../example/throwing_st.cpp]
+
+
+[section Better asserts]
+
+Pretty often assertions provide not enougth information to locate the problem. For example you can see the following message on out-of-range access:
+
+```
+../../../boost/array.hpp:123: T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]: Assertion '(i < N)&&("out of range")' failed.
+Aborted (core dumped)
+```
+
+That's not enought to locate the problem without debugger. There may be thousends code lines in real world examples and hundrets places where that assertion could happen. Let's try to improve the assertions, and make them more informative:
+
+[getting_started_assert_handlers]
+
+We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole project. Now all the `BOOST_ASSERT` and `BOOST_ASSERT_MSG` will call our functions `assertion_failed` and `assertion_failed_msg` in case of failure. In `assertion_failed_msg` we output information that was provided by the assertion macro and [classref boost::stacktrace::stacktrace]:
+
+```
+Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]': out of range.
+Backtrace:
+ 0# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long)
+ 1# boost::array<int, 5ul>::operator[](unsigned long)
+ 2# oops(unsigned long)
+ 3# bar(int)
+ 4# foo(int)
+ 5# bar(int)
+ 6# foo(int)
+ 7# bar(int)
+ 8# foo(int)
+ 9# bar(int)
+10# foo(int)
+11# bar(int)
+12# foo(int)
+13# bar(int)
+14# foo(int)
+15# main
+16# __libc_start_main
+17# _start
+18# ??
+```
+
+Now we do know the steps that lead to the assertion and could find the error without debugger.
+
+[endsect]
+
+[section Handle Terminates and Segmentation Faults]
+
+Segmentation Faults and `std::terminate` calls sometimes happen in programs. Programmers usually wish to get as much information as possible on such incidents, so having a stacktrace will significantly improve debugging and fixing.
+
+To deal with Segmentation Faults and `std::terminate` calls we would need to write handlers:
+
+[getting_started_terminate_handlers]
+
+After that we can set them as a default handlers and get some more information on incidents:
+
+[getting_started_setup_handlers]
+
+Now we'll get the following output on `std::terminate` call:
+
+```
+Terminate called:
+ 0# my_terminate_handler()
+ 1# std::rethrow_exception(std::__exception_ptr::exception_ptr)
+ 2# std::terminate()
+ 3# bar(int)
+ 4# bar(int)
+ 5# foo(int)
+ 6# bar(int)
+ 7# foo(int)
+ 8# bar(int)
+ 9# foo(int)
+10# bar(int)
+11# foo(int)
+12# bar(int)
+13# foo(int)
+14# bar(int)
+15# foo(int)
+16# main
+17# __libc_start_main
+18# _start
+19# ??
+```
+And the following output on Segmentation Fault:
+
+```
+Signal 11, backtrace:
+ 0# my_signal_handler(int)
+ 1# killpg
+ 2# ??
+ 3# bar(int)
+ 4# foo(int)
+ 5# bar(int)
+ 6# foo(int)
+ 7# bar(int)
+ 8# foo(int)
+ 9# bar(int)
+10# foo(int)
+11# bar(int)
+12# foo(int)
+13# bar(int)
+14# foo(int)
+15# main
+16# __libc_start_main
+17# _start
+18# ??
+```
+
+The output stacktrace may be corrupted by previous actions. But now at least some basic information is available to work with.
+
+[endsect]
+
+[section Exceptions with Stacktrace]
+
+You can provide more information along with exception by embedding stacktraces into the exception. For that we will need:
+
+* Basic class that holds the stacktrace:
+
+[getting_started_class_traced]
+
+* Helper class for appending class `traced` to any exception:
+
+[getting_started_class_with_trace]
+
+* Throw `with_trace<Exception>` instead of just `Exception`:
+
+[getting_started_throwing_with_trace]
+
+* Catch exceptions by `traced`:
+
+[getting_started_catching_trace]
+
+Code from above will output:
+
+```
+'i' must be less than 4 in oops()
+Backtrace:
+ 0# with_trace<std::out_of_range>::with_trace<char const (&) [34]>(char const (&) [34])
+ 1# oops(unsigned long)
+ 2# bar(int)
+ 3# foo(int)
+ 4# bar(int)
+ 5# foo(int)
+ 6# bar(int)
+ 7# foo(int)
+ 8# bar(int)
+ 9# foo(int)
+10# bar(int)
+11# foo(int)
+12# bar(int)
+13# foo(int)
+14# main
+15# __libc_start_main
+16# _start
+17# ??
+```
+
+[endsect]
+
 [endsect]
 
 

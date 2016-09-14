@@ -10,6 +10,9 @@ BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
 
 BOOST_NOINLINE void oops(std::size_t i) {
+    // std::terminate();
+    // void (*p)() = 0; p();
+
     boost::array<int, 5> a = {{0, 1, 2, 3, 4}};
     foo(a[i]);
 }
@@ -58,10 +61,11 @@ Backtrace:
 18# ??
 */
 
+//[getting_started_assert_handlers
+
 // BOOST_ENABLE_ASSERT_DEBUG_HANDLER is defined for the whole project
-#include <boost/assert.hpp>
-#include <stdexcept>
-#include <iostream>
+#include <stdexcept>    // std::logic_error
+#include <iostream>     // std::cerr
 #include <boost/stacktrace.hpp>
 
 namespace boost {
@@ -75,18 +79,20 @@ namespace boost {
         ::boost::assertion_failed_msg(expr, 0 /*nullptr*/, function, file, line);
     }
 } // namespace boost
-
+//]
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <exception>    // std::set_terminate
+//[getting_started_terminate_handlers
+
+#include <exception>    // std::set_terminate, std::abort
 #include <signal.h>     // ::signal
 #include <boost/stacktrace.hpp>
-#include <iostream>
+#include <iostream>     // std::cerr
 
 void my_terminate_handler() {
-    std::cerr << "Terminate called: " << boost::stacktrace::stacktrace() << '\n';
+    std::cerr << "Terminate called:\n" << boost::stacktrace::stacktrace() << '\n';
     std::abort();
 }
 
@@ -94,17 +100,14 @@ void my_signal_handler(int signum) {
     std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
     std::abort();
 }
-
+//]
 
 void setup_handlers() {
+//[getting_started_setup_handlers
     std::set_terminate(&my_terminate_handler);
     ::signal(SIGSEGV, &my_signal_handler);
+//]
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#include <boost/exception/error_info.hpp>
-typedef boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace> stacktrace_info;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

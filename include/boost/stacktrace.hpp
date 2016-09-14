@@ -13,6 +13,7 @@
 #endif
 
 #include <boost/aligned_storage.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 #include <iosfwd>
 #include <string>
 
@@ -74,6 +75,12 @@ public:
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
     BOOST_STACKTRACE_FUNCTION std::string operator[](std::size_t frame) const;
+
+    bool operator!() const BOOST_NOEXCEPT {
+        return !size();
+    }
+
+    BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
 };
 
 

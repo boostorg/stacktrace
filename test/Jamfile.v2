@@ -44,7 +44,7 @@ test-suite stacktrace_tests
     [ run test_noop.cpp test_impl.cpp   : : : <define>BOOST_STACKTRACE_USE_NOOP $(NOOP_DEPS) : noop_ho ]
     [ run test.cpp test_impl.cpp        : : : $(AUTO_DEPS) : autodetect_ho ]
 
-    # Test wih shared linked backends
+    # Test with shared linked backends
     [ run test.cpp      : : : <library>.//test_impl_lib_libunwind $(LINKSHARED_UNW)  : libunwind_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_backtrace $(LINKSHARED_BT)   : backtrace_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_windbg $(LINKSHARED_WIND) : windbg_lib ]
@@ -55,8 +55,13 @@ test-suite stacktrace_tests
     [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_BT)   : backtrace_getting_started ]
     [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_WIND) : windbg_getting_started ]
     [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_NOOP) : noop_getting_started ]
-
     [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(AUTO_DEPS) : autodetect_getting_started ]
+
+    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_UNW)  : libunwind_throwing_st ]
+    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_BT)   : backtrace_throwing_st ]
+    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_WIND) : windbg_throwing_st ]
+    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_NOOP) : noop_throwing_st ]
+    [ run ../example/throwing_st.cpp : : : $(AUTO_DEPS) : autodetect_throwing_st ]
   ;
 
 
