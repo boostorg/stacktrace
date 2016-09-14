@@ -51,12 +51,12 @@ test-suite stacktrace_tests
     [ run test_noop.cpp : : : <library>.//test_impl_lib_noop $(LINKSHARED_NOOP) : noop_lib ]
 
     # Making sure that the examples work
-    [ run ../example/getting_started.cpp : : : $(LINKSHARED_UNW)  : libunwind_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(LINKSHARED_BT)   : backtrace_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(LINKSHARED_WIND) : windbg_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(LINKSHARED_NOOP) : noop_getting_started ]
+    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_UNW)  : libunwind_getting_started ]
+    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_BT)   : backtrace_getting_started ]
+    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_WIND) : windbg_getting_started ]
+    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_NOOP) : noop_getting_started ]
 
-    [ run ../example/getting_started.cpp : : : $(AUTO_DEPS) : auto_getting_started ]
+    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(AUTO_DEPS) : autodetect_getting_started ]
   ;
 
 

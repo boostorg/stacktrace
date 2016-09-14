@@ -14,7 +14,6 @@
 
 #include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
-#include <boost/core/no_exceptions_support.hpp>
 
 #include <windows.h>
 #include "DbgHelp.h"
