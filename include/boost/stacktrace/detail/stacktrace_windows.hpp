@@ -12,12 +12,21 @@
 #   pragma once
 #endif
 
+#include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 
 #include <windows.h>
 #include "DbgHelp.h"
 #include <WinBase.h>
+
+#if !defined(BOOST_ALL_NO_LIB)
+#   define BOOST_LIB_NAME Dbghelp
+#   ifdef BOOST_STACKTRACE_DYN_LINK
+#       define BOOST_DYN_LINK
+#   endif
+#   include <boost/config/auto_link.hpp>
+#endif
 
 namespace boost { namespace stacktrace { namespace detail {
 

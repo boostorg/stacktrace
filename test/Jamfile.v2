@@ -18,33 +18,45 @@ project
     <target-os>linux:<cxxflags>"-fvisibility=hidden"
   ;
 
-lib test_impl_lib : test_impl.cpp : <define>BOOST_STACKTRACE_DYN_LINK <link>shared ;
 
-local HONLY_UNW = <define>BOOST_STACKTRACE_USE_LIBUNWIND <library>unwind [ check-target-builds ../build//libunwind : : <build>no ] ;
-local HONLY_BT = <define>BOOST_STACKTRACE_USE_BACKTRACE <target-os>linux:<library>dl [ check-target-builds ../build//backtrace : : <build>no ] ;
-local HONLY_WIND = <define>BOOST_STACKTRACE_USE_WINDBG <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
-local HONLY_AUTO = <target-os>linux:<library>dl <target-os>windows:<library>Dbghelp [ check-target-builds ../build//libunwind : <library>unwind ] ;
-local HONLY_NOOP = <define>BOOST_STACKTRACE_USE_NOOP ;
-local LINKST =  <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>.//test_impl_lib ;
+local UNW_DEPS  = <library>unwind [ check-target-builds ../build//libunwind : : <build>no ] ;
+local BT_DEPS   = <target-os>linux:<library>dl [ check-target-builds ../build//backtrace : : <build>no ] ;
+local WIND_DEPS = <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local NOOP_DEPS =  ;
+local AUTO_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <library>Dbghelp ] [ check-target-builds ../build//libunwind : <library>unwind ] ;
+
+local LINKSHARED_UNW  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_libunwind  $(UNW_DEPS)  ;
+local LINKSHARED_BT   = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace  $(BT_DEPS)   ;
+local LINKSHARED_WIND = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg     $(WIND_DEPS) ;
+local LINKSHARED_NOOP = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop       $(NOOP_DEPS) ;
+
+lib test_impl_lib_libunwind : test_impl.cpp : $(LINKSHARED_UNW) ;
+lib test_impl_lib_backtrace : test_impl.cpp : $(LINKSHARED_BT) ;
+lib test_impl_lib_windbg    : test_impl.cpp : $(LINKSHARED_WIND) ;
+lib test_impl_lib_noop      : test_impl.cpp : $(LINKSHARED_NOOP) ;
 
 test-suite stacktrace_tests
   :
-    [ run test.cpp test_impl.cpp        : : : $(HONLY_UNW)  : libunwind_ho ]
-    [ run test.cpp test_impl.cpp        : : : $(HONLY_BT)   : backtrace_ho ]
-    [ run test.cpp test_impl.cpp        : : : $(HONLY_WIND) : windbg_ho ]
-    [ run test.cpp test_impl.cpp        : : : $(HONLY_AUTO) : autodetect_ho ]
-    [ run test_noop.cpp test_impl.cpp   : : : $(HONLY_NOOP) : noop_ho ]
+    # Header only tests
+    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_LIBUNWIND $(UNW_DEPS)  : libunwind_ho ]
+    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS)   : backtrace_ho ]
+    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_WINDBG $(WIND_DEPS) : windbg_ho ]
+    [ run test_noop.cpp test_impl.cpp   : : : <define>BOOST_STACKTRACE_USE_NOOP $(NOOP_DEPS) : noop_ho ]
+    [ run test.cpp test_impl.cpp        : : : $(AUTO_DEPS) : autodetect_ho ]
 
-    [ run test.cpp      : : : $(LINKST) <library>/boost/stacktrace//boost_stacktrace_libunwind    [ check-target-builds ../build//libunwind : : <build>no ]   : libunwind_lib ]
-    [ run test.cpp      : : : $(LINKST) <library>/boost/stacktrace//boost_stacktrace_backtrace    [ check-target-builds ../build//backtrace : : <build>no ]   : backtrace_lib ]
-    [ run test.cpp      : : : $(LINKST) <library>/boost/stacktrace//boost_stacktrace_windbg       [ check-target-builds ../build//WinDbg : : <build>no ]      : windbg_lib ]
-    [ run test_noop.cpp : : : $(LINKST) <library>/boost/stacktrace//boost_stacktrace_noop : noop_lib ]
+    # Test wih shared linked backends
+    [ run test.cpp      : : : <library>.//test_impl_lib_libunwind $(LINKSHARED_UNW)  : libunwind_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_backtrace $(LINKSHARED_BT)   : backtrace_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_windbg $(LINKSHARED_WIND) : windbg_lib ]
+    [ run test_noop.cpp : : : <library>.//test_impl_lib_noop $(LINKSHARED_NOOP) : noop_lib ]
 
-    [ run ../example/getting_started.cpp : : : $(HONLY_UNW) : libunwind_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(HONLY_BT) : backtrace_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(HONLY_WIND) : windbg_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(HONLY_AUTO) : auto_getting_started ]
-    [ run ../example/getting_started.cpp : : : $(HONLY_NOOP) : noop_getting_started ]
+    # Making sure that the examples work
+    [ run ../example/getting_started.cpp : : : $(LINKSHARED_UNW)  : libunwind_getting_started ]
+    [ run ../example/getting_started.cpp : : : $(LINKSHARED_BT)   : backtrace_getting_started ]
+    [ run ../example/getting_started.cpp : : : $(LINKSHARED_WIND) : windbg_getting_started ]
+    [ run ../example/getting_started.cpp : : : $(LINKSHARED_NOOP) : noop_getting_started ]
+
+    [ run ../example/getting_started.cpp : : : $(AUTO_DEPS) : auto_getting_started ]
   ;
 
 
