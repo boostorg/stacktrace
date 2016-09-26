@@ -35,23 +35,30 @@ struct symbol_info_with_stack {
     char name_part[max_name_length];
 };
 
+struct symbol_initialization_structure {
+    HANDLE process;
+
+    inline symbol_initialization_structure() BOOST_NOEXCEPT
+        : process(GetCurrentProcess())
+    {
+        SymInitialize(process, 0, true);
+    }
+
+    inline ~symbol_initialization_structure() BOOST_NOEXCEPT {
+        SymCleanup(process);
+    }
+};
+
 struct backtrace_holder {
     BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
 
     std::size_t frames_count;
     void* buffer[max_size];
-    HANDLE process;
 
     BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
         : frames_count(0)
-        , process(GetCurrentProcess())
     {
-        const bool inited = !!SymInitialize(process, 0, true);
-        if (inited) {
-            frames_count = CaptureStackBackTrace(0, max_size, buffer, 0);
-        } else {
-            process = 0;
-        }
+        frames_count = CaptureStackBackTrace(0, max_size, buffer, 0);
     }
 
     inline std::size_t size() const BOOST_NOEXCEPT {
@@ -61,15 +68,19 @@ struct backtrace_holder {
     inline std::string get_frame(std::size_t frame) const {
         std::string res;
 
-        if (frame >= frames_count || !process) {
+        static symbol_initialization_structure symproc;
+
+        if (frame >= frames_count) {
             return res;
         }
 
         symbol_info_with_stack s;
         s.symbol.MaxNameLen = symbol_info_with_stack::max_name_length;
         s.symbol.SizeOfStruct = sizeof(SYMBOL_INFO);
-        SymFromAddr(process, reinterpret_cast<DWORD64>(buffer[frame]), 0, &s.symbol);
-        res = s.symbol.Name;
+        const bool sym_res = !!SymFromAddr(symproc.process, reinterpret_cast<DWORD64>(buffer[frame]), 0, &s.symbol);
+        if (sym_res) {
+            res = s.symbol.Name;
+        }
         return res;
     }
 
