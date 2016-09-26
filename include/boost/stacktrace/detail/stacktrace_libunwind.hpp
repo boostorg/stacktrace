@@ -12,6 +12,7 @@
 #   pragma once
 #endif
 
+#include <boost/stacktrace.hpp>
 #include <boost/stacktrace/detail/stacktrace_helpers.hpp>
 #include <boost/core/demangle.hpp>
 #include <cstring>
@@ -29,38 +30,7 @@ struct backtrace_holder {
 
     BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
         : frames_count(0)
-    {
-        unw_context_t uc;
-        if (unw_getcontext(&uc) != 0) {
-            return;
-        }
-
-        {   // Counting frames_count
-            unw_cursor_t cursor;
-            if (unw_init_local(&cursor, &uc) != 0) {
-                return;
-            }
-            while (unw_step(&cursor) > 0) {
-                ++ frames_count;
-            }
-        }
-
-        unw_cursor_t cursor;
-        if (unw_init_local(&cursor, &uc) != 0) {
-            frames_count = 0;
-            return;
-        }
-
-        BOOST_TRY {
-            frames = boost::make_shared<std::string[]>(frames_count);
-            std::size_t i = 0;
-            while (unw_step(&cursor) > 0){
-                frames[i] = get_frame_impl(cursor);
-                ++ i;
-            }
-        } BOOST_CATCH(...) {}
-        BOOST_CATCH_END
-    }
+    {}
 
     inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
@@ -111,5 +81,46 @@ struct backtrace_holder {
 };
 
 }}} // namespace boost::stacktrace::detail
+
+
+namespace boost { namespace stacktrace {
+
+stacktrace::stacktrace() BOOST_NOEXCEPT {
+    new (&impl_) boost::stacktrace::detail::backtrace_holder();
+    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::to_bt(impl_);
+
+    unw_context_t uc;
+    if (unw_getcontext(&uc) != 0) {
+        return;
+    }
+
+    {   // Counting frames_count
+        unw_cursor_t cursor;
+        if (unw_init_local(&cursor, &uc) != 0) {
+            return;
+        }
+        while (unw_step(&cursor) > 0) {
+            ++ bt.frames_count;
+        }
+    }
+
+    unw_cursor_t cursor;
+    if (unw_init_local(&cursor, &uc) != 0) {
+        bt.frames_count = 0;
+        return;
+    }
+
+    BOOST_TRY {
+        bt.frames = boost::make_shared<std::string[]>(bt.frames_count);
+        std::size_t i = 0;
+        while (unw_step(&cursor) > 0){
+            bt.frames[i] = boost::stacktrace::detail::backtrace_holder::get_frame_impl(cursor);
+            ++ i;
+        }
+    } BOOST_CATCH(...) {}
+    BOOST_CATCH_END
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_LIBUNWIND_HPP

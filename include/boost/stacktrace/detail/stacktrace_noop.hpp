@@ -12,6 +12,9 @@
 #   pragma once
 #endif
 
+
+#include <boost/stacktrace.hpp>
+
 namespace boost { namespace stacktrace { namespace detail {
 
 struct backtrace_holder {
@@ -25,5 +28,13 @@ struct backtrace_holder {
 };
 
 }}} // namespace boost::stacktrace::detail
+
+namespace boost { namespace stacktrace {
+
+stacktrace::stacktrace() BOOST_NOEXCEPT {
+    new (&impl_) boost::stacktrace::detail::backtrace_holder();
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_NOOP_HPP

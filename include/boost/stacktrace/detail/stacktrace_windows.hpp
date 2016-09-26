@@ -55,12 +55,6 @@ struct backtrace_holder {
     std::size_t frames_count;
     void* buffer[max_size];
 
-    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
-        : frames_count(0)
-    {
-        frames_count = CaptureStackBackTrace(0, max_size, buffer, 0);
-    }
-
     inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
     }
@@ -83,9 +77,18 @@ struct backtrace_holder {
         }
         return res;
     }
-
 };
 
 }}} // namespace boost::stacktrace::detail
+
+namespace boost { namespace stacktrace {
+
+stacktrace::stacktrace() BOOST_NOEXCEPT {
+    new (&impl_) boost::stacktrace::detail::backtrace_holder();
+    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::to_bt(impl_);
+    bt.frames_count = CaptureStackBackTrace(0, boost::stacktrace::detail::backtrace_holder::max_size, bt.buffer, 0);
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_WINDOWS_HPP

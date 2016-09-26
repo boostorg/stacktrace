@@ -16,6 +16,20 @@
 #include <boost/type_traits/is_pointer.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
+
+struct backtrace_holder;
+
+template <class T>
+inline boost::stacktrace::detail::backtrace_holder& to_bt(T& data) BOOST_NOEXCEPT {
+    return *reinterpret_cast<boost::stacktrace::detail::backtrace_holder*>(&data);
+}
+
+template <class T>
+inline const boost::stacktrace::detail::backtrace_holder& to_bt(const T& data) BOOST_NOEXCEPT {
+    return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(&data);
+}
+
+
 /*
 BOOST_STATIC_CONSTEXPR char to_hex_array[] = "0123456789ABCDEF";
 

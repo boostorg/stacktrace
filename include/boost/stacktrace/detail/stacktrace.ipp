@@ -13,6 +13,7 @@
 #endif
 
 #include <boost/stacktrace.hpp>
+#include <boost/stacktrace/detail/stacktrace_helpers.hpp>
 #include <boost/static_assert.hpp>
 
 // Autodetection
@@ -56,22 +57,9 @@
 
 namespace boost { namespace stacktrace {
 
-namespace detail {
-    template <class T>
-    inline boost::stacktrace::detail::backtrace_holder& to_bt(T& data) BOOST_NOEXCEPT {
-        return *reinterpret_cast<boost::stacktrace::detail::backtrace_holder*>(&data);
-    }
-
-    template <class T>
-    inline const boost::stacktrace::detail::backtrace_holder& to_bt(const T& data) BOOST_NOEXCEPT {
-        return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(&data);
-    }
-} // namespace detail
-
-
-stacktrace::stacktrace() BOOST_NOEXCEPT {
-    new (&impl_) boost::stacktrace::detail::backtrace_holder();
-}
+// stacktrace::stacktrace() is defined in each backend separately. This is
+// requered to avoid `boost::stacktrace::detail::backtrace_holder` apearing in
+// stack traces.
 
 stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT {
     new (&impl_) boost::stacktrace::detail::backtrace_holder(

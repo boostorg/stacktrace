@@ -26,10 +26,6 @@ struct backtrace_holder {
     BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
     void* buffer[max_size];
 
-    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT {
-        frames_count = ::backtrace(buffer, max_size);
-    }
-
     inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
     }
@@ -58,7 +54,17 @@ struct backtrace_holder {
     }
 };
 
-
 }}} // namespace boost::stacktrace::detail
+
+
+namespace boost { namespace stacktrace {
+
+stacktrace::stacktrace() BOOST_NOEXCEPT {
+    new (&impl_) boost::stacktrace::detail::backtrace_holder();
+    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::to_bt(impl_);
+    bt.frames_count = ::backtrace(bt.buffer, boost::stacktrace::detail::backtrace_holder::max_size);
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_LINUX_HPP
