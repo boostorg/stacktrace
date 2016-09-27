@@ -19,6 +19,9 @@
 #include "DbgHelp.h"
 #include <WinBase.h>
 
+#include <boost/detail/winapi/get_current_process.hpp>
+#include <boost/detail/winapi/sym_from_addr.hpp>
+
 #if !defined(BOOST_ALL_NO_LIB)
 #   define BOOST_LIB_NAME Dbghelp
 #   ifdef BOOST_STACKTRACE_DYN_LINK
@@ -30,16 +33,16 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct symbol_info_with_stack {
-    BOOST_STATIC_CONSTEXPR  std::size_t max_name_length = MAX_SYM_NAME * sizeof(char);
-    SYMBOL_INFO symbol;
+    BOOST_STATIC_CONSTEXPR std::size_t max_name_length = MAX_SYM_NAME * sizeof(char);
+    boost::detail::winapi::SYMBOL_INFO_ symbol;
     char name_part[max_name_length];
 };
 
 struct symbol_initialization_structure {
-    HANDLE process;
+    boost::detail::winapi::HANDLE_ process;
 
     inline symbol_initialization_structure() BOOST_NOEXCEPT
-        : process(GetCurrentProcess())
+        : process(boost::detail::winapi::GetCurrentProcess())
     {
         SymInitialize(process, 0, true);
     }
@@ -70,8 +73,10 @@ struct backtrace_holder {
 
         symbol_info_with_stack s;
         s.symbol.MaxNameLen = symbol_info_with_stack::max_name_length;
-        s.symbol.SizeOfStruct = sizeof(SYMBOL_INFO);
-        const bool sym_res = !!SymFromAddr(symproc.process, reinterpret_cast<DWORD64>(buffer[frame]), 0, &s.symbol);
+        s.symbol.SizeOfStruct = sizeof(boost::detail::winapi::SYMBOL_INFO_);
+        const bool sym_res = !!boost::detail::winapi::SymFromAddr(
+            symproc.process, reinterpret_cast<boost::detail::winapi::ULONGLONG_>(buffer[frame]), 0, &s.symbol
+        );
         if (sym_res) {
             res = s.symbol.Name;
         }
