@@ -1,0 +1,290 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Build, Macros and Backends</title>
+<link rel="stylesheet" href="http://www.boost.org/doc/libs/1_61_0/doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="../index.html" title="Chapter&#160;1.&#160;Boost.Stacktrace 1.0">
+<link rel="up" href="../index.html" title="Chapter&#160;1.&#160;Boost.Stacktrace 1.0">
+<link rel="prev" href="getting_started.html" title="Getting Started">
+<link rel="next" href="../boost_stacktrace_header_reference.html" title="Boost.Stacktrace Header Reference">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="http://www.boost.org/doc/libs/1_61_0/boost.png"></td>
+<td align="center"><a href="http://www.boost.org/doc/libs/1_61_0/index.html">Home</a></td>
+<td align="center"><a href="http://www.boost.org/doc/libs/1_61_0/libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="http://www.boost.org/doc/libs/1_61_0/more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="getting_started.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_stacktrace_header_reference.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_stacktrace.build_macros_and_backends"></a><a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Build, Macros
+    and Backends</a>
+</h2></div></div></div>
+<p>
+      By default Boost.Stacktrace is a header-only library and it attempts to detect
+      the tracing backend automatically.
+    </p>
+<p>
+      You can define the following macros to explicitly specify backend that you're
+      willing to use in header-only mode (those macros have no effect if defined
+      <span class="bold"><strong>BOOST_STACKTRACE_LINK</strong></span> or <span class="bold"><strong>BOOST_STACKTRACE_DYN_LINK</strong></span>):
+    </p>
+<div class="table">
+<a name="boost_stacktrace.build_macros_and_backends.configbackend"></a><p class="title"><b>Table&#160;1.1.&#160;Header only backend specifications</b></p>
+<div class="table-contents"><table class="table" summary="Header only backend specifications">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Macro name
+              </p>
+            </th>
+<th>
+              <p>
+                Effect
+              </p>
+            </th>
+<th>
+              <p>
+                Platforms
+              </p>
+            </th>
+<th>
+              <p>
+                Uses debug information <sup>[<a name="boost_stacktrace.build_macros_and_backends.f0" href="#ftn.boost_stacktrace.build_macros_and_backends.f0" class="footnote">a</a>]</sup>
+              </p>
+            </th>
+<th>
+              <p>
+                Uses dynamic exports information <sup>[<a name="boost_stacktrace.build_macros_and_backends.f1" href="#ftn.boost_stacktrace.build_macros_and_backends.f1" class="footnote">b</a>]</sup>
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_USE_LIBUNWIND</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Use libunwind tracing backend. This is the best known backend for
+                POSIX systems that requires linking with libunwind library.
+              </p>
+            </td>
+<td>
+              <p>
+                POSIX
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_USE_WINDBG</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Use Windows specific tracing backend that uses DbgHelp. This is the
+                best and only known backend for Windows platform that requires linking
+                with DbgHelp library.
+              </p>
+            </td>
+<td>
+              <p>
+                Windows
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_USE_BACKTRACE</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Use tracing backend that calls POSIX function backtrace. This is
+                a fallback backend for POSIX platforms that requires linking with
+                libdl library.
+              </p>
+            </td>
+<td>
+              <p>
+                POSIX
+              </p>
+            </td>
+<td>
+              <p>
+                no
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_USE_NOOP</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Use noop tracing backend that does nothing. Use this backend if you
+                wish to disable backtracing.
+              </p>
+            </td>
+<td>
+              <p>
+                POSIX and Windows
+              </p>
+            </td>
+<td>
+              <p>
+                no
+              </p>
+            </td>
+<td>
+              <p>
+                no
+              </p>
+            </td>
+</tr>
+</tbody>
+<tbody class="footnotes"><tr><td colspan="5">
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f0" href="#boost_stacktrace.build_macros_and_backends.f0" class="para">a</a>] </sup>
+                  This will provide more readable backtraces if the binary is build
+                  with debug information.
+                </p></div>
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f1" href="#boost_stacktrace.build_macros_and_backends.f1" class="para">b</a>] </sup>
+                  This will provide readable function names in backtrace for functions
+                  that are exported by the binary.
+                </p></div>
+</td></tr></tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      You may use following macro to improve build times or to be able to switch
+      backends without recompiling your project:
+    </p>
+<div class="table">
+<a name="boost_stacktrace.build_macros_and_backends.linkmacro"></a><p class="title"><b>Table&#160;1.2.&#160;Link macros</b></p>
+<div class="table-contents"><table class="table" summary="Link macros">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Macro name
+              </p>
+            </th>
+<th>
+              <p>
+                Effect
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_LINK</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Disable header-only build and require linking with shared or static
+                library that has contains the tracing backend. If <span class="bold"><strong>BOOST_ALL_DYN_LINK</strong></span>
+                is defined - link with shared library.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>BOOST_STACKTRACE_DYN_LINK</strong></span>
+              </p>
+            </td>
+<td>
+              <p>
+                Disable header-only build and require linking with shared library
+                that has contains tracing backend.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      If one of the link macros defined you have to manually link your binary with
+      one of the libraries that has the backend implementation:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          boost_stacktrace_libunwind
+        </li>
+<li class="listitem">
+          boost_stacktrace_windbg
+        </li>
+<li class="listitem">
+          boost_stacktrace_backtrace
+        </li>
+<li class="listitem">
+          boost_stacktrace_noop
+        </li>
+</ul></div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2016 Antony Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="getting_started.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_stacktrace_header_reference.html"><img src="http://www.boost.org/doc/libs/1_61_0/doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
