@@ -29,6 +29,15 @@ inline const boost::stacktrace::detail::backtrace_holder& to_bt(const T& data) B
     return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(&data);
 }
 
+template <class T>
+inline boost::stacktrace::detail::backtrace_holder& construct_bt_and_return(T& data) BOOST_NOEXCEPT {
+    new (&data) boost::stacktrace::detail::backtrace_holder();
+    return boost::stacktrace::detail::to_bt(data);
+}
+
+inline boost::stacktrace::detail::backtrace_holder& construct_bt_and_return(backtrace_holder& data) BOOST_NOEXCEPT {
+    return data;
+}
 
 /*
 BOOST_STATIC_CONSTEXPR char to_hex_array[] = "0123456789ABCDEF";

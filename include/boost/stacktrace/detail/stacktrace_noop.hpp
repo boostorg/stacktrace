@@ -12,27 +12,14 @@
 #   pragma once
 #endif
 
-
 #include <boost/stacktrace.hpp>
-
-namespace boost { namespace stacktrace { namespace detail {
-
-struct backtrace_holder {
-    inline std::size_t size() const BOOST_NOEXCEPT {
-        return 0u;
-    }
-
-    inline std::string get_frame(std::size_t /*frame*/) const {
-        return std::string();
-    }
-};
-
-}}} // namespace boost::stacktrace::detail
+#include <boost/stacktrace/detail/backtrace_holder_noop.hpp>
+#include <boost/stacktrace/detail/helpers.hpp>
 
 namespace boost { namespace stacktrace {
 
 stacktrace::stacktrace() BOOST_NOEXCEPT {
-    new (&impl_) boost::stacktrace::detail::backtrace_holder();
+    boost::stacktrace::detail::construct_bt_and_return(impl_);
 }
 
 }} // namespace boost::stacktrace

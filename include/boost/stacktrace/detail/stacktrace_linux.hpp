@@ -13,55 +13,13 @@
 #endif
 
 #include <boost/stacktrace.hpp>
-#include <boost/stacktrace/detail/stacktrace_helpers.hpp>
-#include <boost/core/demangle.hpp>
-
-#include <dlfcn.h>
-#include <execinfo.h>
-
-namespace boost { namespace stacktrace { namespace detail {
-
-struct backtrace_holder {
-    std::size_t frames_count;
-    BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
-    void* buffer[max_size];
-
-    inline std::size_t size() const BOOST_NOEXCEPT {
-        return frames_count;
-    }
-
-    inline std::string get_frame(std::size_t frame) const {
-        std::string res;
-        if (frame >= frames_count) {
-            return res;
-        }
-
-        Dl_info dli;
-        if (!dladdr(buffer[frame], &dli)) {
-            return res;
-        }
-
-        if (dli.dli_sname) {
-            boost::core::scoped_demangled_name demangled(dli.dli_sname);
-            if (demangled.get()) {
-                res = demangled.get();
-            } else {
-                res = dli.dli_sname;
-            }
-        }
-
-        return res;
-    }
-};
-
-}}} // namespace boost::stacktrace::detail
-
+#include <boost/stacktrace/detail/backtrace_holder_linux.hpp>
+#include <boost/stacktrace/detail/helpers.hpp>
 
 namespace boost { namespace stacktrace {
 
 stacktrace::stacktrace() BOOST_NOEXCEPT {
-    new (&impl_) boost::stacktrace::detail::backtrace_holder();
-    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::to_bt(impl_);
+    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
     bt.frames_count = ::backtrace(bt.buffer, boost::stacktrace::detail::backtrace_holder::max_size);
 }
 

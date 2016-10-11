@@ -18,12 +18,36 @@
 #include <string>
 
 /// @cond
+
+// Link or header only
 #if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
 #   define BOOST_STACKTRACE_LINK
 #endif
 
 #if defined(BOOST_STACKTRACE_LINK) && !defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_ALL_DYN_LINK)
 #   define BOOST_STACKTRACE_DYN_LINK
+#endif
+
+// Backend autodetection
+#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_LIBUNWIND) \
+    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) &&!defined(BOOST_STACKTRACE_USE_HEADER)
+
+#if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
+#   if __has_include(<libunwind.h>)
+#       define BOOST_STACKTRACE_USE_LIBUNWIND
+#   elif __has_include(<execinfo.h>)
+#       define BOOST_STACKTRACE_USE_BACKTRACE
+#   elif __has_include("DbgHelp.h")
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   endif
+#else
+#   if defined(BOOST_WINDOWS)
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   else
+#       define BOOST_STACKTRACE_USE_BACKTRACE
+#   endif
+#endif
+
 #endif
 
 #ifdef BOOST_STACKTRACE_LINK
@@ -38,14 +62,29 @@
 #   endif
 #else
 #   define BOOST_STACKTRACE_FUNCTION inline
+#   if defined(BOOST_STACKTRACE_USE_NOOP)
+#       include <boost/stacktrace/detail/backtrace_holder_noop.hpp>
+#   elif defined(BOOST_STACKTRACE_USE_WINDBG)
+#      include <boost/stacktrace/detail/backtrace_holder_windows.hpp>
+#   elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
+#      include <boost/stacktrace/detail/backtrace_holder_libunwind.hpp>
+#   elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
+#      include <boost/stacktrace/detail/backtrace_holder_linux.hpp>
+#   else
+#       error No suitable backtrace backend found
+#   endif
 #endif
 /// @endcond
 
 namespace boost { namespace stacktrace {
 
 class stacktrace {
+#ifdef BOOST_STACKTRACE_LINK
     BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
     boost::aligned_storage<max_implementation_size>::type impl_;
+#else
+    boost::stacktrace::detail::backtrace_holder impl_;
+#endif
 
 public:
     /// @brief Stores the current function call sequence inside the class.

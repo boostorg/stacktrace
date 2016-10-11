@@ -13,84 +13,13 @@
 #endif
 
 #include <boost/stacktrace.hpp>
-#include <boost/stacktrace/detail/stacktrace_helpers.hpp>
-
-#include <windows.h>
-#include "DbgHelp.h"
-#include <WinBase.h>
-
-#include <boost/detail/winapi/get_current_process.hpp>
-#include <boost/detail/winapi/sym_from_addr.hpp>
-
-#if !defined(BOOST_ALL_NO_LIB)
-#   define BOOST_LIB_NAME Dbghelp
-#   ifdef BOOST_STACKTRACE_DYN_LINK
-#       define BOOST_DYN_LINK
-#   endif
-#   include <boost/config/auto_link.hpp>
-#endif
-
-namespace boost { namespace stacktrace { namespace detail {
-
-struct symbol_info_with_stack {
-    BOOST_STATIC_CONSTEXPR std::size_t max_name_length = MAX_SYM_NAME * sizeof(char);
-    boost::detail::winapi::SYMBOL_INFO_ symbol;
-    char name_part[max_name_length];
-};
-
-struct symbol_initialization_structure {
-    boost::detail::winapi::HANDLE_ process;
-
-    inline symbol_initialization_structure() BOOST_NOEXCEPT
-        : process(boost::detail::winapi::GetCurrentProcess())
-    {
-        SymInitialize(process, 0, true);
-    }
-
-    inline ~symbol_initialization_structure() BOOST_NOEXCEPT {
-        SymCleanup(process);
-    }
-};
-
-struct backtrace_holder {
-    BOOST_STATIC_CONSTEXPR std::size_t max_size = 100u;
-
-    std::size_t frames_count;
-    void* buffer[max_size];
-
-    inline std::size_t size() const BOOST_NOEXCEPT {
-        return frames_count;
-    }
-
-    inline std::string get_frame(std::size_t frame) const {
-        std::string res;
-
-        static symbol_initialization_structure symproc;
-
-        if (frame >= frames_count) {
-            return res;
-        }
-
-        symbol_info_with_stack s;
-        s.symbol.MaxNameLen = symbol_info_with_stack::max_name_length;
-        s.symbol.SizeOfStruct = sizeof(boost::detail::winapi::SYMBOL_INFO_);
-        const bool sym_res = !!boost::detail::winapi::SymFromAddr(
-            symproc.process, reinterpret_cast<boost::detail::winapi::ULONGLONG_>(buffer[frame]), 0, &s.symbol
-        );
-        if (sym_res) {
-            res = s.symbol.Name;
-        }
-        return res;
-    }
-};
-
-}}} // namespace boost::stacktrace::detail
+#include <boost/stacktrace/detail/backtrace_holder_windows.hpp>
+#include <boost/stacktrace/detail/helpers.hpp>
 
 namespace boost { namespace stacktrace {
 
 stacktrace::stacktrace() BOOST_NOEXCEPT {
-    new (&impl_) boost::stacktrace::detail::backtrace_holder();
-    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::to_bt(impl_);
+    boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
     bt.frames_count = CaptureStackBackTrace(0, boost::stacktrace::detail::backtrace_holder::max_size, bt.buffer, 0);
 }
 

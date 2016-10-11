@@ -7,4 +7,4 @@
 #define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
 #define BOOST_STACKTRACE_USE_WINDBG
 #define BOOST_STACKTRACE_LINK
-#include <boost/stacktrace/detail/stacktrace.ipp>
+#include "stacktrace_src.ipp"
