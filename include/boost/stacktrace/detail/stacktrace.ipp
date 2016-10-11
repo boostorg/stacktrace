@@ -13,7 +13,6 @@
 #endif
 
 #include <boost/stacktrace.hpp>
-#include <boost/static_assert.hpp>
 
 #if defined(BOOST_STACKTRACE_USE_NOOP)
 #   include <boost/stacktrace/detail/stacktrace_noop.hpp>
