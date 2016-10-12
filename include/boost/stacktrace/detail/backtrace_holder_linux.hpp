@@ -50,6 +50,32 @@ struct backtrace_holder {
 
         return res;
     }
+
+    inline bool operator< (const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+        if (frames_count != rhs.frames_count) {
+            return frames_count < rhs.frames_count;
+        } else if (this == &rhs) {
+            return false;
+        }
+
+        return std::lexicographical_compare(
+            buffer, buffer + frames_count,
+            rhs.buffer, rhs.buffer + rhs.frames_count
+        );
+    }
+
+    inline bool operator==(const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+        if (frames_count != rhs.frames_count) {
+            return false;
+        } else if (this == &rhs) {
+            return true;
+        }
+
+        return std::equal(
+            buffer, buffer + frames_count,
+            rhs.buffer
+        );
+    }
 };
 
 }}} // namespace boost::stacktrace::detail

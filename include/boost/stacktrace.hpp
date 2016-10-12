@@ -119,9 +119,27 @@ public:
         return !size();
     }
 
+    /// @brief Allows to check that capturing stack trace was successful.
+    /// @returns `true` if `this->size() != 0`
+    ///
+    /// @b Complexity: O(1)
     BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
+
+    /// @brief Compares stacktraces for less, order is platform dependant.
+    ///
+    /// @b Complexity: Amortized O(1); worst case O(size())
+    BOOST_STACKTRACE_FUNCTION bool operator< (const stacktrace& rhs) const BOOST_NOEXCEPT;
+
+    /// @brief Compares stacktraces for equality.
+    ///
+    /// @b Complexity: Amortized O(1); worst case O(size())
+    BOOST_STACKTRACE_FUNCTION bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT;
 };
 
+inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
+inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
+inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
+inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
 /// Outputs stacktrace in a human readable format to output stream.
 template <class CharT, class TraitsT>

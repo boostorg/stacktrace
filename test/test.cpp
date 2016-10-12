@@ -32,6 +32,8 @@ void test_deeply_nested_namespaces() {
 #if defined(BOOST_STACKTRACE_DYN_LINK) || !defined(BOOST_STACKTRACE_USE_BACKTRACE)
     BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
 #endif
+
+    // TODO: BOOST_TEST(return_from_nested_namespaces() != return_from_nested_namespaces());
 }
 
 void test_nested() {
@@ -61,10 +63,39 @@ void test_nested() {
 #endif
 }
 
+void test_comparisons() {
+    stacktrace nst = return_from_nested_namespaces();
+    stacktrace st;
+    stacktrace cst(st);
+
+    BOOST_TEST(nst);
+    BOOST_TEST(st);
+
+    BOOST_TEST(nst != st);
+    BOOST_TEST(st != nst);
+    BOOST_TEST(st == st);
+    BOOST_TEST(nst == nst);
+
+    BOOST_TEST(nst != cst);
+    BOOST_TEST(cst != nst);
+    BOOST_TEST(cst == st);
+    BOOST_TEST(cst == cst);
+
+    BOOST_TEST(nst < st || nst > st);
+    BOOST_TEST(st < nst || nst < st);
+    BOOST_TEST(st <= st);
+    BOOST_TEST(nst <= nst);
+    BOOST_TEST(st >= st);
+    BOOST_TEST(nst >= nst);
+
+    BOOST_TEST(nst < cst || cst < nst);
+    BOOST_TEST(nst > cst || cst > nst);
+}
 
 int main() {
     test_deeply_nested_namespaces();
     test_nested();
+    test_comparisons();
 
     return boost::report_errors();
 }

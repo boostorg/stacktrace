@@ -23,6 +23,14 @@ struct backtrace_holder {
     inline std::string get_frame(std::size_t /*frame*/) const {
         return std::string();
     }
+    
+    inline bool operator< (const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+        return false;
+    }
+
+    inline bool operator==(const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+        return true;
+    }
 };
 
 }}} // namespace boost::stacktrace::detail

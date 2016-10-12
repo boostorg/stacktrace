@@ -67,6 +67,13 @@ std::string stacktrace::operator[](std::size_t frame) const {
     return boost::stacktrace::detail::to_bt(impl_).get_frame(frame);
 }
 
+bool stacktrace::operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::to_bt(impl_) < boost::stacktrace::detail::to_bt(rhs.impl_);
+}
+
+bool stacktrace::operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::to_bt(impl_) == boost::stacktrace::detail::to_bt(rhs.impl_);
+}
 
 }}
 
