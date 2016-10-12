@@ -16,14 +16,20 @@
 #include <boost/stacktrace/detail/backtrace_holder_linux.hpp>
 #include <boost/stacktrace/detail/helpers.hpp>
 
+#include <boost/functional/hash.hpp>
+
 namespace boost { namespace stacktrace {
 
-stacktrace::stacktrace() BOOST_NOEXCEPT {
+stacktrace::stacktrace() BOOST_NOEXCEPT
+    : hash_code_(0)
+{
     boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
     bt.frames_count = ::backtrace(bt.buffer, boost::stacktrace::detail::backtrace_holder::max_size);
-    if (bt.buffer[bt.frames_count] == 0) {
+    if (bt.buffer[bt.frames_count - 1] == 0) {
         -- bt.frames_count;
     }
+
+    hash_code_ = boost::hash_range(bt.buffer, bt.buffer + bt.frames_count);
 }
 
 }} // namespace boost::stacktrace

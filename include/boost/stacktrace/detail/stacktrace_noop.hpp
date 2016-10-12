@@ -18,7 +18,9 @@
 
 namespace boost { namespace stacktrace {
 
-stacktrace::stacktrace() BOOST_NOEXCEPT {
+stacktrace::stacktrace() BOOST_NOEXCEPT
+    : hash_code_(0)
+{
     boost::stacktrace::detail::construct_bt_and_return(impl_);
 }
 

@@ -36,7 +36,6 @@ struct backtrace_holder {
             return res;
         }
 
-
         Dl_info dli;
         if (!!dladdr(buffer[frame], &dli) && dli.dli_sname) {
             boost::core::scoped_demangled_name demangled(dli.dli_sname);

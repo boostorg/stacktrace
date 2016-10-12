@@ -16,10 +16,15 @@
 #include <boost/stacktrace/detail/backtrace_holder_libunwind.hpp>
 #include <boost/stacktrace/detail/helpers.hpp>
 
+#include <boost/functional/hash.hpp>
+
 namespace boost { namespace stacktrace {
 
-stacktrace::stacktrace() BOOST_NOEXCEPT {
+stacktrace::stacktrace() BOOST_NOEXCEPT
+    : hash_code_(0)
+{
     boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
+    bt.frames_count = 0;
 
     unw_context_t uc;
     if (unw_getcontext(&uc) != 0) {
@@ -47,6 +52,7 @@ stacktrace::stacktrace() BOOST_NOEXCEPT {
         std::size_t i = 0;
         while (unw_step(&cursor) > 0){
             bt.frames[i] = boost::stacktrace::detail::backtrace_holder::get_frame_impl(cursor);
+            boost::hash_combine(hash_code_, bt.frames[i]);
             ++ i;
         }
     } BOOST_CATCH(...) {}

@@ -86,6 +86,8 @@ class stacktrace {
     boost::stacktrace::detail::backtrace_holder impl_;
 #endif
 
+    std::size_t hash_code_;
+
 public:
     /// @brief Stores the current function call sequence inside the class.
     ///
@@ -136,6 +138,13 @@ public:
     ///
     /// @b Complexity: Amortized O(1); worst case O(size())
     BOOST_STACKTRACE_FUNCTION bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT;
+
+    /// @brief Returns hashed code of the stacktrace.
+    ///
+    /// @b Complexity: O(1)
+    std::size_t hash_code() const BOOST_NOEXCEPT {
+        return hash_code_;
+    }
 };
 
 /// Additional comparison operators for stacktraces that have amortized O(1) complexity.
@@ -143,6 +152,11 @@ inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXC
 inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
 inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
 inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+
+/// Hashing support
+inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
+    return st.hash_code();
+}
 
 /// Outputs stacktrace in a human readable format to output stream.
 template <class CharT, class TraitsT>

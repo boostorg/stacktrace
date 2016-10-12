@@ -43,7 +43,9 @@ namespace boost { namespace stacktrace {
 // requered to avoid `boost::stacktrace::detail::backtrace_holder` apearing in
 // stack traces.
 
-stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT {
+stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT
+    : hash_code_(bt.hash_code_)
+{
     new (&impl_) boost::stacktrace::detail::backtrace_holder(
         boost::stacktrace::detail::to_bt(bt.impl_)
     );
@@ -51,6 +53,7 @@ stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT {
 
 stacktrace& stacktrace::operator=(const stacktrace& bt) BOOST_NOEXCEPT {
     boost::stacktrace::detail::to_bt(impl_) = boost::stacktrace::detail::to_bt(bt.impl_);
+    hash_code_ = bt.hash_code_;
     return *this;
 }
 
@@ -68,11 +71,15 @@ std::string stacktrace::operator[](std::size_t frame) const {
 }
 
 bool stacktrace::operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::to_bt(impl_) < boost::stacktrace::detail::to_bt(rhs.impl_);
+    return hash_code_ < rhs.hash_code_
+        || (hash_code_ == rhs.hash_code_ && boost::stacktrace::detail::to_bt(impl_) < boost::stacktrace::detail::to_bt(rhs.impl_))
+    ;
 }
 
 bool stacktrace::operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::to_bt(impl_) == boost::stacktrace::detail::to_bt(rhs.impl_);
+    return hash_code_ == rhs.hash_code_
+        && boost::stacktrace::detail::to_bt(impl_) == boost::stacktrace::detail::to_bt(rhs.impl_)
+    ;
 }
 
 }}

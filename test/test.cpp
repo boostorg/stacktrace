@@ -91,6 +91,13 @@ void test_comparisons() {
 
     BOOST_TEST(nst < cst || cst < nst);
     BOOST_TEST(nst > cst || cst > nst);
+
+
+    BOOST_TEST(hash_value(nst) == hash_value(nst));
+    BOOST_TEST(hash_value(cst) == hash_value(st));
+    
+    BOOST_TEST(hash_value(nst) != hash_value(cst));
+    BOOST_TEST(hash_value(st) != hash_value(nst));
 }
 
 int main() {

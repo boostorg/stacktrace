@@ -36,10 +36,12 @@ namespace boost { namespace stacktrace {
 
 stacktrace::stacktrace(const stacktrace& bt) BOOST_NOEXCEPT
     : impl_(bt.impl_)
+    , hash_code_(bt.hash_code_)
 {}
 
 stacktrace& stacktrace::operator=(const stacktrace& bt) BOOST_NOEXCEPT {
     impl_ = bt.impl_;
+    hash_code_ = bt.hash_code_;
     return *this;
 }
 
@@ -54,11 +56,11 @@ std::string stacktrace::operator[](std::size_t frame) const {
 }
 
 bool stacktrace::operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
-    return impl_ < rhs.impl_;
+    return hash_code_ < rhs.hash_code_ || (hash_code_ == rhs.hash_code_ && impl_ < rhs.impl_);
 }
 
 bool stacktrace::operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
-    return impl_ == rhs.impl_;
+    return hash_code_ == rhs.hash_code_ && impl_ == rhs.impl_;
 }
 
 }}

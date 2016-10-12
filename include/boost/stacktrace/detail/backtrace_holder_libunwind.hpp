@@ -28,10 +28,6 @@ struct backtrace_holder {
     std::size_t frames_count;
     boost::shared_ptr<std::string[]> frames;
 
-    BOOST_FORCEINLINE backtrace_holder() BOOST_NOEXCEPT
-        : frames_count(0)
-    {}
-
     inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
     }

@@ -18,9 +18,13 @@
 
 namespace boost { namespace stacktrace {
 
-stacktrace::stacktrace() BOOST_NOEXCEPT {
+stacktrace::stacktrace() BOOST_NOEXCEPT
+    : hash_code_(0)
+{
     boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
-    bt.frames_count = CaptureStackBackTrace(0, boost::stacktrace::detail::backtrace_holder::max_size, bt.buffer, 0);
+    boost::detail::winapi::ULONG_ hc = 0;
+    bt.frames_count = CaptureStackBackTrace(0, boost::stacktrace::detail::backtrace_holder::max_size, bt.buffer, &hc);
+    boost::hash_combine(hash_code_, hc);
 }
 
 }} // namespace boost::stacktrace
