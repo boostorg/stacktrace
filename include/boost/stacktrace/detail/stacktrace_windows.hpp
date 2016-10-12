@@ -16,6 +16,8 @@
 #include <boost/stacktrace/detail/backtrace_holder_windows.hpp>
 #include <boost/stacktrace/detail/helpers.hpp>
 
+#include <boost/functional/hash.hpp>
+
 namespace boost { namespace stacktrace {
 
 stacktrace::stacktrace() BOOST_NOEXCEPT
