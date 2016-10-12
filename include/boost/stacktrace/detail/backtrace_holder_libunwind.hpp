@@ -16,6 +16,8 @@
 #include <cstring>
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <algorithm>
 
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
@@ -73,6 +75,9 @@ struct backtrace_holder {
         } else {
             res.resize( std::strlen(res.data()) ); // Note: here res is \0 terminated, but size() not equal to strlen
         }
+
+        res += " +";
+        res += to_hex_array(offp).data();
 
         return res;
     }

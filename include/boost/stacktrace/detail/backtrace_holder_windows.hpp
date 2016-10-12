@@ -12,6 +12,9 @@
 #   pragma once
 #endif
 
+#include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <algorithm>
+
 #include <windows.h>
 #include "DbgHelp.h"
 #include <WinBase.h>
@@ -76,6 +79,9 @@ struct backtrace_holder {
         );
         if (sym_res) {
             res = s.symbol.Name;
+        } else {
+            res = "?? at ";
+            res += to_hex_array(buffer[frame]).data();
         }
         return res;
     }

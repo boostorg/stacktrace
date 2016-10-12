@@ -21,6 +21,9 @@ namespace boost { namespace stacktrace {
 stacktrace::stacktrace() BOOST_NOEXCEPT {
     boost::stacktrace::detail::backtrace_holder& bt = boost::stacktrace::detail::construct_bt_and_return(impl_);
     bt.frames_count = ::backtrace(bt.buffer, boost::stacktrace::detail::backtrace_holder::max_size);
+    if (bt.buffer[bt.frames_count] == 0) {
+        -- bt.frames_count;
+    }
 }
 
 }} // namespace boost::stacktrace

@@ -150,13 +150,8 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
         os.width(2);
         os << i;
         os.width(w);
-        const std::string f = bt[i];
         os << "# ";
-        if (f.empty()) {
-            os << "??";
-        } else {
-            os << f;
-        }
+        os << bt[i];
         os << '\n';
     }
 

@@ -33,7 +33,8 @@ void test_deeply_nested_namespaces() {
     BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
 #endif
 
-    // TODO: BOOST_TEST(return_from_nested_namespaces() != return_from_nested_namespaces());
+    stacktrace ns1 = return_from_nested_namespaces();
+    BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
 }
 
 void test_nested() {

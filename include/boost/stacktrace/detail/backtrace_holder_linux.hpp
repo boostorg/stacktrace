@@ -13,6 +13,8 @@
 #endif
 
 #include <boost/core/demangle.hpp>
+#include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <algorithm>
 
 #include <dlfcn.h>
 #include <execinfo.h>
@@ -34,18 +36,18 @@ struct backtrace_holder {
             return res;
         }
 
-        Dl_info dli;
-        if (!dladdr(buffer[frame], &dli)) {
-            return res;
-        }
 
-        if (dli.dli_sname) {
+        Dl_info dli;
+        if (!!dladdr(buffer[frame], &dli) && dli.dli_sname) {
             boost::core::scoped_demangled_name demangled(dli.dli_sname);
             if (demangled.get()) {
                 res = demangled.get();
             } else {
                 res = dli.dli_sname;
             }
+        } else  {
+            res = "?? at ";
+            res += to_hex_array(buffer[frame]).data();
         }
 
         return res;
