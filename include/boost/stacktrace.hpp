@@ -115,11 +115,13 @@ public:
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
     BOOST_STACKTRACE_FUNCTION std::string operator[](std::size_t frame) const;
 
+    /// @cond
     bool operator!() const BOOST_NOEXCEPT {
         return !size();
     }
+    /// @endcond
 
-    /// @brief Allows to check that capturing stack trace was successful.
+    /// @brief Allows to check that stack trace capturing was successful.
     /// @returns `true` if `this->size() != 0`
     ///
     /// @b Complexity: O(1)
@@ -136,6 +138,7 @@ public:
     BOOST_STACKTRACE_FUNCTION bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT;
 };
 
+/// Additional comparison operators for stacktraces that have amortized O(1) complexity.
 inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
 inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
 inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
