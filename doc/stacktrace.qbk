@@ -15,8 +15,6 @@ How to display the call sequence in C++? From what function was called the curre
 
 Boost.Stacktrace library is a simple library that provides information about call sequence in human readable form.
 
-[warning Library is in early development stage! A lot of thing will change soon!]
-
 [warning This is not an official Boost library! It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library to formal review, if community think that it is interesting!]
 
 [endsect]
