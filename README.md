@@ -1,9 +1,6 @@
 ### Stacktrace
 Library for storing and printing backtraces.
 
-### Caution
-This is not an official Boost C++ library. It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library to formal review, if community think that it is interesting!
-
 ### Test results
 @               | Build         | Tests coverage | More info
 ----------------|-------------- | -------------- |-----------
@@ -11,6 +8,11 @@ Master branch:  | [![Build Status](https://travis-ci.org/apolukhin/stacktrace.sv
 
 
 [Latest developer documentation](http://apolukhin.github.io/stacktrace/index.html)
+
+
+### Caution
+This is not an official Boost C++ library. It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library to formal review, if community think that it is interesting!
+
 
 ### License
 Distributed under the [Boost Software License, Version 1.0](http://boost.org/LICENSE_1_0.txt).
