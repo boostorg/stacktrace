@@ -11,11 +11,11 @@
 ]
 
 [section Motivation]
-How to display the call sequence in C++? From what function was called the current function? What call sequence lead to an exception?
+How to display the call sequence in C++? From what function was called the current function? What call sequence led to an exception?
 
-Boost.Stacktrace library is a simple library that provides information about call sequence in human readable form.
+Boost.Stacktrace library is a simple library that provides information about call sequence in a human-readable form.
 
-[warning This is not an official Boost library! It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library to formal review, if community think that it is interesting!]
+[warning This is not an official Boost library! It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library for formal review, if community thinks that it is interesting!]
 
 [endsect]
 
@@ -27,14 +27,14 @@ Boost.Stacktrace library is a simple library that provides information about cal
 
 [section Better asserts]
 
-Pretty often assertions provide not enougth information to locate the problem. For example you can see the following message on out-of-range access:
+Pretty often assertions provide not enough information to locate the problem. For example you can see the following message on out-of-range access:
 
 ```
 ../../../boost/array.hpp:123: T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]: Assertion '(i < N)&&("out of range")' failed.
 Aborted (core dumped)
 ```
 
-That's not enought to locate the problem without debugger. There may be thousends code lines in real world examples and hundrets places where that assertion could happen. Let's try to improve the assertions, and make them more informative:
+That's not enough to locate the problem without debugger. There may be thousand code lines in real world examples and hundred places where that assertion could happen. Let's try to improve the assertions, and make them more informative:
 
 [getting_started_assert_handlers]
 
@@ -64,7 +64,7 @@ Backtrace:
 18# ??
 ```
 
-Now we do know the steps that lead to the assertion and could find the error without debugger.
+Now we do know the steps that led to the assertion and can find the error without debugger.
 
 [endsect]
 
@@ -188,7 +188,7 @@ At some point arises a requirement to easily enable/disable stacktraces for a wh
 Just define *BOOST_STACKTRACE_LINK* for a whole project. Now you can enable/disable stacktraces by just linking with different backends:
 
 * link with `boost_stacktrace_noop` to disable backtracing
-* link with other backends to output becktraces
+* link with other backends to output backtraces
 
 See [link boost_stacktrace.build_macros_and_backends section "Build, Macros and Backends"] for more info.
 
@@ -203,7 +203,7 @@ By default Boost.Stacktrace is a header-only library and it attempts to detect t
 You can define the following macros to explicitly specify backend that you're willing to use in header-only mode (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
 
 [table:configbackend Header only backend specifications
-    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is build with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]]]
+    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]]]
     [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes]]
@@ -211,14 +211,14 @@ You can define the following macros to explicitly specify backend that you're wi
 ]
 
 
-You may use following macro to improve build times or to be able to switch backends without recompiling your project:
+You may use the following macros to improve build times or to be able to switch backends without recompiling your project:
 [table:linkmacro Link macros
     [[Macro name] [Effect]]
-    [[*BOOST_STACKTRACE_LINK*] [Disable header-only build and require linking with shared or static library that has contains the tracing backend. If *BOOST_ALL_DYN_LINK* is defined - link with shared library.]]
-    [[*BOOST_STACKTRACE_DYN_LINK*] [Disable header-only build and require linking with shared library that has contains tracing backend.]]
+    [[*BOOST_STACKTRACE_LINK*] [Disable header-only build and require linking with shared or static library that contains the tracing backend. If *BOOST_ALL_DYN_LINK* is defined, then link with shared library.]]
+    [[*BOOST_STACKTRACE_DYN_LINK*] [Disable header-only build and require linking with shared library that contains tracing backend.]]
 ]
 
-If one of the link macros defined you have to manually link your binary with one of the libraries that has the backend implementation:
+If one of the link macros is defined, you have to manually link your binary with one of the libraries that has the backend implementation:
 
 * boost_stacktrace_libunwind
 * boost_stacktrace_windbg
