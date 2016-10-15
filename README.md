@@ -1,13 +1,11 @@
 ### Stacktrace
-Library for storing and printing backtraces.
+Library for storing and printing backtraces. [Documentation](http://apolukhin.github.io/stacktrace/index.html)
+
 
 ### Test results
 @               | Build         | Tests coverage | More info
 ----------------|-------------- | -------------- |-----------
 Master branch:  | [![Build Status](https://travis-ci.org/apolukhin/stacktrace.svg?branch=master)](https://travis-ci.org/apolukhin/stacktrace) [![Build status](https://ci.appveyor.com/api/projects/status/e070eams56vu0lm6/branch/master?svg=true)](https://ci.appveyor.com/project/apolukhin/stacktrace/branch/master) | [![Coverage Status](https://coveralls.io/repos/apolukhin/stacktrace/badge.png?branch=master)](https://coveralls.io/r/apolukhin/stacktrace?branch=master) | [details...](http://www.boost.org/development/tests/master/developer/stacktrace.html)
-
-
-[Latest developer documentation](http://apolukhin.github.io/stacktrace/index.html)
 
 
 ### Caution
