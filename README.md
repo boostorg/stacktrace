@@ -1,5 +1,7 @@
 ### Stacktrace
-Library for storing and printing backtraces. [Documentation](http://apolukhin.github.io/stacktrace/index.html)
+Library for storing and printing backtraces.
+
+[Documentation and examples.](http://apolukhin.github.io/stacktrace/index.html)
 
 
 ### Test results
