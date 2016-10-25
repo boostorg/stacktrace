@@ -100,10 +100,73 @@ void test_comparisons() {
     BOOST_TEST(hash_value(st) != hash_value(nst));
 }
 
+void test_iterators() {
+    stacktrace nst = return_from_nested_namespaces();
+    stacktrace st;
+
+    BOOST_TEST(nst.begin() != st.begin());
+    BOOST_TEST(nst.cbegin() != st.cbegin());
+    BOOST_TEST(nst.crbegin() != st.crbegin());
+    BOOST_TEST(nst.rbegin() != st.rbegin());
+
+    BOOST_TEST(st.begin() == st.begin());
+    BOOST_TEST(st.cbegin() == st.cbegin());
+    BOOST_TEST(st.crbegin() == st.crbegin());
+    BOOST_TEST(st.rbegin() == st.rbegin());
+
+    BOOST_TEST(++st.begin() == ++st.begin());
+    BOOST_TEST(++st.cbegin() == ++st.cbegin());
+    BOOST_TEST(++st.crbegin() == ++st.crbegin());
+    BOOST_TEST(++st.rbegin() == ++st.rbegin());
+
+    BOOST_TEST(st.begin() + 1 == st.begin() + 1);
+    BOOST_TEST(st.cbegin() + 1 == st.cbegin() + 1);
+    BOOST_TEST(st.crbegin() + 1 == st.crbegin() + 1);
+    BOOST_TEST(st.rbegin() + 1 == st.rbegin() + 1);
+
+    BOOST_TEST(nst.end() != st.end());
+    BOOST_TEST(nst.cend() != st.cend());
+    BOOST_TEST(nst.crend() != st.crend());
+    BOOST_TEST(nst.rend() != st.rend());
+
+    BOOST_TEST(st.end() == st.end());
+    BOOST_TEST(st.cend() == st.cend());
+    BOOST_TEST(st.crend() == st.crend());
+    BOOST_TEST(st.rend() == st.rend());
+
+    BOOST_TEST(--st.end() == --st.end());
+    BOOST_TEST(--st.cend() == --st.cend());
+    BOOST_TEST(--st.crend() == --st.crend());
+    BOOST_TEST(--st.rend() == --st.rend());
+
+
+    BOOST_TEST(st.end() > st.begin());
+    BOOST_TEST(st.end() > st.cbegin());
+    BOOST_TEST(st.cend() > st.cbegin());
+    BOOST_TEST(st.cend() > st.begin());
+
+
+    BOOST_TEST(st.size() == static_cast<std::size_t>(st.end() - st.begin()));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(st.end() - st.cbegin()));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(st.cend() - st.cbegin()));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(st.cend() - st.begin()));
+
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rend(), st.rbegin())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rend(), st.crbegin())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crend(), st.crbegin())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crend(), st.rbegin())));
+
+
+    boost::stacktrace::stacktrace::iterator it = st.begin();
+    ++ it;
+    BOOST_TEST(it == st.begin() + 1);
+}
+
 int main() {
     test_deeply_nested_namespaces();
     test_nested();
     test_comparisons();
+    test_iterators();
 
     return boost::report_errors();
 }
