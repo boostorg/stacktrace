@@ -191,7 +191,7 @@
 </tbody>
 <tbody class="footnotes"><tr><td colspan="5">
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f0" href="#boost_stacktrace.build_macros_and_backends.f0" class="para">a</a>] </sup>
-                  This will provide more readable backtraces if the binary is build
+                  This will provide more readable backtraces if the binary is built
                   with debug information.
                 </p></div>
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f1" href="#boost_stacktrace.build_macros_and_backends.f1" class="para">b</a>] </sup>
@@ -202,7 +202,7 @@
 </table></div>
 </div>
 <br class="table-break"><p>
-      You may use following macro to improve build times or to be able to switch
+      You may use the following macros to improve build times or to be able to switch
       backends without recompiling your project:
     </p>
 <div class="table">
@@ -234,8 +234,8 @@
 <td>
               <p>
                 Disable header-only build and require linking with shared or static
-                library that has contains the tracing backend. If <span class="bold"><strong>BOOST_ALL_DYN_LINK</strong></span>
-                is defined - link with shared library.
+                library that contains the tracing backend. If <span class="bold"><strong>BOOST_ALL_DYN_LINK</strong></span>
+                is defined, then link with shared library.
               </p>
             </td>
 </tr>
@@ -248,7 +248,7 @@
 <td>
               <p>
                 Disable header-only build and require linking with shared library
-                that has contains tracing backend.
+                that contains tracing backend.
               </p>
             </td>
 </tr>
@@ -256,8 +256,8 @@
 </table></div>
 </div>
 <br class="table-break"><p>
-      If one of the link macros defined you have to manually link your binary with
-      one of the libraries that has the backend implementation:
+      If one of the link macros is defined, you have to manually link your binary
+      with one of the libraries that has the backend implementation:
     </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
 <li class="listitem">

@@ -42,15 +42,15 @@
       asserts</a>
 </h3></div></div></div>
 <p>
-        Pretty often assertions provide not enougth information to locate the problem.
+        Pretty often assertions provide not enough information to locate the problem.
         For example you can see the following message on out-of-range access:
       </p>
 <pre class="programlisting"><span class="special">../../../</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">array</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">:</span><span class="number">123</span><span class="special">:</span> <span class="identifier">T</span><span class="special">&amp;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">,</span> <span class="identifier">N</span><span class="special">&gt;::</span><span class="keyword">operator</span><span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">,</span> <span class="identifier">N</span><span class="special">&gt;::</span><span class="identifier">size_type</span><span class="special">)</span> <span class="special">[</span><span class="identifier">with</span> <span class="identifier">T</span> <span class="special">=</span> <span class="keyword">int</span><span class="special">;</span> <span class="keyword">long</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="identifier">N</span> <span class="special">=</span> <span class="number">5ul</span><span class="special">]:</span> <span class="identifier">Assertion</span> <span class="char">'(i &lt; N)&amp;&amp;("out of range")'</span> <span class="identifier">failed</span><span class="special">.</span>
 <span class="identifier">Aborted</span> <span class="special">(</span><span class="identifier">core</span> <span class="identifier">dumped</span><span class="special">)</span>
 </pre>
 <p>
-        That's not enought to locate the problem without debugger. There may be thousends
-        code lines in real world examples and hundrets places where that assertion
+        That's not enough to locate the problem without debugger. There may be thousand
+        code lines in real world examples and hundred places where that assertion
         could happen. Let's try to improve the assertions, and make them more informative:
       </p>
 <pre class="programlisting"><span class="comment">// BOOST_ENABLE_ASSERT_DEBUG_HANDLER is defined for the whole project</span>
@@ -102,7 +102,7 @@
 <span class="number">18</span><span class="special">#</span> <span class="special">??</span>
 </pre>
 <p>
-        Now we do know the steps that lead to the assertion and could find the error
+        Now we do know the steps that led to the assertion and can find the error
         without debugger.
       </p>
 </div>
@@ -303,7 +303,7 @@
             to disable backtracing
           </li>
 <li class="listitem">
-            link with other backends to output becktraces
+            link with other backends to output backtraces
           </li>
 </ul></div>
 <p>
