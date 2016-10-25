@@ -51,8 +51,17 @@ std::size_t stacktrace::size() const BOOST_NOEXCEPT {
     return impl_.size();
 }
 
-std::string stacktrace::operator[](std::size_t frame) const {
+std::string stacktrace::get_name(std::size_t frame) const {
     return impl_.get_frame(frame);
+}
+
+
+std::string stacktrace::get_source_file(std::size_t frame) const {
+    return std::string();
+}
+
+std::size_t stacktrace::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
+    return 0;
 }
 
 bool stacktrace::operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {

@@ -12,11 +12,13 @@
 #   pragma once
 #endif
 
-#include <boost/aligned_storage.hpp>
-#include <boost/core/explicit_operator_bool.hpp>
+#include <boost/core/noncopyable.hpp>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/assert.hpp>
+
+#include <boost/aligned_storage.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 
 #include <iosfwd>
 #include <string>
@@ -82,71 +84,6 @@
 
 namespace boost { namespace stacktrace {
 
-class stacktrace;
-
-class frame {
-    void*       frame_no_;
-public:
-};
-
-//typedef std::string frame;
-
-/// @cond
-namespace detail {
-
-class iterator : public boost::iterator_facade<
-    iterator,
-    const frame,
-    boost::random_access_traversal_tag>
-{
-    typedef boost::iterator_facade<
-        iterator,
-        const frame,
-        boost::random_access_traversal_tag
-    > base_t;
-
-    const stacktrace* impl_;
-    std::size_t       frame_no_;
-
-    iterator(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
-        : impl_(impl)
-        , frame_no_(frame_no)
-    {}
-
-    friend class ::boost::stacktrace::stacktrace;
-    friend class ::boost::iterators::iterator_core_access;
-
-    const frame& dereference() const; /* {
-        return (*impl_)[frame_no_];
-    }*/
-
-    bool equal(const iterator& it) const BOOST_NOEXCEPT {
-        return impl_ == it.impl_ && frame_no_ == it.frame_no_;
-    }
-
-    void increment() BOOST_NOEXCEPT {
-        ++frame_no_;
-    }
-
-    void decrement() BOOST_NOEXCEPT {
-        --frame_no_;
-    }
-
-    void advance(std::size_t n) BOOST_NOEXCEPT {
-        frame_no_ += n;
-    }
-
-    base_t::difference_type distance_to(const iterator& it) const {
-        BOOST_ASSERT(impl_ == it.impl_);
-        return it.frame_no_ - frame_no_;
-    }
-public:
-
-};
-
-} // namespace detail
-/// @endcond
-
 class stacktrace {
 #ifdef BOOST_STACKTRACE_LINK
     BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
@@ -154,12 +91,79 @@ class stacktrace {
 #else
     boost::stacktrace::detail::backtrace_holder impl_;
 #endif
-
     std::size_t hash_code_;
 
+    BOOST_STACKTRACE_FUNCTION std::string get_name(std::size_t frame_no) const;
+    BOOST_STACKTRACE_FUNCTION std::string get_source_file(std::size_t frame_no) const;
+    BOOST_STACKTRACE_FUNCTION std::size_t get_source_line(std::size_t frame_no) const BOOST_NOEXCEPT;
+
 public:
+    class frame {
+        const stacktrace* impl_;
+        const std::size_t frame_no_;
+
+        frame(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
+            : impl_(impl)
+            , frame_no_(frame_no)
+        {}
+
+        friend class ::boost::stacktrace::stacktrace;
+    public:
+        std::string name() const;
+        std::string source_file() const;
+        std::size_t source_line() const  BOOST_NOEXCEPT;
+    };
+
+    class iterator : public boost::iterator_facade<
+        iterator,
+        const frame,
+        boost::random_access_traversal_tag,
+        frame>
+    {
+        typedef boost::iterator_facade<
+            iterator,
+            const frame,
+            boost::random_access_traversal_tag
+        > base_t;
+
+        const stacktrace* impl_;
+        std::size_t       frame_no_;
+
+        iterator(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
+            : impl_(impl)
+            , frame_no_(frame_no)
+        {}
+
+        friend class ::boost::stacktrace::stacktrace;
+        friend class ::boost::iterators::iterator_core_access;
+
+        frame dereference() const {
+            return (*impl_)[frame_no_];
+        }
+
+        bool equal(const iterator& it) const BOOST_NOEXCEPT {
+            return impl_ == it.impl_ && frame_no_ == it.frame_no_;
+        }
+
+        void increment() BOOST_NOEXCEPT {
+            ++frame_no_;
+        }
+
+        void decrement() BOOST_NOEXCEPT {
+            --frame_no_;
+        }
+
+        void advance(std::size_t n) BOOST_NOEXCEPT {
+            frame_no_ += n;
+        }
+
+        base_t::difference_type distance_to(const iterator& it) const {
+            BOOST_ASSERT(impl_ == it.impl_);
+            return it.frame_no_ - frame_no_;
+        }
+    };
+
     typedef frame                                   value_type;
-    typedef boost::stacktrace::detail::iterator     iterator;
     typedef iterator                                const_iterator;
     typedef std::reverse_iterator<iterator>         reverse_iterator;
     typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
@@ -200,7 +204,9 @@ public:
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
-    BOOST_STACKTRACE_FUNCTION std::string operator[](std::size_t frame_no) const;
+    frame operator[](std::size_t frame_no) const {
+        return frame(this, frame_no);
+    }
 
     /// @cond
     bool operator!() const BOOST_NOEXCEPT {
@@ -232,6 +238,17 @@ public:
     }
 };
 
+inline std::string stacktrace::frame::name() const {
+    return impl_->get_name(frame_no_);
+}
+inline std::string stacktrace::frame::source_file() const {
+    return impl_->get_source_file(frame_no_);
+}
+inline std::size_t stacktrace::frame::source_line() const BOOST_NOEXCEPT {
+    return impl_->get_source_line(frame_no_);
+}
+
+
 /// Additional comparison operators for stacktraces that have amortized O(1) complexity.
 inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
 inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
@@ -241,6 +258,12 @@ inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXC
 /// Hashing support
 inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
     return st.hash_code();
+}
+
+/// Outputs stacktrace in a human readable format to output stream.
+template <class CharT, class TraitsT>
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame& f) {
+    return os << f.name();
 }
 
 /// Outputs stacktrace in a human readable format to output stream.
