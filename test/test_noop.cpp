@@ -15,16 +15,16 @@ BOOST_SYMBOL_IMPORT stacktrace return_from_nested_namespaces();
 
 void test_deeply_nested_namespaces() {
     BOOST_TEST(return_from_nested_namespaces().size() == 0);
-    BOOST_TEST(return_from_nested_namespaces()[0].name() == "");
+    BOOST_TEST(return_from_nested_namespaces().begin()->name() == "");
 }
 
 void test_nested() {
     std::pair<stacktrace, stacktrace> res = foo2(15);
 
     BOOST_TEST(res.first.size() == 0);
-    BOOST_TEST(res.first[0].name() == "");
+    BOOST_TEST(res.first.begin()->name() == "");
     BOOST_TEST(res.second.size() == 0);
-    BOOST_TEST(res.second[0].name() == "");
+    BOOST_TEST(res.second.begin()->name() == "");
 }
 
 

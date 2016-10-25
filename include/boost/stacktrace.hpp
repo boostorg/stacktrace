@@ -93,32 +93,52 @@ class stacktrace {
 #endif
     std::size_t hash_code_;
 
+    /// @cond
     BOOST_STACKTRACE_FUNCTION std::string get_name(std::size_t frame_no) const;
     BOOST_STACKTRACE_FUNCTION std::string get_source_file(std::size_t frame_no) const;
     BOOST_STACKTRACE_FUNCTION std::size_t get_source_line(std::size_t frame_no) const BOOST_NOEXCEPT;
+    /// @endcond
 
 public:
+    /// @cond
+    class iterator;
+    /// @endcond
+
     class frame {
+    /// @cond
         const stacktrace* impl_;
-        const std::size_t frame_no_;
+        std::size_t frame_no_;
 
         frame(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
             : impl_(impl)
             , frame_no_(frame_no)
         {}
 
-        friend class ::boost::stacktrace::stacktrace;
+        frame(const frame& f) BOOST_NOEXCEPT
+            : impl_(f.impl_)
+            , frame_no_(f.frame_no_)
+        {}
+
+        frame& operator=(const frame& f) BOOST_NOEXCEPT {
+            impl_ = f.impl_;
+            frame_no_ = f.frame_no_;
+
+            return *this;
+        }
+
+        friend class ::boost::stacktrace::stacktrace::iterator;
+    /// @endcond
     public:
         std::string name() const;
         std::string source_file() const;
         std::size_t source_line() const  BOOST_NOEXCEPT;
     };
 
+    /// @cond
     class iterator : public boost::iterator_facade<
         iterator,
         const frame,
-        boost::random_access_traversal_tag,
-        frame>
+        boost::random_access_traversal_tag>
     {
         typedef boost::iterator_facade<
             iterator,
@@ -126,42 +146,41 @@ public:
             boost::random_access_traversal_tag
         > base_t;
 
-        const stacktrace* impl_;
-        std::size_t       frame_no_;
+        frame f_;
 
         iterator(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
-            : impl_(impl)
-            , frame_no_(frame_no)
+            : f_(impl, frame_no)
         {}
 
         friend class ::boost::stacktrace::stacktrace;
         friend class ::boost::iterators::iterator_core_access;
 
-        frame dereference() const {
-            return (*impl_)[frame_no_];
+        const frame& dereference() const {
+            return f_;
         }
 
         bool equal(const iterator& it) const BOOST_NOEXCEPT {
-            return impl_ == it.impl_ && frame_no_ == it.frame_no_;
+            return f_.impl_ == it.f_.impl_ && f_.frame_no_ == it.f_.frame_no_;
         }
 
         void increment() BOOST_NOEXCEPT {
-            ++frame_no_;
+            ++f_.frame_no_;
         }
 
         void decrement() BOOST_NOEXCEPT {
-            --frame_no_;
+            --f_.frame_no_;
         }
 
         void advance(std::size_t n) BOOST_NOEXCEPT {
-            frame_no_ += n;
+            f_.frame_no_ += n;
         }
 
         base_t::difference_type distance_to(const iterator& it) const {
-            BOOST_ASSERT(impl_ == it.impl_);
-            return it.frame_no_ - frame_no_;
+            BOOST_ASSERT(f_.impl_ == it.f_.impl_);
+            return it.f_.frame_no_ - f_.frame_no_;
         }
     };
+    /// @endcond
 
     typedef frame                                   value_type;
     typedef iterator                                const_iterator;
@@ -204,9 +223,9 @@ public:
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
-    frame operator[](std::size_t frame_no) const {
+/*    frame operator[](std::size_t frame_no) const {
         return frame(this, frame_no);
-    }
+    }*/
 
     /// @cond
     bool operator!() const BOOST_NOEXCEPT {
@@ -260,10 +279,16 @@ inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
     return st.hash_code();
 }
 
-/// Outputs stacktrace in a human readable format to output stream.
+/// Outputs stacktrace::frame in a human readable format to output stream.
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame& f) {
-    return os << f.name();
+    os << f.name();
+
+    if (f.source_line()) {
+        return os << '\t' << f.source_file() << ':' << f.source_line();
+    }
+
+    return os;
 }
 
 /// Outputs stacktrace in a human readable format to output stream.
@@ -271,12 +296,14 @@ template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace& bt) {
     const std::streamsize w = os.width();
     const std::size_t frames = bt.size();
+    stacktrace::const_iterator it = bt.begin();
     for (std::size_t i = 0; i < frames; ++i) {
         os.width(2);
         os << i;
         os.width(w);
         os << "# ";
-        os << bt[i];
+        os << *it;
+        ++ it;
         os << '\n';
     }
 
