@@ -97,7 +97,12 @@ void my_terminate_handler() {
 }
 
 void my_signal_handler(int signum) {
-    std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
+    boost::stacktrace::stacktrace bt;
+    if (bt) {
+        std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; ``[footnote Strictly
+speaking this code is not async-signal-safe, but we have SIGSEGV already it could hardly become worse.
+[link boost_stacktrace.build_macros_and_backends Section "Build, Macros and Backends"] describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and `operator<<` will be never called. ]``
+    }
     std::abort();
 }
 //]

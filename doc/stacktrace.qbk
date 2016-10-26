@@ -24,6 +24,34 @@ Boost.Stacktrace library is a simple library that provides information about cal
 [import ../example/getting_started.cpp]
 [import ../example/throwing_st.cpp]
 
+[section How to print current call stack]
+
+[classref boost::stacktrace::stacktrace] contains methods for working with call-stack/backtraces/stacktraces. Here's a small example:
+```
+#include <boost/stacktrace.hpp>
+
+// ... somewere inside the `bar(int)` function that is called recursively:
+std::cout << boost::stacktrace::stacktrace();
+```
+
+In that example:
+
+* `boost::stacktrace::` is the namespace that has all the classes and functions to work with stacktraces
+* [classref boost::stacktrace::stacktrace stacktrace()] is the default constructor call; constructor stores the current function call sequence inside the stacktrace class.
+
+Code from above will output something like this:
+
+```
+ 0# bar(int)
+ 1# bar(int)
+ 2# bar(int)
+ 3# bar(int)
+ 4# main
+ 5# __libc_start_main
+ 6# _start
+```
+
+[endsect]
 
 [section Handle Terminates and Segmentation Faults]
 
@@ -197,7 +225,7 @@ See [link boost_stacktrace.build_macros_and_backends section "Build, Macros and 
 
 [section Saving stacktraces by specified format]
 
-[classref boost::stacktrace::stacktrace] provides access to individual [classref boost::stacktrace::stacktrace::frame_view frames] of the stacktrace,
+[classref boost::stacktrace::stacktrace] provides access to individual [classref boost::stacktrace::frame_view frames] of the stacktrace,
 so that you could save stacktrace information in your own format. Consider the example, that saves only function addresses of each frame:
 
 [getting_started_trace_addresses]
@@ -219,11 +247,11 @@ By default Boost.Stacktrace is a header-only library and it attempts to detect t
 You can define the following macros to explicitly specify backend that you're willing to use in header-only mode (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
 
 [table:configbackend Header only backend specifications
-    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] [Construction speed]]
-    [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes] [slow]]
-    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes] [fast]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes] [fast]]
-    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing.] [POSIX and Windows] [no] [no] [noop]]
+    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] [Construction speed] [Async signal safe[footnote Absolutely safe to use that backend in async signal handler.]]]
+    [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes] [slow] [no]]
+    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes] [fast] [no]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes] [fast] [no]]
+    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing, `stacktrace::size()` with that backend always return 0. ] [POSIX and Windows] [no] [no] [noop] [yes]]
 ]
 
 
