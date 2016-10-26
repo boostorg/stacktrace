@@ -107,7 +107,7 @@ public:
 #endif
 
     class frame_view {
-    /// @cond
+        /// @cond
         const stacktrace* impl_;
         std::size_t frame_no_;
 
@@ -117,7 +117,7 @@ public:
         {}
 
         friend class ::boost::stacktrace::stacktrace::iterator;
-    /// @endcond
+        /// @endcond
 
     public:
         /// @returns Name of the frame (function name in a human readable form).
@@ -147,7 +147,7 @@ public:
     };
 
     /// @cond
-    class iterator : public boost::iterator_facade<
+    class iterator: public boost::iterator_facade<
         iterator,
         frame_view,
         boost::random_access_traversal_tag,

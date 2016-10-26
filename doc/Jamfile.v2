@@ -18,8 +18,9 @@ doxygen autodoc
         <doxygen:param>EXPAND_ONLY_PREDEF=YES
         <doxygen:param>MACRO_EXPANSION=YES
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
-                                   \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() noexcept;\" \\
-                                   \"BOOST_STACKTRACE_FUNCTION\""
+                                   \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\
+                                   \"BOOST_STACKTRACE_FUNCTION\" \\
+                                   \"BOOST_STACKTRACE_DOXYGEN_INVOKED\""
         <xsl:param>"boost.doxygen.reftitle=Boost.Stacktrace Header Reference"
    ;
 

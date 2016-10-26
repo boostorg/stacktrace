@@ -194,6 +194,21 @@ See [link boost_stacktrace.build_macros_and_backends section "Build, Macros and 
 
 [endsect]
 
+[section Saving stacktraces by specified format]
+
+[classref boost::stacktrace::stacktrace] provides access to individual [classref boost::stacktrace::stacktrace::frame_view frames] of the stacktrace,
+so that you could save stacktrace information in your own format. Consider the example, that saves only function addresses of each frame:
+
+[getting_started_trace_addresses]
+
+Code from above will output:
+
+```
+0x401a25,0x401a25,0x401a25,0x401a25,0x401a25,0x401a25,0x4019cb,0x401a7f,0x7f9da8a46e50,0x4013e0,0,
+```
+
+[endsect]
+
 [endsect]
 
 [section Build, Macros and Backends]
@@ -203,11 +218,11 @@ By default Boost.Stacktrace is a header-only library and it attempts to detect t
 You can define the following macros to explicitly specify backend that you're willing to use in header-only mode (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
 
 [table:configbackend Header only backend specifications
-    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]]]
-    [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes]]
-    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing.] [POSIX and Windows] [no] [no]]
+    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] [Construction speed]]
+    [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes] [slow]]
+    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes] [fast]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes] [fast]]
+    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing.] [POSIX and Windows] [no] [no] [noop]]
 ]
 
 
