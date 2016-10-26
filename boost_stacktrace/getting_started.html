@@ -27,15 +27,156 @@
 <a name="boost_stacktrace.getting_started"></a><a class="link" href="getting_started.html" title="Getting Started">Getting Started</a>
 </h2></div></div></div>
 <div class="toc"><dl>
-<dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.better_asserts">Better
-      asserts</a></span></dt>
+<dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.how_to_print_current_call_stack">How
+      to print current call stack</a></span></dt>
 <dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.handle_terminates_and_segmentati">Handle
       Terminates and Segmentation Faults</a></span></dt>
+<dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.better_asserts">Better
+      asserts</a></span></dt>
 <dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.exceptions_with_stacktrace">Exceptions
       with Stacktrace</a></span></dt>
 <dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.enabling_and_disabling_stacktrac">Enabling
       and Disabling stacktraces</a></span></dt>
+<dt><span class="section"><a href="getting_started.html#boost_stacktrace.getting_started.saving_stacktraces_by_specified_">Saving
+      stacktraces by specified format</a></span></dt>
 </dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_stacktrace.getting_started.how_to_print_current_call_stack"></a><a class="link" href="getting_started.html#boost_stacktrace.getting_started.how_to_print_current_call_stack" title="How to print current call stack">How
+      to print current call stack</a>
+</h3></div></div></div>
+<p>
+        <code class="computeroutput"><a class="link" href="../boost/stacktrace/stacktrace.html" title="Class stacktrace">boost::stacktrace::stacktrace</a></code>
+        contains methods for working with call-stack/backtraces/stacktraces. Here's
+        a small example:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">stacktrace</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="comment">// ... somewere inside the `bar(int)` function that is called recursively:</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">();</span>
+</pre>
+<p>
+        In that example:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span></code>
+            is the namespace that has all the classes and functions to work with
+            stacktraces
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><a class="link" href="../boost/stacktrace/stacktrace.html" title="Class stacktrace">stacktrace()</a></code>
+            is the default constructor call; constructor stores the current function
+            call sequence inside the stacktrace class.
+          </li>
+</ul></div>
+<p>
+        Code from above will output something like this:
+      </p>
+<pre class="programlisting"><span class="number">0</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">1</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">2</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">3</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">4</span><span class="special">#</span> <span class="identifier">main</span>
+<span class="number">5</span><span class="special">#</span> <span class="identifier">__libc_start_main</span>
+<span class="number">6</span><span class="special">#</span> <span class="identifier">_start</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_stacktrace.getting_started.handle_terminates_and_segmentati"></a><a class="link" href="getting_started.html#boost_stacktrace.getting_started.handle_terminates_and_segmentati" title="Handle Terminates and Segmentation Faults">Handle
+      Terminates and Segmentation Faults</a>
+</h3></div></div></div>
+<p>
+        Segmentation Faults and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
+        calls sometimes happen in programs. Programmers usually wish to get as much
+        information as possible on such incidents, so having a stacktrace will significantly
+        improve debugging and fixing.
+      </p>
+<p>
+        To deal with Segmentation Faults and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
+        calls we would need to write handlers:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">exception</span><span class="special">&gt;</span>    <span class="comment">// std::set_terminate, std::abort</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">signal</span><span class="special">.</span><span class="identifier">h</span><span class="special">&gt;</span>     <span class="comment">// ::signal</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">stacktrace</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>     <span class="comment">// std::cerr</span>
+
+<span class="keyword">void</span> <span class="identifier">my_terminate_handler</span><span class="special">()</span> <span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Terminate called:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span> <span class="identifier">my_signal_handler</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">signum</span><span class="special">)</span> <span class="special">{</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span> <span class="identifier">bt</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">bt</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Signal "</span> <span class="special">&lt;&lt;</span> <span class="identifier">signum</span> <span class="special">&lt;&lt;</span> <span class="string">", backtrace:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span> <sup>[<a name="boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="footnote">1</a>]</sup>
+    <span class="special">}</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<p>
+        After that we can set them as a default handlers and get some more information
+        on incidents:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">set_terminate</span><span class="special">(&amp;</span><span class="identifier">my_terminate_handler</span><span class="special">);</span>
+<span class="special">::</span><span class="identifier">signal</span><span class="special">(</span><span class="identifier">SIGSEGV</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">my_signal_handler</span><span class="special">);</span>
+</pre>
+<p>
+        Now we'll get the following output on <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
+        call:
+      </p>
+<pre class="programlisting"><span class="identifier">Terminate</span> <span class="identifier">called</span><span class="special">:</span>
+ <span class="number">0</span><span class="special">#</span> <span class="identifier">my_terminate_handler</span><span class="special">()</span>
+ <span class="number">1</span><span class="special">#</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">__exception_ptr</span><span class="special">::</span><span class="identifier">exception_ptr</span><span class="special">)</span>
+ <span class="number">2</span><span class="special">#</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span><span class="special">()</span>
+ <span class="number">3</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">4</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">5</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">6</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">7</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">8</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">9</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">10</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">11</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">12</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">13</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">14</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">15</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">16</span><span class="special">#</span> <span class="identifier">main</span>
+<span class="number">17</span><span class="special">#</span> <span class="identifier">__libc_start_main</span>
+<span class="number">18</span><span class="special">#</span> <span class="identifier">_start</span>
+<span class="number">19</span><span class="special">#</span> <span class="special">??</span>
+</pre>
+<p>
+        And the following output on Segmentation Fault:
+      </p>
+<pre class="programlisting"><span class="identifier">Signal</span> <span class="number">11</span><span class="special">,</span> <span class="identifier">backtrace</span><span class="special">:</span>
+ <span class="number">0</span><span class="special">#</span> <span class="identifier">my_signal_handler</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">1</span><span class="special">#</span> <span class="identifier">killpg</span>
+ <span class="number">2</span><span class="special">#</span> <span class="special">??</span>
+ <span class="number">3</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">4</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">5</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">6</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">7</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">8</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+ <span class="number">9</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">10</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">11</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">12</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">13</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">14</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
+<span class="number">15</span><span class="special">#</span> <span class="identifier">main</span>
+<span class="number">16</span><span class="special">#</span> <span class="identifier">__libc_start_main</span>
+<span class="number">17</span><span class="special">#</span> <span class="identifier">_start</span>
+<span class="number">18</span><span class="special">#</span> <span class="special">??</span>
+</pre>
+<p>
+        The output stacktrace may be corrupted by previous actions. But now at least
+        some basic information is available to work with.
+      </p>
+</div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="boost_stacktrace.getting_started.better_asserts"></a><a class="link" href="getting_started.html#boost_stacktrace.getting_started.better_asserts" title="Better asserts">Better
@@ -104,98 +245,6 @@
 <p>
         Now we do know the steps that led to the assertion and can find the error
         without debugger.
-      </p>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="boost_stacktrace.getting_started.handle_terminates_and_segmentati"></a><a class="link" href="getting_started.html#boost_stacktrace.getting_started.handle_terminates_and_segmentati" title="Handle Terminates and Segmentation Faults">Handle
-      Terminates and Segmentation Faults</a>
-</h3></div></div></div>
-<p>
-        Segmentation Faults and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
-        calls sometimes happen in programs. Programmers usually wish to get as much
-        information as possible on such incidents, so having a stacktrace will significantly
-        improve debugging and fixing.
-      </p>
-<p>
-        To deal with Segmentation Faults and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
-        calls we would need to write handlers:
-      </p>
-<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">exception</span><span class="special">&gt;</span>    <span class="comment">// std::set_terminate, std::abort</span>
-<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">signal</span><span class="special">.</span><span class="identifier">h</span><span class="special">&gt;</span>     <span class="comment">// ::signal</span>
-<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">stacktrace</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
-<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>     <span class="comment">// std::cerr</span>
-
-<span class="keyword">void</span> <span class="identifier">my_terminate_handler</span><span class="special">()</span> <span class="special">{</span>
-    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Terminate called:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
-    <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
-<span class="special">}</span>
-
-<span class="keyword">void</span> <span class="identifier">my_signal_handler</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">signum</span><span class="special">)</span> <span class="special">{</span>
-    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Signal "</span> <span class="special">&lt;&lt;</span> <span class="identifier">signum</span> <span class="special">&lt;&lt;</span> <span class="string">", backtrace:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
-    <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
-<span class="special">}</span>
-</pre>
-<p>
-        After that we can set them as a default handlers and get some more information
-        on incidents:
-      </p>
-<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">set_terminate</span><span class="special">(&amp;</span><span class="identifier">my_terminate_handler</span><span class="special">);</span>
-<span class="special">::</span><span class="identifier">signal</span><span class="special">(</span><span class="identifier">SIGSEGV</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">my_signal_handler</span><span class="special">);</span>
-</pre>
-<p>
-        Now we'll get the following output on <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span></code>
-        call:
-      </p>
-<pre class="programlisting"><span class="identifier">Terminate</span> <span class="identifier">called</span><span class="special">:</span>
- <span class="number">0</span><span class="special">#</span> <span class="identifier">my_terminate_handler</span><span class="special">()</span>
- <span class="number">1</span><span class="special">#</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">__exception_ptr</span><span class="special">::</span><span class="identifier">exception_ptr</span><span class="special">)</span>
- <span class="number">2</span><span class="special">#</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">terminate</span><span class="special">()</span>
- <span class="number">3</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">4</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">5</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">6</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">7</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">8</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">9</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">10</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">11</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">12</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">13</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">14</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">15</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">16</span><span class="special">#</span> <span class="identifier">main</span>
-<span class="number">17</span><span class="special">#</span> <span class="identifier">__libc_start_main</span>
-<span class="number">18</span><span class="special">#</span> <span class="identifier">_start</span>
-<span class="number">19</span><span class="special">#</span> <span class="special">??</span>
-</pre>
-<p>
-        And the following output on Segmentation Fault:
-      </p>
-<pre class="programlisting"><span class="identifier">Signal</span> <span class="number">11</span><span class="special">,</span> <span class="identifier">backtrace</span><span class="special">:</span>
- <span class="number">0</span><span class="special">#</span> <span class="identifier">my_signal_handler</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">1</span><span class="special">#</span> <span class="identifier">killpg</span>
- <span class="number">2</span><span class="special">#</span> <span class="special">??</span>
- <span class="number">3</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">4</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">5</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">6</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">7</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">8</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
- <span class="number">9</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">10</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">11</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">12</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">13</span><span class="special">#</span> <span class="identifier">bar</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">14</span><span class="special">#</span> <span class="identifier">foo</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span>
-<span class="number">15</span><span class="special">#</span> <span class="identifier">main</span>
-<span class="number">16</span><span class="special">#</span> <span class="identifier">__libc_start_main</span>
-<span class="number">17</span><span class="special">#</span> <span class="identifier">_start</span>
-<span class="number">18</span><span class="special">#</span> <span class="special">??</span>
-</pre>
-<p>
-        The output stacktrace may be corrupted by previous actions. But now at least
-        some basic information is available to work with.
       </p>
 </div>
 <div class="section">
@@ -310,6 +359,42 @@
         See <a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">section "Build,
         Macros and Backends"</a> for more info.
       </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_stacktrace.getting_started.saving_stacktraces_by_specified_"></a><a class="link" href="getting_started.html#boost_stacktrace.getting_started.saving_stacktraces_by_specified_" title="Saving stacktraces by specified format">Saving
+      stacktraces by specified format</a>
+</h3></div></div></div>
+<p>
+        <code class="computeroutput"><a class="link" href="../boost/stacktrace/stacktrace.html" title="Class stacktrace">boost::stacktrace::stacktrace</a></code>
+        provides access to individual <code class="computeroutput"><a class="link" href="../boost/stacktrace/frame_view.html" title="Class frame_view">frames</a></code>
+        of the stacktrace, so that you could save stacktrace information in your
+        own format. Consider the example, that saves only function addresses of each
+        frame:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">stacktrace</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>     <span class="comment">// std::cout</span>
+
+<span class="keyword">namespace</span> <span class="identifier">bs</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">;</span>
+<span class="keyword">void</span> <span class="identifier">dump_compact</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">bs</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">&amp;</span> <span class="identifier">st</span><span class="special">)</span> <span class="special">{</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">bs</span><span class="special">::</span><span class="identifier">frame_view</span> <span class="identifier">frame</span><span class="special">:</span> <span class="identifier">st</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">frame</span><span class="special">.</span><span class="identifier">address</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">','</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+        Code from above will output:
+      </p>
+<pre class="programlisting"><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x401a25</span><span class="special">,</span><span class="number">0x4019cb</span><span class="special">,</span><span class="number">0x401a7f</span><span class="special">,</span><span class="number">0</span><span class="identifier">x7f9da8a46e50</span><span class="special">,</span><span class="number">0x4013e0</span><span class="special">,</span><span class="number">0</span><span class="special">,</span>
+</pre>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="para">1</a>] </sup>Strictly
+speaking this code is not async-signal-safe, but we have SIGSEGV already it could hardly become worse.
+<a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Section "Build, Macros and Backends"</a> describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code> will be never called. </p></div>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>

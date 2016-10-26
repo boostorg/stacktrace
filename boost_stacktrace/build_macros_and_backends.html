@@ -45,6 +45,8 @@
 <col>
 <col>
 <col>
+<col>
+<col>
 </colgroup>
 <thead><tr>
 <th>
@@ -70,6 +72,16 @@
 <th>
               <p>
                 Uses dynamic exports information <sup>[<a name="boost_stacktrace.build_macros_and_backends.f1" href="#ftn.boost_stacktrace.build_macros_and_backends.f1" class="footnote">b</a>]</sup>
+              </p>
+            </th>
+<th>
+              <p>
+                Construction speed
+              </p>
+            </th>
+<th>
+              <p>
+                Async signal safe<sup>[<a name="boost_stacktrace.build_macros_and_backends.f2" href="#ftn.boost_stacktrace.build_macros_and_backends.f2" class="footnote">c</a>]</sup>
               </p>
             </th>
 </tr></thead>
@@ -101,6 +113,16 @@
                 yes
               </p>
             </td>
+<td>
+              <p>
+                slow
+              </p>
+            </td>
+<td>
+              <p>
+                no
+              </p>
+            </td>
 </tr>
 <tr>
 <td>
@@ -128,6 +150,16 @@
 <td>
               <p>
                 yes
+              </p>
+            </td>
+<td>
+              <p>
+                fast
+              </p>
+            </td>
+<td>
+              <p>
+                no
               </p>
             </td>
 </tr>
@@ -159,6 +191,16 @@
                 yes
               </p>
             </td>
+<td>
+              <p>
+                fast
+              </p>
+            </td>
+<td>
+              <p>
+                no
+              </p>
+            </td>
 </tr>
 <tr>
 <td>
@@ -169,7 +211,8 @@
 <td>
               <p>
                 Use noop tracing backend that does nothing. Use this backend if you
-                wish to disable backtracing.
+                wish to disable backtracing, <code class="computeroutput"><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">size</span><span class="special">()</span></code> with that backend always return
+                0.
               </p>
             </td>
 <td>
@@ -187,9 +230,19 @@
                 no
               </p>
             </td>
+<td>
+              <p>
+                noop
+              </p>
+            </td>
+<td>
+              <p>
+                yes
+              </p>
+            </td>
 </tr>
 </tbody>
-<tbody class="footnotes"><tr><td colspan="5">
+<tbody class="footnotes"><tr><td colspan="7">
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f0" href="#boost_stacktrace.build_macros_and_backends.f0" class="para">a</a>] </sup>
                   This will provide more readable backtraces if the binary is built
                   with debug information.
@@ -197,6 +250,9 @@
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f1" href="#boost_stacktrace.build_macros_and_backends.f1" class="para">b</a>] </sup>
                   This will provide readable function names in backtrace for functions
                   that are exported by the binary.
+                </p></div>
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f2" href="#boost_stacktrace.build_macros_and_backends.f2" class="para">c</a>] </sup>
+                  Absolutely safe to use that backend in async signal handler.
                 </p></div>
 </td></tr></tbody>
 </table></div>
