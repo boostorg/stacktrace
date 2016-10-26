@@ -19,16 +19,20 @@ struct backtrace_holder {
     inline std::size_t size() const BOOST_NOEXCEPT {
         return 0u;
     }
+    
+    inline const void* get_address(std::size_t /*frame*/) const BOOST_NOEXCEPT {
+        return 0;
+    }
 
     inline std::string get_frame(std::size_t /*frame*/) const {
         return std::string();
     }
 
-    inline bool operator< (const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+    inline bool operator< (const backtrace_holder& /*rhs*/) const BOOST_NOEXCEPT {
         return false;
     }
 
-    inline bool operator==(const backtrace_holder& rhs) const BOOST_NOEXCEPT {
+    inline bool operator==(const backtrace_holder& /*rhs*/) const BOOST_NOEXCEPT {
         return true;
     }
 };

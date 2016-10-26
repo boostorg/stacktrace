@@ -162,6 +162,14 @@ void test_iterators() {
     BOOST_TEST(it == st.begin() + 1);
 }
 
+void test_frame_view() {
+    stacktrace nst = return_from_nested_namespaces();
+    stacktrace st;
+
+    stacktrace::frame_view fv = nst[1];
+    BOOST_TEST(st[1].name() != fv.name());
+}
+
 int main() {
     test_deeply_nested_namespaces();
     test_nested();

@@ -85,6 +85,7 @@
 namespace boost { namespace stacktrace {
 
 class stacktrace {
+    /// @cond
 #ifdef BOOST_STACKTRACE_LINK
     BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
     boost::aligned_storage<max_implementation_size>::type impl_;
@@ -93,60 +94,71 @@ class stacktrace {
 #endif
     std::size_t hash_code_;
 
-    /// @cond
     BOOST_STACKTRACE_FUNCTION std::string get_name(std::size_t frame_no) const;
+    BOOST_STACKTRACE_FUNCTION const void* get_address(std::size_t frame_no) const BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION std::string get_source_file(std::size_t frame_no) const;
     BOOST_STACKTRACE_FUNCTION std::size_t get_source_line(std::size_t frame_no) const BOOST_NOEXCEPT;
     /// @endcond
 
 public:
-    /// @cond
+    /// @brief Random access iterator that returns frame_view.
     class iterator;
-    /// @endcond
 
-    class frame {
+    class frame_view {
     /// @cond
         const stacktrace* impl_;
         std::size_t frame_no_;
 
-        frame(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
+        frame_view(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
             : impl_(impl)
             , frame_no_(frame_no)
         {}
 
-        frame(const frame& f) BOOST_NOEXCEPT
-            : impl_(f.impl_)
-            , frame_no_(f.frame_no_)
-        {}
-
-        frame& operator=(const frame& f) BOOST_NOEXCEPT {
-            impl_ = f.impl_;
-            frame_no_ = f.frame_no_;
-
-            return *this;
-        }
-
         friend class ::boost::stacktrace::stacktrace::iterator;
     /// @endcond
+
     public:
-        std::string name() const;
-        std::string source_file() const;
-        std::size_t source_line() const  BOOST_NOEXCEPT;
+        /// @returns Name of the frame (function name in a human readable form).
+        /// @throws std::bad_alloc if not enough memory to construct resulting string.
+        std::string name() const {
+            return impl_->get_name(frame_no_);
+        }
+
+        /// @returns Address of the frame function.
+        /// @throws Nothing.
+        const void* address() const BOOST_NOEXCEPT {
+            return impl_->get_address(frame_no_);
+        }
+
+        /// @returns Path to the source file, were the function of the frame is defined. Returns empty string
+        /// if this->source_line() == 0.
+        /// @throws std::bad_alloc if not enough memory to construct resulting string.
+        std::string source_file() const {
+            return impl_->get_source_file(frame_no_);
+        }
+
+        /// @returns Code line in the source file, were the function of the frame is defined.
+        /// @throws Nothing.
+        std::size_t source_line() const  BOOST_NOEXCEPT {
+            return impl_->get_source_line(frame_no_);
+        }
     };
 
     /// @cond
     class iterator : public boost::iterator_facade<
         iterator,
-        const frame,
-        boost::random_access_traversal_tag>
+        frame_view,
+        boost::random_access_traversal_tag,
+        frame_view>
     {
         typedef boost::iterator_facade<
             iterator,
-            const frame,
-            boost::random_access_traversal_tag
+            frame_view,
+            boost::random_access_traversal_tag,
+            frame_view
         > base_t;
 
-        frame f_;
+        frame_view f_;
 
         iterator(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
             : f_(impl, frame_no)
@@ -155,7 +167,7 @@ public:
         friend class ::boost::stacktrace::stacktrace;
         friend class ::boost::iterators::iterator_core_access;
 
-        const frame& dereference() const {
+        frame_view dereference() const BOOST_NOEXCEPT {
             return f_;
         }
 
@@ -182,20 +194,10 @@ public:
     };
     /// @endcond
 
-    typedef frame                                   value_type;
+    typedef frame_view                              reference;
     typedef iterator                                const_iterator;
     typedef std::reverse_iterator<iterator>         reverse_iterator;
     typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
-
-    const_iterator begin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
-    const_iterator cbegin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
-    const_iterator end() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
-    const_iterator cend() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
-
-    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
-    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
-    const_reverse_iterator rend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
-    const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
 
     /// @brief Stores the current function call sequence inside the class.
     ///
@@ -216,16 +218,16 @@ public:
     /// @b Complexity: O(1)
     BOOST_STACKTRACE_FUNCTION std::size_t size() const BOOST_NOEXCEPT;
 
-    /// @param frame_no Zero based index of function to return. 0
+    /// @param frame_no Zero based index of frame to return. 0
     /// is the function index where stacktrace was constructed and
     /// index close to this->size() contains function `main()`.
-    /// @returns Function name in a human readable form.
+    /// @returns frame_view that references the actual frame info, stored inside *this.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
-/*    frame operator[](std::size_t frame_no) const {
-        return frame(this, frame_no);
-    }*/
+    frame_view operator[](std::size_t frame_no) const {
+        return *(cbegin() + frame_no);
+    }
 
     /// @cond
     bool operator!() const BOOST_NOEXCEPT {
@@ -255,33 +257,40 @@ public:
     std::size_t hash_code() const BOOST_NOEXCEPT {
         return hash_code_;
     }
+
+    /// @b Complexity: O(1)
+    const_iterator begin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
+    /// @b Complexity: O(1)
+    const_iterator cbegin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
+    /// @b Complexity: O(1)
+    const_iterator end() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
+    /// @b Complexity: O(1)
+    const_iterator cend() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
+
+    /// @b Complexity: O(1)
+    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
+    /// @b Complexity: O(1)
+    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
+    /// @b Complexity: O(1)
+    const_reverse_iterator rend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
+    /// @b Complexity: O(1)
+    const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
 };
 
-inline std::string stacktrace::frame::name() const {
-    return impl_->get_name(frame_no_);
-}
-inline std::string stacktrace::frame::source_file() const {
-    return impl_->get_source_file(frame_no_);
-}
-inline std::size_t stacktrace::frame::source_line() const BOOST_NOEXCEPT {
-    return impl_->get_source_line(frame_no_);
-}
-
-
-/// Additional comparison operators for stacktraces that have amortized O(1) complexity.
+/// Comparison operators that order in a platform dependant order and have amortized O(1) complexity; O(size()) worst case conmlexity.
 inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
 inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
 inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
 inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
-/// Hashing support
+/// Hashing support, O(1) complexity.
 inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
     return st.hash_code();
 }
 
 /// Outputs stacktrace::frame in a human readable format to output stream.
 template <class CharT, class TraitsT>
-std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame& f) {
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame_view& f) {
     os << f.name();
 
     if (f.source_line()) {
@@ -296,14 +305,12 @@ template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace& bt) {
     const std::streamsize w = os.width();
     const std::size_t frames = bt.size();
-    stacktrace::const_iterator it = bt.begin();
     for (std::size_t i = 0; i < frames; ++i) {
         os.width(2);
         os << i;
         os.width(w);
         os << "# ";
-        os << *it;
-        ++ it;
+        os << bt[i];
         os << '\n';
     }
 

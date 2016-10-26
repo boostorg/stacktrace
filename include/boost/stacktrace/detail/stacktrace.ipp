@@ -55,6 +55,9 @@ std::string stacktrace::get_name(std::size_t frame) const {
     return impl_.get_frame(frame);
 }
 
+const void* stacktrace::get_address(std::size_t frame) const BOOST_NOEXCEPT {
+    return impl_.get_address(frame);
+}
 
 std::string stacktrace::get_source_file(std::size_t frame) const {
     return std::string();

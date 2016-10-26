@@ -62,6 +62,10 @@ struct backtrace_holder {
         return frames_count;
     }
 
+    inline const void* get_address(std::size_t frame) const BOOST_NOEXCEPT {
+        return buffer[frame];
+    }
+
     inline std::string get_frame(std::size_t frame) const {
         std::string res;
 
