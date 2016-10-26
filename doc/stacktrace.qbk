@@ -25,49 +25,6 @@ Boost.Stacktrace library is a simple library that provides information about cal
 [import ../example/throwing_st.cpp]
 
 
-[section Better asserts]
-
-Pretty often assertions provide not enough information to locate the problem. For example you can see the following message on out-of-range access:
-
-```
-../../../boost/array.hpp:123: T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]: Assertion '(i < N)&&("out of range")' failed.
-Aborted (core dumped)
-```
-
-That's not enough to locate the problem without debugger. There may be thousand code lines in real world examples and hundred places where that assertion could happen. Let's try to improve the assertions, and make them more informative:
-
-[getting_started_assert_handlers]
-
-We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole project. Now all the `BOOST_ASSERT` and `BOOST_ASSERT_MSG` will call our functions `assertion_failed` and `assertion_failed_msg` in case of failure. In `assertion_failed_msg` we output information that was provided by the assertion macro and [classref boost::stacktrace::stacktrace]:
-
-```
-Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]': out of range.
-Backtrace:
- 0# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long)
- 1# boost::array<int, 5ul>::operator[](unsigned long)
- 2# oops(unsigned long)
- 3# bar(int)
- 4# foo(int)
- 5# bar(int)
- 6# foo(int)
- 7# bar(int)
- 8# foo(int)
- 9# bar(int)
-10# foo(int)
-11# bar(int)
-12# foo(int)
-13# bar(int)
-14# foo(int)
-15# main
-16# __libc_start_main
-17# _start
-18# ??
-```
-
-Now we do know the steps that led to the assertion and can find the error without debugger.
-
-[endsect]
-
 [section Handle Terminates and Segmentation Faults]
 
 Segmentation Faults and `std::terminate` calls sometimes happen in programs. Programmers usually wish to get as much information as possible on such incidents, so having a stacktrace will significantly improve debugging and fixing.
@@ -133,6 +90,50 @@ Signal 11, backtrace:
 The output stacktrace may be corrupted by previous actions. But now at least some basic information is available to work with.
 
 [endsect]
+
+[section Better asserts]
+
+Pretty often assertions provide not enough information to locate the problem. For example you can see the following message on out-of-range access:
+
+```
+../../../boost/array.hpp:123: T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]: Assertion '(i < N)&&("out of range")' failed.
+Aborted (core dumped)
+```
+
+That's not enough to locate the problem without debugger. There may be thousand code lines in real world examples and hundred places where that assertion could happen. Let's try to improve the assertions, and make them more informative:
+
+[getting_started_assert_handlers]
+
+We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole project. Now all the `BOOST_ASSERT` and `BOOST_ASSERT_MSG` will call our functions `assertion_failed` and `assertion_failed_msg` in case of failure. In `assertion_failed_msg` we output information that was provided by the assertion macro and [classref boost::stacktrace::stacktrace]:
+
+```
+Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]': out of range.
+Backtrace:
+ 0# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long)
+ 1# boost::array<int, 5ul>::operator[](unsigned long)
+ 2# oops(unsigned long)
+ 3# bar(int)
+ 4# foo(int)
+ 5# bar(int)
+ 6# foo(int)
+ 7# bar(int)
+ 8# foo(int)
+ 9# bar(int)
+10# foo(int)
+11# bar(int)
+12# foo(int)
+13# bar(int)
+14# foo(int)
+15# main
+16# __libc_start_main
+17# _start
+18# ??
+```
+
+Now we do know the steps that led to the assertion and can find the error without debugger.
+
+[endsect]
+
 
 [section Exceptions with Stacktrace]
 

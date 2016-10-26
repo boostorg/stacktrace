@@ -120,7 +120,7 @@ void setup_handlers() {
 namespace bs = boost::stacktrace;
 void dump_compact(const bs::stacktrace& st) {
     for (unsigned i = 0; i < st.size(); ++i) {
-        bs::stacktrace::frame_view frame = st[i];
+        bs::frame_view frame = st[i];
         std::cout << frame.address() << ',';
     }
 
@@ -133,7 +133,7 @@ void dump_compact(const bs::stacktrace& st) {
 
 namespace bs = boost::stacktrace;
 void dump_compact(const bs::stacktrace& st) {
-    for (bs::stacktrace::frame_view frame: st) {
+    for (bs::frame_view frame: st) {
         std::cout << frame.address() << ',';
     }
 

@@ -12,6 +12,7 @@
 #include <boost/core/lightweight_test.hpp>
 
 using boost::stacktrace::stacktrace;
+using boost::stacktrace::frame_view;
 
 #ifdef BOOST_STACKTRACE_DYN_LINK
 #   define BOOST_ST_API BOOST_SYMBOL_IMPORT
@@ -166,7 +167,7 @@ void test_frame_view() {
     stacktrace nst = return_from_nested_namespaces();
     stacktrace st;
 
-    stacktrace::frame_view fv = nst[1];
+    frame_view fv = nst[1];
     BOOST_TEST(st[1].name() != fv.name());
     BOOST_TEST(st[1] != fv);
     BOOST_TEST(st[1] == st[1]);
