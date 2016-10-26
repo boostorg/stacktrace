@@ -168,6 +168,15 @@ void test_frame_view() {
 
     stacktrace::frame_view fv = nst[1];
     BOOST_TEST(st[1].name() != fv.name());
+    BOOST_TEST(st[1] != fv);
+    BOOST_TEST(st[1] == st[1]);
+    BOOST_TEST(st[1] <= st[1]);
+    BOOST_TEST(st[1] >= st[1]);
+    BOOST_TEST(st[1] < fv || st[1] > fv);
+
+    BOOST_TEST(hash_value(st[1]) != hash_value(fv));
+    fv = st[1];
+    BOOST_TEST(hash_value(st[1]) == hash_value(fv));
 }
 
 int main() {

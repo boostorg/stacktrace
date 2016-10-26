@@ -24,21 +24,34 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
+struct bt_pair {
+    std::string name;
+    const void* addr;
+};
+
+inline bool operator< (const bt_pair& lhs, const bt_pair& rhs) BOOST_NOEXCEPT {
+    return lhs.addr < rhs.addr;
+}
+
+inline bool operator== (const bt_pair& lhs, const bt_pair& rhs) BOOST_NOEXCEPT {
+    return lhs.addr == rhs.addr;
+}
+
 struct backtrace_holder {
     std::size_t frames_count;
-    boost::shared_ptr<std::string[]> frames;
+    boost::shared_ptr<bt_pair[]> frames;
 
     inline std::size_t size() const BOOST_NOEXCEPT {
         return frames_count;
     }
 
     inline const void* get_address(std::size_t frame) const BOOST_NOEXCEPT {
-        return &frames[frame];
+        return frames[frame].addr;
     }
 
     inline std::string get_frame(std::size_t frame) const {
         if (frame < frames_count) {
-            return frames[frame];
+            return frames[frame].name;
         } else {
             return std::string();
         }
@@ -48,7 +61,7 @@ struct backtrace_holder {
         std::string res;
         unw_word_t offp;
         char data[256];
-        const int ret = unw_get_proc_name (&cursor, data, sizeof(data) / sizeof(char), &offp);
+        const int ret = unw_get_proc_name(&cursor, data, sizeof(data) / sizeof(char), &offp);
 
         if (ret == -UNW_ENOMEM) {
             res.resize(sizeof(data) * 2);

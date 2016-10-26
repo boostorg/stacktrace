@@ -48,11 +48,15 @@ stacktrace::stacktrace() BOOST_NOEXCEPT
     }
 
     BOOST_TRY {
-        bt.frames = boost::make_shared<std::string[]>(bt.frames_count);
+        bt.frames = boost::make_shared<boost::stacktrace::detail::bt_pair[]>(bt.frames_count);
         std::size_t i = 0;
         while (unw_step(&cursor) > 0){
-            bt.frames[i] = boost::stacktrace::detail::backtrace_holder::get_frame_impl(cursor);
-            boost::hash_combine(hash_code_, bt.frames[i]);
+            bt.frames[i].name = boost::stacktrace::detail::backtrace_holder::get_frame_impl(cursor);
+            unw_proc_info_t inf;
+            const int res = unw_get_proc_info(&cursor, &inf);
+            (void)res;
+            bt.frames[i].addr = reinterpret_cast<void*>(inf.start_ip ? inf.start_ip : inf.gp);
+            boost::hash_combine(hash_code_, bt.frames[i].name);
             ++ i;
         }
     } BOOST_CATCH(...) {}

@@ -12,8 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/core/noncopyable.hpp>
-
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/assert.hpp>
 
@@ -101,8 +99,12 @@ class stacktrace {
     /// @endcond
 
 public:
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     /// @brief Random access iterator that returns frame_view.
-    class iterator;
+    typedef implementation_specific iterator;
+#else
+    class iterator; // forward declaration
+#endif
 
     class frame_view {
     /// @cond
@@ -222,10 +224,9 @@ public:
     /// is the function index where stacktrace was constructed and
     /// index close to this->size() contains function `main()`.
     /// @returns frame_view that references the actual frame info, stored inside *this.
-    /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
-    frame_view operator[](std::size_t frame_no) const {
+    frame_view operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
         return *(cbegin() + frame_no);
     }
 
@@ -277,27 +278,29 @@ public:
     const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
 };
 
-/// Comparison operators that order in a platform dependant order and have amortized O(1) complexity; O(size()) worst case conmlexity.
+/// Comparison operators that order in a platform dependant order and have amortized O(1) complexity; O(size()) worst case complexity.
 inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
 inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
 inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
 inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+
+/// Comparison operators that order in a platform dependant order and have O(1) complexity.
+inline bool operator< (const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
+inline bool operator> (const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
+inline bool operator<=(const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
+inline bool operator>=(const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
+inline bool operator==(const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
+inline bool operator!=(const stacktrace::frame_view& lhs, const stacktrace::frame_view& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+
 
 /// Hashing support, O(1) complexity.
 inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
     return st.hash_code();
 }
 
-/// Outputs stacktrace::frame in a human readable format to output stream.
-template <class CharT, class TraitsT>
-std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame_view& f) {
-    os << f.name();
-
-    if (f.source_line()) {
-        return os << '\t' << f.source_file() << ':' << f.source_line();
-    }
-
-    return os;
+/// Hashing support, O(1) complexity.
+inline std::size_t hash_value(const stacktrace::frame_view& f) BOOST_NOEXCEPT {
+    return reinterpret_cast<std::size_t>(f.address());
 }
 
 /// Outputs stacktrace in a human readable format to output stream.
@@ -312,6 +315,18 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
         os << "# ";
         os << bt[i];
         os << '\n';
+    }
+
+    return os;
+}
+
+/// Outputs stacktrace::frame in a human readable format to output stream.
+template <class CharT, class TraitsT>
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace::frame_view& f) {
+    os << f.name();
+
+    if (f.source_line()) {
+        return os << '\t' << f.source_file() << ':' << f.source_line();
     }
 
     return os;
