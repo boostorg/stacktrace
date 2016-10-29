@@ -170,7 +170,12 @@ void test_frame_view() {
     frame_view fv = nst[1];
     BOOST_TEST(st[1].name() != fv.name());
     BOOST_TEST(st[1] != fv);
+    if (st[1].source_line()) {
+        BOOST_TEST(st[1].source_file() != fv.source_file());
+    }
     BOOST_TEST(st[1] == st[1]);
+    BOOST_TEST(st[1].source_file() == st[1].source_file());
+    BOOST_TEST(st[1].source_line() == st[1].source_line());
     BOOST_TEST(st[1] <= st[1]);
     BOOST_TEST(st[1] >= st[1]);
     BOOST_TEST(st[1] < fv || st[1] > fv);
@@ -185,6 +190,7 @@ int main() {
     test_nested();
     test_comparisons();
     test_iterators();
+    test_frame_view();
 
     return boost::report_errors();
 }

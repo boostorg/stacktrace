@@ -25,10 +25,13 @@ void test_nested() {
     BOOST_TEST(res.first.begin()->name() == "");
     BOOST_TEST(res.second.size() == 0);
     BOOST_TEST(res.second.begin()->name() == "");
+
     BOOST_TEST(res.second[0].name() == "");
+    BOOST_TEST(res.second[0].address() == 0);
 
     BOOST_TEST(res.second <= res.first);
     BOOST_TEST(res.second >= res.first);
+    BOOST_TEST(res.second == res.first);
     BOOST_TEST(res.second == res.first);
     BOOST_TEST(!(res.second > res.first));
 }
