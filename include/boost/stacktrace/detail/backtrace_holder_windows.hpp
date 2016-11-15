@@ -122,7 +122,7 @@ struct backtrace_holder {
     inline std::string get_frame(std::size_t frame) const {
         std::string result;
         if (frame >= frames_count) {
-            return res;
+            return result;
         }
 
         com_holder<IDebugSymbols> idebug_;
@@ -132,7 +132,7 @@ struct backtrace_holder {
         ULONG64 offset = reinterpret_cast<ULONG64>(buffer[frame]);
 
         char name[256];
-        name[0] = 0;
+        name[0] = '\0';
         PULONG size = 0;
         bool res = (S_OK == idebug_->GetNameByOffset(
             offset,
