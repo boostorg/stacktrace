@@ -21,18 +21,8 @@
 
 #include <boost/detail/winapi/get_current_process.hpp>
 
-#if !defined(BOOST_ALL_NO_LIB)
-#   define BOOST_LIB_NAME ole32
-#   ifdef BOOST_STACKTRACE_DYN_LINK
-#       define BOOST_DYN_LINK
-#   endif
-#   include <boost/config/auto_link.hpp>
-#   define BOOST_LIB_NAME Dbgeng
-#   ifdef BOOST_STACKTRACE_DYN_LINK
-#       define BOOST_DYN_LINK
-#   endif
-#   include <boost/config/auto_link.hpp>
-#endif
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "Dbgeng.lib")
 
 namespace boost { namespace stacktrace { namespace detail {
 template <class T>
