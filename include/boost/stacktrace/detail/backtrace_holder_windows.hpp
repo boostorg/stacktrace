@@ -129,7 +129,7 @@ struct backtrace_holder {
         if (!try_init_com(idebug_)) {
             return result;
         }
-        ULONG64 offset = buffer[frame]);
+        ULONG64 offset = reinterpret_cast<ULONG64>(buffer[frame]);
 
         char name[256];
         name[0] = 0;
