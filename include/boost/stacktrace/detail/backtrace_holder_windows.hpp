@@ -119,26 +119,26 @@ struct backtrace_holder {
         if (!try_init_com(idebug_)) {
             return result;
         }
-        ULONG64 offset = reinterpret_cast<ULONG64>(buffer[frame]);
+        const ULONG64 offset = reinterpret_cast<ULONG64>(buffer[frame]);
 
         char name[256];
         name[0] = '\0';
-        PULONG size = 0;
+        ULONG size = 0;
         bool res = (S_OK == idebug_->GetNameByOffset(
             offset,
             name,
             sizeof(name),
-            reinterpret_cast<PULONG>(&size),
+            &size,
             0
         ));
 
         if (!res && size != 0) {
-            result.resize(reinterpret_cast<std::size_t>(size));
+            result.resize(size);
             res = (S_OK == idebug_->GetNameByOffset(
                 offset,
                 &result[0],
-                result.size(),
-                reinterpret_cast<PULONG>(&size),
+                static_cast<ULONG>(result.size()),
+                &size,
                 0
             ));
         } else if (res) {
