@@ -77,7 +77,7 @@ before_install:
     - git remote add --no-tags -t $BRANCH_TO_TEST origin https://github.com/boostorg/boost.git
     - git fetch --depth=1
     - git checkout $BRANCH_TO_TEST
-    - git submodule update --jobs=3 --depth=1 --init --merge
+    - git submodule update --jobs=3 --init --merge
     - git remote set-branches --add origin $BRANCH_TO_TEST
     - git pull --recurse-submodules --depth=1
     - git status
