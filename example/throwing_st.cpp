@@ -50,8 +50,8 @@ BOOST_NOINLINE void oops(int i) {
     //[getting_started_throwing_with_trace
     if (i >= 4)
         throw with_trace<std::out_of_range>("'i' must be less than 4 in oops()");
-    if (i == 0)
-        throw with_trace<std::logic_error>("'i' must not be zero in oops()");
+    if (i <= 0)
+        throw with_trace<std::logic_error>("'i' must not be greater than zero in oops()");
     //]
     foo(i);
 }
