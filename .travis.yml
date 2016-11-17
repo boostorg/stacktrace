@@ -8,7 +8,7 @@
 # See https://svn.boost.org/trac/boost/wiki/TravisCoverals for description of this file
 # and how it can be used with Boost libraries.
 #
-# File revision #5
+# File revision #6
 
 sudo: false
 language: cpp
@@ -38,11 +38,12 @@ env:
         - BOOST_REMOVE=$(basename $TRAVIS_BUILD_DIR)
 
     matrix:
-        - CXX_FLAGS="--coverage -DBOOST_TRAVISCI_BUILD -std=c++98" LINK_FLAGS=--coverage TOOLSET=gcc
-        - CXX_FLAGS="--coverage -DBOOST_TRAVISCI_BUILD -std=c++11" LINK_FLAGS=--coverage TOOLSET=gcc-5
-        - CXX_FLAGS="--coverage -DBOOST_TRAVISCI_BUILD -std=c++1y" LINK_FLAGS=--coverage TOOLSET=gcc-5
-        #- CXX_FLAGS="--coverage -DBOOST_TRAVISCI_BUILD -std=c++11 -stdlib=libc++" LINK_FLAGS="--coverage -stdlib=libc++" TOOLSET=clang
-        #- CXX_FLAGS="--coverage -DBOOST_TRAVISCI_BUILD -std=c++1y -stdlib=libc++" LINK_FLAGS="--coverage -stdlib=libc++" TOOLSET=clang
+        # Note that "--coverage -fsanitize=address,leak,undefined -DBOOST_TRAVISCI_BUILD" are added automatically lower in code
+        - CXX_FLAGS="-std=c++98" LINK_FLAGS="" TOOLSET=gcc
+        - CXX_FLAGS="-std=c++11" LINK_FLAGS="" TOOLSET=gcc-5
+        - CXX_FLAGS="-std=c++1y" LINK_FLAGS="" TOOLSET=gcc-5
+        #- CXX_FLAGS="-std=c++11 -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
+        #- CXX_FLAGS="-std=c++1y -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
 
 ###############################################################################################################
 # From this point and below code is same for all the Boost libs
@@ -55,14 +56,13 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - valgrind
     - python-yaml
-    - gcc-5
-    - g++-5
+    - gcc-6
+    - g++-6
     - lcov
     - clang
     - libc++-dev
-    - libunwind7-dev
+    - libunwind7-dev                                    # stacktrace library extension
 
 before_install:
     # Set this to the name of the library
@@ -92,7 +92,7 @@ before_install:
 
 script:
     # `--coverage` flags required to generate coverage info for Coveralls
-    - ../../../b2 testing.launcher=valgrind address-model=64 architecture=x86 toolset=$TOOLSET cxxflags="$CXX_FLAGS" linkflags="$LINK_FLAGS"
+    - ../../../b2 "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.3 " address-model=64 architecture=x86 toolset=$TOOLSET cxxflags="--coverage -fsanitize=address,leak,undefined -DBOOST_TRAVISCI_BUILD $CXX_FLAGS" linkflags="$LINK_FLAGS --coverage -lasan -lubsan"
 
 after_success:
     # Copying Coveralls data to a separate folder
