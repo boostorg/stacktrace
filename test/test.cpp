@@ -167,22 +167,28 @@ void test_frame_view() {
     stacktrace nst = return_from_nested_namespaces();
     stacktrace st;
 
-    frame_view fv = nst[1];
-    BOOST_TEST(st[1].name() != fv.name());
-    BOOST_TEST(st[1] != fv);
-    if (st[1].source_line()) {
-        BOOST_TEST(st[1].source_file() != fv.source_file());
-    }
-    BOOST_TEST(st[1] == st[1]);
-    BOOST_TEST(st[1].source_file() == st[1].source_file());
-    BOOST_TEST(st[1].source_line() == st[1].source_line());
-    BOOST_TEST(st[1] <= st[1]);
-    BOOST_TEST(st[1] >= st[1]);
-    BOOST_TEST(st[1] < fv || st[1] > fv);
+    const std::size_t min_size = (nst.size() < st.size() ? nst.size() : st.size());
+    BOOST_TEST(min_size > 2);
 
-    BOOST_TEST(hash_value(st[1]) != hash_value(fv));
-    fv = st[1];
-    BOOST_TEST(hash_value(st[1]) == hash_value(fv));
+    for (std::size_t i = 0; i < min_size; ++i) {
+        BOOST_TEST(st[i] == st[i]);
+        BOOST_TEST(st[i].source_file() == st[i].source_file());
+        BOOST_TEST(st[i].source_line() == st[i].source_line());
+        BOOST_TEST(st[i] <= st[i]);
+        BOOST_TEST(st[i] >= st[i]);
+
+        frame_view fv = nst[2];
+        if (i >= 2 && i < min_size - 3) { // Begin and end of the trace may match, skipping them
+            BOOST_TEST(st[i].name() != fv.name());
+            BOOST_TEST(st[i] != fv);
+            BOOST_TEST(st[i] < fv || st[i] > fv);
+            BOOST_TEST(hash_value(st[i]) != hash_value(fv));
+            BOOST_TEST(st[i].source_line() == 0 || st[i].source_file() != fv.source_file());
+        }
+
+        fv = st[i];
+        BOOST_TEST(hash_value(st[i]) == hash_value(fv));
+    }
 }
 
 int main() {
