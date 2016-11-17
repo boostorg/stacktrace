@@ -54,7 +54,8 @@ env:
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r/test
+    - git-core/ppa
     packages:
     - python-yaml
     - gcc-6
@@ -75,13 +76,9 @@ before_install:
     - git remote add --no-tags -t $BRANCH_TO_TEST origin https://github.com/boostorg/boost.git
     - git fetch --depth=1
     - git checkout $BRANCH_TO_TEST
-    - git submodule update --init --merge
+    - git submodule update --jobs=3 --depth=1 --init --merge
     - git remote set-branches --add origin $BRANCH_TO_TEST
-    - git pull --recurse-submodules
-    - git submodule update --init
-    - git checkout $BRANCH_TO_TEST
-    - git submodule foreach "git reset --quiet --hard; git clean -fxd"
-    - git reset --hard; git clean -fxd
+    - git pull --recurse-submodules --depth=1
     - git status
     - rm -rf $BOOST/libs/$BOOST_REMOVE
     - mv $TRAVIS_BUILD_DIR $BOOST/libs/$PROJECT_TO_TEST
