@@ -57,6 +57,7 @@ addons:
     - ubuntu-toolchain-r-test
     - git-core
     packages:
+    - git
     - python-yaml
     - gcc-6
     - g++-6
