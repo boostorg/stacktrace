@@ -54,8 +54,8 @@ env:
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r/test
-    - git-core/ppa
+    - ubuntu-toolchain-r-test
+    - git-core
     packages:
     - python-yaml
     - gcc-6
