@@ -73,12 +73,69 @@ struct backtrace_holder {
         return buffer[frame];
     }
 
-    inline std::string get_source_file(std::size_t /*frame*/) const {
-        return std::string();
+    inline std::string get_source_file(std::size_t frame) const {
+        std::string result;
+        if (frame >= frames_count) {
+            return result;
+        }
+
+        com_holder<IDebugSymbols> idebug_;
+        if (!try_init_com(idebug_)) {
+            return result;
+        }
+        const ULONG64 offset = reinterpret_cast<ULONG64>(buffer[frame]);
+
+        char name[256];
+        name[0] = 0;
+        ULONG size = 0;
+        bool res = (S_OK == idebug_->GetLineByOffset(
+            offset,
+            0,
+            name,
+            sizeof(name),
+            &size,
+            0
+        ));
+
+        if (!res && size != 0) {
+            result.resize(size);
+            res = (S_OK == idebug_->GetLineByOffset(
+                offset,
+                0,
+                &result[0],
+                static_cast<ULONG>(result.size()),
+                &size,
+                0
+            ));
+        } else if (res) {
+            result = name;
+        }
+
+
+        if (!res) {
+            result.clear();
+        }
+
+        return result;
     }
 
-    inline std::size_t get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {
-        return 0;
+    inline std::size_t get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
+        ULONG line_num = 0;
+
+        if (!try_init_com()) {
+            return 0;
+        }
+
+        const bool is_ok = (S_OK == idebug_->GetLineByOffset(
+            reinterpret_cast<ULONG64>(buffer[frame]),
+            &line_num,
+            0,
+            0,
+            0,
+            0
+        ));
+
+        return (is_ok ? line_num : 0);
     }
 
     static bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
@@ -93,7 +150,6 @@ struct backtrace_holder {
 
         com_holder<IDebugControl> icontrol;
         iclient->QueryInterface(__uuidof(IDebugControl), icontrol.to_void_ptr_ptr());
-
 
         const bool res1 = (S_OK == iclient->AttachProcess(
             0,

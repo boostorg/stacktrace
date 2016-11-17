@@ -7,8 +7,10 @@
 
 #include <cstring>
 #include <windows.h>
-#include "DbgHelp.h"
-#include <WinBase.h>
-#pragma comment(lib, "Dbghelp.lib")
+#include "Dbgeng.h"
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "Dbgeng.lib")
 
-int main() {}
+int main() {
+    CoInitializeEx(0, COINIT_MULTITHREADED);
+}
