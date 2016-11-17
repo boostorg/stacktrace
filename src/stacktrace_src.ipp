@@ -75,11 +75,11 @@ const void* stacktrace::get_address(std::size_t frame) const BOOST_NOEXCEPT {
 }
 
 std::string stacktrace::get_source_file(std::size_t frame) const {
-    return std::string();
+    return boost::stacktrace::detail::to_bt(impl_).get_source_file(frame);
 }
 
 std::size_t stacktrace::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
-    return 0;
+    return boost::stacktrace::detail::to_bt(impl_).get_source_line(frame);
 }
 
 bool stacktrace::operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {

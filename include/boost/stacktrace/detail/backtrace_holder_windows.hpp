@@ -25,6 +25,7 @@
 #pragma comment(lib, "Dbgeng.lib")
 
 namespace boost { namespace stacktrace { namespace detail {
+
 template <class T>
 class com_holder: boost::noncopyable {
     T* holder_;
@@ -70,6 +71,14 @@ struct backtrace_holder {
 
     inline const void* get_address(std::size_t frame) const BOOST_NOEXCEPT {
         return buffer[frame];
+    }
+
+    inline std::string get_source_file(std::size_t /*frame*/) const {
+        return std::string();
+    }
+
+    inline std::size_t get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {
+        return 0;
     }
 
     static bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {

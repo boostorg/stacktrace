@@ -49,6 +49,14 @@ struct backtrace_holder {
         return frames[frame].addr;
     }
 
+    inline std::string get_source_file(std::size_t /*frame*/) const {
+        return std::string();
+    }
+
+    inline std::size_t get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {
+        return 0;
+    }
+
     inline std::string get_frame(std::size_t frame) const {
         if (frame < frames_count) {
             return frames[frame].name;
