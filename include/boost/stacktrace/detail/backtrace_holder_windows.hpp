@@ -122,7 +122,8 @@ struct backtrace_holder {
     inline std::size_t get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
         ULONG line_num = 0;
 
-        if (!try_init_com()) {
+        com_holder<IDebugSymbols> idebug_;
+        if (!try_init_com(idebug_)) {
             return 0;
         }
 

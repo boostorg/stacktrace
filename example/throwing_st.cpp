@@ -41,12 +41,12 @@ struct with_trace : public Exception, public traced {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOST_NOINLINE void oops(std::size_t i);
+BOOST_NOINLINE void oops(int i);
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
 
 #include <stdexcept>
-BOOST_NOINLINE void oops(std::size_t i) {
+BOOST_NOINLINE void oops(int i) {
     //[getting_started_throwing_with_trace
     if (i >= 4)
         throw with_trace<std::out_of_range>("'i' must be less than 4 in oops()");

@@ -72,7 +72,7 @@ namespace boost {
     void assertion_failed_msg(char const* expr, char const* msg, char const* function, char const* file, long line) {
         std::cerr << "Expression '" << expr << "' is false in function '" << function << "': " << (msg ? msg : "<...>") << ".\n"
             << "Backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
-        throw std::logic_error("assertion");
+        std::abort();
     }
 
     void assertion_failed(char const* expr, char const* function, char const* file, long line) {
