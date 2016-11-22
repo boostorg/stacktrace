@@ -14,6 +14,7 @@
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/core/noncopyable.hpp>
+#include <boost/functional/hash.hpp> 
 #include <algorithm>
 
 #include <windows.h>
@@ -117,7 +118,13 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     impl().frames_count = 0;
     hash_code = 0;
     boost::detail::winapi::ULONG_ hc = 0;
-    impl().frames_count = CaptureStackBackTrace(0, 1 + (size - sizeof(backtrace_holder)) / sizeof(void*), impl().buffer, &hc);
+    impl().frames_count = CaptureStackBackTrace(
+        0,
+        static_cast<boost::detail::winapi::ULONG_>(1 + (size - sizeof(backtrace_holder)) / sizeof(void*)),
+        impl().buffer,
+        &hc
+    );
+
     boost::hash_combine(hash_code, hc);
 }
 
