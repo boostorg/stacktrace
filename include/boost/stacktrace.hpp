@@ -21,64 +21,7 @@
 #include <iosfwd>
 #include <string>
 
-/// @cond
-
-// Link or header only
-#if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
-#   define BOOST_STACKTRACE_LINK
-#endif
-
-#if defined(BOOST_STACKTRACE_LINK) && !defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_ALL_DYN_LINK)
-#   define BOOST_STACKTRACE_DYN_LINK
-#endif
-
-// Backend autodetection
-#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_LIBUNWIND) \
-    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) &&!defined(BOOST_STACKTRACE_USE_HEADER)
-
-#if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
-#   if __has_include(<libunwind.h>)
-#       define BOOST_STACKTRACE_USE_LIBUNWIND
-#   elif __has_include(<execinfo.h>)
-#       define BOOST_STACKTRACE_USE_BACKTRACE
-#   elif __has_include("DbgHelp.h")
-#       define BOOST_STACKTRACE_USE_WINDBG
-#   endif
-#else
-#   if defined(BOOST_WINDOWS)
-#       define BOOST_STACKTRACE_USE_WINDBG
-#   else
-#       define BOOST_STACKTRACE_USE_BACKTRACE
-#   endif
-#endif
-
-#endif
-
-#ifdef BOOST_STACKTRACE_LINK
-#   if defined(BOOST_STACKTRACE_DYN_LINK)
-#       ifdef BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
-#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_EXPORT
-#       else
-#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_IMPORT
-#       endif
-#   else
-#       define BOOST_STACKTRACE_FUNCTION
-#   endif
-#else
-#   define BOOST_STACKTRACE_FUNCTION inline
-#   if defined(BOOST_STACKTRACE_USE_NOOP)
-#       include <boost/stacktrace/detail/backtrace_holder_noop.hpp>
-#   elif defined(BOOST_STACKTRACE_USE_WINDBG)
-#      include <boost/stacktrace/detail/backtrace_holder_windows.hpp>
-#   elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
-#      include <boost/stacktrace/detail/backtrace_holder_libunwind.hpp>
-#   elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
-#      include <boost/stacktrace/detail/backtrace_holder_linux.hpp>
-#   else
-#       error No suitable backtrace backend found
-#   endif
-#endif
-/// @endcond
+#include <boost/stacktrace/detail/backend.hpp>
 
 namespace boost { namespace stacktrace {
 
@@ -90,12 +33,12 @@ namespace detail { class iterator; }
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame_view {
     /// @cond
-    const stacktrace* impl_;
+    const boost::stacktrace::detail::backend* impl_;
     std::size_t frame_no_;
 
     frame_view(); // = delete
 
-    frame_view(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
+    frame_view(const boost::stacktrace::detail::backend* impl, std::size_t frame_no) BOOST_NOEXCEPT
         : impl_(impl)
         , frame_no_(frame_no)
     {}
@@ -156,7 +99,7 @@ namespace detail {
 
         frame_view f_;
 
-        iterator(const stacktrace* impl, std::size_t frame_no) BOOST_NOEXCEPT
+        iterator(const boost::stacktrace::detail::backend* impl, std::size_t frame_no) BOOST_NOEXCEPT
             : f_(impl, frame_no)
         {}
 
@@ -195,21 +138,11 @@ namespace detail {
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
 class stacktrace {
     /// @cond
-#ifdef BOOST_STACKTRACE_LINK
     BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
     boost::aligned_storage<max_implementation_size>::type impl_;
-#else
-    boost::stacktrace::detail::backtrace_holder impl_;
-#endif
     std::size_t hash_code_;
+    boost::stacktrace::detail::backend back_;
 
-    BOOST_STACKTRACE_FUNCTION std::string get_name(std::size_t frame_no) const;
-    BOOST_STACKTRACE_FUNCTION const void* get_address(std::size_t frame_no) const BOOST_NOEXCEPT;
-    BOOST_STACKTRACE_FUNCTION std::string get_source_file(std::size_t frame_no) const;
-    BOOST_STACKTRACE_FUNCTION std::size_t get_source_line(std::size_t frame_no) const BOOST_NOEXCEPT;
-    /// @endcond
-
-    friend class frame_view;
 public:
     typedef frame_view                              reference;
 
@@ -222,21 +155,35 @@ public:
     /// @brief Stores the current function call sequence inside the class.
     ///
     /// @b Complexity: O(N) where N is call seaquence length, O(1) for noop backend.
-    BOOST_STACKTRACE_FUNCTION stacktrace() BOOST_NOEXCEPT;
+    stacktrace() BOOST_NOEXCEPT
+        : impl_()
+        , hash_code_()
+        , back_(&impl_, sizeof(impl_), hash_code_)
+    {}
 
     /// @b Complexity: O(1)
-    BOOST_STACKTRACE_FUNCTION stacktrace(const stacktrace& bt) BOOST_NOEXCEPT;
+    stacktrace(const stacktrace& st) BOOST_NOEXCEPT
+        : impl_()
+        , hash_code_(st.hash_code_)
+        , back_(st.back_, &impl_)
+    {}
 
     /// @b Complexity: O(1)
-    BOOST_STACKTRACE_FUNCTION stacktrace& operator=(const stacktrace& bt) BOOST_NOEXCEPT;
+    stacktrace& operator=(const stacktrace& st) BOOST_NOEXCEPT {
+        back_.~backend();
+        new (&back_) boost::stacktrace::detail::backend(st.back_, &impl_);
+        return *this;
+    }
 
     /// @b Complexity: O(N) for libunwind, O(1) for other backends.
-    BOOST_STACKTRACE_FUNCTION ~stacktrace() BOOST_NOEXCEPT;
+    ~stacktrace() BOOST_NOEXCEPT {}
 
     /// @returns Number of function names stored inside the class.
     ///
     /// @b Complexity: O(1)
-    BOOST_STACKTRACE_FUNCTION std::size_t size() const BOOST_NOEXCEPT;
+    std::size_t size() const BOOST_NOEXCEPT {
+        return back_.size();
+    }
 
     /// @param frame_no Zero based index of frame to return. 0
     /// is the function index where stacktrace was constructed and
@@ -250,22 +197,22 @@ public:
 
 
     /// @b Complexity: O(1)
-    const_iterator begin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
+    const_iterator begin() const BOOST_NOEXCEPT { return const_iterator(&back_, 0); }
     /// @b Complexity: O(1)
-    const_iterator cbegin() const BOOST_NOEXCEPT { return const_iterator(this, 0); }
+    const_iterator cbegin() const BOOST_NOEXCEPT { return const_iterator(&back_, 0); }
     /// @b Complexity: O(1)
-    const_iterator end() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
+    const_iterator end() const BOOST_NOEXCEPT { return const_iterator(&back_, size()); }
     /// @b Complexity: O(1)
-    const_iterator cend() const BOOST_NOEXCEPT { return const_iterator(this, size()); }
+    const_iterator cend() const BOOST_NOEXCEPT { return const_iterator(&back_, size()); }
 
     /// @b Complexity: O(1)
-    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
+    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, 0) ); }
     /// @b Complexity: O(1)
-    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, 0) ); }
+    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, 0) ); }
     /// @b Complexity: O(1)
-    const_reverse_iterator rend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
+    const_reverse_iterator rend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, size()) ); }
     /// @b Complexity: O(1)
-    const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(this, size()) ); }
+    const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, size()) ); }
 
 
     /// @brief Allows to check that stack trace capturing was successful.
@@ -277,12 +224,16 @@ public:
     /// @brief Compares stacktraces for less, order is platform dependant.
     ///
     /// @b Complexity: Amortized O(1); worst case O(size())
-    BOOST_STACKTRACE_FUNCTION bool operator< (const stacktrace& rhs) const BOOST_NOEXCEPT;
+    bool operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
+        return hash_code_ < rhs.hash_code_ || (hash_code_ == rhs.hash_code_ && back_ < rhs.back_);
+    }
 
     /// @brief Compares stacktraces for equality.
     ///
     /// @b Complexity: Amortized O(1); worst case O(size())
-    BOOST_STACKTRACE_FUNCTION bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT;
+    bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
+        return hash_code_ == rhs.hash_code_ && back_ == rhs.back_;
+    }
 
     /// @brief Returns hashed code of the stacktrace.
     ///
@@ -370,13 +321,5 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 }
 
 }} // namespace boost::stacktrace
-
-/// @cond
-#undef BOOST_STACKTRACE_FUNCTION
-
-#ifndef BOOST_STACKTRACE_LINK
-#   include <boost/stacktrace/detail/stacktrace.ipp>
-#endif
-/// @endcond
 
 #endif // BOOST_STACKTRACE_STACKTRACE_HPP
