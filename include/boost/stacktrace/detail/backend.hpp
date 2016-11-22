@@ -57,7 +57,7 @@
 #       define BOOST_STACKTRACE_FUNCTION
 #   endif
 #else
-#   define BOOST_STACKTRACE_FUNCTION BOOST_FORCEINLINE
+#   define BOOST_STACKTRACE_FUNCTION inline
 #endif
 
 namespace boost { namespace stacktrace { namespace detail {
