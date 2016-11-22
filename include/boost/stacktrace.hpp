@@ -171,7 +171,9 @@ public:
     /// @b Complexity: O(1)
     stacktrace& operator=(const stacktrace& st) BOOST_NOEXCEPT {
         back_.~backend();
+        hash_code_ = st.hash_code_;
         new (&back_) boost::stacktrace::detail::backend(st.back_, &impl_);
+
         return *this;
     }
 
