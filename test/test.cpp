@@ -29,28 +29,28 @@ void test_deeply_nested_namespaces() {
     ss << return_from_nested_namespaces();
     std::cout << ss.str() << '\n';
     BOOST_TEST(ss.str().find("main") != std::string::npos);
-std::cerr << "cerr 1\n";
+
 #if defined(BOOST_STACKTRACE_DYN_LINK) || !defined(BOOST_STACKTRACE_USE_BACKTRACE)
     BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
 #endif
-std::cerr << "cerr 2\n";
+
     stacktrace ns1 = return_from_nested_namespaces();
     BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
     std::cerr << "cerr 3\n";
 }
 
 void test_nested() {
-std::cerr << "cerr 4\n";
+
     std::pair<stacktrace, stacktrace> res = foo2(15);
-std::cerr << "cerr 5\n";
+
     std::stringstream ss1, ss2;
-std::cerr << "cerr 6\n";
+
     ss1 << res.first;
     ss2 << res.second;
     std::cout << "'" << ss1.str() << "'\n\n" << ss2.str() << std::endl;
     BOOST_TEST(!ss1.str().empty());
     BOOST_TEST(!ss2.str().empty());
-std::cerr << "cerr 7\n";
+
     BOOST_TEST(ss1.str().find(" 0# ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" 0# ") != std::string::npos);
 

@@ -86,6 +86,7 @@ public:
     BOOST_STACKTRACE_FUNCTION bool operator==(const backend& rhs) const BOOST_NOEXCEPT;
 
     BOOST_STACKTRACE_FUNCTION backend(const backend& b, void* memory) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION backend& operator=(const backend& b) BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION ~backend() BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION std::size_t size() const BOOST_NOEXCEPT;
 };

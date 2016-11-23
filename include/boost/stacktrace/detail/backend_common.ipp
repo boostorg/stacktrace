@@ -22,6 +22,19 @@ backend::backend(const backend& b, void* memory) BOOST_NOEXCEPT
     );
 }
 
+backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
+    if (data_ == b.data_) {
+        return *this;
+    }
+
+    reinterpret_cast<backtrace_holder*>(data_)->~backtrace_holder();
+    new(data_) backtrace_holder(
+        b.impl()
+    );
+
+    return *this;
+}
+
 backend::~backend() BOOST_NOEXCEPT {
     reinterpret_cast<backtrace_holder*>(data_)->~backtrace_holder();
 }

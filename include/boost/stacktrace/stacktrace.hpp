@@ -45,7 +45,7 @@ public:
     /// @brief Stores the current function call sequence inside the class.
     ///
     /// @b Complexity: O(N) where N is call seaquence length, O(1) for noop backend.
-    stacktrace() BOOST_NOEXCEPT
+    BOOST_FORCEINLINE stacktrace() BOOST_NOEXCEPT
         : impl_()
         , hash_code_()
         , back_(&impl_, sizeof(impl_), hash_code_)
@@ -60,9 +60,8 @@ public:
 
     /// @b Complexity: O(1)
     stacktrace& operator=(const stacktrace& st) BOOST_NOEXCEPT {
-        back_.~backend();
         hash_code_ = st.hash_code_;
-        new (&back_) boost::stacktrace::detail::backend(st.back_, &impl_);
+        back_ = back_;
 
         return *this;
     }

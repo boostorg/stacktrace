@@ -46,6 +46,10 @@ backend::backend(const backend& b, void* memory) BOOST_NOEXCEPT
     : data_(memory)
 {}
 
+backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
+    return *this;
+}
+
 backend::~backend() BOOST_NOEXCEPT {}
 
 std::size_t backend::size() const BOOST_NOEXCEPT {
