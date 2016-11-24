@@ -112,16 +112,16 @@ struct backtrace_holder {
 
 
 backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(memory)
+    : data_(static_cast<backtrace_holder*>(memory))
 {
     new (data_) backtrace_holder();
-    impl().frames_count = 0;
+    data_->frames_count = 0;
     hash_code = 0;
     boost::detail::winapi::ULONG_ hc = 0;
-    impl().frames_count = CaptureStackBackTrace(
+    data_->frames_count = CaptureStackBackTrace(
         0,
         static_cast<boost::detail::winapi::ULONG_>((size - sizeof(backtrace_holder)) / sizeof(void*)),
-        impl().buffer,
+        data_->buffer,
         &hc
     );
 
@@ -130,7 +130,7 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
 
 std::string backend::get_name(std::size_t frame) const {
     std::string result;
-    if (frame >= impl().frames_count) {
+    if (frame >= data_->frames_count) {
         return result;
     }
 
@@ -138,7 +138,7 @@ std::string backend::get_name(std::size_t frame) const {
     if (!try_init_com(idebug_)) {
         return result;
     }
-    const ULONG64 offset = reinterpret_cast<ULONG64>(impl().buffer[frame]);
+    const ULONG64 offset = reinterpret_cast<ULONG64>(data_->buffer[frame]);
 
     char name[256];
     name[0] = '\0';
@@ -172,12 +172,12 @@ std::string backend::get_name(std::size_t frame) const {
 }
 
 const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return impl().buffer[frame];
+    return data_->buffer[frame];
 }
 
 std::string backend::get_source_file(std::size_t frame) const {
     std::string result;
-    if (frame >= impl().frames_count) {
+    if (frame >= data_->frames_count) {
         return result;
     }
 
@@ -185,7 +185,7 @@ std::string backend::get_source_file(std::size_t frame) const {
     if (!try_init_com(idebug_)) {
         return result;
     }
-    const ULONG64 offset = reinterpret_cast<ULONG64>(impl().buffer[frame]);
+    const ULONG64 offset = reinterpret_cast<ULONG64>(data_->buffer[frame]);
 
     char name[256];
     name[0] = 0;
@@ -230,7 +230,7 @@ std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
     }
 
     const bool is_ok = (S_OK == idebug_->GetLineByOffset(
-        reinterpret_cast<ULONG64>(impl().buffer[frame]),
+        reinterpret_cast<ULONG64>(data_->buffer[frame]),
         &line_num,
         0,
         0,
@@ -242,28 +242,28 @@ std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
 }
 
 bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
-        return impl().frames_count < rhs.impl().frames_count;
+    if (data_->frames_count != rhs.data_->frames_count) {
+        return data_->frames_count < rhs.data_->frames_count;
     } else if (this == &rhs) {
         return false;
     }
 
     return std::lexicographical_compare(
-        impl().buffer, impl().buffer + impl().frames_count,
-        rhs.impl().buffer, rhs.impl().buffer + rhs.impl().frames_count
+        data_->buffer, data_->buffer + data_->frames_count,
+        rhs.data_->buffer, rhs.data_->buffer + rhs.data_->frames_count
     );
 }
 
 bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
+    if (data_->frames_count != rhs.data_->frames_count) {
         return false;
     } else if (this == &rhs) {
         return true;
     }
 
     return std::equal(
-        impl().buffer, impl().buffer + impl().frames_count,
-        rhs.impl().buffer
+        data_->buffer, data_->buffer + data_->frames_count,
+        rhs.data_->buffer
     );
 }
 

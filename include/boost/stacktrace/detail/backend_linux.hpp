@@ -164,32 +164,32 @@ static inline std::string try_demangle(const char* mangled) {
 }
 
 backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(memory)
+    : data_(static_cast<backtrace_holder*>(memory))
 {
     new (data_) backtrace_holder();
-    impl().frames_count = 0;
+    data_->frames_count = 0;
     hash_code = 0;
 
     // TODO: Not async signal safe. Use _Unwind_Backtrace, _Unwind_GetIP
-    impl().frames_count = ::backtrace(impl().buffer, (size - sizeof(backtrace_holder)) / sizeof(void*));
-    if (impl().buffer[impl().frames_count - 1] == 0) {
-        -- impl().frames_count;
+    data_->frames_count = ::backtrace(data_->buffer, (size - sizeof(backtrace_holder)) / sizeof(void*));
+    if (data_->buffer[data_->frames_count - 1] == 0) {
+        -- data_->frames_count;
     }
 
-    hash_code = boost::hash_range(impl().buffer, impl().buffer + impl().frames_count);
+    hash_code = boost::hash_range(data_->buffer, data_->buffer + data_->frames_count);
 }
 
 std::string backend::get_name(std::size_t frame) const {
     std::string res;
-    if (frame >= impl().frames_count) {
+    if (frame >= data_->frames_count) {
         return res;
     }
 
     Dl_info dli;
-    if (!!dladdr(impl().buffer[frame], &dli) && dli.dli_sname) {
+    if (!!dladdr(data_->buffer[frame], &dli) && dli.dli_sname) {
         res = try_demangle(dli.dli_sname);
     } else {
-        res = addr2line("-fe", impl().buffer[frame]);
+        res = addr2line("-fe", data_->buffer[frame]);
         res = res.substr(0, res.find_last_of('\n'));
         res = try_demangle(res.c_str());
     }
@@ -198,17 +198,17 @@ std::string backend::get_name(std::size_t frame) const {
 }
 
 const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return impl().buffer[frame];
+    return data_->buffer[frame];
 }
 
 std::string backend::get_source_file(std::size_t frame) const {
-    std::string res = addr2line("-e", impl().buffer[frame]);
+    std::string res = addr2line("-e", data_->buffer[frame]);
     res = res.substr(0, res.find_last_of(':'));
     return res;
 }
 
 std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
-    std::string res = addr2line("-e", impl().buffer[frame]);
+    std::string res = addr2line("-e", data_->buffer[frame]);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
         return 0;
@@ -224,28 +224,28 @@ std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
 }
 
 bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
-        return impl().frames_count < rhs.impl().frames_count;
+    if (data_->frames_count != rhs.data_->frames_count) {
+        return data_->frames_count < rhs.data_->frames_count;
     } else if (this == &rhs) {
         return false;
     }
 
     return std::lexicographical_compare(
-        impl().buffer, impl().buffer + impl().frames_count,
-        rhs.impl().buffer, rhs.impl().buffer + rhs.impl().frames_count
+        data_->buffer, data_->buffer + data_->frames_count,
+        rhs.data_->buffer, rhs.data_->buffer + rhs.data_->frames_count
     );
 }
 
 bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
+    if (data_->frames_count != rhs.data_->frames_count) {
         return false;
     } else if (this == &rhs) {
         return true;
     }
 
     return std::equal(
-        impl().buffer, impl().buffer + impl().frames_count,
-        rhs.impl().buffer
+        data_->buffer, data_->buffer + data_->frames_count,
+        rhs.data_->buffer
     );
 }
 

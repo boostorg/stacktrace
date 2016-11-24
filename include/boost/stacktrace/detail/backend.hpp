@@ -66,15 +66,7 @@ struct backtrace_holder;
 
 // Class that implements the actual backtracing
 class backend: boost::noncopyable {
-    void* data_;
-
-    inline boost::stacktrace::detail::backtrace_holder& impl() BOOST_NOEXCEPT {
-        return *reinterpret_cast<boost::stacktrace::detail::backtrace_holder*>(data_);
-    }
-
-    inline const boost::stacktrace::detail::backtrace_holder& impl() const BOOST_NOEXCEPT {
-        return *reinterpret_cast<const boost::stacktrace::detail::backtrace_holder*>(data_);
-    }
+    backtrace_holder* data_;
 
 public:
     BOOST_STACKTRACE_FUNCTION backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT;

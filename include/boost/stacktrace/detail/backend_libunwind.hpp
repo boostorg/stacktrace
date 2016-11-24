@@ -84,10 +84,10 @@ inline std::string get_frame_impl(unw_cursor_t& cursor) {
 
 
 backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(memory)
+    : data_(static_cast<backtrace_holder*>(memory))
 {
     new (data_) backtrace_holder();
-    impl().frames_count = 0;
+    data_->frames_count = 0;
     hash_code = 0;
 
     unw_context_t uc;
@@ -101,26 +101,26 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
             return;
         }
         while (unw_step(&cursor) > 0) {
-            ++ impl().frames_count;
+            ++ data_->frames_count;
         }
     }
 
     unw_cursor_t cursor;
     if (unw_init_local(&cursor, &uc) != 0) {
-        impl().frames_count = 0;
+        data_->frames_count = 0;
         return;
     }
 
     BOOST_TRY {
-        impl().frames = boost::make_shared<boost::stacktrace::detail::bt_pair[]>(impl().frames_count);
+        data_->frames = boost::make_shared<boost::stacktrace::detail::bt_pair[]>(data_->frames_count);
         std::size_t i = 0;
         while (unw_step(&cursor) > 0){
-            impl().frames[i].name = get_frame_impl(cursor);
+            data_->frames[i].name = get_frame_impl(cursor);
             unw_proc_info_t inf;
             const int res = unw_get_proc_info(&cursor, &inf);
             (void)res;
-            impl().frames[i].addr = reinterpret_cast<void*>(inf.start_ip ? inf.start_ip : inf.gp);
-            boost::hash_combine(hash_code, impl().frames[i].name);
+            data_->frames[i].addr = reinterpret_cast<void*>(inf.start_ip ? inf.start_ip : inf.gp);
+            boost::hash_combine(hash_code, data_->frames[i].name);
             ++ i;
         }
     } BOOST_CATCH(...) {}
@@ -128,15 +128,15 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
 }
 
 std::string backend::get_name(std::size_t frame) const {
-    if (frame < impl().frames_count) {
-        return impl().frames[frame].name;
+    if (frame < data_->frames_count) {
+        return data_->frames[frame].name;
     } else {
         return std::string();
     }
 }
 
 const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return impl().frames[frame].addr;
+    return data_->frames[frame].addr;
 }
 
 std::string backend::get_source_file(std::size_t /*frame*/) const {
@@ -148,28 +148,28 @@ std::size_t backend::get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT
 }
 
 bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
-        return impl().frames_count < rhs.impl().frames_count;
-    } else if (impl().frames.get() == rhs.impl().frames.get()) {
+    if (data_->frames_count != rhs.data_->frames_count) {
+        return data_->frames_count < rhs.data_->frames_count;
+    } else if (data_->frames.get() == rhs.data_->frames.get()) {
         return false;
     }
 
     return std::lexicographical_compare(
-        impl().frames.get(), impl().frames.get() + impl().frames_count,
-        rhs.impl().frames.get(), rhs.impl().frames.get() + rhs.impl().frames_count
+        data_->frames.get(), data_->frames.get() + data_->frames_count,
+        rhs.data_->frames.get(), rhs.data_->frames.get() + rhs.data_->frames_count
     );
 }
 
 bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
-    if (impl().frames_count != rhs.impl().frames_count) {
+    if (data_->frames_count != rhs.data_->frames_count) {
         return false;
-    } else if (impl().frames.get() == rhs.impl().frames.get()) {
+    } else if (data_->frames.get() == rhs.data_->frames.get()) {
         return true;
     }
 
     return std::equal(
-        impl().frames.get(), impl().frames.get() + impl().frames_count,
-        rhs.impl().frames.get()
+        data_->frames.get(), data_->frames.get() + data_->frames_count,
+        rhs.data_->frames.get()
     );
 }
 

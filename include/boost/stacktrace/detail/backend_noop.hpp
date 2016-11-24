@@ -14,16 +14,19 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(memory)
-{}
+
+backend::backend(void* /*memory*/, std::size_t /*size*/, std::size_t& hash_code) BOOST_NOEXCEPT
+    : data_(0)
+{
+    hash_code = 0;
+}
 
 std::string backend::get_name(std::size_t /*frame*/) const {
     return std::string();
 }
 
 const void* backend::get_address(std::size_t /*frame*/) const BOOST_NOEXCEPT {
-    return 0;
+    return data_; // returns 0. Suppressing `private field 'data_' is not used` warning
 }
 
 std::string backend::get_source_file(std::size_t /*frame*/) const {
@@ -42,11 +45,11 @@ bool backend::operator==(const backend& /*rhs*/) const BOOST_NOEXCEPT {
     return true;
 }
 
-backend::backend(const backend& b, void* memory) BOOST_NOEXCEPT
-    : data_(memory)
+backend::backend(const backend& /*b*/, void* /*memory*/) BOOST_NOEXCEPT
+    : data_(0)
 {}
 
-backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
+backend& backend::operator=(const backend& /*b*/) BOOST_NOEXCEPT {
     return *this;
 }
 

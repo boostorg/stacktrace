@@ -15,10 +15,10 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 backend::backend(const backend& b, void* memory) BOOST_NOEXCEPT
-    : data_(memory)
+    : data_(static_cast<backtrace_holder*>(memory))
 {
     new(data_) backtrace_holder(
-        b.impl()
+        *b.data_
     );
 }
 
@@ -29,18 +29,18 @@ backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
 
     reinterpret_cast<backtrace_holder*>(data_)->~backtrace_holder();
     new(data_) backtrace_holder(
-        b.impl()
+        *b.data_
     );
 
     return *this;
 }
 
 backend::~backend() BOOST_NOEXCEPT {
-    reinterpret_cast<backtrace_holder*>(data_)->~backtrace_holder();
+    data_->~backtrace_holder();
 }
 
 std::size_t backend::size() const BOOST_NOEXCEPT {
-    return impl().frames_count;
+    return data_->frames_count;
 }
 
 }}}
