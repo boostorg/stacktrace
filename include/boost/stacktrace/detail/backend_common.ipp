@@ -27,7 +27,7 @@ backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
         return *this;
     }
 
-    reinterpret_cast<backtrace_holder*>(data_)->~backtrace_holder();
+    data_->~backtrace_holder();
     new(data_) backtrace_holder(
         *b.data_
     );
