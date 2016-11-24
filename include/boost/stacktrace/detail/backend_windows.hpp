@@ -98,7 +98,7 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
 
 struct backtrace_holder {
     std::size_t frames_count;
-    void* buffer[1];
+    void* buffer[];
 
     backtrace_holder() BOOST_NOEXCEPT {}
 
@@ -120,7 +120,7 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     boost::detail::winapi::ULONG_ hc = 0;
     impl().frames_count = CaptureStackBackTrace(
         0,
-        static_cast<boost::detail::winapi::ULONG_>(1 + (size - sizeof(backtrace_holder)) / sizeof(void*)),
+        static_cast<boost::detail::winapi::ULONG_>((size - sizeof(backtrace_holder)) / sizeof(void*)),
         impl().buffer,
         &hc
     );
