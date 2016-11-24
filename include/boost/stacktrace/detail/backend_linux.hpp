@@ -19,6 +19,7 @@
 
 #include <dlfcn.h>
 #include <execinfo.h>
+#include <cstdio>
 
 namespace boost { namespace stacktrace { namespace detail {
 
@@ -42,6 +43,7 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     impl().frames_count = 0;
     hash_code = 0;
 
+    // TODO: Not async signal safe. Use _Unwind_Backtrace, _Unwind_GetIP
     impl().frames_count = ::backtrace(impl().buffer, 1 + (size - sizeof(backtrace_holder)) / sizeof(void*));
     if (impl().buffer[impl().frames_count - 1] == 0) {
         -- impl().frames_count;
@@ -76,8 +78,51 @@ const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
     return impl().buffer[frame];
 }
 
-std::string backend::get_source_file(std::size_t /*frame*/) const {
-    return std::string();
+std::string backend::get_source_file(std::size_t frame) const {
+    std::string res;
+
+/*
+    Dl_info dli;
+    if (!!dladdr(impl().buffer[frame], &dli) && dli.dli_fname) {
+        res = dli.dli_fname;
+    } else {
+        res.resize(16);
+        int rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+        while (rlin_size == static_cast<int>(res.size() - 1)) {
+            res.resize(res.size() * 4);
+            rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+        }
+        if (rlin_size == -1) {
+            res.clear();
+            return res;
+        }
+        res.resize(rlin_size);
+    }
+
+    // TODO: redirect STDERR
+    FILE* p = popen(
+        ("addr2line -e " + res + " " + to_hex_array(impl().buffer[frame]).data()).c_str(),
+        "r"
+    );
+    res.clear();
+
+    if (!p) {
+        return res;
+    }
+
+    char data[32];
+    while (!std::feof(p)) {
+        if (std::fgets(data, sizeof(data), p)) {
+            res += data;
+        } else {
+            break;
+        }
+    }
+    pclose(p); // TODO: RAII
+
+    res = res.substr(0, res.find_last_of(':'));
+*/
+    return res;
 }
 
 std::size_t backend::get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {

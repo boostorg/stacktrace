@@ -66,6 +66,7 @@ void test_nested() {
     BOOST_TEST(ss2.str().find("foo1") != std::string::npos);
     BOOST_TEST(ss2.str().find("foo2") != std::string::npos);
 #endif
+    //BOOST_TEST(false);
 }
 
 void test_comparisons() {
