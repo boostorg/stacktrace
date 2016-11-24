@@ -25,7 +25,7 @@ namespace boost { namespace stacktrace { namespace detail {
 
 struct backtrace_holder {
     std::size_t frames_count;
-    void* buffer[1];
+    void* buffer[];
 
     backtrace_holder() BOOST_NOEXCEPT {}
 
@@ -44,7 +44,7 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     hash_code = 0;
 
     // TODO: Not async signal safe. Use _Unwind_Backtrace, _Unwind_GetIP
-    impl().frames_count = ::backtrace(impl().buffer, 1 + (size - sizeof(backtrace_holder)) / sizeof(void*));
+    impl().frames_count = ::backtrace(impl().buffer, (size - sizeof(backtrace_holder)) / sizeof(void*));
     if (impl().buffer[impl().frames_count - 1] == 0) {
         -- impl().frames_count;
     }
