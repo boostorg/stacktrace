@@ -22,6 +22,8 @@
 #include <execinfo.h>
 #include <cstdio>
 
+#include <sys/types.h>
+#include <sys/wait.h>
 
 
 namespace boost { namespace stacktrace { namespace detail {
@@ -44,26 +46,67 @@ struct backtrace_holder {
 
 #pragma GCC diagnostic pop
 
-class pipe_holder {
+class addr2line_pipe {
     FILE* p;
+    pid_t pid;
 
 public:
-    explicit pipe_holder(const char* command) BOOST_NOEXCEPT
-        : p(popen(command,"r"))
-    {}
+    explicit addr2line_pipe(const char *flag, const char* exec_path, const char* addr) BOOST_NOEXCEPT
+        : p(0)
+        , pid(0)
+    {
+        int pdes[2];
+        char prog_name[] = "addr2line";
+        char* argp[] = {
+            prog_name,
+            const_cast<char*>(flag),
+            const_cast<char*>(exec_path),
+            const_cast<char*>(addr),
+            0
+        };
+
+        if (pipe(pdes) < 0) {
+            return;
+        }
+
+        pid = fork();
+        switch (pid) {
+        case -1:
+            // failed
+            close(pdes[0]);
+            close(pdes[1]);
+            return;
+
+        case 0:
+            // we are the child
+            close(STDERR_FILENO);
+            close(pdes[0]);
+            if (pdes[1] != STDOUT_FILENO) {
+                dup2(pdes[1], STDOUT_FILENO);
+            }
+            execvp(prog_name, argp);
+            _exit(127);
+        }
+
+        p = fdopen(pdes[0], "r");
+        close(pdes[1]);
+    }
 
     operator FILE*() const BOOST_NOEXCEPT {
         return p;
     }
 
-    ~pipe_holder() BOOST_NOEXCEPT {
+    ~addr2line_pipe() BOOST_NOEXCEPT {
         if (p) {
-            pclose(p);
+            fclose(p);
+            int pstat = 0;
+            kill(pid, SIGKILL);
+            waitpid(pid, &pstat, 0);
         }
     }
 };
 
-static inline std::string addr2line(const char* command, void* addr) {
+static inline std::string addr2line(const char* flag, void* addr) {
     std::string res;
 
     Dl_info dli;
@@ -83,10 +126,7 @@ static inline std::string addr2line(const char* command, void* addr) {
         res.resize(rlin_size);
     }
 
-    // TODO: redirect STDERR
-    pipe_holder p(
-        (command + res + " " + to_hex_array(addr).data()).c_str()
-    );
+    addr2line_pipe p(flag, res.c_str(), to_hex_array(addr).data());
     res.clear();
 
     if (!p) {
@@ -149,7 +189,7 @@ std::string backend::get_name(std::size_t frame) const {
     if (!!dladdr(impl().buffer[frame], &dli) && dli.dli_sname) {
         res = try_demangle(dli.dli_sname);
     } else {
-        res = addr2line("addr2line -fe ", impl().buffer[frame]);
+        res = addr2line("-fe", impl().buffer[frame]);
         res = res.substr(0, res.find_last_of('\n'));
         res = try_demangle(res.c_str());
     }
@@ -162,13 +202,13 @@ const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
 }
 
 std::string backend::get_source_file(std::size_t frame) const {
-    std::string res = addr2line("addr2line -e ", impl().buffer[frame]);
+    std::string res = addr2line("-e", impl().buffer[frame]);
     res = res.substr(0, res.find_last_of(':'));
     return res;
 }
 
 std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
-    std::string res = addr2line("addr2line -e ", impl().buffer[frame]);
+    std::string res = addr2line("-e", impl().buffer[frame]);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
         return 0;
