@@ -15,13 +15,19 @@
 #include <boost/core/demangle.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <boost/lexical_cast/try_lexical_convert.hpp>
 #include <algorithm>
 
 #include <dlfcn.h>
 #include <execinfo.h>
 #include <cstdio>
 
+
+
 namespace boost { namespace stacktrace { namespace detail {
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 struct backtrace_holder {
     std::size_t frames_count;
@@ -35,6 +41,87 @@ struct backtrace_holder {
         std::copy(d.buffer, d.buffer + frames_count, buffer);
     }
 };
+
+#pragma GCC diagnostic pop
+
+class pipe_holder {
+    FILE* p;
+
+public:
+    explicit pipe_holder(const char* command) BOOST_NOEXCEPT
+        : p(popen(command,"r"))
+    {}
+
+    operator FILE*() const BOOST_NOEXCEPT {
+        return p;
+    }
+
+    ~pipe_holder() BOOST_NOEXCEPT {
+        if (p) {
+            pclose(p);
+        }
+    }
+};
+
+static inline std::string addr2line(const char* command, void* addr) {
+    std::string res;
+
+    Dl_info dli;
+    if (!!dladdr(addr, &dli) && dli.dli_fname) {
+        res = dli.dli_fname;
+    } else {
+        res.resize(16);
+        int rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+        while (rlin_size == static_cast<int>(res.size() - 1)) {
+            res.resize(res.size() * 4);
+            rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+        }
+        if (rlin_size == -1) {
+            res.clear();
+            return res;
+        }
+        res.resize(rlin_size);
+    }
+
+    // TODO: redirect STDERR
+    pipe_holder p(
+        (command + res + " " + to_hex_array(addr).data()).c_str()
+    );
+    res.clear();
+
+    if (!p) {
+        return res;
+    }
+
+    char data[32];
+    while (!std::feof(p)) {
+        if (std::fgets(data, sizeof(data), p)) {
+            res += data;
+        } else {
+            break;
+        }
+    }
+
+    // Trimming
+    while (!res.empty() && (res[res.size() - 1] == '\n' || res[res.size() - 1] == '\r')) {
+        res.erase(res.size() - 1);
+    }
+
+    return res;
+}
+
+static inline std::string try_demangle(const char* mangled) {
+    std::string res;
+
+    boost::core::scoped_demangled_name demangled(mangled);
+    if (demangled.get()) {
+        res = demangled.get();
+    } else {
+        res = mangled;
+    }
+
+    return res;
+}
 
 backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
     : data_(memory)
@@ -60,15 +147,11 @@ std::string backend::get_name(std::size_t frame) const {
 
     Dl_info dli;
     if (!!dladdr(impl().buffer[frame], &dli) && dli.dli_sname) {
-        boost::core::scoped_demangled_name demangled(dli.dli_sname);
-        if (demangled.get()) {
-            res = demangled.get();
-        } else {
-            res = dli.dli_sname;
-        }
-    } else  {
-        res = "?? at ";
-        res += to_hex_array(impl().buffer[frame]).data();
+        res = try_demangle(dli.dli_sname);
+    } else {
+        res = addr2line("addr2line -fe ", impl().buffer[frame]);
+        res = res.substr(0, res.find_last_of('\n'));
+        res = try_demangle(res.c_str());
     }
 
     return res;
@@ -79,54 +162,25 @@ const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
 }
 
 std::string backend::get_source_file(std::size_t frame) const {
-    std::string res;
-
-/*
-    Dl_info dli;
-    if (!!dladdr(impl().buffer[frame], &dli) && dli.dli_fname) {
-        res = dli.dli_fname;
-    } else {
-        res.resize(16);
-        int rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
-        while (rlin_size == static_cast<int>(res.size() - 1)) {
-            res.resize(res.size() * 4);
-            rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
-        }
-        if (rlin_size == -1) {
-            res.clear();
-            return res;
-        }
-        res.resize(rlin_size);
-    }
-
-    // TODO: redirect STDERR
-    FILE* p = popen(
-        ("addr2line -e " + res + " " + to_hex_array(impl().buffer[frame]).data()).c_str(),
-        "r"
-    );
-    res.clear();
-
-    if (!p) {
-        return res;
-    }
-
-    char data[32];
-    while (!std::feof(p)) {
-        if (std::fgets(data, sizeof(data), p)) {
-            res += data;
-        } else {
-            break;
-        }
-    }
-    pclose(p); // TODO: RAII
-
+    std::string res = addr2line("addr2line -e ", impl().buffer[frame]);
     res = res.substr(0, res.find_last_of(':'));
-*/
     return res;
 }
 
-std::size_t backend::get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {
-    return 0;
+std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
+    std::string res = addr2line("addr2line -e ", impl().buffer[frame]);
+    const std::size_t last = res.find_last_of(':');
+    if (last == std::string::npos) {
+        return 0;
+    }
+    res = res.substr(last + 1);
+
+    std::size_t line_num = 0;
+    if (!boost::conversion::try_lexical_convert(res, line_num)) {
+        return 0;
+    }
+
+    return line_num;
 }
 
 bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {

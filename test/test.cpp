@@ -36,7 +36,6 @@ void test_deeply_nested_namespaces() {
 
     stacktrace ns1 = return_from_nested_namespaces();
     BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
-    std::cerr << "cerr 3\n";
 }
 
 void test_nested() {
