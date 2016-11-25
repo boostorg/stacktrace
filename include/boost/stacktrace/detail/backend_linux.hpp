@@ -195,7 +195,7 @@ std::string backend::get_name(const void* addr) {
 }
 
 const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return data_->buffer[frame];
+    return frame < data_->frames_count ? data_->buffer[frame] : 0;
 }
 
 std::string backend::get_source_file(const void* addr) {
