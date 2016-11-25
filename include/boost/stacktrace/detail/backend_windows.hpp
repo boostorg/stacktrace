@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <boost/functional/hash.hpp> 
 #include <algorithm>

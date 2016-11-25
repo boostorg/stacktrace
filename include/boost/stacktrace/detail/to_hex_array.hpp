@@ -15,15 +15,11 @@
 #include <boost/array.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_pointer.hpp>
+#include <boost/type_traits/make_unsigned.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 
 BOOST_STATIC_CONSTEXPR char to_hex_array_bytes[] = "0123456789ABCDEF";
-
-template <class T>
-inline bool can_be_safely_trimmed_by(T addr, std::size_t part) BOOST_NOEXCEPT {
-    return !(addr >> (sizeof(T) / part * 8));
-}
 
 template <class T>
 inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) BOOST_NOEXCEPT {
@@ -31,15 +27,7 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) BOOST_
     ret.back() = '\0';
     BOOST_STATIC_ASSERT_MSG(!boost::is_pointer<T>::value, "");
 
-    const std::size_t s = (
-        can_be_safely_trimmed_by(addr, 2)
-            ? (can_be_safely_trimmed_by(addr, 4)
-                ? (can_be_safely_trimmed_by(addr, 8)
-                    ? sizeof(addr) / 8
-                : sizeof(addr) / 4)
-            : sizeof(addr) / 2)
-        : sizeof(addr)
-    );
+    const std::size_t s = sizeof(T);
 
     char* out = ret.data() + s * 2 + 1;
 
@@ -55,16 +43,9 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) BOOST_
     return ret;
 }
 
-inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(void* addr) BOOST_NOEXCEPT {
-    return to_hex_array(
-        reinterpret_cast<std::size_t>(addr)
-    );
-}
-
-
 inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* addr) BOOST_NOEXCEPT {
     return to_hex_array(
-        reinterpret_cast<std::size_t>(addr)
+        reinterpret_cast< boost::make_unsigned<std::ptrdiff_t>::type >(addr)
     );
 }
 
