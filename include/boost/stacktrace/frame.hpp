@@ -4,8 +4,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_FRAME_VIEW_HPP
-#define BOOST_STACKTRACE_FRAME_VIEW_HPP
+#ifndef BOOST_STACKTRACE_FRAME_HPP
+#define BOOST_STACKTRACE_FRAME_HPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -23,35 +23,35 @@ namespace boost { namespace stacktrace {
 class const_iterator;
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
-class frame_view {
+class frame {
     /// @cond
     const void* addr_;
 
-    frame_view(); // = delete
+    frame(); // = delete
     /// @endcond
 
 public:
 #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
-    frame_view() = delete;
+    frame() = delete;
 
-    /// @brief Copy constructs frame_view.
+    /// @brief Copy constructs frame.
     /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
-    frame_view(const frame_view&) = default;
+    frame(const frame&) = default;
 
-    /// @brief Copy assigns frame_view.
+    /// @brief Copy assigns frame.
     /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
-    frame_view& operator=(const frame_view&) = default;
+    frame& operator=(const frame&) = default;
 #endif
 
-    /// @brief Constructs frame_view that can extract information from addr at runtime.
+    /// @brief Constructs frame that can extract information from addr at runtime.
     /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
-    explicit frame_view(const void* addr) BOOST_NOEXCEPT
+    explicit frame(const void* addr) BOOST_NOEXCEPT
         : addr_(addr)
     {}
 
@@ -82,21 +82,21 @@ public:
 };
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity.
-inline bool operator< (const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
-inline bool operator> (const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
-inline bool operator<=(const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
-inline bool operator>=(const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
-inline bool operator==(const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
-inline bool operator!=(const frame_view& lhs, const frame_view& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
+inline bool operator> (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
+inline bool operator<=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
+inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
+inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
+inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
 /// Hashing support, O(1) complexity.
-inline std::size_t hash_value(const frame_view& f) BOOST_NOEXCEPT {
+inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
     return reinterpret_cast<std::size_t>(f.address());
 }
 
 /// Outputs stacktrace::frame in a human readable format to output stream.
 template <class CharT, class TraitsT>
-std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame_view& f) {
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame& f) {
     os << f.name();
 
     if (f.source_line()) {
@@ -108,4 +108,4 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_FRAME_VIEW_HPP
+#endif // BOOST_STACKTRACE_FRAME_HPP

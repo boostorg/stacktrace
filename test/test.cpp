@@ -12,7 +12,7 @@
 #include <boost/core/lightweight_test.hpp>
 
 using boost::stacktrace::stacktrace;
-using boost::stacktrace::frame_view;
+using boost::stacktrace::frame;
 
 #ifdef BOOST_STACKTRACE_DYN_LINK
 #   define BOOST_ST_API BOOST_SYMBOL_IMPORT
@@ -166,7 +166,7 @@ void test_iterators() {
     BOOST_TEST(it == st.begin() + 1);
 }
 
-void test_frame_view() {
+void test_frame() {
     stacktrace nst = return_from_nested_namespaces();
     stacktrace st;
 
@@ -180,7 +180,7 @@ void test_frame_view() {
         BOOST_TEST(st[i] <= st[i]);
         BOOST_TEST(st[i] >= st[i]);
 
-        frame_view fv = nst[2];
+        frame fv = nst[2];
         if (i >= 2 && i < min_size - 3) { // Begin and end of the trace may match, skipping them
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
@@ -199,7 +199,7 @@ int main() {
     test_nested();
     test_comparisons();
     test_iterators();
-    test_frame_view();
+    test_frame();
 
     return boost::report_errors();
 }

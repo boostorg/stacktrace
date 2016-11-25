@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/frame_view.hpp>
+#include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/stacktrace.hpp>
 
 #endif // BOOST_STACKTRACE_HPP

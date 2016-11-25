@@ -225,7 +225,7 @@ See [link boost_stacktrace.build_macros_and_backends section "Build, Macros and 
 
 [section Saving stacktraces by specified format]
 
-[classref boost::stacktrace::stacktrace] provides access to individual [classref boost::stacktrace::frame_view frames] of the stacktrace,
+[classref boost::stacktrace::stacktrace] provides access to individual [classref boost::stacktrace::frame frames] of the stacktrace,
 so that you could save stacktrace information in your own format. Consider the example, that saves only function addresses of each frame:
 
 [getting_started_trace_addresses]

@@ -16,26 +16,26 @@
 #include <boost/assert.hpp>
 
 #include <boost/stacktrace/detail/backend.hpp>
-#include <boost/stacktrace/frame_view.hpp>
+#include <boost/stacktrace/frame.hpp>
 
 namespace boost { namespace stacktrace {
 
 // Forward declarations
 class stacktrace;
 
-/// Random access iterator over frames that returns `frame_view` on dereference.
+/// Random access iterator over frames that returns `frame` on dereference.
 class const_iterator: public boost::iterator_facade<
     const_iterator,
-    frame_view,
+    frame,
     boost::random_access_traversal_tag,
-    frame_view>
+    frame>
 {
 /// @cond
     typedef boost::iterator_facade<
         const_iterator,
-        frame_view,
+        frame,
         boost::random_access_traversal_tag,
-        frame_view
+        frame
     > base_t;
 
     const boost::stacktrace::detail::backend* impl_;
@@ -49,8 +49,8 @@ class const_iterator: public boost::iterator_facade<
     friend class ::boost::stacktrace::stacktrace;
     friend class ::boost::iterators::iterator_core_access;
 
-    frame_view dereference() const BOOST_NOEXCEPT {
-        return frame_view(impl_->get_address(frame_no_));
+    frame dereference() const BOOST_NOEXCEPT {
+        return frame(impl_->get_address(frame_no_));
     }
 
     bool equal(const const_iterator& it) const BOOST_NOEXCEPT {

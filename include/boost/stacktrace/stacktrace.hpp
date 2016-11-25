@@ -19,7 +19,7 @@
 #include <string>
 
 #include <boost/stacktrace/detail/backend.hpp>
-#include <boost/stacktrace/frame_view.hpp>
+#include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/const_iterator.hpp>
 
 namespace boost { namespace stacktrace {
@@ -34,9 +34,9 @@ class stacktrace {
     /// @endcond
 
 public:
-    typedef frame_view                              reference;
+    typedef frame                              reference;
 
-    /// @brief Random access iterator that returns frame_view.
+    /// @brief Random access iterator that returns frame.
     typedef boost::stacktrace::const_iterator       iterator;
     typedef iterator                                const_iterator;
     typedef std::reverse_iterator<iterator>         reverse_iterator;
@@ -79,10 +79,10 @@ public:
     /// @param frame_no Zero based index of frame to return. 0
     /// is the function index where stacktrace was constructed and
     /// index close to this->size() contains function `main()`.
-    /// @returns frame_view that references the actual frame info, stored inside *this.
+    /// @returns frame that references the actual frame info, stored inside *this.
     ///
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
-    frame_view operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
+    frame operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
         return *(cbegin() + frame_no);
     }
 
