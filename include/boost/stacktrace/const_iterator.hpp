@@ -38,38 +38,40 @@ class const_iterator: public boost::iterator_facade<
         frame_view
     > base_t;
 
-    frame_view f_;
+    const boost::stacktrace::detail::backend* impl_;
+    std::size_t frame_no_;
 
     const_iterator(const boost::stacktrace::detail::backend* impl, std::size_t frame_no) BOOST_NOEXCEPT
-        : f_(impl, frame_no)
+        : impl_(impl)
+        , frame_no_(frame_no)
     {}
 
     friend class ::boost::stacktrace::stacktrace;
     friend class ::boost::iterators::iterator_core_access;
 
     frame_view dereference() const BOOST_NOEXCEPT {
-        return f_;
+        return frame_view(impl_->get_address(frame_no_));
     }
 
     bool equal(const const_iterator& it) const BOOST_NOEXCEPT {
-        return f_.impl_ == it.f_.impl_ && f_.frame_no_ == it.f_.frame_no_;
+        return impl_ == it.impl_ && frame_no_ == it.frame_no_;
     }
 
     void increment() BOOST_NOEXCEPT {
-        ++f_.frame_no_;
+        ++frame_no_;
     }
 
     void decrement() BOOST_NOEXCEPT {
-        --f_.frame_no_;
+        --frame_no_;
     }
 
     void advance(std::size_t n) BOOST_NOEXCEPT {
-        f_.frame_no_ += n;
+        frame_no_ += n;
     }
 
     base_t::difference_type distance_to(const const_iterator& it) const {
-        BOOST_ASSERT(f_.impl_ == it.f_.impl_);
-        return it.f_.frame_no_ - f_.frame_no_;
+        BOOST_ASSERT(impl_ == it.impl_);
+        return it.frame_no_ - frame_no_;
     }
 /// @endcond
 };

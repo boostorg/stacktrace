@@ -25,17 +25,9 @@ class const_iterator;
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame_view {
     /// @cond
-    const boost::stacktrace::detail::backend* impl_;
-    std::size_t frame_no_;
+    const void* addr_;
 
     frame_view(); // = delete
-
-    frame_view(const boost::stacktrace::detail::backend* impl, std::size_t frame_no) BOOST_NOEXCEPT
-        : impl_(impl)
-        , frame_no_(frame_no)
-    {}
-
-    friend class ::boost::stacktrace::const_iterator;
     /// @endcond
 
 public:
@@ -55,6 +47,14 @@ public:
     frame_view& operator=(const frame_view&) = default;
 #endif
 
+    /// @brief Constructs frame_view that can extract information from addr at runtime.
+    /// @throws Nothing.
+    ///
+    /// @b Complexity: O(1).
+    explicit frame_view(const void* addr) BOOST_NOEXCEPT
+        : addr_(addr)
+    {}
+
     /// @returns Name of the frame (function name in a human readable form).
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     std::string name() const {
@@ -64,7 +64,7 @@ public:
     /// @returns Address of the frame function.
     /// @throws Nothing.
     const void* address() const BOOST_NOEXCEPT {
-        return impl_->get_address(frame_no_);
+        return addr_;
     }
 
     /// @returns Path to the source file, were the function of the frame is defined. Returns empty string
@@ -75,8 +75,8 @@ public:
     }
 
     /// @returns Code line in the source file, were the function of the frame is defined.
-    /// @throws Nothing.
-    std::size_t source_line() const BOOST_NOEXCEPT {
+    /// @throws std::bad_alloc if not enough memory to construct string for internal needs.
+    std::size_t source_line() const {
         return boost::stacktrace::detail::backend::get_source_line(address());
     }
 };
