@@ -128,17 +128,12 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     boost::hash_combine(hash_code, hc);
 }
 
-std::string backend::get_name(std::size_t frame) const {
-    std::string result;
-    if (frame >= data_->frames_count) {
-        return result;
-    }
-
+std::string backend::get_name(const void* addr) {
     com_holder<IDebugSymbols> idebug_;
     if (!try_init_com(idebug_)) {
         return result;
     }
-    const ULONG64 offset = reinterpret_cast<ULONG64>(data_->buffer[frame]);
+    const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
     char name[256];
     name[0] = '\0';
@@ -175,17 +170,12 @@ const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
     return data_->buffer[frame];
 }
 
-std::string backend::get_source_file(std::size_t frame) const {
-    std::string result;
-    if (frame >= data_->frames_count) {
-        return result;
-    }
-
+std::string backend::get_source_file(const void* addr) {
     com_holder<IDebugSymbols> idebug_;
     if (!try_init_com(idebug_)) {
         return result;
     }
-    const ULONG64 offset = reinterpret_cast<ULONG64>(data_->buffer[frame]);
+    const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
     char name[256];
     name[0] = 0;
@@ -221,7 +211,7 @@ std::string backend::get_source_file(std::size_t frame) const {
     return result;
 }
 
-std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
+std::size_t backend::get_source_line(const void* addr) {
     ULONG line_num = 0;
 
     com_holder<IDebugSymbols> idebug_;
@@ -230,7 +220,7 @@ std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
     }
 
     const bool is_ok = (S_OK == idebug_->GetLineByOffset(
-        reinterpret_cast<ULONG64>(data_->buffer[frame]),
+        reinterpret_cast<ULONG64>(addr),
         &line_num,
         0,
         0,

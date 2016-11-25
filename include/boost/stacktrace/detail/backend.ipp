@@ -18,8 +18,6 @@
 #   include <boost/stacktrace/detail/backend_noop.hpp>
 #elif defined(BOOST_STACKTRACE_USE_WINDBG)
 #   include <boost/stacktrace/detail/backend_windows.hpp>
-#elif defined(BOOST_STACKTRACE_USE_LIBUNWIND)
-#   include <boost/stacktrace/detail/backend_libunwind.hpp>
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
 #   include <boost/stacktrace/detail/backend_linux.hpp>
 #else

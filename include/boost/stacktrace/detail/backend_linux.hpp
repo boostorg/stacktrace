@@ -106,7 +106,7 @@ public:
     }
 };
 
-static inline std::string addr2line(const char* flag, void* addr) {
+static inline std::string addr2line(const char* flag, const void* addr) {
     std::string res;
 
     Dl_info dli;
@@ -179,17 +179,14 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     hash_code = boost::hash_range(data_->buffer, data_->buffer + data_->frames_count);
 }
 
-std::string backend::get_name(std::size_t frame) const {
+std::string backend::get_name(const void* addr) {
     std::string res;
-    if (frame >= data_->frames_count) {
-        return res;
-    }
 
     Dl_info dli;
-    if (!!dladdr(data_->buffer[frame], &dli) && dli.dli_sname) {
+    if (!!dladdr(addr, &dli) && dli.dli_sname) {
         res = try_demangle(dli.dli_sname);
     } else {
-        res = addr2line("-fe", data_->buffer[frame]);
+        res = addr2line("-fe", addr);
         res = res.substr(0, res.find_last_of('\n'));
         res = try_demangle(res.c_str());
     }
@@ -201,14 +198,14 @@ const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
     return data_->buffer[frame];
 }
 
-std::string backend::get_source_file(std::size_t frame) const {
-    std::string res = addr2line("-e", data_->buffer[frame]);
+std::string backend::get_source_file(const void* addr) {
+    std::string res = addr2line("-e", addr);
     res = res.substr(0, res.find_last_of(':'));
     return res;
 }
 
-std::size_t backend::get_source_line(std::size_t frame) const BOOST_NOEXCEPT {
-    std::string res = addr2line("-e", data_->buffer[frame]);
+std::size_t backend::get_source_line(const void* addr) {
+    std::string res = addr2line("-e", addr);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
         return 0;

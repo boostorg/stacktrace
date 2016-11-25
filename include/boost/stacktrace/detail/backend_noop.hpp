@@ -21,7 +21,7 @@ backend::backend(void* /*memory*/, std::size_t /*size*/, std::size_t& hash_code)
     hash_code = 0;
 }
 
-std::string backend::get_name(std::size_t /*frame*/) const {
+std::string backend::get_name(const void* /*addr*/) {
     return std::string();
 }
 
@@ -29,11 +29,11 @@ const void* backend::get_address(std::size_t /*frame*/) const BOOST_NOEXCEPT {
     return data_; // returns 0. Suppressing `private field 'data_' is not used` warning
 }
 
-std::string backend::get_source_file(std::size_t /*frame*/) const {
+std::string backend::get_source_file(const void* /*addr*/) {
     return std::string();
 }
 
-std::size_t backend::get_source_line(std::size_t /*frame*/) const BOOST_NOEXCEPT {
+std::size_t backend::get_source_line(const void* /*addr*/) {
     return 0;
 }
 

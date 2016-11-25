@@ -29,9 +29,7 @@
     && !defined(BOOST_STACKTRACE_USE_BACKTRACE) &&!defined(BOOST_STACKTRACE_USE_HEADER)
 
 #if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
-#   if __has_include(<libunwind.h>)
-#       define BOOST_STACKTRACE_USE_LIBUNWIND
-#   elif __has_include(<execinfo.h>)
+#   if __has_include(<execinfo.h>)
 #       define BOOST_STACKTRACE_USE_BACKTRACE
 #   elif __has_include("Dbgeng.h")
 #       define BOOST_STACKTRACE_USE_WINDBG
@@ -70,10 +68,10 @@ class backend: boost::noncopyable {
 
 public:
     BOOST_STACKTRACE_FUNCTION backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT;
-    BOOST_STACKTRACE_FUNCTION std::string get_name(std::size_t frame_no) const;
+    BOOST_STACKTRACE_FUNCTION static std::string get_name(const void* addr);
     BOOST_STACKTRACE_FUNCTION const void* get_address(std::size_t frame_no) const BOOST_NOEXCEPT;
-    BOOST_STACKTRACE_FUNCTION std::string get_source_file(std::size_t frame_no) const;
-    BOOST_STACKTRACE_FUNCTION std::size_t get_source_line(std::size_t frame_no) const BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION static std::string get_source_file(const void* addr);
+    BOOST_STACKTRACE_FUNCTION static std::size_t get_source_line(const void* addr);
     BOOST_STACKTRACE_FUNCTION bool operator< (const backend& rhs) const BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION bool operator==(const backend& rhs) const BOOST_NOEXCEPT;
 

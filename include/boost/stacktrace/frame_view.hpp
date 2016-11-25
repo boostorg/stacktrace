@@ -58,7 +58,7 @@ public:
     /// @returns Name of the frame (function name in a human readable form).
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     std::string name() const {
-        return impl_->get_name(frame_no_);
+        return boost::stacktrace::detail::backend::get_name(address());
     }
 
     /// @returns Address of the frame function.
@@ -71,13 +71,13 @@ public:
     /// if this->source_line() == 0.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     std::string source_file() const {
-        return impl_->get_source_file(frame_no_);
+        return boost::stacktrace::detail::backend::get_source_file(address());
     }
 
     /// @returns Code line in the source file, were the function of the frame is defined.
     /// @throws Nothing.
     std::size_t source_line() const BOOST_NOEXCEPT {
-        return impl_->get_source_line(frame_no_);
+        return boost::stacktrace::detail::backend::get_source_line(address());
     }
 };
 

@@ -61,6 +61,13 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(void* addr) BO
     );
 }
 
+
+inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* addr) BOOST_NOEXCEPT {
+    return to_hex_array(
+        reinterpret_cast<std::size_t>(addr)
+    );
+}
+
 }}} // namespace boost::stacktrace::detail
 
 #endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_TO_HEX_ARRAY_HPP
