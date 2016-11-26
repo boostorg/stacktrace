@@ -110,7 +110,7 @@
 <span class="keyword">void</span> <span class="identifier">my_signal_handler</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">signum</span><span class="special">)</span> <span class="special">{</span>
     <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span> <span class="identifier">bt</span><span class="special">;</span>
     <span class="keyword">if</span> <span class="special">(</span><span class="identifier">bt</span><span class="special">)</span> <span class="special">{</span>
-        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Signal "</span> <span class="special">&lt;&lt;</span> <span class="identifier">signum</span> <span class="special">&lt;&lt;</span> <span class="string">", backtrace:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span> <sup>[<a name="boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="footnote">1</a>]</sup>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Signal "</span> <span class="special">&lt;&lt;</span> <span class="identifier">signum</span> <span class="special">&lt;&lt;</span> <span class="string">", backtrace:\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span> <span class="comment">// <sup>[<a name="boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="footnote">1</a>]</sup></span>
     <span class="special">}</span>
     <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
 <span class="special">}</span>
@@ -290,8 +290,8 @@
           </li></ul></div>
 <pre class="programlisting"><span class="keyword">if</span> <span class="special">(</span><span class="identifier">i</span> <span class="special">&gt;=</span> <span class="number">4</span><span class="special">)</span>
     <span class="keyword">throw</span> <span class="identifier">with_trace</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">out_of_range</span><span class="special">&gt;(</span><span class="string">"'i' must be less than 4 in oops()"</span><span class="special">);</span>
-<span class="keyword">if</span> <span class="special">(</span><span class="identifier">i</span> <span class="special">==</span> <span class="number">0</span><span class="special">)</span>
-    <span class="keyword">throw</span> <span class="identifier">with_trace</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">logic_error</span><span class="special">&gt;(</span><span class="string">"'i' must not be zero in oops()"</span><span class="special">);</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">i</span> <span class="special">&lt;=</span> <span class="number">0</span><span class="special">)</span>
+    <span class="keyword">throw</span> <span class="identifier">with_trace</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">logic_error</span><span class="special">&gt;(</span><span class="string">"'i' must not be greater than zero in oops()"</span><span class="special">);</span>
 </pre>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
             Catch exceptions by <code class="computeroutput"><span class="identifier">traced</span></code>:
@@ -367,7 +367,7 @@
 </h3></div></div></div>
 <p>
         <code class="computeroutput"><a class="link" href="../boost/stacktrace/stacktrace.html" title="Class stacktrace">boost::stacktrace::stacktrace</a></code>
-        provides access to individual <code class="computeroutput"><a class="link" href="../boost/stacktrace/frame_view.html" title="Class frame_view">frames</a></code>
+        provides access to individual <code class="computeroutput"><a class="link" href="../boost/stacktrace/frame.html" title="Class frame">frames</a></code>
         of the stacktrace, so that you could save stacktrace information in your
         own format. Consider the example, that saves only function addresses of each
         frame:
@@ -377,7 +377,7 @@
 
 <span class="keyword">namespace</span> <span class="identifier">bs</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">;</span>
 <span class="keyword">void</span> <span class="identifier">dump_compact</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">bs</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">&amp;</span> <span class="identifier">st</span><span class="special">)</span> <span class="special">{</span>
-    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">bs</span><span class="special">::</span><span class="identifier">frame_view</span> <span class="identifier">frame</span><span class="special">:</span> <span class="identifier">st</span><span class="special">)</span> <span class="special">{</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">bs</span><span class="special">::</span><span class="identifier">frame</span> <span class="identifier">frame</span><span class="special">:</span> <span class="identifier">st</span><span class="special">)</span> <span class="special">{</span>
         <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">frame</span><span class="special">.</span><span class="identifier">address</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">','</span><span class="special">;</span>
     <span class="special">}</span>
 
@@ -392,9 +392,7 @@
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="para">1</a>] </sup>Strictly
-speaking this code is not async-signal-safe, but we have SIGSEGV already it could hardly become worse.
-<a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Section "Build, Macros and Backends"</a> describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code> will be never called. </p></div>
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="para">1</a>] </sup>Strictly speaking this code is not async-signal-safe, but we have SIGSEGV already it could hardly become worse. <a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Section "Build, Macros and Backends"</a> describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code> will be never called. </p></div>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
