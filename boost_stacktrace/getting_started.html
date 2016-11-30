@@ -392,7 +392,7 @@
 </div>
 <div class="footnotes">
 <br><hr width="100" align="left">
-<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="para">1</a>] </sup>Strictly speaking this code is not async-signal-safe, but we have SIGSEGV already it could hardly become worse. <a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Section "Build, Macros and Backends"</a> describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code> will be never called. </p></div>
+<div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" href="#boost_stacktrace.getting_started.handle_terminates_and_segmentati.f0" class="para">1</a>] </sup>Strictly speaking this code is not async-signal-safe, because it uses std::cerr. <a class="link" href="build_macros_and_backends.html" title="Build, Macros and Backends">Section "Build, Macros and Backends"</a> describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code> will be never called. </p></div>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>

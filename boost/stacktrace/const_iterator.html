@@ -26,14 +26,13 @@
 <a name="boost.stacktrace.const_iterator"></a><div class="titlepage"></div>
 <div class="refnamediv">
 <h2><span class="refentrytitle">Class const_iterator</span></h2>
-<p>boost::stacktrace::const_iterator &#8212; Random access iterator over frames that returns <code class="computeroutput">frame</code> on dereference. </p>
+<p>boost::stacktrace::const_iterator &#8212; Random access iterator over frames that returns <a class="link" href="frame.html" title="Class frame">boost::stacktrace::frame</a> on dereference. </p>
 </div>
 <h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
 <div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_stacktrace_header_reference.html#header.boost.stacktrace.const_iterator_hpp" title="Header &lt;boost/stacktrace/const_iterator.hpp&gt;">boost/stacktrace/const_iterator.hpp</a>&gt;
 
 </span>
-<span class="keyword">class</span> <a class="link" href="const_iterator.html" title="Class const_iterator">const_iterator</a> <span class="special">:</span> <span class="keyword">public</span> boost::iterator_facade&lt; const_iterator, frame, boost::random_access_traversal_tag, frame &gt;
-<span class="special">{</span>
+<span class="keyword">class</span> <a class="link" href="const_iterator.html" title="Class const_iterator">const_iterator</a> <span class="special">:</span> <span class="keyword">private</span> <span class="identifier">implementation_details</span> <span class="special">{</span>
 <span class="special">}</span><span class="special">;</span></pre></div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>

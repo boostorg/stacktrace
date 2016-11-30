@@ -46,7 +46,6 @@
 <col>
 <col>
 <col>
-<col>
 </colgroup>
 <thead><tr>
 <th>
@@ -76,11 +75,6 @@
             </th>
 <th>
               <p>
-                Construction speed
-              </p>
-            </th>
-<th>
-              <p>
                 Async signal safe<sup>[<a name="boost_stacktrace.build_macros_and_backends.f2" href="#ftn.boost_stacktrace.build_macros_and_backends.f2" class="footnote">c</a>]</sup>
               </p>
             </th>
@@ -89,13 +83,14 @@
 <tr>
 <td>
               <p>
-                <span class="bold"><strong>BOOST_STACKTRACE_USE_LIBUNWIND</strong></span>
+                <span class="bold"><strong>BOOST_STACKTRACE_USE_UNWIND</strong></span>
               </p>
             </td>
 <td>
               <p>
-                Use libunwind tracing backend. This is the best known backend for
-                POSIX systems that requires linking with libunwind library.
+                Use unwind tracing backend. This is the best known backend for POSIX
+                systems that requires LSB Core Specification 4.1 from OS. Requires
+                linking with libdl library.
               </p>
             </td>
 <td>
@@ -115,12 +110,7 @@
             </td>
 <td>
               <p>
-                slow
-              </p>
-            </td>
-<td>
-              <p>
-                no
+                Constructors
               </p>
             </td>
 </tr>
@@ -154,12 +144,7 @@
             </td>
 <td>
               <p>
-                fast
-              </p>
-            </td>
-<td>
-              <p>
-                no
+                ???
               </p>
             </td>
 </tr>
@@ -171,9 +156,8 @@
             </td>
 <td>
               <p>
-                Use tracing backend that calls POSIX function backtrace. This is
-                a fallback backend for POSIX platforms that requires linking with
-                libdl library.
+                Use tracing backend that calls POSIX function <code class="computeroutput"><span class="identifier">backtrace</span></code>.
+                Requires linking with libdl library.
               </p>
             </td>
 <td>
@@ -189,11 +173,6 @@
 <td>
               <p>
                 yes
-              </p>
-            </td>
-<td>
-              <p>
-                fast
               </p>
             </td>
 <td>
@@ -232,17 +211,12 @@
             </td>
 <td>
               <p>
-                noop
-              </p>
-            </td>
-<td>
-              <p>
-                yes
+                all functions
               </p>
             </td>
 </tr>
 </tbody>
-<tbody class="footnotes"><tr><td colspan="7">
+<tbody class="footnotes"><tr><td colspan="6">
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f0" href="#boost_stacktrace.build_macros_and_backends.f0" class="para">a</a>] </sup>
                   This will provide more readable backtraces if the binary is built
                   with debug information.
@@ -252,7 +226,8 @@
                   that are exported by the binary.
                 </p></div>
 <div class="footnote"><p><sup>[<a name="ftn.boost_stacktrace.build_macros_and_backends.f2" href="#boost_stacktrace.build_macros_and_backends.f2" class="para">c</a>] </sup>
-                  Absolutely safe to use that backend in async signal handler.
+                  Absolutely safe to construct instances of <code class="computeroutput"><a class="link" href="../boost/stacktrace/stacktrace.html" title="Class stacktrace">boost::stacktrace::stacktrace</a></code>
+                  in async signal handlers using that backend.
                 </p></div>
 </td></tr></tbody>
 </table></div>
@@ -317,7 +292,7 @@
     </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
 <li class="listitem">
-          boost_stacktrace_libunwind
+          boost_stacktrace_unwind
         </li>
 <li class="listitem">
           boost_stacktrace_windbg
