@@ -247,11 +247,11 @@ By default Boost.Stacktrace is a header-only library and it attempts to detect t
 You can define the following macros to explicitly specify backend that you're willing to use in header-only mode (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
 
 [table:configbackend Header only backend specifications
-    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] [Construction speed] [Async signal safe[footnote Absolutely safe to use that backend in async signal handler.]]]
-    [[*BOOST_STACKTRACE_USE_LIBUNWIND*] [Use libunwind tracing backend. This is the best known backend for POSIX systems that requires linking with libunwind library.] [POSIX] [yes] [yes] [slow] [no]]
-    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes] [fast] [no]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function backtrace. This is a fallback backend for POSIX platforms that requires linking with libdl library.] [POSIX] [no] [yes] [fast] [no]]
-    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing, `stacktrace::size()` with that backend always return 0. ] [POSIX and Windows] [no] [no] [noop] [yes]]
+    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] [Async signal safe[footnote Absolutely safe to construct instances of [classref boost::stacktrace::stacktrace] in async signal handlers using that backend.]]]
+    [[*BOOST_STACKTRACE_USE_UNWIND*] [Use unwind tracing backend. This is the best known backend for POSIX systems that requires LSB Core Specification 4.1 from OS. Requires linking with libdl library.] [POSIX] [yes] [yes] [Constructors]]
+    [[*BOOST_STACKTRACE_USE_WINDBG*] [Use Windows specific tracing backend that uses DbgHelp. This is the best and only known backend for Windows platform that requires linking with DbgHelp library.] [Windows] [yes] [yes] [???]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use tracing backend that calls POSIX function `backtrace`. Requires linking with libdl library.] [POSIX] [no] [yes] [no]]
+    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing backend that does nothing. Use this backend if you wish to disable backtracing, `stacktrace::size()` with that backend always return 0. ] [POSIX and Windows] [no] [no] [all functions]]
 ]
 
 
@@ -264,7 +264,7 @@ You may use the following macros to improve build times or to be able to switch 
 
 If one of the link macros is defined, you have to manually link your binary with one of the libraries that has the backend implementation:
 
-* boost_stacktrace_libunwind
+* boost_stacktrace_unwind
 * boost_stacktrace_windbg
 * boost_stacktrace_backtrace
 * boost_stacktrace_noop

@@ -18,6 +18,10 @@
 #include <boost/lexical_cast/try_lexical_convert.hpp>
 #include <algorithm>
 
+#if defined(BOOST_STACKTRACE_USE_UNWIND)
+#include <unwind.h>
+#endif
+
 #include <dlfcn.h>
 #include <execinfo.h>
 #include <cstdio>
@@ -163,6 +167,32 @@ static inline std::string try_demangle(const char* mangled) {
     return res;
 }
 
+
+
+
+#if defined(BOOST_STACKTRACE_USE_UNWIND)
+struct unwind_state {
+    void** current;
+    void** end;
+};
+
+inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void* arg) {
+    unwind_state* state = static_cast<unwind_state*>(arg);
+    *state->current = reinterpret_cast<void*>(
+        _Unwind_GetIP(context)
+    );
+
+    ++state->current;
+    if (!*(state->current - 1) || state->current == state->end) {
+        return _URC_END_OF_STACK;
+    }
+    return _URC_NO_REASON;
+}
+#endif
+
+
+
+
 backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
     : data_(static_cast<backtrace_holder*>(memory))
 {
@@ -170,11 +200,18 @@ backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_N
     data_->frames_count = 0;
     hash_code = 0;
 
-    // TODO: Not async signal safe. Use _Unwind_Backtrace, _Unwind_GetIP
+#if defined(BOOST_STACKTRACE_USE_UNWIND)
+    unwind_state state = { data_->buffer, data_->buffer + data_->frames_count };
+    _Unwind_Backtrace(&unwind_callback, &state);
+    data_->frames_count = state.current - data_->buffer;
+#elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
     data_->frames_count = ::backtrace(data_->buffer, (size - sizeof(backtrace_holder)) / sizeof(void*));
     if (data_->buffer[data_->frames_count - 1] == 0) {
         -- data_->frames_count;
     }
+#else
+#   error No stacktrace backend defined. Define BOOST_STACKTRACE_USE_UNWIND or BOOST_STACKTRACE_USE_BACKTRACE
+#endif
 
     hash_code = boost::hash_range(data_->buffer, data_->buffer + data_->frames_count);
 }

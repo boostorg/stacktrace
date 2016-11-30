@@ -30,8 +30,9 @@ void test_deeply_nested_namespaces() {
     std::cout << ss.str() << '\n';
     BOOST_TEST(ss.str().find("main") != std::string::npos);
 
-#if defined(BOOST_STACKTRACE_DYN_LINK) || !defined(BOOST_STACKTRACE_USE_BACKTRACE)
-    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
+#if defined(BOOST_STACKTRACE_DYN_LINK)
+    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos
+                || ss.str().find("return_from_nested_namespaces") != std::string::npos);
 #endif
 
     stacktrace ns1 = return_from_nested_namespaces();

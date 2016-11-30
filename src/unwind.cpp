@@ -4,11 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <dlfcn.h>
-#include <execinfo.h>
-
-int main() {
-    void* buffer[10];
-    ::backtrace(buffer, 10);
-
-}
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_USE_UNWIND
+#define BOOST_STACKTRACE_LINK
+#include <boost/stacktrace/detail/backend.ipp>

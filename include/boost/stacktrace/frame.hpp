@@ -35,33 +35,43 @@ public:
     frame() = delete;
 
     /// @brief Copy constructs frame.
-    /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    /// @throws Nothing.
     frame(const frame&) = default;
 
     /// @brief Copy assigns frame.
-    /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    /// @throws Nothing.
     frame& operator=(const frame&) = default;
 #endif
 
     /// @brief Constructs frame that can extract information from addr at runtime.
-    /// @throws Nothing.
     ///
     /// @b Complexity: O(1).
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    /// @throws Nothing.
     explicit frame(const void* addr) BOOST_NOEXCEPT
         : addr_(addr)
     {}
 
     /// @returns Name of the frame (function name in a human readable form).
+    ///
+    /// @b Async-Handler-Safety: Unsafe.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     std::string name() const {
         return boost::stacktrace::detail::backend::get_name(address());
     }
 
     /// @returns Address of the frame function.
+    ///
+    /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
     const void* address() const BOOST_NOEXCEPT {
         return addr_;
@@ -70,18 +80,22 @@ public:
     /// @returns Path to the source file, were the function of the frame is defined. Returns empty string
     /// if this->source_line() == 0.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
+    ///
+    /// @b Async-Handler-Safety: Unsafe.
     std::string source_file() const {
         return boost::stacktrace::detail::backend::get_source_file(address());
     }
 
     /// @returns Code line in the source file, were the function of the frame is defined.
     /// @throws std::bad_alloc if not enough memory to construct string for internal needs.
+    ///
+    /// @b Async-Handler-Safety: Unsafe.
     std::size_t source_line() const {
         return boost::stacktrace::detail::backend::get_source_line(address());
     }
 };
 
-/// Comparison operators that provide platform dependant ordering and have O(1) complexity.
+/// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
 inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
 inline bool operator> (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
 inline bool operator<=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
@@ -89,12 +103,12 @@ inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { retu
 inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
 inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
-/// Hashing support, O(1) complexity.
+/// Hashing support, O(1) complexity; Async-Handler-Safe.
 inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
     return reinterpret_cast<std::size_t>(f.address());
 }
 
-/// Outputs stacktrace::frame in a human readable format to output stream.
+/// Outputs stacktrace::frame in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame& f) {
     os << f.name();

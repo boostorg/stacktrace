@@ -25,20 +25,21 @@
 #endif
 
 // Backend autodetection
-#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_LIBUNWIND) \
-    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) &&!defined(BOOST_STACKTRACE_USE_HEADER)
+#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_UNWIND) \
+    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_HEADER)
 
 #if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
-#   if __has_include(<execinfo.h>)
-#       define BOOST_STACKTRACE_USE_BACKTRACE
-#   elif __has_include("Dbgeng.h")
+#   if __has_include("Dbgeng.h")
 #       define BOOST_STACKTRACE_USE_WINDBG
+#   else
+#       define BOOST_STACKTRACE_USE_UNWIND
 #   endif
 #else
 #   if defined(BOOST_WINDOWS)
 #       define BOOST_STACKTRACE_USE_WINDBG
 #   else
-#       define BOOST_STACKTRACE_USE_BACKTRACE
+#       define BOOST_STACKTRACE_USE_UNWIND
+//#       define BOOST_STACKTRACE_USE_BACKTRACE
 #   endif
 #endif
 

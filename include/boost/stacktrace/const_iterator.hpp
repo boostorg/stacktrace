@@ -20,17 +20,22 @@
 
 namespace boost { namespace stacktrace {
 
+
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+/// Random access iterator over frames that returns boost::stacktrace::frame on dereference
+class const_iterator: implementation_details {};
+
+#else
+
 // Forward declarations
 class stacktrace;
 
-/// Random access iterator over frames that returns `frame` on dereference.
 class const_iterator: public boost::iterator_facade<
     const_iterator,
     frame,
     boost::random_access_traversal_tag,
     frame>
 {
-/// @cond
     typedef boost::iterator_facade<
         const_iterator,
         frame,
@@ -73,8 +78,9 @@ class const_iterator: public boost::iterator_facade<
         BOOST_ASSERT(impl_ == it.impl_);
         return it.frame_no_ - frame_no_;
     }
-/// @endcond
 };
+
+#endif // #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
 
 }} // namespace boost::stacktrace
 

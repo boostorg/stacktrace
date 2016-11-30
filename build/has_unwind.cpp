@@ -4,11 +4,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <dlfcn.h>
-#include <execinfo.h>
+#include <unwind.h>
 
 int main() {
-    void* buffer[10];
-    ::backtrace(buffer, 10);
 
 }
