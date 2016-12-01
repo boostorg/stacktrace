@@ -13,8 +13,7 @@
 #endif
 
 #include <boost/core/noncopyable.hpp>
-#include <boost/functional/hash.hpp> 
-#include <algorithm>
+#include <boost/functional/hash.hpp>
 
 #include <windows.h>
 #include "Dbgeng.h"
@@ -95,36 +94,22 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
 }
 
 
-struct backtrace_holder {
-    std::size_t frames_count;
-    void* buffer[];
-
-    backtrace_holder() BOOST_NOEXCEPT {}
-
-    backtrace_holder(const backtrace_holder& d) BOOST_NOEXCEPT 
-        : frames_count(d.frames_count)
-    {
-        std::copy(d.buffer, d.buffer + frames_count, buffer);
-    }
-};
 
 
-
-backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(static_cast<backtrace_holder*>(memory))
+backend::backend(void* memory, std::size_t size) BOOST_NOEXCEPT
+    : hash_code_(0)
+    , frames_count_(0)
+    , data_(static_cast<void**>(memory))
 {
-    new (data_) backtrace_holder();
-    data_->frames_count = 0;
-    hash_code = 0;
     boost::detail::winapi::ULONG_ hc = 0;
-    data_->frames_count = CaptureStackBackTrace(
+    frames_count_ = CaptureStackBackTrace(
         0,
-        static_cast<boost::detail::winapi::ULONG_>((size - sizeof(backtrace_holder)) / sizeof(void*)),
-        data_->buffer,
+        static_cast<boost::detail::winapi::ULONG_>(size / sizeof(void*)),
+        data_,
         &hc
     );
 
-    boost::hash_combine(hash_code, hc);
+    boost::hash_combine(hash_code_, hc);
 }
 
 std::string backend::get_name(const void* addr) {
@@ -164,10 +149,6 @@ std::string backend::get_name(const void* addr) {
     }
 
     return result;
-}
-
-const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return frame < data_->frames_count ? data_->buffer[frame] : 0;
 }
 
 std::string backend::get_source_file(const void* addr) {
@@ -232,31 +213,6 @@ std::size_t backend::get_source_line(const void* addr) {
     return (is_ok ? line_num : 0);
 }
 
-bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
-    if (data_->frames_count != rhs.data_->frames_count) {
-        return data_->frames_count < rhs.data_->frames_count;
-    } else if (this == &rhs) {
-        return false;
-    }
-
-    return std::lexicographical_compare(
-        data_->buffer, data_->buffer + data_->frames_count,
-        rhs.data_->buffer, rhs.data_->buffer + rhs.data_->frames_count
-    );
-}
-
-bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
-    if (data_->frames_count != rhs.data_->frames_count) {
-        return false;
-    } else if (this == &rhs) {
-        return true;
-    }
-
-    return std::equal(
-        data_->buffer, data_->buffer + data_->frames_count,
-        rhs.data_->buffer
-    );
-}
 
 }}} // namespace boost::stacktrace::detail
 

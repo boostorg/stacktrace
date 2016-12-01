@@ -16,7 +16,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/lexical_cast/try_lexical_convert.hpp>
-#include <algorithm>
 
 #if defined(BOOST_STACKTRACE_USE_UNWIND)
 #include <unwind.h>
@@ -31,24 +30,6 @@
 
 
 namespace boost { namespace stacktrace { namespace detail {
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
-struct backtrace_holder {
-    std::size_t frames_count;
-    void* buffer[];
-
-    backtrace_holder() BOOST_NOEXCEPT {}
-
-    backtrace_holder(const backtrace_holder& d) BOOST_NOEXCEPT 
-        : frames_count(d.frames_count)
-    {
-        std::copy(d.buffer, d.buffer + frames_count, buffer);
-    }
-};
-
-#pragma GCC diagnostic pop
 
 class addr2line_pipe {
     FILE* p;
@@ -193,27 +174,25 @@ inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void
 
 
 
-backend::backend(void* memory, std::size_t size, std::size_t& hash_code) BOOST_NOEXCEPT
-    : data_(static_cast<backtrace_holder*>(memory))
+backend::backend(void* memory, std::size_t size) BOOST_NOEXCEPT
+    : hash_code_(0)
+    , frames_count_(0)
+    , data_(static_cast<void**>(memory))
 {
-    new (data_) backtrace_holder();
-    data_->frames_count = 0;
-    hash_code = 0;
-
 #if defined(BOOST_STACKTRACE_USE_UNWIND)
-    unwind_state state = { data_->buffer, data_->buffer + data_->frames_count };
+    unwind_state state = { data_, data_ + frames_count_ };
     _Unwind_Backtrace(&unwind_callback, &state);
-    data_->frames_count = state.current - data_->buffer;
+    frames_count_ = state.current - data_;
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
-    data_->frames_count = ::backtrace(data_->buffer, (size - sizeof(backtrace_holder)) / sizeof(void*));
-    if (data_->buffer[data_->frames_count - 1] == 0) {
-        -- data_->frames_count;
+    frames_count_ = ::backtrace(data_, size / sizeof(void*));
+    if (data_[frames_count_ - 1] == 0) {
+        -- frames_count_;
     }
 #else
 #   error No stacktrace backend defined. Define BOOST_STACKTRACE_USE_UNWIND or BOOST_STACKTRACE_USE_BACKTRACE
 #endif
 
-    hash_code = boost::hash_range(data_->buffer, data_->buffer + data_->frames_count);
+    hash_code_ = boost::hash_range(data_, data_ + frames_count_);
 }
 
 std::string backend::get_name(const void* addr) {
@@ -228,16 +207,19 @@ std::string backend::get_name(const void* addr) {
         res = try_demangle(res.c_str());
     }
 
-    return res;
-}
+    if (res == "??") {
+        res.clear();
+    }
 
-const void* backend::get_address(std::size_t frame) const BOOST_NOEXCEPT {
-    return frame < data_->frames_count ? data_->buffer[frame] : 0;
+    return res;
 }
 
 std::string backend::get_source_file(const void* addr) {
     std::string res = addr2line("-e", addr);
     res = res.substr(0, res.find_last_of(':'));
+    if (res == "??") {
+        res.clear();
+    }
     return res;
 }
 
@@ -255,32 +237,6 @@ std::size_t backend::get_source_line(const void* addr) {
     }
 
     return line_num;
-}
-
-bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
-    if (data_->frames_count != rhs.data_->frames_count) {
-        return data_->frames_count < rhs.data_->frames_count;
-    } else if (this == &rhs) {
-        return false;
-    }
-
-    return std::lexicographical_compare(
-        data_->buffer, data_->buffer + data_->frames_count,
-        rhs.data_->buffer, rhs.data_->buffer + rhs.data_->frames_count
-    );
-}
-
-bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
-    if (data_->frames_count != rhs.data_->frames_count) {
-        return false;
-    } else if (this == &rhs) {
-        return true;
-    }
-
-    return std::equal(
-        data_->buffer, data_->buffer + data_->frames_count,
-        rhs.data_->buffer
-    );
 }
 
 }}} // namespace boost::stacktrace::detail

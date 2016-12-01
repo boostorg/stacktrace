@@ -15,25 +15,31 @@
 #include <iosfwd>
 #include <string>
 
+#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/stacktrace/detail/backend.hpp>
 
 namespace boost { namespace stacktrace {
-
-// Forward declarations
-class const_iterator;
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame {
     /// @cond
     const void* addr_;
-
-    frame(); // = delete
     /// @endcond
 
 public:
-#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
-    frame() = delete;
+    /// @brief Constructs frame that references NULL address.
+    /// Calls to source_file() and source_line() wil lreturn empty string.
+    /// Calls to source_line() will return 0.
+    ///
+    /// @b Complexity: O(1).
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    /// @throws Nothing.
+    frame() BOOST_NOEXCEPT
+        : addr_(0)
+    {}
 
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     /// @brief Copy constructs frame.
     ///
     /// @b Complexity: O(1).
@@ -93,6 +99,26 @@ public:
     std::size_t source_line() const {
         return boost::stacktrace::detail::backend::get_source_line(address());
     }
+
+    /// @brief Checks that frame is not references NULL address.
+    /// @returns `true` if `this->address() != 0`
+    ///
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
+
+    /// @brief Checks that frame references NULL address.
+    /// @returns `true` if `this->address() == 0`
+    ///
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    bool empty() const BOOST_NOEXCEPT { return !address(); }
+    
+    /// @cond
+    bool operator!() const BOOST_NOEXCEPT { return !address(); }
+    /// @endcond
 };
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
@@ -111,10 +137,16 @@ inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
 /// Outputs stacktrace::frame in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame& f) {
-    os << f.name();
+    std::string name = f.name();
+    if (!name.empty()) {
+        os << name;
+    } else {
+        os << f.address();
+    }
 
-    if (f.source_line()) {
-        return os << '\t' << f.source_file() << ':' << f.source_line();
+    const std::size_t source_line = f.source_line();
+    if (source_line) {
+        os << " at " << f.source_file() << ':' << source_line;
     }
 
     return os;

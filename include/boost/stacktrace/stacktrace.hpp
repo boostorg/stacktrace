@@ -29,7 +29,6 @@ class stacktrace {
     /// @cond
     BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
     boost::aligned_storage<max_implementation_size>::type impl_;
-    std::size_t hash_code_;
     boost::stacktrace::detail::backend back_;
     /// @endcond
 
@@ -48,8 +47,7 @@ public:
     /// @b Async-Handler-Safety: Depends on backend, see "Build, Macros and Backends" section.
     BOOST_FORCEINLINE stacktrace() BOOST_NOEXCEPT
         : impl_()
-        , hash_code_()
-        , back_(&impl_, sizeof(impl_), hash_code_)
+        , back_(&impl_, sizeof(impl_))
     {}
 
     /// @b Complexity: O(st.size())
@@ -57,7 +55,6 @@ public:
     /// @b Async-Handler-Safety: Safe.
     stacktrace(const stacktrace& st) BOOST_NOEXCEPT
         : impl_()
-        , hash_code_(st.hash_code_)
         , back_(st.back_, &impl_)
     {}
 
@@ -65,8 +62,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     stacktrace& operator=(const stacktrace& st) BOOST_NOEXCEPT {
-        hash_code_ = st.hash_code_;
-        back_ = back_;
+        back_ = st.back_;
 
         return *this;
     }
@@ -141,13 +137,22 @@ public:
     /// @b Async-Handler-Safety: Safe.
     BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
 
+
+    /// @brief Allows to check that stack trace failed.
+    /// @returns `true` if `this->size() == 0`
+    ///
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    bool empty() const BOOST_NOEXCEPT { return !size(); }
+
     /// @brief Compares stacktraces for less, order is platform dependant.
     ///
     /// @b Complexity: Amortized O(1); worst case O(size())
     ///
     /// @b Async-Handler-Safety: Safe.
     bool operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
-        return hash_code_ < rhs.hash_code_ || (hash_code_ == rhs.hash_code_ && back_ < rhs.back_);
+        return back_ < rhs.back_;
     }
 
     /// @brief Compares stacktraces for equality.
@@ -156,7 +161,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
-        return hash_code_ == rhs.hash_code_ && back_ == rhs.back_;
+        return back_ == rhs.back_;
     }
 
     /// @brief Returns hashed code of the stacktrace.
@@ -164,7 +169,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    std::size_t hash_code() const BOOST_NOEXCEPT { return hash_code_; }
+    std::size_t hash_code() const BOOST_NOEXCEPT { return back_.hash_code(); }
 
     /// @cond
     bool operator!() const BOOST_NOEXCEPT { return !size(); }

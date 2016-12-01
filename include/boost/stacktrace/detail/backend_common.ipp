@@ -12,35 +12,36 @@
 #   pragma once
 #endif
 
+#include <algorithm>
+
 namespace boost { namespace stacktrace { namespace detail {
 
-backend::backend(const backend& b, void* memory) BOOST_NOEXCEPT
-    : data_(static_cast<backtrace_holder*>(memory))
-{
-    new(data_) backtrace_holder(
-        *b.data_
-    );
-}
-
-backend& backend::operator=(const backend& b) BOOST_NOEXCEPT {
-    if (data_ == b.data_) {
-        return *this;
+bool backend::operator< (const backend& rhs) const BOOST_NOEXCEPT {
+    if (frames_count_ != rhs.frames_count_) {
+        return frames_count_ < rhs.frames_count_;
+    } else if (hash_code_ != rhs.hash_code_) {
+        return hash_code_ < rhs.hash_code_;
+    } else if (data_ == rhs.data_) {
+        return false;
     }
 
-    data_->~backtrace_holder();
-    new(data_) backtrace_holder(
-        *b.data_
+    return std::lexicographical_compare(
+        data_, data_ + frames_count_,
+        rhs.data_, rhs.data_ + rhs.frames_count_
     );
-
-    return *this;
 }
 
-backend::~backend() BOOST_NOEXCEPT {
-    data_->~backtrace_holder();
-}
+bool backend::operator==(const backend& rhs) const BOOST_NOEXCEPT {
+    if (hash_code_ != rhs.hash_code_ || frames_count_ != rhs.frames_count_) {
+        return false;
+    } else if (data_ == rhs.data_) {
+        return true;
+    }
 
-std::size_t backend::size() const BOOST_NOEXCEPT {
-    return data_->frames_count;
+    return std::equal(
+        data_, data_ + frames_count_,
+        rhs.data_
+    );
 }
 
 }}}

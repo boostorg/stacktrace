@@ -182,17 +182,25 @@ void test_frame() {
         BOOST_TEST(st[i] >= st[i]);
 
         frame fv = nst[2];
+        BOOST_TEST(fv);
         if (i >= 2 && i < min_size - 3) { // Begin and end of the trace may match, skipping them
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i] < fv || st[i] > fv);
             BOOST_TEST(hash_value(st[i]) != hash_value(fv));
             BOOST_TEST(st[i].source_line() == 0 || st[i].source_file() != fv.source_file());
+            BOOST_TEST(st[i]);
         }
 
         fv = st[i];
         BOOST_TEST(hash_value(st[i]) == hash_value(fv));
     }
+
+    boost::stacktrace::frame empty_frame;
+    BOOST_TEST(!empty_frame);
+    BOOST_TEST(empty_frame.source_file() == "");
+    BOOST_TEST(empty_frame.name() == "");
+    BOOST_TEST(empty_frame.source_line() == 0);
 }
 
 int main() {
