@@ -55,14 +55,12 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    - r-packages-trusty
     - git-core
     packages:
     - git
     - python-yaml
     - gcc-6
     - g++-6
-    - lcov
     - clang
     - libc++-dev
 
@@ -99,7 +97,9 @@ after_success:
     - find ../../../bin.v2/ -name "*.gcno" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
     - find ../../../bin.v2/ -name "*.da" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
     - find ../../../bin.v2/ -name "*.no" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
-    - LCOV="lcov --gcov-tool gcov-6"
+    - wget https://github.com/linux-test-project/lcov/archive/v1.12.zip
+    - unzip v1.12.zip
+    - LCOV="lcov-1.12/bin/lcov --gcov-tool gcov-6"
 
     # Preparing Coveralls data by changind data format to a readable one
     - echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
