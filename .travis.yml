@@ -65,7 +65,6 @@ addons:
     - lcov
     - clang
     - libc++-dev
-    - libunwind-dev                                    # stacktrace library extension
 
 before_install:
     # Set this to the name of the library
