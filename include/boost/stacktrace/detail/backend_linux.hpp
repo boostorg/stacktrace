@@ -174,17 +174,20 @@ inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void
 
 
 
-backend::backend(void* memory, std::size_t size) BOOST_NOEXCEPT
+backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
     : hash_code_(0)
     , frames_count_(0)
-    , data_(static_cast<void**>(memory))
+    , data_(memory)
 {
+    if (!size) {
+        return;
+    }
 #if defined(BOOST_STACKTRACE_USE_UNWIND)
-    unwind_state state = { data_, data_ + frames_count_ };
+    unwind_state state = { data_, data_ + size };
     _Unwind_Backtrace(&unwind_callback, &state);
     frames_count_ = state.current - data_;
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
-    frames_count_ = ::backtrace(data_, size / sizeof(void*));
+    frames_count_ = ::backtrace(data_, size);
     if (data_[frames_count_ - 1] == 0) {
         -- frames_count_;
     }

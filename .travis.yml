@@ -8,7 +8,7 @@
 # See https://svn.boost.org/trac/boost/wiki/TravisCoverals for description of this file
 # and how it can be used with Boost libraries.
 #
-# File revision #6
+# File revision #7
 
 sudo: false
 language: cpp
@@ -99,7 +99,7 @@ after_success:
     - find ../../../bin.v2/ -name "*.gcno" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
 
     # Preparing Coveralls data by changind data format to a readable one
-    - lcov --directory $TRAVIS_BUILD_DIR/coverals --base-directory ./ --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info
+    - lcov --gcov-tool gcov-6 --directory $TRAVIS_BUILD_DIR/coverals --base-directory ./ --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info
 
     # ... erasing /test/ /example/ folder data
     - cd $BOOST

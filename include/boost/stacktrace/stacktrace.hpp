@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/aligned_storage.hpp>
 #include <boost/core/explicit_operator_bool.hpp>
 
 #include <iosfwd>
@@ -27,8 +26,8 @@ namespace boost { namespace stacktrace {
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
 class stacktrace {
     /// @cond
-    BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 110u;
-    boost::aligned_storage<max_implementation_size>::type impl_;
+    BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 100u;
+    void* impl_[max_implementation_size];
     boost::stacktrace::detail::backend back_;
     /// @endcond
 
@@ -47,7 +46,7 @@ public:
     /// @b Async-Handler-Safety: Depends on backend, see "Build, Macros and Backends" section.
     BOOST_FORCEINLINE stacktrace() BOOST_NOEXCEPT
         : impl_()
-        , back_(&impl_, sizeof(impl_))
+        , back_(impl_, max_implementation_size)
     {}
 
     /// @b Complexity: O(st.size())
@@ -55,7 +54,7 @@ public:
     /// @b Async-Handler-Safety: Safe.
     stacktrace(const stacktrace& st) BOOST_NOEXCEPT
         : impl_()
-        , back_(st.back_, &impl_)
+        , back_(st.back_, impl_)
     {}
 
     /// @b Complexity: O(st.size())

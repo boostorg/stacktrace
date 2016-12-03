@@ -76,7 +76,7 @@ class backend {
     }
 
 public:
-    BOOST_STACKTRACE_FUNCTION backend(void* memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION backend(void** memory, std::size_t size) BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION static std::string get_name(const void* addr);
     const void* get_address(std::size_t frame_no) const BOOST_NOEXCEPT {
         return frame_no < frames_count_ ? data_[frame_no] : 0;
@@ -86,10 +86,10 @@ public:
     BOOST_STACKTRACE_FUNCTION bool operator< (const backend& rhs) const BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION bool operator==(const backend& rhs) const BOOST_NOEXCEPT;
 
-    backend(const backend& b, void* memory) BOOST_NOEXCEPT
+    backend(const backend& b, void** memory) BOOST_NOEXCEPT
         : hash_code_(b.hash_code_)
         , frames_count_(b.frames_count_)
-        , data_(static_cast<void**>(memory))
+        , data_(memory)
     {
         copy_frames_from(b);
     }

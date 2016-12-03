@@ -96,15 +96,15 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
 
 
 
-backend::backend(void* memory, std::size_t size) BOOST_NOEXCEPT
+backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
     : hash_code_(0)
     , frames_count_(0)
-    , data_(static_cast<void**>(memory))
+    , data_(memory)
 {
     boost::detail::winapi::ULONG_ hc = 0;
     frames_count_ = CaptureStackBackTrace(
         0,
-        static_cast<boost::detail::winapi::ULONG_>(size / sizeof(void*)),
+        static_cast<boost::detail::winapi::ULONG_>(size),
         data_,
         &hc
     );

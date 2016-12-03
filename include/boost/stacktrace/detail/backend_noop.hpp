@@ -15,7 +15,7 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 
-backend::backend(void* /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT
+backend::backend(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT
     : hash_code_(0)
     , frames_count_(0)
     , data_(0)
