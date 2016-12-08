@@ -4,6 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/stacktrace_fwd.hpp>
 
 #include <boost/stacktrace.hpp>
 #include <stdexcept>
@@ -69,11 +70,9 @@ void test_nested() {
     //BOOST_TEST(false);
 }
 
-void test_comparisons() {
-    stacktrace nst = return_from_nested_namespaces();
-    stacktrace st;
-    stacktrace cst(st);
-
+template <class Bt>
+void test_comparisons_base(Bt nst, Bt st) {
+    Bt cst(st);
     BOOST_TEST(nst);
     BOOST_TEST(st);
 
@@ -100,9 +99,15 @@ void test_comparisons() {
 
     BOOST_TEST(hash_value(nst) == hash_value(nst));
     BOOST_TEST(hash_value(cst) == hash_value(st));
-    
+
     BOOST_TEST(hash_value(nst) != hash_value(cst));
     BOOST_TEST(hash_value(st) != hash_value(nst));
+}
+
+void test_comparisons() {
+    stacktrace nst = return_from_nested_namespaces();
+    stacktrace st;
+    test_comparisons_base(nst, st);
 }
 
 void test_iterators() {
@@ -203,12 +208,49 @@ void test_frame() {
     BOOST_TEST(empty_frame.source_line() == 0);
 }
 
+void test_empty_basic_stacktrace() {
+    typedef boost::stacktrace::basic_stacktrace<0> st_t;
+    st_t st;
+
+    BOOST_TEST(!st);
+    BOOST_TEST(st.empty());
+    BOOST_TEST(st.size() == 0);
+    BOOST_TEST(st.begin() == st.end());
+    BOOST_TEST(st.cbegin() == st.end());
+    BOOST_TEST(st.cbegin() == st.cend());
+    BOOST_TEST(st.begin() == st.cend());
+
+    BOOST_TEST(st.rbegin() == st.rend());
+    BOOST_TEST(st.crbegin() == st.rend());
+    BOOST_TEST(st.crbegin() == st.crend());
+    BOOST_TEST(st.rbegin() == st.crend());
+
+    BOOST_TEST(hash_value(st) == hash_value(st_t()));
+    BOOST_TEST(st == st_t());
+}
+
+BOOST_NOINLINE boost::stacktrace::basic_stacktrace<2> bar1() {
+    boost::stacktrace::basic_stacktrace<2> result;
+    BOOST_TEST(result.size() == 2);
+    return result;
+}
+
+BOOST_NOINLINE boost::stacktrace::basic_stacktrace<2> bar2() {
+    boost::stacktrace::basic_stacktrace<2> result;
+    BOOST_TEST(result.size() == 2);
+    return result;
+}
+
 int main() {
     test_deeply_nested_namespaces();
     test_nested();
     test_comparisons();
     test_iterators();
     test_frame();
+    test_empty_basic_stacktrace();
+
+    BOOST_TEST(&bar1 != &bar2);
+    test_comparisons_base(bar1(), bar2());
 
     return boost::report_errors();
 }

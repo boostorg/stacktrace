@@ -15,7 +15,6 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/assert.hpp>
 
-#include <boost/stacktrace/detail/backend.hpp>
 #include <boost/stacktrace/frame.hpp>
 
 namespace boost { namespace stacktrace {
@@ -28,7 +27,7 @@ class const_iterator: implementation_details {};
 #else
 
 // Forward declarations
-class stacktrace;
+template <std::size_t> class basic_stacktrace;
 
 class const_iterator: public boost::iterator_facade<
     const_iterator,
@@ -51,7 +50,7 @@ class const_iterator: public boost::iterator_facade<
         , frame_no_(frame_no)
     {}
 
-    friend class ::boost::stacktrace::stacktrace;
+    template <std::size_t> friend class basic_stacktrace;
     friend class ::boost::iterators::iterator_core_access;
 
     frame dereference() const BOOST_NOEXCEPT {

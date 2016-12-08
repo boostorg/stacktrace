@@ -21,18 +21,33 @@
 #include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/const_iterator.hpp>
 
+
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+
+/// You may define this macro to some positive integer to limit the max stack frames count for the boost::stacktrace::stacktrace class.
+/// This macro does not affect the boost::stacktrace::basic_stacktrace.
+///
+/// @b Default: 100
+#define BOOST_STACKTRACE_DEFAULT_MAX_DEPTH 100
+
+#endif
+
 namespace boost { namespace stacktrace {
 
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
-class stacktrace {
+/// @tparam Depth Max stack frames count that this class may hold. Equal to basic_stacktrace::max_depth.
+template <std::size_t Depth>
+class basic_stacktrace {
     /// @cond
-    BOOST_STATIC_CONSTEXPR std::size_t max_implementation_size = sizeof(void*) * 100u;
-    void* impl_[max_implementation_size];
+    void* impl_[Depth ? Depth : 1];
     boost::stacktrace::detail::backend back_;
     /// @endcond
 
 public:
-    typedef frame                              reference;
+    /// Max stack frames count that this class may hold. Equal to Depth template parameter.
+    BOOST_STATIC_CONSTEXPR std::size_t max_depth = Depth;
+
+    typedef frame                                   reference;
 
     typedef boost::stacktrace::const_iterator       iterator;
     typedef boost::stacktrace::const_iterator       const_iterator;
@@ -44,15 +59,15 @@ public:
     /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
     ///
     /// @b Async-Handler-Safety: Depends on backend, see "Build, Macros and Backends" section.
-    BOOST_FORCEINLINE stacktrace() BOOST_NOEXCEPT
+    BOOST_FORCEINLINE basic_stacktrace() BOOST_NOEXCEPT
         : impl_()
-        , back_(impl_, max_implementation_size)
+        , back_(impl_, Depth)
     {}
 
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe.
-    stacktrace(const stacktrace& st) BOOST_NOEXCEPT
+    basic_stacktrace(const basic_stacktrace& st) BOOST_NOEXCEPT
         : impl_()
         , back_(st.back_, impl_)
     {}
@@ -60,7 +75,7 @@ public:
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe.
-    stacktrace& operator=(const stacktrace& st) BOOST_NOEXCEPT {
+    basic_stacktrace& operator=(const basic_stacktrace& st) BOOST_NOEXCEPT {
         back_ = st.back_;
 
         return *this;
@@ -69,7 +84,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    ~stacktrace() BOOST_NOEXCEPT {}
+    ~basic_stacktrace() BOOST_NOEXCEPT {}
 
     /// @returns Number of function names stored inside the class.
     ///
@@ -150,7 +165,7 @@ public:
     /// @b Complexity: Amortized O(1); worst case O(size())
     ///
     /// @b Async-Handler-Safety: Safe.
-    bool operator< (const stacktrace& rhs) const BOOST_NOEXCEPT {
+    bool operator< (const basic_stacktrace& rhs) const BOOST_NOEXCEPT {
         return back_ < rhs.back_;
     }
 
@@ -159,7 +174,7 @@ public:
     /// @b Complexity: Amortized O(1); worst case O(size())
     ///
     /// @b Async-Handler-Safety: Safe.
-    bool operator==(const stacktrace& rhs) const BOOST_NOEXCEPT {
+    bool operator==(const basic_stacktrace& rhs) const BOOST_NOEXCEPT {
         return back_ == rhs.back_;
     }
 
@@ -177,19 +192,35 @@ public:
 
 
 /// Comparison operators that provide platform dependant ordering and have amortized O(1) complexity; O(size()) worst case complexity; are Async-Handler-Safe.
-inline bool operator> (const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
-inline bool operator<=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
-inline bool operator>=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
-inline bool operator!=(const stacktrace& lhs, const stacktrace& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+template <std::size_t Depth>
+bool operator> (const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+    return rhs < lhs;
+}
+
+template <std::size_t Depth>
+bool operator<=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+    return !(lhs > rhs);
+}
+
+template <std::size_t Depth>
+bool operator>=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+    return !(lhs < rhs);
+}
+
+template <std::size_t Depth>
+bool operator!=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+    return !(lhs == rhs);
+}
 
 /// Hashing support, O(1) complexity; Async-Handler-Safe.
-inline std::size_t hash_value(const stacktrace& st) BOOST_NOEXCEPT {
+template <std::size_t Depth>
+std::size_t hash_value(const basic_stacktrace<Depth>& st) BOOST_NOEXCEPT {
     return st.hash_code();
 }
 
 /// Outputs stacktrace in a human readable format to output stream; unsafe to use in async handlers.
-template <class CharT, class TraitsT>
-std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace& bt) {
+template <class CharT, class TraitsT, std::size_t Depth>
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Depth>& bt) {
     const std::streamsize w = os.width();
     const std::size_t frames = bt.size();
     for (std::size_t i = 0; i < frames; ++i) {
@@ -203,6 +234,8 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
     return os;
 }
+
+typedef basic_stacktrace<BOOST_STACKTRACE_DEFAULT_MAX_DEPTH> stacktrace;
 
 }} // namespace boost::stacktrace
 

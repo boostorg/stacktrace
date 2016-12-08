@@ -20,6 +20,7 @@ doxygen autodoc
         <doxygen:param>MACRO_EXPANSION=YES
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
                                    \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\
+                                   \"BOOST_STATIC_CONSTEXPR=static constexpr\" \\
                                    \"BOOST_STACKTRACE_FUNCTION\" \\
                                    \"BOOST_STACKTRACE_DOXYGEN_INVOKED\""
         <xsl:param>"boost.doxygen.reftitle=Boost.Stacktrace Header Reference"
@@ -35,3 +36,13 @@ boostbook standalone
         <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/doc/html
     ;
 
+###############################################################################
+alias boostdoc
+    : stacktrace
+    :
+    : <dependency>autodoc
+    : ;
+
+explicit boostdoc ;
+alias boostrelease ;
+explicit boostrelease ;
