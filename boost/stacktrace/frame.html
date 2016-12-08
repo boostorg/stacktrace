@@ -25,7 +25,7 @@
 <a name="boost.stacktrace.frame"></a><div class="titlepage"></div>
 <div class="refnamediv">
 <h2><span class="refentrytitle">Class frame</span></h2>
-<p>boost::stacktrace::frame &#8212; Non-owning class that references the frame information stored inside the <a class="link" href="stacktrace.html" title="Class stacktrace">boost::stacktrace::stacktrace</a> class. </p>
+<p>boost::stacktrace::frame &#8212; Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class. </p>
 </div>
 <h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
 <div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_stacktrace_header_reference.html#header.boost.stacktrace.frame_hpp" title="Header &lt;boost/stacktrace/frame.hpp&gt;">boost/stacktrace/frame.hpp</a>&gt;
@@ -34,29 +34,29 @@
 <span class="keyword">class</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">{</span>
 <span class="keyword">public</span><span class="special">:</span>
   <span class="comment">// <a class="link" href="frame.html#boost.stacktrace.frameconstruct-copy-destruct">construct/copy/destruct</a></span>
-  <a class="link" href="frame.html#idm46840151524944-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
-  <a class="link" href="frame.html#idm46840151521744-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
-  <span class="keyword">explicit</span> <a class="link" href="frame.html#idm46840151513168-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
-  <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span> <a class="link" href="frame.html#idm46840151517712-bb"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="frame.html#idm45487108531760-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="frame.html#idm45487108528560-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="frame.html#idm45487108519984-bb"><span class="identifier">frame</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span> <a class="link" href="frame.html#idm45487108524528-bb"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
 
-  <span class="comment">// <a class="link" href="frame.html#idm46840151545840-bb">public member functions</a></span>
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="frame.html#idm46840151545344-bb"><span class="identifier">name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="frame.html#idm46840151542320-bb"><span class="identifier">address</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="frame.html#idm46840151539296-bb"><span class="identifier">source_file</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="frame.html#idm46840151536144-bb"><span class="identifier">source_line</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  <span class="keyword">explicit</span> <a class="link" href="frame.html#idm46840151533120-bb"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
-  <span class="keyword">bool</span> <a class="link" href="frame.html#idm46840151528976-bb"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="comment">// <a class="link" href="frame.html#idm45487108552656-bb">public member functions</a></span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="frame.html#idm45487108552160-bb"><span class="identifier">name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="frame.html#idm45487108549136-bb"><span class="identifier">address</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="frame.html#idm45487108546112-bb"><span class="identifier">source_file</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="frame.html#idm45487108542960-bb"><span class="identifier">source_line</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="frame.html#idm45487108539936-bb"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="frame.html#idm45487108535792-bb"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
 <span class="special">}</span><span class="special">;</span></pre></div>
 <div class="refsect1">
-<a name="idm46262301089280"></a><h2>Description</h2>
+<a name="idm45841352424960"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="idm46262301088864"></a><h3>
+<a name="idm45841352424544"></a><h3>
 <a name="boost.stacktrace.frameconstruct-copy-destruct"></a><code class="computeroutput">frame</code> 
         public
        construct/copy/destruct</h3>
 <div class="orderedlist"><ol class="orderedlist" type="1">
 <li class="listitem">
-<pre class="literallayout"><a name="idm46840151524944-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Constructs frame that references NULL address. Calls to source_file() and source_line() wil lreturn empty string. Calls to source_line() will return 0. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
+<pre class="literallayout"><a name="idm45487108531760-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Constructs frame that references NULL address. Calls to source_file() and source_line() wil lreturn empty string. Calls to source_line() will return 0. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. 
 </p>
 <div class="variablelist"><table border="0">
@@ -68,7 +68,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><a name="idm46840151521744-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Copy constructs frame. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
+<pre class="literallayout"><a name="idm45487108528560-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Copy constructs frame. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. 
 </p>
 <div class="variablelist"><table border="0">
@@ -80,7 +80,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm46840151513168-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Constructs frame that can extract information from addr at runtime. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm45487108519984-bb"></a><span class="identifier">frame</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Constructs frame that can extract information from addr at runtime. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. 
 </p>
 <div class="variablelist"><table border="0">
@@ -92,7 +92,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span> <a name="idm46840151517712-bb"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Copy assigns frame. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
+<pre class="literallayout"><a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span> <a name="idm45487108524528-bb"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="frame.html" title="Class frame">frame</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Copy assigns frame. <p><span class="bold"><strong>Complexity:</strong></span> O(1).</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. 
 </p>
 <div class="variablelist"><table border="0">
@@ -106,11 +106,11 @@
 </ol></div>
 </div>
 <div class="refsect2">
-<a name="idm46262301046064"></a><h3>
-<a name="idm46840151545840-bb"></a><code class="computeroutput">frame</code> public member functions</h3>
+<a name="idm45841352381680"></a><h3>
+<a name="idm45487108552656-bb"></a><code class="computeroutput">frame</code> public member functions</h3>
 <div class="orderedlist"><ol class="orderedlist" type="1">
 <li class="listitem">
-<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="idm46840151545344-bb"></a><span class="identifier">name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="idm45487108552160-bb"></a><span class="identifier">name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
 <p>
 <span class="bold"><strong>Async-Handler-Safety</strong></span>: Unsafe. 
 </p>
@@ -129,7 +129,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a name="idm46840151542320-bb"></a><span class="identifier">address</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a name="idm45487108549136-bb"></a><span class="identifier">address</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
 <p>
 <span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. 
 </p>
@@ -148,7 +148,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="idm46840151539296-bb"></a><span class="identifier">source_file</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="idm45487108546112-bb"></a><span class="identifier">source_file</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
 <p>
 
 <span class="bold"><strong>Async-Handler-Safety</strong></span>: Unsafe. </p>
@@ -167,7 +167,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="idm46840151536144-bb"></a><span class="identifier">source_line</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="idm45487108542960-bb"></a><span class="identifier">source_line</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
 <p>
 
 <span class="bold"><strong>Async-Handler-Safety</strong></span>: Unsafe. </p>
@@ -186,7 +186,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm46840151533120-bb"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Checks that frame is not references NULL address. <p>
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="idm45487108539936-bb"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Checks that frame is not references NULL address. <p>
 <span class="bold"><strong>Complexity:</strong></span> O(1)</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. </p>
 <div class="variablelist"><table border="0">
@@ -198,7 +198,7 @@
 </table></div>
 </li>
 <li class="listitem">
-<pre class="literallayout"><span class="keyword">bool</span> <a name="idm46840151528976-bb"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Checks that frame references NULL address. <p>
+<pre class="literallayout"><span class="keyword">bool</span> <a name="idm45487108535792-bb"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Checks that frame references NULL address. <p>
 <span class="bold"><strong>Complexity:</strong></span> O(1)</p>
 <p><span class="bold"><strong>Async-Handler-Safety</strong></span>: Safe. </p>
 <div class="variablelist"><table border="0">
