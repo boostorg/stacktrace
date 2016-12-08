@@ -4,7 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace_fwd.hpp>
+#include <boost/stacktrace/stacktrace_fwd.hpp>
 
 #include <boost/stacktrace.hpp>
 #include <stdexcept>
