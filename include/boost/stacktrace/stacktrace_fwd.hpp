@@ -7,9 +7,11 @@
 #ifndef BOOST_STACKTRACE_STACKTRACE_FWD_HPP
 #define BOOST_STACKTRACE_STACKTRACE_FWD_HPP
 
+#include <cstddef>
+
 /// @file stacktrace_fwd.hpp This header contains only forward declarations of
 /// boost::stacktrace::frame, boost::stacktrace::const_iterator, boost::stacktrace::basic_stacktrace
-/// and does not include any other headers.
+/// and does not include any other Boost headers.
 
 /// @cond
 namespace boost { namespace stacktrace {
