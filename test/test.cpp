@@ -75,6 +75,8 @@ void test_nested() {
 template <class Bt>
 void test_comparisons_base(Bt nst, Bt st) {
     Bt cst(st);
+    st = st;
+    cst = cst;
     BOOST_TEST(nst);
     BOOST_TEST(st);
 
@@ -191,6 +193,7 @@ void test_frame() {
         frame fv = nst[2];
         BOOST_TEST(fv);
         if (i >= 2 && i < min_size - 3) { // Begin and end of the trace may match, skipping them
+            BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i] < fv || st[i] > fv);
