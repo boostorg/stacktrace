@@ -24,6 +24,8 @@ using boost::stacktrace::frame;
 BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i);
 BOOST_ST_API std::pair<stacktrace, stacktrace> foo1(int i);
 BOOST_ST_API stacktrace return_from_nested_namespaces();
+BOOST_ST_API boost::stacktrace::basic_stacktrace<4> bar1();
+BOOST_ST_API boost::stacktrace::basic_stacktrace<4> bar2();
 
 void test_deeply_nested_namespaces() {
     std::stringstream ss;
@@ -228,18 +230,6 @@ void test_empty_basic_stacktrace() {
     BOOST_TEST(hash_value(st) == hash_value(st_t()));
     BOOST_TEST(st == st_t());
 }
-/*
-BOOST_NOINLINE boost::stacktrace::basic_stacktrace<2> bar1() {
-    boost::stacktrace::basic_stacktrace<2> result;
-    BOOST_TEST(result.size() == 2);
-    return result;
-}
-
-BOOST_NOINLINE boost::stacktrace::basic_stacktrace<2> bar2() {
-    boost::stacktrace::basic_stacktrace<2> result;
-    BOOST_TEST(result.size() == 2);
-    return result;
-}*/
 
 int main() {
     test_deeply_nested_namespaces();
@@ -249,8 +239,12 @@ int main() {
     test_frame();
     test_empty_basic_stacktrace();
 
-    //BOOST_TEST(&bar1 != &bar2);
-    //test_comparisons_base(bar1(), bar2());
+    BOOST_TEST(&bar1 != &bar2);
+    boost::stacktrace::basic_stacktrace<4> b1 = bar1();
+    BOOST_TEST(b1.size() == 4);
+    boost::stacktrace::basic_stacktrace<4> b2 = bar2();
+    BOOST_TEST(b2.size() == 4);
+    test_comparisons_base(bar1(), bar2());
 
     return boost::report_errors();
 }

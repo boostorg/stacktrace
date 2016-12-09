@@ -65,3 +65,14 @@ BOOST_ST_API BOOST_NOINLINE stacktrace return_from_nested_namespaces() {
 
     return get_backtrace_from_nested_namespaces();
 }
+
+BOOST_ST_API BOOST_NOINLINE boost::stacktrace::basic_stacktrace<4> bar1() {
+    boost::stacktrace::basic_stacktrace<4> result;
+    return result;
+}
+
+BOOST_ST_API BOOST_NOINLINE boost::stacktrace::basic_stacktrace<4> bar2() {
+    boost::stacktrace::basic_stacktrace<4> result;
+    return result;
+}
+
