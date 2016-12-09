@@ -21,8 +21,10 @@ Boost.Stacktrace library is a simple library that provides information about cal
 
 [section Getting Started]
 
-[import ../example/getting_started.cpp]
+[import ../example/assert_handler.cpp]
+[import ../example/terminate_handler.cpp]
 [import ../example/throwing_st.cpp]
+[import ../example/trace_addresses.cpp]
 
 [section How to print current call stack]
 

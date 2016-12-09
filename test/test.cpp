@@ -229,6 +229,8 @@ void test_empty_basic_stacktrace() {
 
     BOOST_TEST(hash_value(st) == hash_value(st_t()));
     BOOST_TEST(st == st_t());
+    BOOST_TEST(!(st < st_t()));
+    BOOST_TEST(!(st > st_t()));
 }
 
 int main() {

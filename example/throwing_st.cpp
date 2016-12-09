@@ -54,6 +54,7 @@ BOOST_NOINLINE void oops(int i) {
         throw with_trace<std::logic_error>("'i' must not be greater than zero in oops()");
     //]
     foo(i);
+    std::exit(1);
 }
 
 #include <boost/array.hpp>
@@ -66,6 +67,7 @@ BOOST_NOINLINE void bar(int i) {
             oops(i);
         }
     }
+    std::exit(2);
 }
 
 BOOST_NOINLINE void foo(int i) {
@@ -84,7 +86,7 @@ int main() {
             std::cerr << "Backtrace:\n" << e.trace << '\n';
         }
     } catch (const std::exception& e) {
-        std::cerr << e.what() << '\n';
+        std::cerr << e.what() << '\n'; /*<-*/ std::exit(3); /*->*/
     }
     //]
 }

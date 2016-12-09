@@ -49,19 +49,16 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <library>.//test_impl_lib_unwind $(LINKSHARED_UNWD)   : unwind_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_windbg $(LINKSHARED_WIND) : windbg_lib ]
     [ run test_noop.cpp : : : <library>.//test_impl_lib_noop $(LINKSHARED_NOOP) : noop_lib ]
-
-    # Making sure that the examples work
-    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_BT)   : backtrace_getting_started ]
-    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_UNWD)   : unwind_getting_started ]
-    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_WIND) : windbg_getting_started ]
-    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(LINKSHARED_NOOP) : noop_getting_started ]
-    [ run ../example/getting_started.cpp : : : <define>BOOST_ENABLE_ASSERT_DEBUG_HANDLER $(AUTO_DEPS) : autodetect_getting_started ]
-
-    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_BT)   : backtrace_throwing_st ]
-    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_UNWD) : unwind_throwing_st ]
-    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_WIND) : windbg_throwing_st ]
-    [ run ../example/throwing_st.cpp : : : $(LINKSHARED_NOOP) : noop_throwing_st ]
-    [ run ../example/throwing_st.cpp : : : $(AUTO_DEPS) : autodetect_throwing_st ]
   ;
 
+# Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite. 
+for local p in [ glob ../example/*.cpp ]
+{
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT) : backtrace_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD) : unwind_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND) : windbg_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP) : noop_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(AUTO_DEPS) : autodetect_$(p[1]:B) ] ;
+
+}
 
