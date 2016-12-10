@@ -243,9 +243,15 @@
 <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
             Write a basic class that holds the stacktrace:
           </li></ul></div>
-<p>
-        [getting_stated_class_traced]
-      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">stacktrace</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="keyword">struct</span> <span class="identifier">traced</span> <span class="special">{</span>
+    <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">stacktrace</span> <span class="identifier">trace</span><span class="special">;</span>
+
+    <span class="keyword">virtual</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">what</span><span class="special">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="special">~</span><span class="identifier">traced</span><span class="special">(){}</span>
+<span class="special">};</span>
+</pre>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
             Write a helper class for appending class <code class="computeroutput"><span class="identifier">traced</span></code>
             to any exception:
