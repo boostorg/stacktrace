@@ -188,12 +188,12 @@ backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
     frames_count_ = state.current - data_;
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
     frames_count_ = ::backtrace(data_, size);
-    if (data_[frames_count_ - 1] == 0) {
-        -- frames_count_;
-    }
 #else
 #   error No stacktrace backend defined. Define BOOST_STACKTRACE_USE_UNWIND or BOOST_STACKTRACE_USE_BACKTRACE
 #endif
+    if (data_[frames_count_ - 1] == 0) {
+        -- frames_count_;
+    }
 
     hash_code_ = boost::hash_range(data_, data_ + frames_count_);
 }

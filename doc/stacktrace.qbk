@@ -25,6 +25,8 @@ Boost.Stacktrace library is a simple library that provides information about cal
 [import ../example/terminate_handler.cpp]
 [import ../example/throwing_st.cpp]
 [import ../example/trace_addresses.cpp]
+[import ../example/debug_function.cpp]
+[import ../example/user_config.hpp]
 
 [section How to print current call stack]
 
@@ -55,7 +57,7 @@ Code from above will output something like this:
 
 [endsect]
 
-[section Handle Terminates and Segmentation Faults]
+[section Handle terminates, aborts and Segmentation Faults]
 
 Segmentation Faults and `std::terminate` calls sometimes happen in programs. Programmers usually wish to get as much information as possible on such incidents, so having a stacktrace will significantly improve debugging and fixing.
 
@@ -71,50 +73,37 @@ Now we'll get the following output on `std::terminate` call:
 
 ```
 Terminate called:
- 0# my_terminate_handler()
- 1# std::rethrow_exception(std::__exception_ptr::exception_ptr)
- 2# std::terminate()
- 3# bar(int)
- 4# bar(int)
- 5# foo(int)
- 6# bar(int)
- 7# foo(int)
- 8# bar(int)
- 9# foo(int)
-10# bar(int)
-11# foo(int)
-12# bar(int)
-13# foo(int)
-14# bar(int)
-15# foo(int)
-16# main
-17# __libc_start_main
-18# _start
-19# ??
+ 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
+ 1# my_terminate_handler() at /data/boost/libs/stacktrace/example/terminate_handler.cpp:37
+ 2# 0x7f624107a6b6
+ 3# 0x7f624107a701
+ 4# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 5# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
+ 6# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 7# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
+ 8# main at /data/boost/libs/stacktrace/example/terminate_handler.cpp:64
+ 9# __libc_start_main
+10# _start
 ```
-And the following output on Segmentation Fault:
+And the following output on Abort:
 
 ```
-Signal 11, backtrace:
- 0# my_signal_handler(int)
- 1# killpg
- 2# ??
- 3# bar(int)
- 4# foo(int)
- 5# bar(int)
- 6# foo(int)
- 7# bar(int)
- 8# foo(int)
- 9# bar(int)
-10# foo(int)
-11# bar(int)
-12# foo(int)
-13# bar(int)
-14# foo(int)
-15# main
-16# __libc_start_main
-17# _start
-18# ??
+Signal 6, backtrace:
+ 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
+ 1# my_signal_handler(int)
+ 2# 0x7f6240a3a4b0
+ 3# gsignal
+ 4# abort
+ 5# my_terminate_handler()
+ 6# 0x7f624107a6b6
+ 7# 0x7f624107a701
+ 8# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 9# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
+10# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
+11# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
+12# main at /data/boost/libs/stacktrace/example/terminate_handler.cpp:64
+13# __libc_start_main
+14# _start
 ```
 
 The output stacktrace may be corrupted by previous actions. But now at least some basic information is available to work with.
@@ -137,27 +126,18 @@ That's not enough to locate the problem without debugger. There may be thousand 
 We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole project. Now all the `BOOST_ASSERT` and `BOOST_ASSERT_MSG` will call our functions `assertion_failed` and `assertion_failed_msg` in case of failure. In `assertion_failed_msg` we output information that was provided by the assertion macro and [classref boost::stacktrace::stacktrace]:
 
 ```
-Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul]': out of range.
+Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul; boost::array<T, N>::reference = int&; boost::array<T, N>::size_type = long unsigned int]': out of range.
 Backtrace:
- 0# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long)
- 1# boost::array<int, 5ul>::operator[](unsigned long)
- 2# oops(unsigned long)
- 3# bar(int)
- 4# foo(int)
- 5# bar(int)
- 6# foo(int)
- 7# bar(int)
- 8# foo(int)
- 9# bar(int)
-10# foo(int)
-11# bar(int)
-12# foo(int)
-13# bar(int)
-14# foo(int)
-15# main
-16# __libc_start_main
-17# _start
-18# ??
+ 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
+ 1# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long) at /data/boost/libs/stacktrace/example/assert_handler.cpp:38
+ 2# boost::array<int, 5ul>::operator[](unsigned long)
+ 3# bar(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:16
+ 4# foo(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:24
+ 5# bar(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:20
+ 6# foo(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:24
+ 7# main at /data/boost/libs/stacktrace/example/assert_handler.cpp:53
+ 8# __libc_start_main
+ 9# _start
 ```
 
 Now we do know the steps that led to the assertion and can find the error without debugger.
@@ -165,15 +145,15 @@ Now we do know the steps that led to the assertion and can find the error withou
 [endsect]
 
 
-[section Exceptions with Stacktrace]
+[section Exceptions with stacktrace]
 
-You can provide more information along with exception by embedding stacktraces into the exception. For that we will need:
+You can provide more information along with exception by embedding stacktraces into the exception. For that you will need to:
 
-* Basic class that holds the stacktrace:
+* Write a basic class that holds the stacktrace:
 
-[getting_started_class_traced]
+[getting_stated_class_traced]
 
-* Helper class for appending class `traced` to any exception:
+* Write a helper class for appending class `traced` to any exception:
 
 [getting_started_class_with_trace]
 
@@ -188,31 +168,24 @@ You can provide more information along with exception by embedding stacktraces i
 Code from above will output:
 
 ```
-'i' must be less than 4 in oops()
+'i' must not be greater than zero in oops()
 Backtrace:
- 0# with_trace<std::out_of_range>::with_trace<char const (&) [34]>(char const (&) [34])
- 1# oops(unsigned long)
- 2# bar(int)
- 3# foo(int)
- 4# bar(int)
- 5# foo(int)
- 6# bar(int)
- 7# foo(int)
- 8# bar(int)
- 9# foo(int)
-10# bar(int)
-11# foo(int)
-12# bar(int)
-13# foo(int)
-14# main
-15# __libc_start_main
-16# _start
-17# ??
+ 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
+ 1# traced::traced() at /data/boost/libs/stacktrace/example/throwing_st.cpp:20
+ 2# with_trace<std::logic_error>::with_trace<char const (&) [44]>(char const (&) [44]) at /data/boost/libs/stacktrace/example/throwing_st.cpp:33
+ 3# oops(int)
+ 4# bar(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:70
+ 5# foo(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:75
+ 6# bar(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:65
+ 7# foo(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:75
+ 8# main at /data/boost/libs/stacktrace/example/throwing_st.cpp:93
+ 9# __libc_start_main
+10# _start
 ```
 
 [endsect]
 
-[section Enabling and Disabling stacktraces]
+[section Enabling and disabling stacktraces]
 
 At some point arises a requirement to easily enable/disable stacktraces for a whole project. That could be easily achived.
 
@@ -235,7 +208,44 @@ so that you could save stacktrace information in your own format. Consider the e
 Code from above will output:
 
 ```
-0x401a25,0x401a25,0x401a25,0x401a25,0x401a25,0x401a25,0x4019cb,0x401a7f,0x7f9da8a46e50,0x4013e0,0,
+0x7fbcfd17f6b5,0x400d4a,0x400d61,0x400d61,0x400d61,0x400d61,0x400d77,0x400cbf,0x400dc0,0x7fbcfc82d830,0x400a79,
+```
+
+[endsect]
+
+[section Getting function information from pointer]
+
+[classref boost::stacktrace::frame] provides information about functions. You may construct that class from function pointer and get the function name at runtime:
+
+[getting_started_debug_function]
+
+Code from above will output:
+
+```
+my_signal_handler(int) at /data/boost/libs/stacktrace/example/debug_function.cpp:21
+```
+
+[endsect]
+
+[section Global control over stacktrace output format]
+
+You may control maximal stacktrace length using [macroref BOOST_STACKTRACE_DEFAULT_MAX_DEPTH] and even override the behavior of default stacktrace output operator by defining the macro from Boost.Config [macroref BOOST_USER_CONFIG] to point to a file like following:
+
+[getting_started_user_config]
+
+Implementation of `do_stream_st` may be the following:
+
+[getting_started_user_config_impl]
+
+Code from above will output:
+
+```
+Terminate called:
+ 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
+ 1# bar(int)
+ 2# foo(int)
+ 3# bar(int)
+ 4# foo(int)
 ```
 
 [endsect]
@@ -270,6 +280,15 @@ If one of the link macros is defined, you have to manually link your binary with
 * boost_stacktrace_windbg
 * boost_stacktrace_backtrace
 * boost_stacktrace_noop
+
+[endsect]
+
+[section Acknowledgements]
+
+In order of helping and advising:
+
+* Great thanks to Nat Goodspeed for requesting [classref boost::stacktrace::frame] like class.
+* Great thanks to Niall Douglas for making an initial review, helping with some platforms and giving great hints on library design.
 
 [endsect]
 

@@ -59,7 +59,7 @@ BOOST_NOINLINE void oops(int i) {
 
 #include <boost/array.hpp>
 BOOST_NOINLINE void bar(int i) {
-    boost::array<int, 5> a = {{0, 1, 2, 3, 4}};
+    boost::array<int, 5> a = {{0, 0, 0, 0, 0}};
     if (i < 5) {
         if (i >= 0) {
             foo(a[i]);
@@ -84,11 +84,13 @@ int main() {
         std::cerr << e.what() << '\n';
         if (e.trace) {
             std::cerr << "Backtrace:\n" << e.trace << '\n';
-        }
+        } /*<-*/ std::exit(0); /*->*/
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n'; /*<-*/ std::exit(3); /*->*/
     }
     //]
+    
+    return 5;
 }
 
 #endif
