@@ -151,7 +151,7 @@ You can provide more information along with exception by embedding stacktraces i
 
 * Write a basic class that holds the stacktrace:
 
-[getting_stated_class_traced]
+[getting_started_class_traced]
 
 * Write a helper class for appending class `traced` to any exception:
 
