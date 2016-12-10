@@ -14,9 +14,6 @@
 
 #include <string>
 
-#ifndef BOOST_STACKTRACE_DEFAULT_MAX_DEPTH
-#   define BOOST_STACKTRACE_DEFAULT_MAX_DEPTH 100
-#endif
 
 // Link or header only
 #if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)

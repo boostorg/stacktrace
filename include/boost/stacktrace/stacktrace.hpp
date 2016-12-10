@@ -17,20 +17,11 @@
 #include <iosfwd>
 #include <string>
 
+#include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/detail/backend.hpp>
 #include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/const_iterator.hpp>
 
-
-#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
-
-/// You may define this macro to some positive integer to limit the max stack frames count for the boost::stacktrace::stacktrace class.
-/// This macro does not affect the boost::stacktrace::basic_stacktrace.
-///
-/// @b Default: 100
-#define BOOST_STACKTRACE_DEFAULT_MAX_DEPTH 100
-
-#endif
 
 namespace boost { namespace stacktrace {
 
