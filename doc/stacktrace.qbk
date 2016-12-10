@@ -46,11 +46,11 @@ In that example:
 Code from above will output something like this:
 
 ```
- 0# bar(int)
- 1# bar(int)
- 2# bar(int)
- 3# bar(int)
- 4# main
+ 0# bar(int) at /path/to/source/file.cpp:70
+ 1# bar(int) at /path/to/source/file.cpp:70
+ 2# bar(int) at /path/to/source/file.cpp:70
+ 3# bar(int) at /path/to/source/file.cpp:70
+ 4# main at /path/to/main.cpp:93
  5# __libc_start_main
  6# _start
 ```
@@ -74,14 +74,14 @@ Now we'll get the following output on `std::terminate` call:
 ```
 Terminate called:
  0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# my_terminate_handler() at /data/boost/libs/stacktrace/example/terminate_handler.cpp:37
+ 1# my_terminate_handler() at boost/libs/stacktrace/example/terminate_handler.cpp:37
  2# 0x7f624107a6b6
  3# 0x7f624107a701
- 4# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
- 5# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
- 6# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
- 7# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
- 8# main at /data/boost/libs/stacktrace/example/terminate_handler.cpp:64
+ 4# bar(int) at boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 5# foo(int) at boost/libs/stacktrace/example/terminate_handler.cpp:22
+ 6# bar(int) at boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 7# foo(int) at boost/libs/stacktrace/example/terminate_handler.cpp:22
+ 8# main at boost/libs/stacktrace/example/terminate_handler.cpp:64
  9# __libc_start_main
 10# _start
 ```
@@ -97,11 +97,11 @@ Signal 6, backtrace:
  5# my_terminate_handler()
  6# 0x7f624107a6b6
  7# 0x7f624107a701
- 8# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
- 9# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
-10# bar(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:18
-11# foo(int) at /data/boost/libs/stacktrace/example/terminate_handler.cpp:22
-12# main at /data/boost/libs/stacktrace/example/terminate_handler.cpp:64
+ 8# bar(int) at boost/libs/stacktrace/example/terminate_handler.cpp:18
+ 9# foo(int) at boost/libs/stacktrace/example/terminate_handler.cpp:22
+10# bar(int) at boost/libs/stacktrace/example/terminate_handler.cpp:18
+11# foo(int) at boost/libs/stacktrace/example/terminate_handler.cpp:22
+12# main at boost/libs/stacktrace/example/terminate_handler.cpp:64
 13# __libc_start_main
 14# _start
 ```
@@ -129,13 +129,13 @@ We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole projec
 Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul; boost::array<T, N>::reference = int&; boost::array<T, N>::size_type = long unsigned int]': out of range.
 Backtrace:
  0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long) at /data/boost/libs/stacktrace/example/assert_handler.cpp:38
+ 1# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long) at boost/libs/stacktrace/example/assert_handler.cpp:38
  2# boost::array<int, 5ul>::operator[](unsigned long)
- 3# bar(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:16
- 4# foo(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:24
- 5# bar(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:20
- 6# foo(int) at /data/boost/libs/stacktrace/example/assert_handler.cpp:24
- 7# main at /data/boost/libs/stacktrace/example/assert_handler.cpp:53
+ 3# bar(int) at boost/libs/stacktrace/example/assert_handler.cpp:16
+ 4# foo(int) at boost/libs/stacktrace/example/assert_handler.cpp:24
+ 5# bar(int) at boost/libs/stacktrace/example/assert_handler.cpp:20
+ 6# foo(int) at boost/libs/stacktrace/example/assert_handler.cpp:24
+ 7# main at boost/libs/stacktrace/example/assert_handler.cpp:53
  8# __libc_start_main
  9# _start
 ```
@@ -171,14 +171,14 @@ Code from above will output:
 'i' must not be greater than zero in oops()
 Backtrace:
  0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# traced::traced() at /data/boost/libs/stacktrace/example/throwing_st.cpp:20
- 2# with_trace<std::logic_error>::with_trace<char const (&) [44]>(char const (&) [44]) at /data/boost/libs/stacktrace/example/throwing_st.cpp:33
+ 1# traced::traced() at boost/libs/stacktrace/example/throwing_st.cpp:20
+ 2# with_trace<std::logic_error>::with_trace<char const (&) [44]>(char const (&) [44]) at boost/libs/stacktrace/example/throwing_st.cpp:33
  3# oops(int)
- 4# bar(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:70
- 5# foo(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:75
- 6# bar(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:65
- 7# foo(int) at /data/boost/libs/stacktrace/example/throwing_st.cpp:75
- 8# main at /data/boost/libs/stacktrace/example/throwing_st.cpp:93
+ 4# bar(int) at boost/libs/stacktrace/example/throwing_st.cpp:70
+ 5# foo(int) at boost/libs/stacktrace/example/throwing_st.cpp:75
+ 6# bar(int) at boost/libs/stacktrace/example/throwing_st.cpp:65
+ 7# foo(int) at boost/libs/stacktrace/example/throwing_st.cpp:75
+ 8# main at boost/libs/stacktrace/example/throwing_st.cpp:93
  9# __libc_start_main
 10# _start
 ```
@@ -222,7 +222,7 @@ Code from above will output:
 Code from above will output:
 
 ```
-my_signal_handler(int) at /data/boost/libs/stacktrace/example/debug_function.cpp:21
+my_signal_handler(int) at boost/libs/stacktrace/example/debug_function.cpp:21
 ```
 
 [endsect]
