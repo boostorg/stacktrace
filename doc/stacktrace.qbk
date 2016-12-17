@@ -287,6 +287,7 @@ If one of the link macros is defined, you have to manually link your binary with
 
 In order of helping and advising:
 
+* Great thanks to Bjorn Reese for highlighting the async-signal-safety issues.
 * Great thanks to Nat Goodspeed for requesting [classref boost::stacktrace::frame] like class.
 * Great thanks to Niall Douglas for making an initial review, helping with some platforms and giving great hints on library design.
 
