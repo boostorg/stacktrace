@@ -11,7 +11,7 @@
 ]
 
 [section Motivation]
-How to display the call sequence in C++? From what function was called the current function? What call sequence led to an exception?
+How can one display the call sequence in C++? What function called the current function? What call sequence led to an exception?
 
 Boost.Stacktrace library is a simple library that provides information about call sequence in a human-readable form.
 
