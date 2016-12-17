@@ -25,12 +25,23 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
+class com_global_initer: boost::noncopyable {
+public:
+    com_global_initer() BOOST_NOEXCEPT {
+        // We do not care about the result of the function call: any result is OK for us.
+        CoInitializeEx(0, COINIT_MULTITHREADED);
+    }
+    ~com_global_initer() BOOST_NOEXCEPT {
+        CoUninitialize();
+    }
+};
+
 template <class T>
 class com_holder: boost::noncopyable {
     T* holder_;
 
 public:
-    com_holder() BOOST_NOEXCEPT
+    com_holder(const com_global_initer&) BOOST_NOEXCEPT
         : holder_(0)
     {}
 
@@ -53,13 +64,11 @@ public:
     }
 };
 
-inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
-    CoInitializeEx(0, COINIT_MULTITHREADED);
-
-    com_holder<IDebugClient> iclient;
+inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
+    com_holder<IDebugClient> iclient(com);
     DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr());
 
-    com_holder<IDebugControl> icontrol;
+    com_holder<IDebugControl> icontrol(com);
     iclient->QueryInterface(__uuidof(IDebugControl), icontrol.to_void_ptr_ptr());
 
     const bool res1 = (S_OK == iclient->AttachProcess(
@@ -76,7 +85,7 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
         return false;
     }
 
-    const bool res = (S_OK == iclient->QueryInterface(__uuidof(IDebugSymbols), idebug_.to_void_ptr_ptr()));
+    const bool res = (S_OK == iclient->QueryInterface(__uuidof(IDebugSymbols), idebug.to_void_ptr_ptr()));
     if (!res) {
         return false;
     }
@@ -105,8 +114,9 @@ backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
 
 std::string backend::get_name(const void* addr) {
     std::string result;
-    com_holder<IDebugSymbols> idebug_;
-    if (!try_init_com(idebug_)) {
+    com_global_initer com_guard;
+    com_holder<IDebugSymbols> idebug(com_guard);
+    if (!try_init_com(idebug, com_guard)) {
         return result;
     }
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
@@ -114,7 +124,7 @@ std::string backend::get_name(const void* addr) {
     char name[256];
     name[0] = '\0';
     ULONG size = 0;
-    bool res = (S_OK == idebug_->GetNameByOffset(
+    bool res = (S_OK == idebug->GetNameByOffset(
         offset,
         name,
         sizeof(name),
@@ -124,7 +134,7 @@ std::string backend::get_name(const void* addr) {
 
     if (!res && size != 0) {
         result.resize(size);
-        res = (S_OK == idebug_->GetNameByOffset(
+        res = (S_OK == idebug->GetNameByOffset(
             offset,
             &result[0],
             static_cast<ULONG>(result.size()),
@@ -144,8 +154,9 @@ std::string backend::get_name(const void* addr) {
 
 std::string backend::get_source_file(const void* addr) {
     std::string result;
-    com_holder<IDebugSymbols> idebug_;
-    if (!try_init_com(idebug_)) {
+    com_global_initer com_guard;
+    com_holder<IDebugSymbols> idebug(com_guard);
+    if (!try_init_com(idebug, com_guard)) {
         return result;
     }
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
@@ -153,7 +164,7 @@ std::string backend::get_source_file(const void* addr) {
     char name[256];
     name[0] = 0;
     ULONG size = 0;
-    bool res = (S_OK == idebug_->GetLineByOffset(
+    bool res = (S_OK == idebug->GetLineByOffset(
         offset,
         0,
         name,
@@ -164,7 +175,7 @@ std::string backend::get_source_file(const void* addr) {
 
     if (!res && size != 0) {
         result.resize(size);
-        res = (S_OK == idebug_->GetLineByOffset(
+        res = (S_OK == idebug->GetLineByOffset(
             offset,
             0,
             &result[0],
@@ -187,12 +198,13 @@ std::string backend::get_source_file(const void* addr) {
 std::size_t backend::get_source_line(const void* addr) {
     ULONG line_num = 0;
 
-    com_holder<IDebugSymbols> idebug_;
-    if (!try_init_com(idebug_)) {
+    com_global_initer com_guard;
+    com_holder<IDebugSymbols> idebug(com_guard);
+    if (!try_init_com(idebug, com_guard)) {
         return 0;
     }
 
-    const bool is_ok = (S_OK == idebug_->GetLineByOffset(
+    const bool is_ok = (S_OK == idebug->GetLineByOffset(
         reinterpret_cast<ULONG64>(addr),
         &line_num,
         0,
