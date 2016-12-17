@@ -46,22 +46,14 @@ public:
         return !!holder_;
     }
 
-    void reset() const BOOST_NOEXCEPT {
+    ~com_holder() BOOST_NOEXCEPT {
         if (holder_) {
             holder_->Release();
         }
     }
-
-    ~com_holder() BOOST_NOEXCEPT {
-        reset();
-    }
 };
 
 inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
-    if (idebug_.is_inited()) {
-        return true;
-    }
-
     CoInitializeEx(0, COINIT_MULTITHREADED);
 
     com_holder<IDebugClient> iclient;
@@ -86,7 +78,6 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug_) BOOST_NOEXCEPT {
 
     const bool res = (S_OK == iclient->QueryInterface(__uuidof(IDebugSymbols), idebug_.to_void_ptr_ptr()));
     if (!res) {
-        idebug_.reset();
         return false;
     }
 
