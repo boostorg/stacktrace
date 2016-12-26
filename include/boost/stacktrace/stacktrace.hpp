@@ -117,22 +117,12 @@ public:
         }
     }
 
-#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
-    basic_stacktrace(const basic_stacktrace& st) = default;
-
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
-    basic_stacktrace(basic_stacktrace&& st) = default;
-
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe if Allocator::deallocate is async signal safe.
-    ~basic_stacktrace() BOOST_NOEXCEPT = default;
-#endif
+    basic_stacktrace(const basic_stacktrace& st)
+        : impl_(st.impl_)
+    {}
 
     /// @b Complexity: O(st.size())
     ///
@@ -142,12 +132,25 @@ public:
         return *this;
     }
 
-/* TODO:
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator::deallocate is async signal safe.
+    ~basic_stacktrace() BOOST_NOEXCEPT = default;
+#endif
+
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
+    basic_stacktrace(basic_stacktrace&& st) = default;
+
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
     basic_stacktrace& operator=(basic_stacktrace&& st) = default;
-*/
+#endif
+
     /// @returns Number of function names stored inside the class.
     ///
     /// @b Complexity: O(1)

@@ -58,6 +58,10 @@
 #   define BOOST_STACKTRACE_FUNCTION inline
 #endif
 
+namespace boost { namespace stacktrace {
+    class frame;
+}}
+
 namespace boost { namespace stacktrace { namespace detail {
 
 // Class that implements the actual backtracing
