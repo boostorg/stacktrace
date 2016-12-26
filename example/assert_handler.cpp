@@ -6,6 +6,7 @@
 
 #define BOOST_ENABLE_ASSERT_HANDLER
 
+#include <cstdlib> // std::exit
 #include <boost/array.hpp>
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);

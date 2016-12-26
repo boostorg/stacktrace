@@ -21,8 +21,8 @@ BOOST_NOINLINE void foo(int i) {
     bar(--i);
 }
 
-inline void ignore_exit(int){ std::exit(0); }
-#define _Exit ignore_exit
+// Ignoring _Exit for testing purposes
+#define _Exit(x) exit(x+1)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +30,7 @@ inline void ignore_exit(int){ std::exit(0); }
 
 #include <exception>    // std::set_terminate, std::abort
 #include <signal.h>     // ::signal
+#include <cstdlib>      // std::_Exit
 #include <boost/stacktrace.hpp>
 #include <iostream>     // std::cerr
 
@@ -44,7 +45,7 @@ void my_signal_handler(int signum) {
     if (bt) {
         std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; // ``[footnote Strictly speaking this code is not async-signal-safe, because it uses std::cerr. [link boost_stacktrace.build_macros_and_backends Section "Build, Macros and Backends"] describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and `operator<<` will be never called. ]``
     }
-    _Exit(-1);
+    std::_Exit(-1);
 }
 //]
 

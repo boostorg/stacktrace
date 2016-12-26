@@ -22,6 +22,7 @@
 #endif
 
 #include <dlfcn.h>
+#include <signal.h>
 #include <execinfo.h>
 #include <cstdio>
 
