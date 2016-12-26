@@ -16,74 +16,129 @@
 
 #include <iosfwd>
 #include <string>
+#include <boost/container/vector.hpp>
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/detail/backend.hpp>
 #include <boost/stacktrace/frame.hpp>
-#include <boost/stacktrace/const_iterator.hpp>
 
+#include <boost/functional/hash.hpp>
 
 namespace boost { namespace stacktrace {
 
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
-/// @tparam Depth Max stack frames count that this class may hold. Equal to basic_stacktrace::max_depth.
-template <std::size_t Depth>
+/// @tparam Allocator Allocator to use during stack capture.
+template <class Allocator>
 class basic_stacktrace {
+    boost::container::vector<frame, Allocator> impl_;
+
     /// @cond
-    void* impl_[Depth ? Depth : 1];
-    boost::stacktrace::detail::backend back_;
+    static const std::size_t frames_to_skip = 0;
+
+    void fill(void** begin, std::size_t size) {
+        impl_.reserve(size);
+        for (std::size_t i = frames_to_skip; i < size; ++i) {
+            impl_.push_back(
+                frame(begin[i])
+            );
+        }
+    }
+
+    BOOST_NOINLINE void init(std::size_t max_depth) BOOST_NOEXCEPT {
+        const size_t buffer_size = 128;
+        if (!max_depth) {
+            return;
+        }
+
+        max_depth += frames_to_skip;
+
+        try {
+            {   // Fast path without additional allocations
+                void* buffer[buffer_size];
+                const std::size_t frames_count = boost::stacktrace::detail::backend(buffer, buffer_size).size();
+                if (buffer_size > frames_count || frames_count >= max_depth) {
+                    const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
+                    fill(buffer, size);
+                    return;
+                }
+            }
+
+            // Failed to fit in `buffer_size`. Allocating memory:
+            typedef typename Allocator::template rebind<void*>::other allocator_void_t;
+            boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
+            do {
+                const std::size_t frames_count = boost::stacktrace::detail::backend(buf.data(), buf.size()).size();
+                if (buf.size() > frames_count || frames_count >= max_depth) {
+                    const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
+                    fill(buf.data(), size);
+                    return;
+                }
+
+                buf.resize(buf.size() * 2);
+            } while (1);
+
+
+        } catch (...) {
+            // ignore exception
+        }
+    }
     /// @endcond
 
 public:
-    /// Max stack frames count that this class may hold. Equal to Depth template parameter.
-    BOOST_STATIC_CONSTEXPR std::size_t max_depth = Depth;
-
-    typedef frame                                   reference;
-
-    typedef boost::stacktrace::const_iterator       iterator;
-    typedef boost::stacktrace::const_iterator       const_iterator;
-    typedef std::reverse_iterator<iterator>         reverse_iterator;
-    typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
+    typedef typename boost::container::vector<frame, Allocator>::value_type             value_type;
+    typedef typename boost::container::vector<frame, Allocator>::allocator_type         allocator_type;
+    typedef typename boost::container::vector<frame, Allocator>::const_pointer          pointer;
+    typedef typename boost::container::vector<frame, Allocator>::const_pointer          const_pointer;
+    typedef typename boost::container::vector<frame, Allocator>::const_reference        reference;
+    typedef typename boost::container::vector<frame, Allocator>::const_reference        const_reference;
+    typedef typename boost::container::vector<frame, Allocator>::size_type              size_type;
+    typedef typename boost::container::vector<frame, Allocator>::difference_type        difference_type;
+    typedef typename boost::container::vector<frame, Allocator>::const_iterator         iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_iterator         const_iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
 
     /// @brief Stores the current function call sequence inside the class.
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
     ///
     /// @b Async-Handler-Safety: Depends on backend, see "Build, Macros and Backends" section.
-    BOOST_FORCEINLINE basic_stacktrace() BOOST_NOEXCEPT
-        : impl_()
-        , back_(impl_, Depth)
-    {}
-
-    /// @b Complexity: O(st.size())
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    basic_stacktrace(const basic_stacktrace& st) BOOST_NOEXCEPT
-        : impl_()
-        , back_(st.back_, impl_)
-    {}
-
-    /// @b Complexity: O(st.size())
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    basic_stacktrace& operator=(const basic_stacktrace& st) BOOST_NOEXCEPT {
-        back_ = st.back_;
-
-        return *this;
+    BOOST_FORCEINLINE explicit basic_stacktrace(const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
+        : impl_(a)
+    {
+        init(static_cast<std::size_t>(-1));
     }
+
+    BOOST_FORCEINLINE explicit basic_stacktrace(std::size_t max_depth, const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
+        : impl_(a)
+    {
+        init(max_depth);
+    }
+
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+    /// @b Complexity: O(st.size())
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    basic_stacktrace(const basic_stacktrace& st) = default;
+
+    /// @b Complexity: O(st.size())
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    basic_stacktrace& operator=(const basic_stacktrace& st) = default;
 
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    ~basic_stacktrace() BOOST_NOEXCEPT {}
+    ~basic_stacktrace() BOOST_NOEXCEPT = default;
+#endif
 
     /// @returns Number of function names stored inside the class.
     ///
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    std::size_t size() const BOOST_NOEXCEPT {
-        return back_.size();
+    size_type size() const BOOST_NOEXCEPT {
+        return impl_.size();
     }
 
     /// @param frame_no Zero based index of frame to return. 0
@@ -94,44 +149,43 @@ public:
     /// @b Complexity: Amortized O(1), O(1) for noop backend.
     ///
     /// @b Async-Handler-Safety: Safe.
-    frame operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
-        return *(cbegin() + frame_no);
+    const_reference operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
+        return impl_[frame_no];
     }
 
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    const_iterator begin() const BOOST_NOEXCEPT { return impl_.begin(); }
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    const_iterator cbegin() const BOOST_NOEXCEPT { return impl_.begin(); }
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    const_iterator end() const BOOST_NOEXCEPT { return impl_.end(); }
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    const_iterator cend() const BOOST_NOEXCEPT { return impl_.end(); }
 
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    const_iterator begin() const BOOST_NOEXCEPT { return const_iterator(&back_, 0); }
+    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return impl_.rbegin(); }
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    const_iterator cbegin() const BOOST_NOEXCEPT { return const_iterator(&back_, 0); }
+    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return impl_.rbegin(); }
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    const_iterator end() const BOOST_NOEXCEPT { return const_iterator(&back_, size()); }
+    const_reverse_iterator rend() const BOOST_NOEXCEPT { return impl_.rend(); }
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    const_iterator cend() const BOOST_NOEXCEPT { return const_iterator(&back_, size()); }
-
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    const_reverse_iterator rbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, 0) ); }
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    const_reverse_iterator crbegin() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, 0) ); }
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    const_reverse_iterator rend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, size()) ); }
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    const_reverse_iterator crend() const BOOST_NOEXCEPT { return const_reverse_iterator( const_iterator(&back_, size()) ); }
+    const_reverse_iterator crend() const BOOST_NOEXCEPT { return impl_.rend(); }
 
 
     /// @brief Allows to check that stack trace capturing was successful.
@@ -142,7 +196,6 @@ public:
     /// @b Async-Handler-Safety: Safe.
     BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
 
-
     /// @brief Allows to check that stack trace failed.
     /// @returns `true` if `this->size() == 0`
     ///
@@ -151,67 +204,67 @@ public:
     /// @b Async-Handler-Safety: Safe.
     bool empty() const BOOST_NOEXCEPT { return !size(); }
 
-    /// @brief Compares stacktraces for less, order is platform dependant.
-    ///
-    /// @b Complexity: Amortized O(1); worst case O(size())
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    bool operator< (const basic_stacktrace& rhs) const BOOST_NOEXCEPT {
-        return back_ < rhs.back_;
-    }
-
-    /// @brief Compares stacktraces for equality.
-    ///
-    /// @b Complexity: Amortized O(1); worst case O(size())
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    bool operator==(const basic_stacktrace& rhs) const BOOST_NOEXCEPT {
-        return back_ == rhs.back_;
-    }
-
-    /// @brief Returns hashed code of the stacktrace.
-    ///
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    std::size_t hash_code() const BOOST_NOEXCEPT { return back_.hash_code(); }
-
     /// @cond
     bool operator!() const BOOST_NOEXCEPT { return !size(); }
     /// @endcond
+
+    const boost::container::vector<frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
+        return impl_;
+    }
 };
 
 
+/// @brief Compares stacktraces for less, order is platform dependant.
+///
+/// @b Complexity: Amortized O(1); worst case O(size())
+///
+/// @b Async-Handler-Safety: Safe.
+template <class Allocator1, class Allocator2>
+bool operator< (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
+    return lhs.size() < rhs.size() || (lhs.size() == rhs.size() && lhs.as_vector() < rhs.as_vector());
+}
+
+/// @brief Compares stacktraces for equality.
+///
+/// @b Complexity: Amortized O(1); worst case O(size())
+///
+/// @b Async-Handler-Safety: Safe.
+template <class Allocator1, class Allocator2>
+bool operator== (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
+    return lhs.as_vector() == rhs.as_vector();
+}
+
+
 /// Comparison operators that provide platform dependant ordering and have amortized O(1) complexity; O(size()) worst case complexity; are Async-Handler-Safe.
-template <std::size_t Depth>
-bool operator> (const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+template <class Allocator1, class Allocator2>
+bool operator> (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
     return rhs < lhs;
 }
 
-template <std::size_t Depth>
-bool operator<=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+template <class Allocator1, class Allocator2>
+bool operator<=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
     return !(lhs > rhs);
 }
 
-template <std::size_t Depth>
-bool operator>=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+template <class Allocator1, class Allocator2>
+bool operator>=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
     return !(lhs < rhs);
 }
 
-template <std::size_t Depth>
-bool operator!=(const basic_stacktrace<Depth>& lhs, const basic_stacktrace<Depth>& rhs) BOOST_NOEXCEPT {
+template <class Allocator1, class Allocator2>
+bool operator!=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
     return !(lhs == rhs);
 }
 
 /// Hashing support, O(1) complexity; Async-Handler-Safe.
-template <std::size_t Depth>
-std::size_t hash_value(const basic_stacktrace<Depth>& st) BOOST_NOEXCEPT {
-    return st.hash_code();
+template <class Allocator>
+std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
+    return boost::hash_range(st.as_vector().data(), st.as_vector().data()+ st.as_vector().size());
 }
 
 /// Outputs stacktrace in a human readable format to output stream; unsafe to use in async handlers.
-template <class CharT, class TraitsT, std::size_t Depth>
-std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Depth>& bt) {
+template <class CharT, class TraitsT, class Allocator>
+std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt) {
     const std::streamsize w = os.width();
     const std::size_t frames = bt.size();
     for (std::size_t i = 0; i < frames; ++i) {
@@ -226,7 +279,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
     return os;
 }
 
-typedef basic_stacktrace<BOOST_STACKTRACE_DEFAULT_MAX_DEPTH> stacktrace;
+typedef basic_stacktrace<> stacktrace;
 
 }} // namespace boost::stacktrace
 

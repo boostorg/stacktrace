@@ -24,8 +24,8 @@ using boost::stacktrace::frame;
 BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i);
 BOOST_ST_API std::pair<stacktrace, stacktrace> foo1(int i);
 BOOST_ST_API stacktrace return_from_nested_namespaces();
-BOOST_ST_API boost::stacktrace::basic_stacktrace<4> bar1();
-BOOST_ST_API boost::stacktrace::basic_stacktrace<4> bar2();
+BOOST_ST_API boost::stacktrace::stacktrace bar1();
+BOOST_ST_API boost::stacktrace::stacktrace bar2();
 
 void test_deeply_nested_namespaces() {
     std::stringstream ss;
@@ -165,10 +165,10 @@ void test_iterators() {
     BOOST_TEST(st.size() == static_cast<std::size_t>(st.cend() - st.cbegin()));
     BOOST_TEST(st.size() == static_cast<std::size_t>(st.cend() - st.begin()));
 
-    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rend(), st.rbegin())));
-    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rend(), st.crbegin())));
-    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crend(), st.crbegin())));
-    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crend(), st.rbegin())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rbegin(), st.rend())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crbegin(), st.rend())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.crbegin(), st.crend())));
+    BOOST_TEST(st.size() == static_cast<std::size_t>(std::distance(st.rbegin(), st.crend())));
 
 
     boost::stacktrace::stacktrace::iterator it = st.begin();
@@ -212,10 +212,10 @@ void test_frame() {
     BOOST_TEST(empty_frame.name() == "");
     BOOST_TEST(empty_frame.source_line() == 0);
 }
-
+/*
 void test_empty_basic_stacktrace() {
-    typedef boost::stacktrace::basic_stacktrace<0> st_t;
-    st_t st;
+    typedef boost::stacktrace::stacktrace st_t;
+    st_t st(0);
 
     BOOST_TEST(!st);
     BOOST_TEST(st.empty());
@@ -234,7 +234,7 @@ void test_empty_basic_stacktrace() {
     BOOST_TEST(st == st_t());
     BOOST_TEST(!(st < st_t()));
     BOOST_TEST(!(st > st_t()));
-}
+}*/
 
 int main() {
     test_deeply_nested_namespaces();
@@ -242,12 +242,12 @@ int main() {
     test_comparisons();
     test_iterators();
     test_frame();
-    test_empty_basic_stacktrace();
+    //test_empty_basic_stacktrace();
 
     BOOST_TEST(&bar1 != &bar2);
-    boost::stacktrace::basic_stacktrace<4> b1 = bar1();
+    boost::stacktrace::stacktrace b1 = bar1();
     BOOST_TEST(b1.size() == 4);
-    boost::stacktrace::basic_stacktrace<4> b2 = bar2();
+    boost::stacktrace::stacktrace b2 = bar2();
     BOOST_TEST(b2.size() == 4);
     test_comparisons_base(bar1(), bar2());
 

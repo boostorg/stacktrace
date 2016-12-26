@@ -9,15 +9,14 @@
 #ifndef USER_CONFIG_HPP
 #define USER_CONFIG_HPP
 
-#define BOOST_STACKTRACE_DEFAULT_MAX_DEPTH 5
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
 #include <iosfwd>
 
 namespace boost { namespace stacktrace {
 
-template <class CharT, class TraitsT, std::size_t Depth>
-std::basic_ostream<CharT, TraitsT>& do_stream_st(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Depth>& bt);
+template <class CharT, class TraitsT, class Allocator>
+std::basic_ostream<CharT, TraitsT>& do_stream_st(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt);
 
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const stacktrace& bt) {
@@ -33,8 +32,8 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 //[getting_started_user_config_impl
 namespace boost { namespace stacktrace {
 
-template <class CharT, class TraitsT, std::size_t Depth>
-std::basic_ostream<CharT, TraitsT>& do_stream_st(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Depth>& bt) {
+template <class CharT, class TraitsT, class Allocator>
+std::basic_ostream<CharT, TraitsT>& do_stream_st(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt) {
     const std::streamsize w = os.width();
     const std::size_t frames = bt.size();
     for (std::size_t i = 0; i < frames; ++i) {

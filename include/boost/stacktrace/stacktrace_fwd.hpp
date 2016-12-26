@@ -8,6 +8,7 @@
 #define BOOST_STACKTRACE_STACKTRACE_FWD_HPP
 
 #include <cstddef>
+#include <memory>
 
 /// @file stacktrace_fwd.hpp This header contains only forward declarations of
 /// boost::stacktrace::frame, boost::stacktrace::const_iterator, boost::stacktrace::basic_stacktrace
@@ -25,13 +26,8 @@
 namespace boost { namespace stacktrace {
 
 class frame;
-
-class const_iterator;
-
-template <std::size_t Depth>
-class basic_stacktrace;
-
-typedef basic_stacktrace<BOOST_STACKTRACE_DEFAULT_MAX_DEPTH> stacktrace;
+template <class Allocator = std::allocator<frame> > class basic_stacktrace;
+typedef basic_stacktrace<> stacktrace;
 
 }} // namespace boost::stacktrace
 

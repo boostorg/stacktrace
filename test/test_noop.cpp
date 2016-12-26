@@ -15,27 +15,16 @@ BOOST_SYMBOL_IMPORT stacktrace return_from_nested_namespaces();
 
 void test_deeply_nested_namespaces() {
     BOOST_TEST(return_from_nested_namespaces().size() == 0);
-    BOOST_TEST(return_from_nested_namespaces().begin()->name() == "");
+    BOOST_TEST(return_from_nested_namespaces().empty());
+    BOOST_TEST(!return_from_nested_namespaces());
 }
 
 void test_nested() {
     std::pair<stacktrace, stacktrace> res = foo2(15);
 
     BOOST_TEST(!res.first);
+    BOOST_TEST(res.first.empty());
     BOOST_TEST(res.first.size() == 0);
-    BOOST_TEST(res.first.begin()->name() == "");
-    BOOST_TEST(res.first.begin()->source_file() == "");
-    BOOST_TEST(res.first.begin()->source_line() == 0);
-    BOOST_TEST(!res.second);
-    BOOST_TEST(res.second.size() == 0);
-    BOOST_TEST(res.second.begin()->name() == "");
-    BOOST_TEST(res.second.begin()->source_file() == "");
-    BOOST_TEST(res.second.begin()->source_line() == 0);
-
-    BOOST_TEST(res.second[0].name() == "");
-    BOOST_TEST(res.second[0].source_file() == "");
-    BOOST_TEST(res.second[0].source_line() == 0);
-    BOOST_TEST(res.second[0].address() == 0);
 
     BOOST_TEST(res.second <= res.first);
     BOOST_TEST(res.second >= res.first);
@@ -50,6 +39,11 @@ void test_empty_frame() {
     BOOST_TEST(empty_frame.source_file() == "");
     BOOST_TEST(empty_frame.name() == "");
     BOOST_TEST(empty_frame.source_line() == 0);
+
+    boost::stacktrace::frame f(0);
+    BOOST_TEST(f.name() == "");
+    BOOST_TEST(f.source_file() == "");
+    BOOST_TEST(f.source_line() == 0);
 }
 
 int main() {
