@@ -36,7 +36,7 @@ class basic_stacktrace {
     boost::container::vector<frame, Allocator> impl_;
 
     /// @cond
-    static const std::size_t frames_to_skip = 0;
+    static const std::size_t frames_to_skip = 2;
 
     void fill(void** begin, std::size_t size) {
         if (size < frames_to_skip) {
@@ -50,14 +50,43 @@ class basic_stacktrace {
             );
         }
     }
+    /// @endcond
 
-    BOOST_NOINLINE void init(std::size_t max_depth) BOOST_NOEXCEPT {
+public:
+    typedef typename boost::container::vector<frame, Allocator>::value_type             value_type;
+    typedef typename boost::container::vector<frame, Allocator>::allocator_type         allocator_type;
+    typedef typename boost::container::vector<frame, Allocator>::const_pointer          pointer;
+    typedef typename boost::container::vector<frame, Allocator>::const_pointer          const_pointer;
+    typedef typename boost::container::vector<frame, Allocator>::const_reference        reference;
+    typedef typename boost::container::vector<frame, Allocator>::const_reference        const_reference;
+    typedef typename boost::container::vector<frame, Allocator>::size_type              size_type;
+    typedef typename boost::container::vector<frame, Allocator>::difference_type        difference_type;
+    typedef typename boost::container::vector<frame, Allocator>::const_iterator         iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_iterator         const_iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
+    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
+
+    /// @brief Stores the current function call sequence inside the class.
+    ///
+    /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    ///
+    /// @param max_depth max stack depth
+    ///
+    /// @throws Nothing. Note that default construction of allocator may throw, hovewer it is
+    /// performed outside the constructor and exception in `allocator_type()` would not result in calling `std::terminate`.
+    BOOST_NOINLINE explicit basic_stacktrace(std::size_t max_depth = static_cast<std::size_t>(-1), const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
+        : impl_(a)
+    {
         const size_t buffer_size = 128;
         if (!max_depth) {
             return;
         }
 
-        max_depth += frames_to_skip;
+        if (static_cast<std::size_t>(-1) - frames_to_skip >= max_depth) {
+            max_depth += frames_to_skip;
+        }
 
         try {
             {   // Fast path without additional allocations
@@ -83,46 +112,9 @@ class basic_stacktrace {
 
                 buf.resize(buf.size() * 2);
             } while (1);
-
-
         } catch (...) {
             // ignore exception
         }
-    }
-    /// @endcond
-
-public:
-    typedef typename boost::container::vector<frame, Allocator>::value_type             value_type;
-    typedef typename boost::container::vector<frame, Allocator>::allocator_type         allocator_type;
-    typedef typename boost::container::vector<frame, Allocator>::const_pointer          pointer;
-    typedef typename boost::container::vector<frame, Allocator>::const_pointer          const_pointer;
-    typedef typename boost::container::vector<frame, Allocator>::const_reference        reference;
-    typedef typename boost::container::vector<frame, Allocator>::const_reference        const_reference;
-    typedef typename boost::container::vector<frame, Allocator>::size_type              size_type;
-    typedef typename boost::container::vector<frame, Allocator>::difference_type        difference_type;
-    typedef typename boost::container::vector<frame, Allocator>::const_iterator         iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_iterator         const_iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
-
-    /// @brief Stores the current function call sequence inside the class.
-    ///
-    /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
-    ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
-    ///
-    /// @throws Nothing. Note that default construction of allocator may throw, hovewer it is
-    /// performed outside the constructor and exception in `allocator_type()` would not result in calling `std::terminate`.
-    BOOST_FORCEINLINE explicit basic_stacktrace(const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
-        : impl_(a)
-    {
-        init(static_cast<std::size_t>(-1));
-    }
-
-    BOOST_FORCEINLINE explicit basic_stacktrace(std::size_t max_depth, const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
-        : impl_(a)
-    {
-        init(max_depth);
     }
 
 #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
@@ -136,22 +128,26 @@ public:
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
     basic_stacktrace(basic_stacktrace&& st) = default;
 
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator::deallocate is async signal safe.
+    ~basic_stacktrace() BOOST_NOEXCEPT = default;
+#endif
+
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
-    basic_stacktrace& operator=(const basic_stacktrace& st) = default;
+    basic_stacktrace& operator=(const basic_stacktrace& st) {
+        impl_ = st.impl_;
+        return *this;
+    }
 
+/* TODO:
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
     basic_stacktrace& operator=(basic_stacktrace&& st) = default;
-
-    /// @b Complexity: O(1)
-    ///
-    /// @b Async-Handler-Safety: Safe if Allocator::deallocate are async signal safe..
-    ~basic_stacktrace() BOOST_NOEXCEPT = default;
-#endif
-
+*/
     /// @returns Number of function names stored inside the class.
     ///
     /// @b Complexity: O(1)

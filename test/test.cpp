@@ -36,10 +36,8 @@ void test_deeply_nested_namespaces() {
     std::cout << ss.str() << '\n';
     BOOST_TEST(ss.str().find("main") != std::string::npos);
 
-#if defined(BOOST_STACKTRACE_DYN_LINK)
-    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos
-                || ss.str().find("return_from_nested_namespaces") != std::string::npos);
-#endif
+    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
+    BOOST_TEST(ss.str().find("return_from_nested_namespaces") != std::string::npos);
 
     stacktrace ns1 = return_from_nested_namespaces();
     BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
@@ -193,9 +191,9 @@ void test_frame() {
         BOOST_TEST(st[i] <= st[i]);
         BOOST_TEST(st[i] >= st[i]);
 
-        frame fv = nst[2];
+        frame fv = nst[0];
         BOOST_TEST(fv);
-        if (i >= 2 && i < min_size - 3) { // Begin and end of the trace may match, skipping them
+        if (i < min_size - 3) { // End of the trace may match, skipping
             BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
@@ -215,7 +213,7 @@ void test_frame() {
     BOOST_TEST(empty_frame.name() == "");
     BOOST_TEST(empty_frame.source_line() == 0);
 }
-/*
+
 void test_empty_basic_stacktrace() {
     typedef boost::stacktrace::stacktrace st_t;
     st_t st(0);
@@ -233,11 +231,11 @@ void test_empty_basic_stacktrace() {
     BOOST_TEST(st.crbegin() == st.crend());
     BOOST_TEST(st.rbegin() == st.crend());
 
-    BOOST_TEST(hash_value(st) == hash_value(st_t()));
-    BOOST_TEST(st == st_t());
-    BOOST_TEST(!(st < st_t()));
-    BOOST_TEST(!(st > st_t()));
-}*/
+    BOOST_TEST(hash_value(st) == hash_value(st_t(0)));
+    BOOST_TEST(st == st_t(0));
+    BOOST_TEST(!(st < st_t(0)));
+    BOOST_TEST(!(st > st_t(0)));
+}
 
 int main() {
     test_deeply_nested_namespaces();
@@ -245,7 +243,7 @@ int main() {
     test_comparisons();
     test_iterators();
     test_frame();
-    //test_empty_basic_stacktrace();
+    test_empty_basic_stacktrace();
 
     BOOST_TEST(&bar1 != &bar2);
     boost::stacktrace::stacktrace b1 = bar1();
