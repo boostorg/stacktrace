@@ -191,9 +191,9 @@ void test_frame() {
         BOOST_TEST(st[i] <= st[i]);
         BOOST_TEST(st[i] >= st[i]);
 
-        frame fv = nst[0];
+        frame fv = nst[i];
         BOOST_TEST(fv);
-        if (i < min_size - 3) { // End of the trace may match, skipping
+        if (i > 1 && i < min_size - 3) {       // Begin ...and end of the trace may match, skipping
             BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
