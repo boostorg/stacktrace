@@ -8,6 +8,8 @@
 #include <boost/stacktrace.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#include <boost/functional/hash.hpp>
+
 using boost::stacktrace::stacktrace;
 BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo2(int i);
 BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo1(int i);

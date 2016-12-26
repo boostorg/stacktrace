@@ -4,8 +4,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP
+#define BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -13,7 +13,6 @@
 #endif
 
 #include <boost/core/demangle.hpp>
-#include <boost/functional/hash.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/lexical_cast/try_lexical_convert.hpp>
 
@@ -175,28 +174,25 @@ inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void
 
 
 
-backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
-    : hash_code_(0)
-    , frames_count_(0)
-    , data_(memory)
-{
+std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    std::size_t frames_count = 0;
     if (!size) {
-        return;
+        return frames_count;
     }
 #if defined(BOOST_STACKTRACE_USE_UNWIND)
-    unwind_state state = { data_, data_ + size };
+    unwind_state state = { memory, memory + size };
     _Unwind_Backtrace(&unwind_callback, &state);
-    frames_count_ = state.current - data_;
+    frames_count = state.current - memory;
 #elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
-    frames_count_ = ::backtrace(data_, size);
+    frames_count = ::backtrace(memory, size);
 #else
 #   error No stacktrace backend defined. Define BOOST_STACKTRACE_USE_UNWIND or BOOST_STACKTRACE_USE_BACKTRACE
 #endif
-    if (data_[frames_count_ - 1] == 0) {
-        -- frames_count_;
+    if (memory[frames_count - 1] == 0) {
+        -- frames_count;
     }
 
-    hash_code_ = boost::hash_range(data_, data_ + frames_count_);
+    return frames_count;
 }
 
 std::string backend::get_name(const void* addr) {
@@ -245,6 +241,4 @@ std::size_t backend::get_source_line(const void* addr) {
 
 }}} // namespace boost::stacktrace::detail
 
-#include <boost/stacktrace/detail/backend_common.ipp>
-
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP
+#endif // BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP

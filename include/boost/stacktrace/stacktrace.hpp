@@ -19,10 +19,13 @@
 #include <boost/container/vector.hpp>
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
-#include <boost/stacktrace/detail/backend.hpp>
 #include <boost/stacktrace/frame.hpp>
+#include <boost/stacktrace/detail/backend.hpp>
 
-#include <boost/functional/hash.hpp>
+namespace boost {
+    // Forward declaration
+    template <class It> std::size_t hash_range(It, It);
+}
 
 namespace boost { namespace stacktrace {
 
@@ -36,7 +39,11 @@ class basic_stacktrace {
     static const std::size_t frames_to_skip = 0;
 
     void fill(void** begin, std::size_t size) {
-        impl_.reserve(size);
+        if (size < frames_to_skip) {
+            return;
+        }
+
+        impl_.reserve(static_cast<std::size_t>(size - frames_to_skip));
         for (std::size_t i = frames_to_skip; i < size; ++i) {
             impl_.push_back(
                 frame(begin[i])
@@ -55,7 +62,7 @@ class basic_stacktrace {
         try {
             {   // Fast path without additional allocations
                 void* buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::detail::backend(buffer, buffer_size).size();
+                const std::size_t frames_count = boost::stacktrace::detail::backend::collect(buffer, buffer_size);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buffer, size);
@@ -67,7 +74,7 @@ class basic_stacktrace {
             typedef typename Allocator::template rebind<void*>::other allocator_void_t;
             boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::detail::backend(buf.data(), buf.size()).size();
+                const std::size_t frames_count = boost::stacktrace::detail::backend::collect(buf.data(), buf.size());
                 if (buf.size() > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buf.data(), size);
@@ -102,7 +109,10 @@ public:
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
     ///
-    /// @b Async-Handler-Safety: Depends on backend, see "Build, Macros and Backends" section.
+    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    ///
+    /// @throws Nothing. Note that default construction of allocator may throw, hovewer it is
+    /// performed outside the constructor and exception in `allocator_type()` would not result in calling `std::terminate`.
     BOOST_FORCEINLINE explicit basic_stacktrace(const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
         : impl_(a)
     {
@@ -118,17 +128,27 @@ public:
 #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     /// @b Complexity: O(st.size())
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     basic_stacktrace(const basic_stacktrace& st) = default;
-
-    /// @b Complexity: O(st.size())
-    ///
-    /// @b Async-Handler-Safety: Safe.
-    basic_stacktrace& operator=(const basic_stacktrace& st) = default;
 
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
+    basic_stacktrace(basic_stacktrace&& st) = default;
+
+    /// @b Complexity: O(st.size())
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    basic_stacktrace& operator=(const basic_stacktrace& st) = default;
+
+    /// @b Complexity: O(st.size())
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
+    basic_stacktrace& operator=(basic_stacktrace&& st) = default;
+
+    /// @b Complexity: O(1)
+    ///
+    /// @b Async-Handler-Safety: Safe if Allocator::deallocate are async signal safe..
     ~basic_stacktrace() BOOST_NOEXCEPT = default;
 #endif
 
@@ -230,7 +250,7 @@ bool operator< (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
 ///
 /// @b Async-Handler-Safety: Safe.
 template <class Allocator1, class Allocator2>
-bool operator== (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
+bool operator==(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) BOOST_NOEXCEPT {
     return lhs.as_vector() == rhs.as_vector();
 }
 
@@ -256,7 +276,7 @@ bool operator!=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
     return !(lhs == rhs);
 }
 
-/// Hashing support, O(1) complexity; Async-Handler-Safe.
+/// Hashing support, O(st.size()) complexity; Async-Handler-Safe.
 template <class Allocator>
 std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
     return boost::hash_range(st.as_vector().data(), st.as_vector().data()+ st.as_vector().size());

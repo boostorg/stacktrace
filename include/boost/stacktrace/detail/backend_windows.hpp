@@ -13,8 +13,6 @@
 #endif
 
 #include <boost/core/noncopyable.hpp>
-#include <boost/functional/hash.hpp>
-
 #include <windows.h>
 #include "Dbgeng.h"
 
@@ -96,20 +94,13 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_ini
 
 
 
-backend::backend(void** memory, std::size_t size) BOOST_NOEXCEPT
-    : hash_code_(0)
-    , frames_count_(0)
-    , data_(memory)
-{
-    boost::detail::winapi::ULONG_ hc = 0;
-    frames_count_ = CaptureStackBackTrace(
+std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    return CaptureStackBackTrace(
         0,
         static_cast<boost::detail::winapi::ULONG_>(size),
-        data_,
-        &hc
+        memory,
+        0
     );
-
-    boost::hash_combine(hash_code_, hc);
 }
 
 std::string backend::get_name(const void* addr) {
@@ -218,7 +209,5 @@ std::size_t backend::get_source_line(const void* addr) {
 
 
 }}} // namespace boost::stacktrace::detail
-
-#include <boost/stacktrace/detail/backend_common.ipp>
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP

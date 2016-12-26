@@ -12,6 +12,9 @@
 #include <sstream>
 #include <boost/core/lightweight_test.hpp>
 
+#include <boost/functional/hash.hpp>
+
+
 using boost::stacktrace::stacktrace;
 using boost::stacktrace::frame;
 

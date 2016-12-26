@@ -15,11 +15,9 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 
-backend::backend(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT
-    : hash_code_(0)
-    , frames_count_(0)
-    , data_(0)
-{}
+std::size_t backend::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT {
+    return 0;
+}
 
 std::string backend::get_name(const void* /*addr*/) {
     return std::string();
@@ -31,14 +29,6 @@ std::string backend::get_source_file(const void* /*addr*/) {
 
 std::size_t backend::get_source_line(const void* /*addr*/) {
     return 0;
-}
-
-bool backend::operator< (const backend& /*rhs*/) const BOOST_NOEXCEPT {
-    return false;
-}
-
-bool backend::operator==(const backend& /*rhs*/) const BOOST_NOEXCEPT {
-    return true;
 }
 
 }}} // namespace boost::stacktrace::detail
