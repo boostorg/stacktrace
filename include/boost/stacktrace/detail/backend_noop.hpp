@@ -31,6 +31,10 @@ std::size_t backend::get_source_line(const void* /*addr*/) {
     return 0;
 }
 
+std::string backend::to_string(const void* /*addr*/) {
+    return std::string();
+}
+
 }}} // namespace boost::stacktrace::detail
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_LIBUNWIND_HPP

@@ -239,6 +239,11 @@ std::size_t backend::get_source_line(const void* addr) {
     return line_num;
 }
 
+std::string backend::to_string(const void* addr) {
+    return get_name(addr) + " at " + addr2line("-Cpe", addr);
+    //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
+}
+
 }}} // namespace boost::stacktrace::detail
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP

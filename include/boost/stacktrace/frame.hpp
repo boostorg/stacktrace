@@ -137,19 +137,7 @@ inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
 /// Outputs stacktrace::frame in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame& f) {
-    std::string name = f.name();
-    if (!name.empty()) {
-        os << name;
-    } else {
-        os << f.address();
-    }
-
-    const std::size_t source_line = f.source_line();
-    if (source_line) {
-        os << " at " << f.source_file() << ':' << source_line;
-    }
-
-    return os;
+    return os << boost::stacktrace::detail::backend::to_string(f.address());
 }
 
 }} // namespace boost::stacktrace

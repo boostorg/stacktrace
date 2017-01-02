@@ -13,6 +13,7 @@
 #endif
 
 #include <boost/core/noncopyable.hpp>
+#include <boost/lexical_cast.hpp>
 #include <windows.h>
 #include "Dbgeng.h"
 
@@ -227,6 +228,24 @@ std::size_t backend::get_source_line(const void* addr) {
     return (is_ok ? line_num : 0);
 }
 
+
+std::string backend::to_string(const void* addr) {
+    com_global_initer com_guard;
+    com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+
+    std::pair<std::string, std::size_t> file_line
+        = boost::stacktrace::detail::get_source_file_line_impl(idebug, addr);
+
+    return boost::stacktrace::detail::get_name_impl(idebug, addr)
+        + " at "
+        + file_line.first
+        + ':'
+        + boost::lexical_cast<std::string>(file_line.second)
+    ;
+}
 
 }}} // namespace boost::stacktrace::detail
 

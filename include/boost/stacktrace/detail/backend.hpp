@@ -71,6 +71,7 @@ public:
     BOOST_STACKTRACE_FUNCTION static std::string get_name(const void* addr);
     BOOST_STACKTRACE_FUNCTION static std::string get_source_file(const void* addr);
     BOOST_STACKTRACE_FUNCTION static std::size_t get_source_line(const void* addr);
+    BOOST_STACKTRACE_FUNCTION static std::string to_string(const void* addr);
 };
 
 }}} // namespace boost::stacktrace::detail
