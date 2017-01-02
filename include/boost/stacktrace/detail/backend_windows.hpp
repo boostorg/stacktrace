@@ -103,13 +103,8 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     );
 }
 
-std::string backend::get_name(const void* addr) {
+inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const void* addr) {
     std::string result;
-    com_global_initer com_guard;
-    com_holder<IDebugSymbols> idebug(com_guard);
-    if (!try_init_com(idebug, com_guard)) {
-        return result;
-    }
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
     char name[256];
@@ -143,21 +138,29 @@ std::string backend::get_name(const void* addr) {
     return result;
 }
 
-std::string backend::get_source_file(const void* addr) {
-    std::string result;
+
+std::string backend::get_name(const void* addr) {
     com_global_initer com_guard;
     com_holder<IDebugSymbols> idebug(com_guard);
-    if (!try_init_com(idebug, com_guard)) {
-        return result;
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
     }
+    
+    return boost::stacktrace::detail::get_name_impl(idebug, addr);
+}
+
+
+inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_holder<IDebugSymbols>& idebug, const void* addr) {
+    std::pair<std::string, std::size_t> result;
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
     char name[256];
     name[0] = 0;
     ULONG size = 0;
+    ULONG line_num = 0;
     bool res = (S_OK == idebug->GetLineByOffset(
         offset,
-        0,
+        &line_num,
         name,
         sizeof(name),
         &size,
@@ -165,25 +168,38 @@ std::string backend::get_source_file(const void* addr) {
     ));
 
     if (!res && size != 0) {
-        result.resize(size);
+        result.first.resize(size);
         res = (S_OK == idebug->GetLineByOffset(
             offset,
-            0,
-            &result[0],
-            static_cast<ULONG>(result.size()),
+            &line_num,
+            &result.first[0],
+            static_cast<ULONG>(result.first.size()),
             &size,
             0
         ));
     } else if (res) {
-        result = name;
+        result.first = name;
+        result.second = line_num;
     }
 
 
     if (!res) {
-        result.clear();
+        result.first.clear();
+        result.second = 0;
     }
 
     return result;
+}
+
+
+std::string backend::get_source_file(const void* addr) {
+    std::string result;
+    com_global_initer com_guard;
+    com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return result;
+    }
+    return boost::stacktrace::detail::get_source_file_line_impl(idebug, addr).first;
 }
 
 std::size_t backend::get_source_line(const void* addr) {
@@ -191,7 +207,7 @@ std::size_t backend::get_source_line(const void* addr) {
 
     com_global_initer com_guard;
     com_holder<IDebugSymbols> idebug(com_guard);
-    if (!try_init_com(idebug, com_guard)) {
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return 0;
     }
 
