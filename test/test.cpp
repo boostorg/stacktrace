@@ -199,7 +199,9 @@ void test_frame() {
             BOOST_TEST(st[i] != fv);
             BOOST_TEST(st[i] < fv || st[i] > fv);
             BOOST_TEST(hash_value(st[i]) != hash_value(fv));
-            BOOST_TEST(st[i].source_line() == 0 || st[i].source_file() != fv.source_file());
+            if (st[i].source_line()) {
+                BOOST_TEST(st[i].source_file() != fv.source_file() || st[i].source_line() != fv.source_line());
+            }
             BOOST_TEST(st[i]);
         }
 
