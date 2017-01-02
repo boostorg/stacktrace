@@ -167,21 +167,26 @@ inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_h
         0
     ));
 
-    if (!res && size != 0) {
-        result.first.resize(size);
-        res = (S_OK == idebug->GetLineByOffset(
-            offset,
-            &line_num,
-            &result.first[0],
-            static_cast<ULONG>(result.first.size()),
-            &size,
-            0
-        ));
-    } else if (res) {
+    if (res) {
         result.first = name;
         result.second = line_num;
+        return result;
     }
 
+    if (!res && size == 0) {
+        return result;
+    }
+
+    result.first.resize(size);
+    res = (S_OK == idebug->GetLineByOffset(
+        offset,
+        &line_num,
+        &result.first[0],
+        static_cast<ULONG>(result.first.size()),
+        &size,
+        0
+    ));
+    result.second = line_num;
 
     if (!res) {
         result.first.clear();
@@ -193,11 +198,10 @@ inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_h
 
 
 std::string backend::get_source_file(const void* addr) {
-    std::string result;
     com_global_initer com_guard;
     com_holder<IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return result;
+        return std::string();
     }
     return boost::stacktrace::detail::get_source_file_line_impl(idebug, addr).first;
 }
