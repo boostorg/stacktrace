@@ -19,22 +19,24 @@ std::size_t backend::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEX
     return 0;
 }
 
-std::string backend::get_name(const void* /*addr*/) {
-    return std::string();
-}
-
-std::string backend::get_source_file(const void* /*addr*/) {
-    return std::string();
-}
-
-std::size_t backend::get_source_line(const void* /*addr*/) {
-    return 0;
-}
-
 std::string backend::to_string(const void* /*addr*/) {
     return std::string();
 }
 
-}}} // namespace boost::stacktrace::detail
+} // namespace detail
+
+std::string frame::name() const {
+    return std::string();
+}
+
+std::string frame::source_file() const {
+    return std::string();
+}
+
+std::size_t frame::source_line() const {
+    return 0;
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_LIBUNWIND_HPP

@@ -91,7 +91,7 @@ public:
     }
 };
 
-static inline std::string addr2line(const char* flag, const void* addr) {
+inline std::string addr2line(const char* flag, const void* addr) {
     std::string res;
 
     Dl_info dli;
@@ -135,7 +135,7 @@ static inline std::string addr2line(const char* flag, const void* addr) {
     return res;
 }
 
-static inline std::string try_demangle(const char* mangled) {
+inline std::string try_demangle(const char* mangled) {
     std::string res;
 
     boost::core::scoped_demangled_name demangled(mangled);
@@ -195,16 +195,23 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     return frames_count;
 }
 
-std::string backend::get_name(const void* addr) {
+std::string backend::to_string(const void* addr) {
+    return boost::stacktrace::frame(addr).name() + " at " + boost::stacktrace::detail::addr2line("-Cpe", addr);
+    //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
+}
+
+} // namespace detail
+
+std::string frame::name() const {
     std::string res;
 
     Dl_info dli;
-    if (!!dladdr(addr, &dli) && dli.dli_sname) {
-        res = try_demangle(dli.dli_sname);
+    if (!!dladdr(addr_, &dli) && dli.dli_sname) {
+        res = boost::stacktrace::detail::try_demangle(dli.dli_sname);
     } else {
-        res = addr2line("-fe", addr);
+        res = boost::stacktrace::detail::addr2line("-fe", addr_);
         res = res.substr(0, res.find_last_of('\n'));
-        res = try_demangle(res.c_str());
+        res = boost::stacktrace::detail::try_demangle(res.c_str());
     }
 
     if (res == "??") {
@@ -214,8 +221,8 @@ std::string backend::get_name(const void* addr) {
     return res;
 }
 
-std::string backend::get_source_file(const void* addr) {
-    std::string res = addr2line("-e", addr);
+std::string frame::source_file() const {
+    std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
         res.clear();
@@ -223,8 +230,8 @@ std::string backend::get_source_file(const void* addr) {
     return res;
 }
 
-std::size_t backend::get_source_line(const void* addr) {
-    std::string res = addr2line("-e", addr);
+std::size_t frame::source_line() const {
+    std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
         return 0;
@@ -239,11 +246,7 @@ std::size_t backend::get_source_line(const void* addr) {
     return line_num;
 }
 
-std::string backend::to_string(const void* addr) {
-    return get_name(addr) + " at " + addr2line("-Cpe", addr);
-    //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
-}
 
-}}} // namespace boost::stacktrace::detail
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP

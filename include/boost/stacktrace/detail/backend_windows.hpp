@@ -35,6 +35,7 @@ public:
     }
 };
 
+
 template <class T>
 class com_holder: boost::noncopyable {
     T* holder_;
@@ -62,6 +63,7 @@ public:
         }
     }
 };
+
 
 inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
     com_holder<IDebugClient> iclient(com);
@@ -93,8 +95,6 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_ini
 }
 
 
-
-
 std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     return CaptureStackBackTrace(
         0,
@@ -103,6 +103,7 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
         0
     );
 }
+
 
 inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const void* addr) {
     std::string result;
@@ -137,17 +138,6 @@ inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const 
     }
 
     return result;
-}
-
-
-std::string backend::get_name(const void* addr) {
-    com_global_initer com_guard;
-    com_holder<IDebugSymbols> idebug(com_guard);
-    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return std::string();
-    }
-    
-    return boost::stacktrace::detail::get_name_impl(idebug, addr);
 }
 
 
@@ -198,40 +188,9 @@ inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_h
 }
 
 
-std::string backend::get_source_file(const void* addr) {
-    com_global_initer com_guard;
-    com_holder<IDebugSymbols> idebug(com_guard);
-    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return std::string();
-    }
-    return boost::stacktrace::detail::get_source_file_line_impl(idebug, addr).first;
-}
-
-std::size_t backend::get_source_line(const void* addr) {
-    ULONG line_num = 0;
-
-    com_global_initer com_guard;
-    com_holder<IDebugSymbols> idebug(com_guard);
-    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return 0;
-    }
-
-    const bool is_ok = (S_OK == idebug->GetLineByOffset(
-        reinterpret_cast<ULONG64>(addr),
-        &line_num,
-        0,
-        0,
-        0,
-        0
-    ));
-
-    return (is_ok ? line_num : 0);
-}
-
-
 std::string backend::to_string(const void* addr) {
-    com_global_initer com_guard;
-    com_holder<IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return std::string();
     }
@@ -247,6 +206,50 @@ std::string backend::to_string(const void* addr) {
     ;
 }
 
-}}} // namespace boost::stacktrace::detail
+} // namespace detail
+
+
+std::string frame::name() const {
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+    
+    return boost::stacktrace::detail::get_name_impl(idebug, addr_);
+}
+
+
+std::string frame::source_file() const {
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+    return boost::stacktrace::detail::get_source_file_line_impl(idebug, addr_).first;
+}
+
+std::size_t frame::source_line() const {
+    ULONG line_num = 0;
+
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return 0;
+    }
+
+    const bool is_ok = (S_OK == idebug->GetLineByOffset(
+        reinterpret_cast<ULONG64>(addr_),
+        &line_num,
+        0,
+        0,
+        0,
+        0
+    ));
+
+    return (is_ok ? line_num : 0);
+}
+
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP

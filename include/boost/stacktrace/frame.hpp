@@ -16,9 +16,64 @@
 #include <string>
 
 #include <boost/core/explicit_operator_bool.hpp>
-#include <boost/stacktrace/detail/backend.hpp>
+
+// Link or header only
+#if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
+#   define BOOST_STACKTRACE_LINK
+#endif
+
+#if defined(BOOST_STACKTRACE_LINK) && !defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_ALL_DYN_LINK)
+#   define BOOST_STACKTRACE_DYN_LINK
+#endif
+
+// Backend autodetection
+#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_UNWIND) \
+    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_HEADER)
+
+#if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
+#   if __has_include("Dbgeng.h")
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   else
+#       define BOOST_STACKTRACE_USE_UNWIND
+#   endif
+#else
+#   if defined(BOOST_WINDOWS)
+#       define BOOST_STACKTRACE_USE_WINDBG
+#   else
+#       define BOOST_STACKTRACE_USE_UNWIND
+#   endif
+#endif
+
+#endif
+
+#ifdef BOOST_STACKTRACE_LINK
+#   if defined(BOOST_STACKTRACE_DYN_LINK)
+#       ifdef BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_EXPORT
+#       else
+#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_IMPORT
+#       endif
+#   else
+#       define BOOST_STACKTRACE_FUNCTION
+#   endif
+#else
+#   define BOOST_STACKTRACE_FUNCTION inline
+#endif
+
+
 
 namespace boost { namespace stacktrace {
+
+namespace detail {
+
+// Class that implements the actual backtracing
+class backend {
+public:
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION static std::string to_string(const void* addr);
+};
+
+} // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame {
@@ -71,9 +126,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Unsafe.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
-    std::string name() const {
-        return boost::stacktrace::detail::backend::get_name(address());
-    }
+    BOOST_STACKTRACE_FUNCTION std::string name() const;
 
     /// @returns Address of the frame function.
     ///
@@ -88,17 +141,13 @@ public:
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
     /// @b Async-Handler-Safety: Unsafe.
-    std::string source_file() const {
-        return boost::stacktrace::detail::backend::get_source_file(address());
-    }
+    BOOST_STACKTRACE_FUNCTION std::string source_file() const;
 
     /// @returns Code line in the source file, were the function of the frame is defined.
     /// @throws std::bad_alloc if not enough memory to construct string for internal needs.
     ///
     /// @b Async-Handler-Safety: Unsafe.
-    std::size_t source_line() const {
-        return boost::stacktrace::detail::backend::get_source_line(address());
-    }
+    BOOST_STACKTRACE_FUNCTION std::size_t source_line() const;
 
     /// @brief Checks that frame is not references NULL address.
     /// @returns `true` if `this->address() != 0`
@@ -141,5 +190,14 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 }
 
 }} // namespace boost::stacktrace
+
+/// @cond
+#undef BOOST_STACKTRACE_FUNCTION
+
+#ifndef BOOST_STACKTRACE_LINK
+#   include <boost/stacktrace/detail/backend.ipp>
+#endif
+/// @endcond
+
 
 #endif // BOOST_STACKTRACE_FRAME_HPP

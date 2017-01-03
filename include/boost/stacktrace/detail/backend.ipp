@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/backend.hpp>
+#include <boost/stacktrace/frame.hpp>
 
 #if defined(BOOST_STACKTRACE_USE_NOOP)
 #   include <boost/stacktrace/detail/backend_noop.hpp>
