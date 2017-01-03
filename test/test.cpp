@@ -24,11 +24,25 @@ using boost::stacktrace::frame;
 #   define BOOST_ST_API
 #endif
 
-BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i);
-BOOST_ST_API std::pair<stacktrace, stacktrace> foo1(int i);
+typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
+BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
 BOOST_ST_API stacktrace return_from_nested_namespaces();
 BOOST_ST_API boost::stacktrace::stacktrace bar1();
 BOOST_ST_API boost::stacktrace::stacktrace bar2();
+
+BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
+    if (i) {
+        return foo2(i - 1, foo1);
+    }
+
+    std::pair<stacktrace, stacktrace> ret;
+    try {
+        throw std::logic_error("test");
+    } catch (const std::logic_error& /*e*/) {
+        ret.second = stacktrace();
+        return ret;
+    }
+}
 
 void test_deeply_nested_namespaces() {
     std::stringstream ss;
@@ -46,7 +60,7 @@ void test_deeply_nested_namespaces() {
 // Template parameter Depth is to produce different functions on each Depth. This simplifies debugging when one of the tests catches error
 template <std::size_t Depth>
 void test_nested() {
-    std::pair<stacktrace, stacktrace> res = foo2(Depth);
+    std::pair<stacktrace, stacktrace> res = foo2(Depth, foo1);
 
     std::stringstream ss1, ss2;
 

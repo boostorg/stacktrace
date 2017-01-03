@@ -16,24 +16,8 @@ using namespace boost::stacktrace;
 #   define BOOST_ST_API
 #endif
 
-BOOST_ST_API BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i);
-BOOST_ST_API BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo2(int i);
-
-std::pair<stacktrace, stacktrace> foo1(int i) {
-    if (i) {
-        return foo2(i - 1);
-    }
-
-    std::pair<stacktrace, stacktrace> ret;
-    try {
-        throw std::logic_error("test");
-    } catch (const std::logic_error& /*e*/) {
-        ret.second = stacktrace();
-        return ret;
-    }
-}
-
-std::pair<stacktrace, stacktrace> foo2(int i) {
+typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
+BOOST_ST_API BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1) {
     if (i) {
         return foo1(--i);
     } else {

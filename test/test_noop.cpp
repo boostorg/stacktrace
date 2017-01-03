@@ -11,9 +11,23 @@
 #include <boost/functional/hash.hpp>
 
 using boost::stacktrace::stacktrace;
-BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo2(int i);
-BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo1(int i);
+typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
+BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
 BOOST_SYMBOL_IMPORT stacktrace return_from_nested_namespaces();
+
+BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
+    if (i) {
+        return foo2(i - 1, foo1);
+    }
+
+    std::pair<stacktrace, stacktrace> ret;
+    try {
+        throw std::logic_error("test");
+    } catch (const std::logic_error& /*e*/) {
+        ret.second = stacktrace();
+        return ret;
+    }
+}
 
 void test_deeply_nested_namespaces() {
     BOOST_TEST(return_from_nested_namespaces().size() == 0);
@@ -22,7 +36,7 @@ void test_deeply_nested_namespaces() {
 }
 
 void test_nested() {
-    std::pair<stacktrace, stacktrace> res = foo2(15);
+    std::pair<stacktrace, stacktrace> res = foo2(15, foo1);
 
     BOOST_TEST(!res.first);
     BOOST_TEST(res.first.empty());
