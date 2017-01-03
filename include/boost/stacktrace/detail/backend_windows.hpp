@@ -14,6 +14,7 @@
 
 #include <boost/core/noncopyable.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <windows.h>
 #include "Dbgeng.h"
 
@@ -135,9 +136,10 @@ inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const 
 
     if (!res) {
         result.clear();
+        return result;
     }
 
-    const std::size_t delimiter = res.find_first_of('!');
+    const std::size_t delimiter = result.find_first_of('!');
     if (delimiter == std::string::npos) {
         return result;
     }
@@ -218,7 +220,7 @@ std::string backend::to_string(const void* addr) {
         res += " at ";
         res += source_line.first;
         res += ':';
-        res += boost::lexical_cast<std::string>(file_line.second);
+        res += boost::lexical_cast<boost::array<char, 40> >(file_line.second).data();
     } else if (!module_name.empty()) {
         res += " in ";
         res += module_name;
