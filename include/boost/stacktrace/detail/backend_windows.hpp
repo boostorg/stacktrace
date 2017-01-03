@@ -220,7 +220,7 @@ std::string backend::to_string(const void* addr) {
         res += " at ";
         res += source_line.first;
         res += ':';
-        res += boost::lexical_cast<boost::array<char, 40> >(file_line.second).data();
+        res += boost::lexical_cast<boost::array<char, 40> >(source_line.second).data();
     } else if (!module_name.empty()) {
         res += " in ";
         res += module_name;
