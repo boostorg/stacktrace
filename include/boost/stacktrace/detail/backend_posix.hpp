@@ -196,7 +196,24 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
 }
 
 std::string backend::to_string(const void* addr) {
-    return boost::stacktrace::frame(addr).name() + " at " + boost::stacktrace::detail::addr2line("-Cpe", addr);
+    std::string res = boost::stacktrace::frame(addr).name();
+    if (res.empty()) {
+        res = to_hex_array(addr).data();
+    }
+    
+    std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", addr);
+    if (!source_line.empty() && source_line[0] != '?') {
+        res += " at ";
+        res += source_line;
+    } else {
+        Dl_info dli;
+        if (!!dladdr(addr, &dli) && dli.dli_sname) {
+            res += " in ";
+            res += dli.dli_fname;
+        }
+    }
+    
+    return res;
     //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
 }
 

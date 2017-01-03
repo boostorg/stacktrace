@@ -105,7 +105,7 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
 }
 
 
-inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const void* addr) {
+inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const void* addr, std::string* module_name = 0) {
     std::string result;
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
@@ -136,6 +136,17 @@ inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const 
     if (!res) {
         result.clear();
     }
+
+    const std::size_t delimiter = res.find_first_of('!');
+    if (delimiter == std::string::npos) {
+        return result;
+    }
+    
+    if (module_name) {
+        *module_name = result.substr(0, delimiter);
+    }
+        
+    result = result.substr(delimiter + 1);
 
     return result;
 }
@@ -195,15 +206,25 @@ std::string backend::to_string(const void* addr) {
         return std::string();
     }
 
-    std::pair<std::string, std::size_t> file_line
+    std::string module_name;
+    std::string res = boost::stacktrace::detail::get_name_impl(idebug, addr, &module_name);
+    if (res.empty()) {
+        res = to_hex_array(addr).data();
+    }
+    
+    std::pair<std::string, std::size_t> source_line
         = boost::stacktrace::detail::get_source_file_line_impl(idebug, addr);
-
-    return boost::stacktrace::detail::get_name_impl(idebug, addr)
-        + " at "
-        + file_line.first
-        + ':'
-        + boost::lexical_cast<std::string>(file_line.second)
-    ;
+    if (!source_line.first.empty() && source_line.second) {
+        res += " at ";
+        res += source_line.first;
+        res += ':';
+        res += boost::lexical_cast<std::string>(file_line.second);
+    } else if (!module_name.empty()) {
+        res += " in ";
+        res += module_name;
+    }
+    
+    return res;
 }
 
 } // namespace detail
