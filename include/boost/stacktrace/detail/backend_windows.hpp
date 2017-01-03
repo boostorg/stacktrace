@@ -200,18 +200,13 @@ inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_h
     return result;
 }
 
-
-std::string backend::to_string(const void* addr) {
-    boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
-    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return std::string();
-    }
-
+inline void to_string_impl(const com_holder<IDebugSymbols>& idebug, const void* addr, std::string& res) {
     std::string module_name;
-    std::string res = boost::stacktrace::detail::get_name_impl(idebug, addr, &module_name);
-    if (res.empty()) {
-        res = to_hex_array(addr).data();
+    std::string name = boost::stacktrace::detail::get_name_impl(idebug, addr, &module_name);
+    if (!name.empty()) {
+        res += name;
+    } else {
+        res += to_hex_array(addr).data();
     }
     
     std::pair<std::string, std::size_t> source_line
@@ -225,7 +220,40 @@ std::string backend::to_string(const void* addr) {
         res += " in ";
         res += module_name;
     }
-    
+}
+
+std::string backend::to_string(const void* addr) {
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+
+    std::string res;
+    to_string_impl(idebug, addr, res);
+    return res;
+}
+
+std::string backend::to_string(const frame* frames, std::size_t size) {
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+
+    std::string res;
+    res.reserve(64 * size);
+    for (std::size_t i = 0; i < size; ++i) {
+        if (i < 10) {
+            res += ' ';
+        }
+        res += boost::lexical_cast<boost::array<char, 40> >(i).data();
+        res += '#';
+        res += ' ';
+        to_string_impl(idebug, frames[i].address(), res);
+        res += '\n';
+    }
+
     return res;
 }
 

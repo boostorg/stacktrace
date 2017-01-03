@@ -14,7 +14,7 @@
 
 #include <boost/core/demangle.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/lexical_cast/try_lexical_convert.hpp>
+#include <boost/lexical_cast.hpp>
 
 #if defined(BOOST_STACKTRACE_USE_UNWIND)
 #include <unwind.h>
@@ -215,6 +215,23 @@ std::string backend::to_string(const void* addr) {
     
     return res;
     //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
+}
+
+std::string backend::to_string(const frame* frames, std::size_t size) {
+    std::string res;
+    res.reserve(64 * size);
+    for (std::size_t i = 0; i < size; ++i) {
+        if (i < 10) {
+            res += ' ';
+        }
+        res += boost::lexical_cast<boost::array<char, 40> >(i).data();
+        res += '#';
+        res += ' ';
+        res += to_string(frames[i].address());
+        res += '\n';
+    }
+
+    return res;
 }
 
 } // namespace detail

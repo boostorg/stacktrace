@@ -283,18 +283,7 @@ std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
 /// Outputs stacktrace in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT, class Allocator>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt) {
-    const std::streamsize w = os.width();
-    const std::size_t frames = bt.size();
-    for (std::size_t i = 0; i < frames; ++i) {
-        os.width(2);
-        os << i;
-        os.width(w);
-        os << "# ";
-        os << bt[i];
-        os << '\n';
-    }
-
-    return os;
+    return os << boost::stacktrace::detail::backend::to_string(bt.as_vector().data(), bt.size());
 }
 
 typedef basic_stacktrace<> stacktrace;

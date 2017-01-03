@@ -23,6 +23,10 @@ std::string backend::to_string(const void* /*addr*/) {
     return std::string();
 }
 
+std::string backend::to_string(const frame* /*frames*/, std::size_t /*count*/) {
+    return std::string();
+}
+
 } // namespace detail
 
 std::string frame::name() const {

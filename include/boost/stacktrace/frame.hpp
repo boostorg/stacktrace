@@ -64,6 +64,8 @@
 
 namespace boost { namespace stacktrace {
 
+class frame;
+
 namespace detail {
 
 // Class that implements the actual backtracing
@@ -71,6 +73,7 @@ class backend {
 public:
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
     BOOST_STACKTRACE_FUNCTION static std::string to_string(const void* addr);
+    BOOST_STACKTRACE_FUNCTION static std::string to_string(const frame* frames, std::size_t size);
 };
 
 } // namespace detail
