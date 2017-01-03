@@ -259,6 +259,7 @@ int main() {
     test_comparisons_base(bar1(), bar2());
 
     test_nested<250>();
+    test_nested<300>();
 
     return boost::report_errors();
 }
