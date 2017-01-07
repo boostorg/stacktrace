@@ -210,37 +210,45 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     return frames_count;
 }
 
-std::string backend::to_string(const void* addr) {
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-        std::string res;
-        ::backtrace_state* state = backtrace_create_state(
-            0, 0, 0, 0
-        );
+inline std::string to_string_impl(const void* addr, ::backtrace_state* state) {
+    std::string res;
 
-        boost::stacktrace::detail::pc_data data;
-        data.is_function = 1;
-        data.is_filename = 1;
-        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-        res.swap(data.function);
-        if (res.empty()) {
-            res = to_hex_array(addr).data();
+    boost::stacktrace::detail::pc_data data;
+    data.is_function = 1;
+    data.is_filename = 1;
+    backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+    res.swap(data.function);
+    if (res.empty()) {
+        res = to_hex_array(addr).data();
+    }
+
+    if (!data.filename.empty() && data.line) {
+        res += " at ";
+        res += data.filename;
+        res += ':';
+        res += boost::lexical_cast<boost::array<char, 40> >(data.line).data();
+    } else {
+        Dl_info dli;
+        if (!!dladdr(addr, &dli) && dli.dli_sname) {
+            res += " in ";
+            res += dli.dli_fname;
         }
-        
-        if (!data.filename.empty() && data.line) {
-            res += " at ";
-            res += data.filename;
-            res += ':';
-            res += boost::lexical_cast<boost::array<char, 40> >(data.line).data();
-        }else {
-            Dl_info dli;
-            if (!!dladdr(addr, &dli) && dli.dli_sname) {
-                res += " in ";
-                res += dli.dli_fname;
-            }
-        }
-        
-        return res;
+    }
+
+    return res;
+}
+
+std::string backend::to_string(const void* addr) {
+    ::backtrace_state* state = backtrace_create_state(
+        0, 0, 0, 0
+    );
+    return boost::stacktrace::detail::to_string_impl(addr, state);
+}
+
 #else
+
+std::string backend::to_string(const void* addr) {
     std::string res = boost::stacktrace::frame(addr).name();
     if (res.empty()) {
         res = to_hex_array(addr).data();
@@ -260,12 +268,19 @@ std::string backend::to_string(const void* addr) {
     
     return res;
     //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
-#endif
 }
+#endif
 
 std::string backend::to_string(const frame* frames, std::size_t size) {
     std::string res;
     res.reserve(64 * size);
+
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+    ::backtrace_state* state = backtrace_create_state(
+        0, 0, 0, 0
+    );
+#endif
+
     for (std::size_t i = 0; i < size; ++i) {
         if (i < 10) {
             res += ' ';
@@ -273,7 +288,11 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
         res += boost::lexical_cast<boost::array<char, 40> >(i).data();
         res += '#';
         res += ' ';
-        res += to_string(frames[i].address());
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+        res += boost::stacktrace::detail::to_string_impl(frames[i].address(), state);
+#else
+        res += boost::stacktrace::detail::backend::to_string(frames[i].address());
+#endif
         res += '\n';
     }
 
