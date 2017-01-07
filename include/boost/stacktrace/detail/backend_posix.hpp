@@ -16,17 +16,19 @@
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/lexical_cast.hpp>
 
-#if defined(BOOST_STACKTRACE_USE_UNWIND)
 #include <unwind.h>
+
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+#include <backtrace.h>
 #endif
 
 #include <dlfcn.h>
-#include <signal.h>
 #include <execinfo.h>
 #include <cstdio>
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 
 namespace boost { namespace stacktrace { namespace detail {
@@ -135,6 +137,31 @@ inline std::string addr2line(const char* flag, const void* addr) {
     return res;
 }
 
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+struct pc_data {
+    unsigned is_function : 1;
+    unsigned is_filename : 1;
+    
+    std::string function;
+    std::string filename;
+    std::size_t line;
+};
+
+static int libbacktrace_full_callback(void *data, uintptr_t pc, const char *filename, int lineno, const char *function) {
+    pc_data& d = *static_cast<pc_data*>(data);
+    if (d.is_filename && filename) {
+        d.filename = filename;
+    }
+    if (d.is_function && function) {
+        d.function = function;
+    }
+    d.line = lineno;
+    return 0;
+}
+#endif
+
+
+
 inline std::string try_demangle(const char* mangled) {
     std::string res;
 
@@ -148,10 +175,6 @@ inline std::string try_demangle(const char* mangled) {
     return res;
 }
 
-
-
-
-#if defined(BOOST_STACKTRACE_USE_UNWIND)
 struct unwind_state {
     void** current;
     void** end;
@@ -169,25 +192,17 @@ inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void
     }
     return _URC_NO_REASON;
 }
-#endif
-
-
-
 
 std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     std::size_t frames_count = 0;
     if (!size) {
         return frames_count;
     }
-#if defined(BOOST_STACKTRACE_USE_UNWIND)
+
     unwind_state state = { memory, memory + size };
     _Unwind_Backtrace(&unwind_callback, &state);
     frames_count = state.current - memory;
-#elif defined(BOOST_STACKTRACE_USE_BACKTRACE)
-    frames_count = ::backtrace(memory, size);
-#else
-#   error No stacktrace backend defined. Define BOOST_STACKTRACE_USE_UNWIND or BOOST_STACKTRACE_USE_BACKTRACE
-#endif
+
     if (memory[frames_count - 1] == 0) {
         -- frames_count;
     }
@@ -196,6 +211,36 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
 }
 
 std::string backend::to_string(const void* addr) {
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+        std::string res;
+        ::backtrace_state* state = backtrace_create_state(
+            0, 0, 0, 0
+        );
+
+        boost::stacktrace::detail::pc_data data;
+        data.is_function = 1;
+        data.is_filename = 1;
+        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        res.swap(data.function);
+        if (res.empty()) {
+            res = to_hex_array(addr).data();
+        }
+        
+        if (!data.filename.empty() && data.line) {
+            res += " at ";
+            res += data.filename;
+            res += ':';
+            res += boost::lexical_cast<boost::array<char, 40> >(data.line).data();
+        }else {
+            Dl_info dli;
+            if (!!dladdr(addr, &dli) && dli.dli_sname) {
+                res += " in ";
+                res += dli.dli_fname;
+            }
+        }
+        
+        return res;
+#else
     std::string res = boost::stacktrace::frame(addr).name();
     if (res.empty()) {
         res = to_hex_array(addr).data();
@@ -215,6 +260,7 @@ std::string backend::to_string(const void* addr) {
     
     return res;
     //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
+#endif
 }
 
 std::string backend::to_string(const frame* frames, std::size_t size) {
@@ -234,15 +280,33 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
     return res;
 }
 
+
+
+
 } // namespace detail
 
 std::string frame::name() const {
     std::string res;
 
     Dl_info dli;
-    if (!!dladdr(addr_, &dli) && dli.dli_sname) {
+    const bool dl_ok = !!dladdr(addr_, &dli);
+    if (dl_ok && dli.dli_sname) {
         res = boost::stacktrace::detail::try_demangle(dli.dli_sname);
     } else {
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+        ::backtrace_state* state = backtrace_create_state(
+            (dl_ok ? dli.dli_fname : 0), 0, 0, 0
+        );
+
+        boost::stacktrace::detail::pc_data data;
+        data.is_function = 1;
+        data.is_filename = 0;
+        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        if (!data.function.empty()) {
+            return boost::stacktrace::detail::try_demangle(data.function.c_str());
+        }
+#endif
+        
         res = boost::stacktrace::detail::addr2line("-fe", addr_);
         res = res.substr(0, res.find_last_of('\n'));
         res = boost::stacktrace::detail::try_demangle(res.c_str());
@@ -256,6 +320,20 @@ std::string frame::name() const {
 }
 
 std::string frame::source_file() const {
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+        ::backtrace_state* state = backtrace_create_state(
+            0, 0, 0, 0
+        );
+
+        boost::stacktrace::detail::pc_data data;
+        data.is_function = 0;
+        data.is_filename = 1;
+        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        if (!data.filename.empty()) {
+            return data.filename;
+        }
+#endif
+
     std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
@@ -265,6 +343,21 @@ std::string frame::source_file() const {
 }
 
 std::size_t frame::source_line() const {
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+        ::backtrace_state* state = backtrace_create_state(
+            0, 0, 0, 0
+        );
+
+        boost::stacktrace::detail::pc_data data;
+        data.is_function = 0;
+        data.is_filename = 0;
+        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        if (data.line) {
+            return data.line;
+        }
+#endif
+
+
     std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {

@@ -9,6 +9,15 @@ lib dl : : <link>shared ;
 lib gcc_s ;
 lib Dbghelp ;
 
+local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
+lib backtrace
+  : 
+  : <search>$(LIBBACKTRACE_PATH)/lib <link>static
+  :
+  : <include>$(LIBBACKTRACE_PATH)/include 
+  ;
+
+
 project
   : requirements
     <toolset>msvc:<asynch-exceptions>on
@@ -19,7 +28,7 @@ project
   ;
 
 
-local BT_DEPS   = <target-os>linux:<library>dl [ check-target-builds ../build//backtrace : : <build>no ] ;
+local BT_DEPS   = <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
 local UNWD_DEPS = <target-os>linux:<library>dl  [ check-target-builds ../build//unwind : : <build>no ] ;
 local WIND_DEPS = <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
 local NOOP_DEPS =  ;

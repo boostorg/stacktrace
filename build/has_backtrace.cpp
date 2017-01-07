@@ -4,11 +4,11 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <dlfcn.h>
-#include <execinfo.h>
+#include <backtrace.h>
 
 int main() {
-    void* buffer[10];
-    ::backtrace(buffer, 10);
-
+    backtrace_state* state = backtrace_create_state(
+        0, 1, 0, 0
+    );
+    (void)state;
 }

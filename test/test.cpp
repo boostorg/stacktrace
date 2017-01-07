@@ -98,6 +98,7 @@ void test_comparisons_base(Bt nst, Bt st) {
     cst = cst;
     BOOST_TEST(nst);
     BOOST_TEST(st);
+    BOOST_TEST(nst[0] != st[0]);
 
     BOOST_TEST(nst != st);
     BOOST_TEST(st != nst);
@@ -274,6 +275,7 @@ int main() {
 
     test_nested<250>();
     test_nested<300>();
+    BOOST_TEST(boost::stacktrace::stacktrace(1).size() == 1);
 
     return boost::report_errors();
 }
