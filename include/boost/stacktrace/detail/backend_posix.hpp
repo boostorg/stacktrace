@@ -227,12 +227,13 @@ inline std::string to_string_impl(const void* addr, ::backtrace_state* state) {
         res += filename;
         res += ':';
         res += boost::lexical_cast<boost::array<char, 40> >(data.line).data();
-    } else {
-        ::Dl_info dli;
-        if (!!::dladdr(addr, &dli) && dli.dli_sname) {
-            res += " in ";
-            res += dli.dli_fname;
-        }
+        return res;
+    }
+
+    ::Dl_info dli;
+    if (!!::dladdr(addr, &dli) && dli.dli_sname) {
+        res += " in ";
+        res += dli.dli_fname;
     }
 
     return res;
@@ -252,8 +253,9 @@ std::string backend::to_string(const void* addr) {
     if (res.empty()) {
         res = to_hex_array(addr).data();
     }
-    
+
 #ifdef BOOST_STACKTRACE_USE_ADDR2LINE
+    //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
     std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", addr);
     if (!source_line.empty() && source_line[0] != '?') {
         res += " at ";
@@ -269,7 +271,6 @@ std::string backend::to_string(const void* addr) {
     }
     
     return res;
-    //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
 }
 #endif
 
@@ -312,36 +313,36 @@ std::string frame::name() const {
     ::Dl_info dli;
     const bool dl_ok = !!::dladdr(addr_, &dli);
     if (dl_ok && dli.dli_sname) {
-        res = boost::stacktrace::detail::try_demangle(dli.dli_sname);
-    } else {
-#ifdef BOOST_STACKTRACE_USE_BACKTRACE
-        ::backtrace_state* state = ::backtrace_create_state(
-            (dl_ok ? dli.dli_fname : 0), 0, 0, 0
-        );
-
-        boost::stacktrace::detail::pc_data data = {&res, 0, 0};
-        ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-        if (!res.empty()) {
-            res = boost::stacktrace::detail::try_demangle(res.c_str());
-            return res;
-        }
-#endif
-#ifdef BOOST_STACKTRACE_USE_ADDR2LINE  
-        res = boost::stacktrace::detail::addr2line("-fe", addr_);
-        res = res.substr(0, res.find_last_of('\n'));
-        res = boost::stacktrace::detail::try_demangle(res.c_str());
-#endif
+        return boost::stacktrace::detail::try_demangle(dli.dli_sname);
     }
+
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+    ::backtrace_state* state = ::backtrace_create_state(
+        0, 0, 0, 0
+    );
+
+    boost::stacktrace::detail::pc_data data = {&res, 0, 0};
+    ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+    if (!res.empty()) {
+        res = boost::stacktrace::detail::try_demangle(res.c_str());
+        return res;
+    }
+#elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
+    res = boost::stacktrace::detail::addr2line("-fe", addr_);
+    res = res.substr(0, res.find_last_of('\n'));
+    res = boost::stacktrace::detail::try_demangle(res.c_str());
 
     if (res == "??") {
         res.clear();
     }
+#endif
 
     return res;
 }
 
 std::string frame::source_file() const {
     std::string res;
+
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
     ::backtrace_state* state = ::backtrace_create_state(
         0, 0, 0, 0
@@ -352,19 +353,20 @@ std::string frame::source_file() const {
     if (!res.empty()) {
         return res;
     }
-#endif
-
-#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
+#elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
     res = boost::stacktrace::detail::addr2line("-e", addr_);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
         res.clear();
     }
 #endif
+
     return res;
 }
 
 std::size_t frame::source_line() const {
+    std::size_t line_num = 0;
+
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
         ::backtrace_state* state = ::backtrace_create_state(
             0, 0, 0, 0
@@ -375,11 +377,7 @@ std::size_t frame::source_line() const {
         if (data.line) {
             return data.line;
         }
-#endif
-
-
-    std::size_t line_num = 0;
-#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
+#elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
     std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
