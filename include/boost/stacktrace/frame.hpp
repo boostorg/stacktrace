@@ -27,20 +27,20 @@
 #endif
 
 // Backend autodetection
-#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_UNWIND) \
+#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE) \
     && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_HEADER)
 
 #if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
 #   if __has_include("Dbgeng.h")
 #       define BOOST_STACKTRACE_USE_WINDBG
 #   else
-#       define BOOST_STACKTRACE_USE_UNWIND
+#       define BOOST_STACKTRACE_USE_ADDR2LINE
 #   endif
 #else
 #   if defined(BOOST_WINDOWS)
 #       define BOOST_STACKTRACE_USE_WINDBG
 #   else
-#       define BOOST_STACKTRACE_USE_UNWIND
+#       define BOOST_STACKTRACE_USE_ADDR2LINE
 #   endif
 #endif
 

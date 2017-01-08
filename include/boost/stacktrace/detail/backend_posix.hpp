@@ -26,13 +26,15 @@
 #include <execinfo.h>
 #include <cstdio>
 
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-
+#endif
 
 namespace boost { namespace stacktrace { namespace detail {
 
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
 class addr2line_pipe {
     FILE* p;
     pid_t pid;
@@ -136,6 +138,8 @@ inline std::string addr2line(const char* flag, const void* addr) {
 
     return res;
 }
+
+#endif // #ifdef BOOST_STACKTRACE_USE_ADDR2LINE
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 struct pc_data {
@@ -254,16 +258,19 @@ std::string backend::to_string(const void* addr) {
         res = to_hex_array(addr).data();
     }
     
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
     std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", addr);
     if (!source_line.empty() && source_line[0] != '?') {
         res += " at ";
         res += source_line;
-    } else {
-        Dl_info dli;
-        if (!!dladdr(addr, &dli) && dli.dli_sname) {
-            res += " in ";
-            res += dli.dli_fname;
-        }
+        return res;
+    }
+#endif
+
+    Dl_info dli;
+    if (!!dladdr(addr, &dli) && dli.dli_sname) {
+        res += " in ";
+        res += dli.dli_fname;
     }
     
     return res;
@@ -325,10 +332,11 @@ std::string frame::name() const {
             return boost::stacktrace::detail::try_demangle(data.function.c_str());
         }
 #endif
-        
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE  
         res = boost::stacktrace::detail::addr2line("-fe", addr_);
         res = res.substr(0, res.find_last_of('\n'));
         res = boost::stacktrace::detail::try_demangle(res.c_str());
+#endif
     }
 
     if (res == "??") {
@@ -340,24 +348,27 @@ std::string frame::name() const {
 
 std::string frame::source_file() const {
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-        ::backtrace_state* state = backtrace_create_state(
-            0, 0, 0, 0
-        );
+    ::backtrace_state* state = backtrace_create_state(
+        0, 0, 0, 0
+    );
 
-        boost::stacktrace::detail::pc_data data;
-        data.is_function = 0;
-        data.is_filename = 1;
-        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-        if (!data.filename.empty()) {
-            return data.filename;
-        }
+    boost::stacktrace::detail::pc_data data;
+    data.is_function = 0;
+    data.is_filename = 1;
+    backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+    if (!data.filename.empty()) {
+        return data.filename;
+    }
 #endif
 
-    std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
+    std::string res;
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
+    res = boost::stacktrace::detail::addr2line("-e", addr_);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
         res.clear();
     }
+#endif
     return res;
 }
 
@@ -377,6 +388,8 @@ std::size_t frame::source_line() const {
 #endif
 
 
+    std::size_t line_num = 0;
+#ifdef BOOST_STACKTRACE_USE_ADDR2LINE
     std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
@@ -384,10 +397,10 @@ std::size_t frame::source_line() const {
     }
     res = res.substr(last + 1);
 
-    std::size_t line_num = 0;
     if (!boost::conversion::try_lexical_convert(res, line_num)) {
         return 0;
     }
+#endif
 
     return line_num;
 }

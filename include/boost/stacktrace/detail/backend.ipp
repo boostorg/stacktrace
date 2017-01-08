@@ -18,7 +18,7 @@
 #   include <boost/stacktrace/detail/backend_noop.hpp>
 #elif defined(BOOST_STACKTRACE_USE_WINDBG)
 #   include <boost/stacktrace/detail/backend_windows.hpp>
-#elif defined(BOOST_STACKTRACE_USE_BACKTRACE) || defined(BOOST_STACKTRACE_USE_UNWIND)
+#elif defined(BOOST_STACKTRACE_USE_BACKTRACE) || defined(BOOST_STACKTRACE_USE_ADDR2LINE)
 #   include <boost/stacktrace/detail/backend_posix.hpp>
 #else
 #   error No suitable backtrace backend found

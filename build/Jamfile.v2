@@ -41,8 +41,8 @@ rule mp-run-simple ( sources + : args * : input-files * : requirements * : targe
 mp-run-simple has_backtrace.cpp : : : <library>backtrace : libbacktrace ;
 explicit libbacktrace ;
 
-mp-run-simple has_unwind.cpp : : : : unwind ;
-explicit unwind ;
+mp-run-simple has_addr2line.cpp : : : : addr2line ;
+explicit addr2line ;
 
 mp-run-simple has_windbg.cpp : : : : WinDbg ;
 explicit WinDbg ;
@@ -76,20 +76,20 @@ lib boost_stacktrace_backtrace
 
 boost-install boost_stacktrace_backtrace ;
 
-lib boost_stacktrace_unwind
+lib boost_stacktrace_addr2line
   : # sources
-    ../src/unwind.cpp
+    ../src/addr2line.cpp
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds ../build//unwind : : <build>no ]
+    [ check-target-builds ../build//addr2line : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_unwind ;
+boost-install boost_stacktrace_addr2line ;
 
 lib boost_stacktrace_windbg
   : # sources
