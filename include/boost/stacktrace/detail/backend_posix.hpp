@@ -36,8 +36,8 @@ namespace boost { namespace stacktrace { namespace detail {
 
 #ifdef BOOST_STACKTRACE_USE_ADDR2LINE
 class addr2line_pipe {
-    FILE* p;
-    pid_t pid;
+    ::FILE* p;
+    ::pid_t pid;
 
 public:
     explicit addr2line_pipe(const char *flag, const char* exec_path, const char* addr) BOOST_NOEXCEPT
@@ -54,43 +54,43 @@ public:
             0
         };
 
-        if (pipe(pdes) < 0) {
+        if (::pipe(pdes) < 0) {
             return;
         }
 
-        pid = fork();
+        pid = ::fork();
         switch (pid) {
         case -1:
             // failed
-            close(pdes[0]);
-            close(pdes[1]);
+            ::close(pdes[0]);
+            ::close(pdes[1]);
             return;
 
         case 0:
             // we are the child
-            close(STDERR_FILENO);
-            close(pdes[0]);
+            ::close(STDERR_FILENO);
+            ::close(pdes[0]);
             if (pdes[1] != STDOUT_FILENO) {
-                dup2(pdes[1], STDOUT_FILENO);
+                ::dup2(pdes[1], STDOUT_FILENO);
             }
-            execvp(prog_name, argp);
-            _exit(127);
+            ::execvp(prog_name, argp);
+            ::_exit(127);
         }
 
-        p = fdopen(pdes[0], "r");
-        close(pdes[1]);
+        p = ::fdopen(pdes[0], "r");
+        ::close(pdes[1]);
     }
 
-    operator FILE*() const BOOST_NOEXCEPT {
+    operator ::FILE*() const BOOST_NOEXCEPT {
         return p;
     }
 
     ~addr2line_pipe() BOOST_NOEXCEPT {
         if (p) {
-            fclose(p);
+            ::fclose(p);
             int pstat = 0;
-            kill(pid, SIGKILL);
-            waitpid(pid, &pstat, 0);
+            ::kill(pid, SIGKILL);
+            ::waitpid(pid, &pstat, 0);
         }
     }
 };
@@ -98,15 +98,15 @@ public:
 inline std::string addr2line(const char* flag, const void* addr) {
     std::string res;
 
-    Dl_info dli;
-    if (!!dladdr(addr, &dli) && dli.dli_fname) {
+    ::Dl_info dli;
+    if (!!::dladdr(addr, &dli) && dli.dli_fname) {
         res = dli.dli_fname;
     } else {
         res.resize(16);
-        int rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+        int rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);
         while (rlin_size == static_cast<int>(res.size() - 1)) {
             res.resize(res.size() * 4);
-            rlin_size = readlink("/proc/self/exe", &res[0], res.size() - 1);
+            rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);
         }
         if (rlin_size == -1) {
             res.clear();
@@ -123,8 +123,8 @@ inline std::string addr2line(const char* flag, const void* addr) {
     }
 
     char data[32];
-    while (!std::feof(p)) {
-        if (std::fgets(data, sizeof(data), p)) {
+    while (!::feof(p)) {
+        if (::fgets(data, sizeof(data), p)) {
             res += data;
         } else {
             break;
@@ -143,21 +143,18 @@ inline std::string addr2line(const char* flag, const void* addr) {
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 struct pc_data {
-    unsigned is_function : 1;
-    unsigned is_filename : 1;
-    
-    std::string function;
-    std::string filename;
+    std::string* function;
+    std::string* filename;
     std::size_t line;
 };
 
-static int libbacktrace_full_callback(void *data, uintptr_t pc, const char *filename, int lineno, const char *function) {
+static int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
     pc_data& d = *static_cast<pc_data*>(data);
-    if (d.is_filename && filename) {
-        d.filename = filename;
+    if (d.filename && filename) {
+        *d.filename = filename;
     }
-    if (d.is_function && function) {
-        d.function = function;
+    if (d.function && function) {
+        *d.function = function;
     }
     d.line = lineno;
     return 0;
@@ -184,17 +181,17 @@ struct unwind_state {
     void** end;
 };
 
-inline _Unwind_Reason_Code unwind_callback(struct _Unwind_Context* context, void* arg) {
+inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg) {
     unwind_state* state = static_cast<unwind_state*>(arg);
     *state->current = reinterpret_cast<void*>(
-        _Unwind_GetIP(context)
+        ::_Unwind_GetIP(context)
     );
 
     ++state->current;
     if (!*(state->current - 1) || state->current == state->end) {
-        return _URC_END_OF_STACK;
+        return ::_URC_END_OF_STACK;
     }
-    return _URC_NO_REASON;
+    return ::_URC_NO_REASON;
 }
 
 std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
@@ -204,7 +201,7 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     }
 
     unwind_state state = { memory, memory + size };
-    _Unwind_Backtrace(&unwind_callback, &state);
+    ::_Unwind_Backtrace(&unwind_callback, &state);
     frames_count = state.current - memory;
 
     if (memory[frames_count - 1] == 0) {
@@ -217,24 +214,22 @@ std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 inline std::string to_string_impl(const void* addr, ::backtrace_state* state) {
     std::string res;
+    std::string filename;
 
-    boost::stacktrace::detail::pc_data data;
-    data.is_function = 1;
-    data.is_filename = 1;
-    backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-    res.swap(data.function);
+    boost::stacktrace::detail::pc_data data = {&res, &filename, 0};
+    ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
     if (res.empty()) {
         res = to_hex_array(addr).data();
     }
 
-    if (!data.filename.empty() && data.line) {
+    if (!filename.empty() && data.line) {
         res += " at ";
-        res += data.filename;
+        res += filename;
         res += ':';
         res += boost::lexical_cast<boost::array<char, 40> >(data.line).data();
     } else {
-        Dl_info dli;
-        if (!!dladdr(addr, &dli) && dli.dli_sname) {
+        ::Dl_info dli;
+        if (!!::dladdr(addr, &dli) && dli.dli_sname) {
             res += " in ";
             res += dli.dli_fname;
         }
@@ -244,7 +239,7 @@ inline std::string to_string_impl(const void* addr, ::backtrace_state* state) {
 }
 
 std::string backend::to_string(const void* addr) {
-    ::backtrace_state* state = backtrace_create_state(
+    ::backtrace_state* state = ::backtrace_create_state(
         0, 0, 0, 0
     );
     return boost::stacktrace::detail::to_string_impl(addr, state);
@@ -267,8 +262,8 @@ std::string backend::to_string(const void* addr) {
     }
 #endif
 
-    Dl_info dli;
-    if (!!dladdr(addr, &dli) && dli.dli_sname) {
+    ::Dl_info dli;
+    if (!!::dladdr(addr, &dli) && dli.dli_sname) {
         res += " in ";
         res += dli.dli_fname;
     }
@@ -283,7 +278,7 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
     res.reserve(64 * size);
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-    ::backtrace_state* state = backtrace_create_state(
+    ::backtrace_state* state = ::backtrace_create_state(
         0, 0, 0, 0
     );
 #endif
@@ -314,22 +309,21 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
 std::string frame::name() const {
     std::string res;
 
-    Dl_info dli;
-    const bool dl_ok = !!dladdr(addr_, &dli);
+    ::Dl_info dli;
+    const bool dl_ok = !!::dladdr(addr_, &dli);
     if (dl_ok && dli.dli_sname) {
         res = boost::stacktrace::detail::try_demangle(dli.dli_sname);
     } else {
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-        ::backtrace_state* state = backtrace_create_state(
+        ::backtrace_state* state = ::backtrace_create_state(
             (dl_ok ? dli.dli_fname : 0), 0, 0, 0
         );
 
-        boost::stacktrace::detail::pc_data data;
-        data.is_function = 1;
-        data.is_filename = 0;
-        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-        if (!data.function.empty()) {
-            return boost::stacktrace::detail::try_demangle(data.function.c_str());
+        boost::stacktrace::detail::pc_data data = {&res, 0, 0};
+        ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        if (!res.empty()) {
+            res = boost::stacktrace::detail::try_demangle(res.c_str());
+            return res;
         }
 #endif
 #ifdef BOOST_STACKTRACE_USE_ADDR2LINE  
@@ -347,21 +341,19 @@ std::string frame::name() const {
 }
 
 std::string frame::source_file() const {
+    std::string res;
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-    ::backtrace_state* state = backtrace_create_state(
+    ::backtrace_state* state = ::backtrace_create_state(
         0, 0, 0, 0
     );
 
-    boost::stacktrace::detail::pc_data data;
-    data.is_function = 0;
-    data.is_filename = 1;
-    backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
-    if (!data.filename.empty()) {
-        return data.filename;
+    boost::stacktrace::detail::pc_data data = {0, &res, 0};
+    ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+    if (!res.empty()) {
+        return res;
     }
 #endif
 
-    std::string res;
 #ifdef BOOST_STACKTRACE_USE_ADDR2LINE
     res = boost::stacktrace::detail::addr2line("-e", addr_);
     res = res.substr(0, res.find_last_of(':'));
@@ -374,14 +366,12 @@ std::string frame::source_file() const {
 
 std::size_t frame::source_line() const {
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
-        ::backtrace_state* state = backtrace_create_state(
+        ::backtrace_state* state = ::backtrace_create_state(
             0, 0, 0, 0
         );
 
-        boost::stacktrace::detail::pc_data data;
-        data.is_function = 0;
-        data.is_filename = 0;
-        backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
+        boost::stacktrace::detail::pc_data data = {0, 0, 0};
+        ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr_), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
         if (data.line) {
             return data.line;
         }

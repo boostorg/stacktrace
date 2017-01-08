@@ -29,10 +29,10 @@ class com_global_initer: boost::noncopyable {
 public:
     com_global_initer() BOOST_NOEXCEPT {
         // We do not care about the result of the function call: any result is OK for us.
-        CoInitializeEx(0, COINIT_MULTITHREADED);
+        ::CoInitializeEx(0, COINIT_MULTITHREADED);
     }
     ~com_global_initer() BOOST_NOEXCEPT {
-        CoUninitialize();
+        ::CoUninitialize();
     }
 };
 
@@ -66,16 +66,16 @@ public:
 };
 
 
-inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
-    com_holder<IDebugClient> iclient(com);
-    DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr());
+inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
+    com_holder<::IDebugClient> iclient(com);
+    ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr());
 
-    com_holder<IDebugControl> icontrol(com);
+    com_holder<::IDebugControl> icontrol(com);
     iclient->QueryInterface(__uuidof(IDebugControl), icontrol.to_void_ptr_ptr());
 
     const bool res1 = (S_OK == iclient->AttachProcess(
         0,
-        GetCurrentProcessId(),
+        ::GetCurrentProcessId(),
         DEBUG_ATTACH_NONINVASIVE | DEBUG_ATTACH_NONINVASIVE_NO_SUSPEND)
     );
     if (!res1) {
@@ -97,7 +97,7 @@ inline bool try_init_com(com_holder<IDebugSymbols>& idebug, const com_global_ini
 
 
 std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
-    return CaptureStackBackTrace(
+    return ::CaptureStackBackTrace(
         0,
         static_cast<boost::detail::winapi::ULONG_>(size),
         memory,
