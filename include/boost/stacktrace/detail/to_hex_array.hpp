@@ -1,11 +1,11 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_STACKTRACE_TO_HEX_ARRAY_HPP
-#define BOOST_STACKTRACE_DETAIL_STACKTRACE_TO_HEX_ARRAY_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
+#define BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -51,4 +51,4 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* ad
 
 }}} // namespace boost::stacktrace::detail
 
-#endif // BOOST_STACKTRACE_DETAIL_STACKTRACE_TO_HEX_ARRAY_HPP
+#endif // BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
