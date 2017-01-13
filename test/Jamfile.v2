@@ -62,7 +62,7 @@ test-suite stacktrace_tests
     [ run test.cpp test_impl.cpp        : : :                                           $(WIND_DEPS)    : windbg_ho ]
     [ run test.cpp test_impl.cpp        : : :                                           $(BASIC_DEPS)   : basic_ho ]
 
-    # Test with shared linked backends
+    # Test with shared linked implementations
     [ run test.cpp      : : : <library>.//test_impl_lib_backtrace   $(LINKSHARED_BT)    : backtrace_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_addr2line   $(LINKSHARED_UNWD)  : addr2line_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_windbg      $(LINKSHARED_WIND)  : windbg_lib ]

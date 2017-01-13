@@ -4,26 +4,19 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_NOOP_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_NOOP_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP
+#define BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
+#include <boost/stacktrace/frame.hpp>
+
 namespace boost { namespace stacktrace { namespace detail {
 
-
-std::size_t backend::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT {
-    return 0;
-}
-
-std::string backend::to_string(const void* /*addr*/) {
-    return std::string();
-}
-
-std::string backend::to_string(const frame* /*frames*/, std::size_t /*count*/) {
+std::string to_string(const frame* /*frames*/, std::size_t /*count*/) {
     return std::string();
 }
 
@@ -41,6 +34,14 @@ std::size_t frame::source_line() const {
     return 0;
 }
 
+std::string to_string(const frame& /*f*/) {
+    return std::string();
+}
+
+std::size_t this_thread_frames::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT {
+    return 0;
+}
+
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_LIBUNWIND_HPP
+#endif // BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP

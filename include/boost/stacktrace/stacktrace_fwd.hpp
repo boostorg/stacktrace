@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -11,17 +11,8 @@
 #include <memory>
 
 /// @file stacktrace_fwd.hpp This header contains only forward declarations of
-/// boost::stacktrace::frame, boost::stacktrace::const_iterator, boost::stacktrace::basic_stacktrace
+/// boost::stacktrace::frame, boost::stacktrace::basic_stacktrace
 /// and does not include any other Boost headers.
-
-
-#ifndef BOOST_STACKTRACE_DEFAULT_MAX_DEPTH
-/// You may define this macro to some positive integer to limit the max stack frames count for the boost::stacktrace::stacktrace class.
-/// This macro does not affect the boost::stacktrace::basic_stacktrace.
-///
-/// @b Default: 100
-#define BOOST_STACKTRACE_DEFAULT_MAX_DEPTH 100
-#endif
 
 namespace boost { namespace stacktrace {
 

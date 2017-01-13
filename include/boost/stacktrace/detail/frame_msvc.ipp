@@ -4,13 +4,15 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_FRAME_MSVC_IPP
+#define BOOST_STACKTRACE_DETAIL_FRAME_MSVC_IPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
+
+#include <boost/stacktrace/frame.hpp>
 
 #include <boost/core/noncopyable.hpp>
 #include <boost/lexical_cast.hpp>
@@ -94,17 +96,6 @@ inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_i
 
     return true;
 }
-
-
-std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
-    return ::CaptureStackBackTrace(
-        0,
-        static_cast<boost::detail::winapi::ULONG_>(size),
-        memory,
-        0
-    );
-}
-
 
 inline std::string get_name_impl(const com_holder<IDebugSymbols>& idebug, const void* addr, std::string* module_name = 0) {
     std::string result;
@@ -222,19 +213,7 @@ inline void to_string_impl(const com_holder<IDebugSymbols>& idebug, const void* 
     }
 }
 
-std::string backend::to_string(const void* addr) {
-    boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
-    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
-        return std::string();
-    }
-
-    std::string res;
-    to_string_impl(idebug, addr, res);
-    return res;
-}
-
-std::string backend::to_string(const frame* frames, std::size_t size) {
+std::string to_string(const frame* frames, std::size_t size) {
     boost::stacktrace::detail::com_global_initer com_guard;
     boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
@@ -258,7 +237,6 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
 }
 
 } // namespace detail
-
 
 std::string frame::name() const {
     boost::stacktrace::detail::com_global_initer com_guard;
@@ -301,6 +279,28 @@ std::size_t frame::source_line() const {
     return (is_ok ? line_num : 0);
 }
 
+std::string to_string(const frame& f) {
+    boost::stacktrace::detail::com_global_initer com_guard;
+    boost::stacktrace::detail::com_holder<IDebugSymbols> idebug(com_guard);
+    if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
+        return std::string();
+    }
+
+    std::string res;
+    boost::stacktrace::detail::to_string_impl(idebug, f.address(), res);
+    return res;
+}
+
+
+std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    return ::CaptureStackBackTrace(
+        0,
+        static_cast<boost::detail::winapi::ULONG_>(size),
+        memory,
+        0
+    );
+}
+
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP
+#endif // BOOST_STACKTRACE_DETAIL_FRAME_MSVC_IPP

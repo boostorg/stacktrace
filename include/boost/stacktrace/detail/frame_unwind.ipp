@@ -1,16 +1,18 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP
+#define BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
+
+#include <boost/stacktrace/frame.hpp>
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/try_demangle.hpp>
@@ -50,23 +52,6 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
     return ::_URC_NO_REASON;
 }
 
-std::size_t backend::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
-    std::size_t frames_count = 0;
-    if (!size) {
-        return frames_count;
-    }
-
-    unwind_state state = { memory, memory + size };
-    ::_Unwind_Backtrace(&unwind_callback, &state);
-    frames_count = state.current - memory;
-
-    if (memory[frames_count - 1] == 0) {
-        -- frames_count;
-    }
-
-    return frames_count;
-}
-
 template <class Base>
 class to_string_impl_base: private Base {
 public:
@@ -91,12 +76,7 @@ public:
     }
 };
 
-std::string backend::to_string(const void* addr) {
-    to_string_impl impl;
-    return impl(addr);
-}
-
-std::string backend::to_string(const frame* frames, std::size_t size) {
+std::string to_string(const frame* frames, std::size_t size) {
     std::string res;
     res.reserve(64 * size);
 
@@ -116,8 +96,8 @@ std::string backend::to_string(const frame* frames, std::size_t size) {
     return res;
 }
 
-
 } // namespace detail
+
 
 std::string frame::name() const {
     ::Dl_info dli;
@@ -129,6 +109,29 @@ std::string frame::name() const {
     return boost::stacktrace::detail::name_impl(addr_);
 }
 
+std::string to_string(const frame& f) {
+    boost::stacktrace::detail::to_string_impl impl;
+    return impl(f.address());
+}
+
+
+std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    std::size_t frames_count = 0;
+    if (!size) {
+        return frames_count;
+    }
+
+    boost::stacktrace::detail::unwind_state state = { memory, memory + size };
+    ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
+    frames_count = state.current - memory;
+
+    if (memory[frames_count - 1] == 0) {
+        -- frames_count;
+    }
+
+    return frames_count;
+}
+
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP
+#endif // BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP

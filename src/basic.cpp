@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -6,4 +6,4 @@
 
 #define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
 #define BOOST_STACKTRACE_LINK
-#include <boost/stacktrace/detail/backend.ipp>
+#include <boost/stacktrace/detail/frame_unwind.ipp>

@@ -67,7 +67,7 @@ public:
 
     /// @brief Stores the current function call sequence inside the class.
     ///
-    /// @b Complexity: O(N) where N is call sequence length, O(1) for noop backend.
+    /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     ///
@@ -90,7 +90,7 @@ public:
         try {
             {   // Fast path without additional allocations
                 void* buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::detail::backend::collect(buffer, buffer_size);
+                const std::size_t frames_count = boost::stacktrace::this_thread_frames::collect(buffer, buffer_size);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buffer, size);
@@ -102,7 +102,7 @@ public:
             typedef typename Allocator::template rebind<void*>::other allocator_void_t;
             boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::detail::backend::collect(buf.data(), buf.size());
+                const std::size_t frames_count = boost::stacktrace::this_thread_frames::collect(buf.data(), buf.size());
                 if (buf.size() > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buf.data(), size);
@@ -164,7 +164,7 @@ public:
     /// index close to this->size() contains function `main()`.
     /// @returns frame that references the actual frame info, stored inside *this.
     ///
-    /// @b Complexity: Amortized O(1), O(1) for noop backend.
+    /// @b Complexity: Amortized O(1), O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
     /// @b Async-Handler-Safety: Safe.
     const_reference operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
@@ -283,7 +283,7 @@ std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
 /// Outputs stacktrace in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT, class Allocator>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt) {
-    return os << boost::stacktrace::detail::backend::to_string(bt.as_vector().data(), bt.size());
+    return os << boost::stacktrace::detail::to_string(bt.as_vector().data(), bt.size());
 }
 
 typedef basic_stacktrace<> stacktrace;

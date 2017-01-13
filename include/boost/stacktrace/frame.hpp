@@ -40,21 +40,13 @@
 #   define BOOST_STACKTRACE_FUNCTION inline
 #endif
 
-
 namespace boost { namespace stacktrace {
 
 class frame;
 
+
 namespace detail {
-
-// Class that implements the actual backtracing
-class backend {
-public:
-    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
-    BOOST_STACKTRACE_FUNCTION static std::string to_string(const void* addr);
-    BOOST_STACKTRACE_FUNCTION static std::string to_string(const frame* frames, std::size_t size);
-};
-
+    BOOST_STACKTRACE_FUNCTION std::string to_string(const frame* frames, std::size_t size);
 } // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
@@ -165,19 +157,33 @@ inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
     return reinterpret_cast<std::size_t>(f.address());
 }
 
+/// Outputs stacktrace::frame in a human readable format to string; unsafe to use in async handlers.
+BOOST_STACKTRACE_FUNCTION std::string to_string(const frame& f);
+
 /// Outputs stacktrace::frame in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const frame& f) {
-    return os << boost::stacktrace::detail::backend::to_string(f.address());
+    return os << boost::stacktrace::to_string(f);
 }
+
+struct this_thread_frames {
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
+};
 
 }} // namespace boost::stacktrace
 
 /// @cond
+
 #undef BOOST_STACKTRACE_FUNCTION
 
 #ifndef BOOST_STACKTRACE_LINK
-#   include <boost/stacktrace/detail/backend.ipp>
+#   if defined(BOOST_STACKTRACE_USE_NOOP)
+#       include <boost/stacktrace/detail/frame_noop.ipp>
+#   elif defined(BOOST_MSVC)
+#       include <boost/stacktrace/detail/frame_msvc.ipp>
+#   else
+#       include <boost/stacktrace/detail/frame_unwind.ipp>
+#   endif
 #endif
 /// @endcond
 
