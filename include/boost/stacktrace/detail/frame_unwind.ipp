@@ -58,7 +58,9 @@ public:
     std::string operator()(const void* addr) {
         Base::res.clear();
         Base::prepare_function_name(addr);
-        if (Base::res.empty()) {
+        if (!Base::res.empty()) {
+            Base::res = boost::stacktrace::detail::try_demangle(Base::res.c_str());
+        } else {
             Base::res = to_hex_array(addr).data();
         }
 

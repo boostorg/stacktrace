@@ -1,7 +1,7 @@
 [library Boost.Stacktrace
     [quickbook 1.6]
     [version 1.0]
-    [copyright 2016 Antony Polukhin]
+    [copyright 2016-2017 Antony Polukhin]
     [category Language Features Emulation]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -14,8 +14,6 @@
 How can one display the call sequence in C++? What function called the current function? What call sequence led to an exception?
 
 Boost.Stacktrace library is a simple C++03 library that provides information about call sequence in a human-readable form.
-
-[warning This is not an official Boost library! It wasn't reviewed and can't be downloaded from www.boost.org. This library is available to the community to know real interest and get comments for refinement. The intention is to submit library for formal review, if community thinks that it is interesting!]
 
 [endsect]
 
@@ -51,7 +49,7 @@ Code from above will output something like this:
  2# bar(int) at /path/to/source/file.cpp:70
  3# bar(int) at /path/to/source/file.cpp:70
  4# main at /path/to/main.cpp:93
- 5# __libc_start_main
+ 5# __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6
  6# _start
 ```
 
@@ -128,16 +126,15 @@ We've defined the `BOOST_ENABLE_ASSERT_DEBUG_HANDLER` macro for the whole projec
 ```
 Expression 'i < N' is false in function 'T& boost::array<T, N>::operator[](boost::array<T, N>::size_type) [with T = int; long unsigned int N = 5ul; boost::array<T, N>::reference = int&; boost::array<T, N>::size_type = long unsigned int]': out of range.
 Backtrace:
- 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long) at boost/libs/stacktrace/example/assert_handler.cpp:38
- 2# boost::array<int, 5ul>::operator[](unsigned long)
- 3# bar(int) at boost/libs/stacktrace/example/assert_handler.cpp:16
- 4# foo(int) at boost/libs/stacktrace/example/assert_handler.cpp:24
- 5# bar(int) at boost/libs/stacktrace/example/assert_handler.cpp:20
- 6# foo(int) at boost/libs/stacktrace/example/assert_handler.cpp:24
- 7# main at boost/libs/stacktrace/example/assert_handler.cpp:53
- 8# __libc_start_main
- 9# _start
+ 0# boost::assertion_failed_msg(char const*, char const*, char const*, char const*, long) at ../example/assert_handler.cpp:39
+ 1# boost::array<int, 5ul>::operator[](unsigned long) at ../../../boost/array.hpp:124
+ 2# bar(int) at ../example/assert_handler.cpp:17
+ 3# foo(int) at ../example/assert_handler.cpp:25
+ 4# bar(int) at ../example/assert_handler.cpp:17
+ 5# foo(int) at ../example/assert_handler.cpp:25
+ 6# main at ../example/assert_handler.cpp:54
+ 7# 0x00007F991FD69F45 in /lib/x86_64-linux-gnu/libc.so.6
+ 8# 0x0000000000401139
 ```
 
 Now we do know the steps that led to the assertion and can find the error without debugger.
@@ -147,21 +144,21 @@ Now we do know the steps that led to the assertion and can find the error withou
 
 [section Exceptions with stacktrace]
 
-You can provide more information along with exception by embedding stacktraces into the exception. For that you will need to:
+You can provide more information along with exception by embedding stacktraces into the exception. There are many ways to do that, here's how to doe that using Boost.Exception:
 
-* Write a basic class that holds the stacktrace:
+* Declare a `boost::error_info` typedef that holds the stacktrace:
 
 [getting_started_class_traced]
 
-* Write a helper class for appending class `traced` to any exception:
+* Write a helper class for throwing any exception with stacktrce:
 
 [getting_started_class_with_trace]
 
-* Throw `with_trace<Exception>` instead of just `Exception`:
+* Use `throw_with_trace(E);` instead of just `throw E;`:
 
 [getting_started_throwing_with_trace]
 
-* Catch exceptions by `traced`:
+* Process exceptions:
 
 [getting_started_catching_trace]
 
@@ -169,18 +166,15 @@ Code from above will output:
 
 ```
 'i' must not be greater than zero in oops()
-Backtrace:
- 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# traced::traced() at boost/libs/stacktrace/example/throwing_st.cpp:20
- 2# with_trace<std::logic_error>::with_trace<char const (&) [44]>(char const (&) [44]) at boost/libs/stacktrace/example/throwing_st.cpp:33
- 3# oops(int)
- 4# bar(int) at boost/libs/stacktrace/example/throwing_st.cpp:70
- 5# foo(int) at boost/libs/stacktrace/example/throwing_st.cpp:75
- 6# bar(int) at boost/libs/stacktrace/example/throwing_st.cpp:65
- 7# foo(int) at boost/libs/stacktrace/example/throwing_st.cpp:75
- 8# main at boost/libs/stacktrace/example/throwing_st.cpp:93
- 9# __libc_start_main
-10# _start
+ 0# void throw_with_trace<std::logic_error>(std::logic_error const&) at ../example/throwing_st.cpp:22
+ 1# oops(int) at ../example/throwing_st.cpp:38
+ 2# bar(int) at ../example/throwing_st.cpp:54
+ 3# foo(int) at ../example/throwing_st.cpp:59
+ 4# bar(int) at ../example/throwing_st.cpp:49
+ 5# foo(int) at ../example/throwing_st.cpp:59
+ 6# main at ../example/throwing_st.cpp:76
+ 7# 0x00007FAC113BEF45 in /lib/x86_64-linux-gnu/libc.so.6
+ 8# 0x0000000000402ED9
 ```
 
 [endsect]
@@ -229,7 +223,7 @@ my_signal_handler(int) at boost/libs/stacktrace/example/debug_function.cpp:21
 
 [section Global control over stacktrace output format]
 
-You may control maximal stacktrace length using [macroref BOOST_STACKTRACE_DEFAULT_MAX_DEPTH] and even override the behavior of default stacktrace output operator by defining the macro from Boost.Config [macroref BOOST_USER_CONFIG] to point to a file like following:
+You may override the behavior of default stacktrace output operator by defining the macro from Boost.Config [macroref BOOST_USER_CONFIG] to point to a file like following:
 
 [getting_started_user_config]
 
@@ -241,11 +235,10 @@ Code from above will output:
 
 ```
 Terminate called:
- 0# boost::stacktrace::detail::backend::backend(void**, unsigned long)
- 1# bar(int)
- 2# foo(int)
- 3# bar(int)
- 4# foo(int)
+ 0# bar(int)
+ 1# foo(int)
+ 2# bar(int)
+ 3# foo(int)
 ```
 
 [endsect]
@@ -254,15 +247,13 @@ Terminate called:
 
 [section Build Macros]
 
-By default Boost.Stacktrace is a header-only library and it attempts to detect the tracing backend automatically.
-
-You can define the following macros to explicitly specify backend that you're willing to use in header-only mode (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
+By default Boost.Stacktrace is a header-only library. You can define the following macros to tune the library (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
 
 [table:config_macro Config Macro
     [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] ]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use libbackend. Requires linking with libdl and libbackend libraries.] [GCC/MinGW/Clang...] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing that does nothing. Use this if you wish to disable backtracing, `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use libbacktrace. Requires linking with libdl and libbacktrace libraries.] [GCC/MinGW/Clang...] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [Use addr2line program to retrive stacktrace. Requires linking with libdl library.] [GCC/MinGW/Clang...] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing that does nothing. Use this if you wish to disable backtracing, `stacktrace::size()` with that macro always returns 0. ] [All] [yes] [no]]
 ]
 
 
@@ -275,9 +266,9 @@ You may use the following macros to improve build times or to be able to switch 
 
 If one of the link macros is defined, you have to manually link your binary with one of the libraries that has the tracing implementation:
 
-* boost_stacktrace_unwind
-* boost_stacktrace_windbg
 * boost_stacktrace_backtrace
+* boost_stacktrace_basic
+* boost_stacktrace_windbg
 * boost_stacktrace_noop
 
 [endsect]

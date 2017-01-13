@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -6,37 +6,21 @@
 
 #include <boost/config.hpp>
 
-#if defined(BOOST_NO_CXX11_NOEXCEPT) || defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) || defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-
-int main(){}
-
-#else
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //[getting_started_class_traced
 #include <boost/stacktrace.hpp>
+#include <boost/exception/all.hpp> 
 
-struct traced {
-    const boost::stacktrace::stacktrace trace;
-
-    virtual const char* what() const noexcept = 0;
-    virtual ~traced(){}
-};
+typedef boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace> traced;
 //]
 
 //[getting_started_class_with_trace
-template <class Exception>
-struct with_trace : public Exception, public traced {
-    template <class... Args>
-    with_trace(Args&&... args)
-        : Exception(std::forward<Args>(args)...)
-    {}
-
-    const char* what() const noexcept {
-        return Exception::what();
-    }
-};
+template <class E>
+void throw_with_trace(const E& e) {
+    throw boost::enable_error_info(e)
+        << traced(boost::stacktrace::stacktrace());
+} 
 //]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,9 +33,9 @@ BOOST_NOINLINE void bar(int i);
 BOOST_NOINLINE void oops(int i) {
     //[getting_started_throwing_with_trace
     if (i >= 4)
-        throw with_trace<std::out_of_range>("'i' must be less than 4 in oops()");
+        throw_with_trace(std::out_of_range("'i' must be less than 4 in oops()"));
     if (i <= 0)
-        throw with_trace<std::logic_error>("'i' must not be greater than zero in oops()");
+        throw_with_trace(std::logic_error("'i' must not be greater than zero in oops()"));
     //]
     foo(i);
     std::exit(1);
@@ -80,18 +64,15 @@ int main() {
     //[getting_started_catching_trace
     try {
         foo(5); // testing assert handler
-    } catch (const traced& e) {
-        std::cerr << e.what() << '\n';
-        if (e.trace) {
-            std::cerr << "Backtrace:\n" << e.trace << '\n';
-        } /*<-*/ std::exit(0); /*->*/
     } catch (const std::exception& e) {
-        std::cerr << e.what() << '\n'; /*<-*/ std::exit(3); /*->*/
+        std::cerr << e.what() << '\n';
+        const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
+        if (st) {
+            std::cerr << *st << '\n'; /*<-*/ std::exit(0); /*->*/
+        } /*<-*/ std::exit(3); /*->*/
     }
     //]
-    
+
     return 5;
 }
-
-#endif
 

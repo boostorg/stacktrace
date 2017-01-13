@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -41,6 +41,7 @@ void my_terminate_handler() {
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
+    //boost::stacktrace::this_thread_frames::dump("backtrace_file.txt")
     boost::stacktrace::stacktrace bt;
     if (bt) {
         std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; // ``[footnote Strictly speaking this code is not async-signal-safe, because it uses std::cerr. [link boost_stacktrace.build_macros_and_backends Section "Build, Macros and Backends"] describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and `operator<<` will be never called. ]``

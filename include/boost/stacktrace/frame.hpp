@@ -168,6 +168,18 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 struct this_thread_frames {
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
+
+/*
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(const char* file) BOOST_NOEXCEPT;
+
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(platform_specific fd) BOOST_NOEXCEPT;
+#elif defined(BOOST_WINDOWS)
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(void* fd) BOOST_NOEXCEPT;
+#else
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(int fd) BOOST_NOEXCEPT;
+#endif
+*/
 };
 
 }} // namespace boost::stacktrace
