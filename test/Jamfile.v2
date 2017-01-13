@@ -24,50 +24,60 @@ project
     <warnings>all
     <debug-symbols>on
     <test-info>always_show_run_output
-    <target-os>linux:<cxxflags>"-fvisibility=hidden"
   ;
 
+local RDYNAMIC = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
+    <target-os>qnxnto,<toolset>qcc:<linkflags>"-Bdynamic" <target-os>qnxnto,<toolset>gcc:<linkflags>"-rdynamic"
+    <target-os>android:<linkflags>"-rdynamic" <target-os>linux:<linkflags>"-rdynamic" <target-os>darwin,<toolset>gcc:<linkflags>"-dynamic"
+    <target-os>darwin,<toolset>clang:<linkflags>"-rdynamic" <target-os>iphone:<linkflags>"-rdynamic" ;
 
-local BT_DEPS   = <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
-local UNWD_DEPS = <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
-local WIND_DEPS = <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
-local NOOP_DEPS =  ;
-local AUTO_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <library>Dbghelp ] ;
+local HIDE_SYMBS = <target-os>linux:<cxxflags>"-fvisibility=hidden" ;
 
-local LINKSHARED_BT   = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace  $(BT_DEPS)   ;
-local LINKSHARED_UNWD = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line  $(UNWD_DEPS) ;
-local LINKSHARED_WIND = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg     $(WIND_DEPS) ;
-local LINKSHARED_NOOP = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop       $(NOOP_DEPS) ;
+local BT_DEPS   = $(HIDE_SYMBS) <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
+local UNWD_DEPS = $(HIDE_SYMBS) <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
+local WIND_DEPS = $(HIDE_SYMBS) <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local NOOP_DEPS = $(HIDE_SYMBS) ;
+local BASIC_DEPS = $(RDYNAMIC) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
+
+local LINKSHARED_BT    = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace  $(BT_DEPS)   ;
+local LINKSHARED_UNWD  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line  $(UNWD_DEPS) ;
+local LINKSHARED_WIND  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg     $(WIND_DEPS) ;
+local LINKSHARED_NOOP  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop       $(NOOP_DEPS) ;
+local LINKSHARED_BASIC = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic      $(BASIC_DEPS) ;
 
 lib test_impl_lib_backtrace : test_impl.cpp : $(LINKSHARED_BT) ;
 lib test_impl_lib_addr2line : test_impl.cpp : $(LINKSHARED_UNWD) ;
 lib test_impl_lib_windbg    : test_impl.cpp : $(LINKSHARED_WIND) ;
 lib test_impl_lib_noop      : test_impl.cpp : $(LINKSHARED_NOOP) ;
 
+obj test_impl_nohide-obj : test_impl.cpp : $(LINKSHARED_BASIC) ;
+lib test_impl_lib_basic  : test_impl_nohide-obj : $(LINKSHARED_BASIC) ;
+
 test-suite stacktrace_tests
   :
     # Header only tests
-    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS)   : backtrace_ho ]
-    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_ADDR2LINE $(UNWD_DEPS) : addr2line_ho ]
-    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_WINDBG $(WIND_DEPS) : windbg_ho ]
-    [ run test_noop.cpp test_impl.cpp   : : : <define>BOOST_STACKTRACE_USE_NOOP $(NOOP_DEPS) : noop_ho ]
-    [ run test.cpp test_impl.cpp        : : : $(AUTO_DEPS) : autodetect_ho ]
+    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_BACKTRACE    $(BT_DEPS)      : backtrace_ho ]
+    [ run test.cpp test_impl.cpp        : : : <define>BOOST_STACKTRACE_USE_ADDR2LINE    $(UNWD_DEPS)    : addr2line_ho ]
+    [ run test_noop.cpp test_impl.cpp   : : : <define>BOOST_STACKTRACE_USE_NOOP         $(NOOP_DEPS)    : noop_ho ]
+    [ run test.cpp test_impl.cpp        : : :                                           $(WIND_DEPS)    : windbg_ho ]
+    [ run test.cpp test_impl.cpp        : : :                                           $(BASIC_DEPS)   : basic_ho ]
 
     # Test with shared linked backends
-    [ run test.cpp      : : : <library>.//test_impl_lib_backtrace $(LINKSHARED_BT)   : backtrace_lib ]
-    [ run test.cpp      : : : <library>.//test_impl_lib_addr2line $(LINKSHARED_UNWD) : addr2line_lib ]
-    [ run test.cpp      : : : <library>.//test_impl_lib_windbg $(LINKSHARED_WIND) : windbg_lib ]
-    [ run test_noop.cpp : : : <library>.//test_impl_lib_noop $(LINKSHARED_NOOP) : noop_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_backtrace   $(LINKSHARED_BT)    : backtrace_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_addr2line   $(LINKSHARED_UNWD)  : addr2line_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_windbg      $(LINKSHARED_WIND)  : windbg_lib ]
+    [ run test_noop.cpp : : : <library>.//test_impl_lib_noop        $(LINKSHARED_NOOP)  : noop_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_basic       $(LINKSHARED_BASIC) : basic_lib ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite. 
 for local p in [ glob ../example/*.cpp ]
 {
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT)   : backtrace_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD) : addr2line_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND) : windbg_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP) : noop_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(AUTO_DEPS) : autodetect_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT)       : backtrace_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD)     : addr2line_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND)     : windbg_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP)     : noop_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BASIC)    : basic_$(p[1]:B) ] ;
 
 }
 

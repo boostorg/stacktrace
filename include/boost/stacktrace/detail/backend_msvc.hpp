@@ -1,11 +1,11 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_WINDOWS_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_WINDOWS_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP
+#define BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -303,4 +303,4 @@ std::size_t frame::source_line() const {
 
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_LINUX_HPP
+#endif // BOOST_STACKTRACE_DETAIL_BACKEND_MSVC_HPP

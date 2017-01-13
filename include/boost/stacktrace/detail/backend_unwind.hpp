@@ -4,8 +4,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP
-#define BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP
+#ifndef BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP
+#define BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -131,4 +131,4 @@ std::string frame::name() const {
 
 }} // namespace boost::stacktrace
 
-#endif // BOOST_STACKTRACE_DETAIL_BACKEND_POSIX_HPP
+#endif // BOOST_STACKTRACE_DETAIL_BACKEND_UNWIND_HPP

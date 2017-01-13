@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -26,26 +26,6 @@
 #   define BOOST_STACKTRACE_DYN_LINK
 #endif
 
-// Backend autodetection
-#if !defined(BOOST_STACKTRACE_USE_NOOP) && !defined(BOOST_STACKTRACE_USE_WINDBG) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE) \
-    && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_HEADER)
-
-#if defined(__has_include) && (!defined(__GNUC__) || __GNUC__ > 4 || BOOST_CLANG)
-#   if __has_include("Dbgeng.h")
-#       define BOOST_STACKTRACE_USE_WINDBG
-#   else
-#       define BOOST_STACKTRACE_USE_ADDR2LINE
-#   endif
-#else
-#   if defined(BOOST_WINDOWS)
-#       define BOOST_STACKTRACE_USE_WINDBG
-#   else
-#       define BOOST_STACKTRACE_USE_ADDR2LINE
-#   endif
-#endif
-
-#endif
-
 #ifdef BOOST_STACKTRACE_LINK
 #   if defined(BOOST_STACKTRACE_DYN_LINK)
 #       ifdef BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
@@ -59,7 +39,6 @@
 #else
 #   define BOOST_STACKTRACE_FUNCTION inline
 #endif
-
 
 
 namespace boost { namespace stacktrace {

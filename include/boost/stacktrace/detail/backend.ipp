@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016.
+// Copyright Antony Polukhin, 2016-2017.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -16,12 +16,10 @@
 
 #if defined(BOOST_STACKTRACE_USE_NOOP)
 #   include <boost/stacktrace/detail/backend_noop.hpp>
-#elif defined(BOOST_STACKTRACE_USE_WINDBG)
-#   include <boost/stacktrace/detail/backend_windows.hpp>
-#elif defined(BOOST_STACKTRACE_USE_BACKTRACE) || defined(BOOST_STACKTRACE_USE_ADDR2LINE)
-#   include <boost/stacktrace/detail/backend_posix.hpp>
+#elif defined(BOOST_MSVC)
+#   include <boost/stacktrace/detail/backend_msvc.hpp>
 #else
-#   error No suitable backtrace backend found
+#   include <boost/stacktrace/detail/backend_unwind.hpp>
 #endif
 
 #endif // BOOST_STACKTRACE_DETAIL_BACKEND_IPP

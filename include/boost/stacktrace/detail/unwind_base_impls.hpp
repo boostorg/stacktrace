@@ -17,11 +17,13 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct to_string_using_nothing {
+    std::string res;
+
     void prepare_function_name(const void* addr) {
         res = boost::stacktrace::frame(addr).name();
     }
 
-    bool prepare_source_location() const BOOST_NOEXCEPT {
+    bool prepare_source_location(const void* /*addr*/) const BOOST_NOEXCEPT {
         return false;
     }
 };
@@ -33,6 +35,8 @@ inline std::string name_impl(const void* /*addr*/) {
     return std::string();
 }
 
+} // namespace detail
+
 std::string frame::source_file() const {
     return std::string();
 }
@@ -41,6 +45,6 @@ std::size_t frame::source_line() const {
     return 0;
 }
 
-}}} // namespace boost::stacktrace::detail
+}} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_UNWIND_BASE_IMPLS_HPP
