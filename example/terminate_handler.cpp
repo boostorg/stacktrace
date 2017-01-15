@@ -44,7 +44,7 @@ void my_signal_handler(int signum) {
     //boost::stacktrace::this_thread_frames::dump("backtrace_file.txt")
     boost::stacktrace::stacktrace bt;
     if (bt) {
-        std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; // ``[footnote Strictly speaking this code is not async-signal-safe, because it uses std::cerr. [link boost_stacktrace.build_macros_and_backends Section "Build, Macros and Backends"] describes async-signal-safe backends, so if you will use the noop backend code becomes absolutely valid as that backens always returns 0 frames and `operator<<` will be never called. ]``
+        std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; // This code is not async-signal-safe! Examples will be changed soon
     }
     std::_Exit(-1);
 }

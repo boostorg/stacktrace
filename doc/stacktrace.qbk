@@ -245,31 +245,31 @@ Terminate called:
 
 [endsect]
 
-[section Build Macros]
+[section Configuration and Build]
 
-By default Boost.Stacktrace is a header-only library. You can define the following macros to tune the library (those macros have no effect if defined *BOOST_STACKTRACE_LINK* or *BOOST_STACKTRACE_DYN_LINK*):
-
-[table:config_macro Config Macro
-    [[Macro name] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary.]] ]
-    [[*BOOST_STACKTRACE_USE_NOOP*] [Use noop tracing that does nothing. Use this if you wish to disable backtracing, `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [Use libbacktrace. Requires linking with libdl and libbacktrace libraries.] [GCC/MinGW/Clang...] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [Use addr2line program to retrive stacktrace. Requires linking with libdl library.] [GCC/MinGW/Clang...] [yes] [yes]]
-]
-
-
-You may use the following macros to improve build times or to be able to switch implementations without recompiling your project:
+By default Boost.Stacktrace is a header-only library, but you may change that and use the following macros to improve build times or to be able to tune library without recompiling your project:
 [table:linkmacro Link macros
     [[Macro name] [Effect]]
     [[*BOOST_STACKTRACE_LINK*] [Disable header-only build and require linking with shared or static library that contains the tracing implementation. If *BOOST_ALL_DYN_LINK* is defined, then link with shared library.]]
     [[*BOOST_STACKTRACE_DYN_LINK*] [Disable header-only build and require linking with shared library that contains tracing implementation.]]
 ]
 
-If one of the link macros is defined, you have to manually link your binary with one of the libraries that has the tracing implementation:
 
-* boost_stacktrace_backtrace
-* boost_stacktrace_basic
-* boost_stacktrace_windbg
-* boost_stacktrace_noop
+In header only mode library could be tuned by macro. If one of the link macro from above is defined, you have to manually link with one of the libraries:
+[table:libconfig Config
+    [[Macro name or default] [Library] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary. Compiling with `-rdynamic` flag, without `-fisibility=hidden` or marking a functions as exported produce a better stacktraces.]] ]
+    [[['default MSVC]] [*boost_stacktrace_windbg*] [ Uses COM and MSVC to show debug info. ] [MSVC] [yes] [yes]]
+    [[['default other platforms]] [*boost_stacktrace_basic*] [Uses compiler intrinsics to collect stacktrace and `::dladdr` to show information about the symbol. Requires linking with *libdl* library.] [GCC/MinGW/Clang...] [no] [yes]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or can be downloaded [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here] ] [GCC/MinGW/Clang...] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [*boost_stacktrace_addr2line*] [Use *addr2line* program to retrieve stacktrace. Requires linking with *libdl* library and calls `::fork`.] [GCC/MinGW/Clang...] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_NOOP*] [*boost_stacktrace_noop*] [Use this if you wish to disable backtracing. `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
+]
+
+[*Examples:]
+
+* if you wish to disable backtracing and you use the library in header only mode, you just need to define *BOOST_STACKTRACE_USE_NOOP* for the whole project
+* if you wish to disable backtracing and *BOOST_STACKTRACE_LINK* is defined, you just need link with *-lboost_stacktrace_noop*
+* if you wish to switch to more powerful implementation on Clang and *BOOST_STACKTRACE_LINK* is defined, you just need link with "*-lboost_stacktrace_backtrace -ldl -lbacktrace*" or "*-lboost_stacktrace_addr2line -ldl*"
 
 [endsect]
 
