@@ -20,6 +20,10 @@ std::string to_string(const frame* /*frames*/, std::size_t /*count*/) {
     return std::string();
 }
 
+std::size_t from_dump(const char* /*filename*/, void** /*frames*/) {
+    return 0;
+}
+
 } // namespace detail
 
 std::string frame::name() const {
@@ -39,6 +43,22 @@ std::string to_string(const frame& /*f*/) {
 }
 
 std::size_t this_thread_frames::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT {
+    return 0;
+}
+
+#if defined(BOOST_WINDOWS)
+std::size_t this_thread_frames::dump(void* /*fd*/) BOOST_NOEXCEPT {
+    return 0;
+}
+#else
+std::size_t this_thread_frames::dump(int /*fd*/) BOOST_NOEXCEPT {
+    return 0;
+}
+#endif
+
+
+
+std::size_t this_thread_frames::dump(const char* /*file*/) BOOST_NOEXCEPT {
     return 0;
 }
 

@@ -28,42 +28,65 @@ BOOST_NOINLINE void foo(int i) {
 
 //[getting_started_terminate_handlers
 
-#include <exception>    // std::set_terminate, std::abort
 #include <signal.h>     // ::signal
 #include <cstdlib>      // std::_Exit
 #include <boost/stacktrace.hpp>
-#include <iostream>     // std::cerr
-
-void my_terminate_handler() {
-    std::cerr << "Terminate called:\n" << boost::stacktrace::stacktrace() << '\n';
-    std::abort();
-}
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
-    //boost::stacktrace::this_thread_frames::dump("backtrace_file.txt")
-    boost::stacktrace::stacktrace bt;
-    if (bt) {
-        std::cerr << "Signal " << signum << ", backtrace:\n" << boost::stacktrace::stacktrace() << '\n'; // This code is not async-signal-safe! Examples will be changed soon
-    }
+    boost::stacktrace::this_thread_frames::dump("./backtrace.dump");
     std::_Exit(-1);
 }
 //]
 
 void setup_handlers() {
 //[getting_started_setup_handlers
-    std::set_terminate(&my_terminate_handler);
     ::signal(SIGSEGV, &my_signal_handler);
     ::signal(SIGABRT, &my_signal_handler);
 //]
 }
 
 
-int main() {
-    setup_handlers();
-    foo(5);
-    
-    return 2;
+#include <iostream>     // std::cerr
+#include <boost/filesystem.hpp>
+
+int main(int argc, const char* argv[]) {
+    if (argc < 2) {
+        // We are copying files to make sure that stacktrace printing works independently from executable name
+        {
+            boost::filesystem::path command_1 = argv[0];
+            command_1 = command_1.parent_path() / (command_1.stem().string() + "_1") / command_1.extension();
+            boost::filesystem::copy_file(argv[0], command_1, boost::filesystem::copy_option::overwrite_if_exists);
+            command_1 += " 1";
+            if (std::system(command_1.c_str())) {
+                std::exit(-1);
+            }
+        }
+
+        {
+            boost::filesystem::path command_2 = argv[0];
+            command_2 = command_2.parent_path() / (command_2.stem().string() + "_2") / command_2.extension();
+            boost::filesystem::copy_file(argv[0], command_2, boost::filesystem::copy_option::overwrite_if_exists);
+            command_2 += " 2";
+            if (std::system(command_2.c_str())) {
+                std::exit(-2);
+            }
+        }
+
+        return 0;
+    }
+
+    switch(argv[1][0]) {
+    case '1':
+        setup_handlers();
+        foo(5);
+        return -11;
+    case '2':
+        boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump("./backtrace.dump");
+        std::cout << st << std::endl;
+        return 0;
+    }
+    return 3;
 }
 
 

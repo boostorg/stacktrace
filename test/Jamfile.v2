@@ -73,11 +73,18 @@ test-suite stacktrace_tests
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite. 
 for local p in [ glob ../example/*.cpp ]
 {
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT)       : backtrace_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD)     : addr2line_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND)     : windbg_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP)     : noop_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BASIC)    : basic_$(p[1]:B) ] ;
+    local target_name = $(p[1]:B) ;
+    local additional_dependency = ;
+    if $(target_name) = "terminate_handler"
+    {
+        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system ;
+    }
+
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT) $(additional_dependency)       : backtrace_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD) $(additional_dependency)     : addr2line_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND) $(additional_dependency)    : windbg_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP) $(additional_dependency)     : noop_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BASIC) $(additional_dependency)    : basic_$(p[1]:B) ] ;
 
 }
 

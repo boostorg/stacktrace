@@ -301,6 +301,28 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_N
     );
 }
 
+std::size_t this_thread_frames::dump(void* fd) BOOST_NOEXCEPT {
+    BOOST_CONSTEXPR_OR_CONST std::size_t buf_size = boost::stacktrace::detail::max_frames_dump;
+    BOOST_CONSTEXPR_OR_CONST std::size_t frames_to_skip = 1;
+    void* buf[buf_size];
+    const std::size_t size = boost::stacktrace::this_thread_frames::collect(buf, buf_size);
+    if (!::WriteFile(fd, buf + frames_to_skip, sizeof(void*) * (size - frames_to_skip))) {
+        return 0;
+    }
+
+    return size;
+}
+
+std::size_t this_thread_frames::dump(const char* file) BOOST_NOEXCEPT {
+    const void* fd = ::CreateFile(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL);
+    if (fd == INVALID_HANDLE_VALUE) {
+        return 0;
+    }
+    const std::size_t size = boost::stacktrace::this_thread_frames::dump(fd);
+    ::CloseHandle(fd);
+    return size;
+}
+
 }} // namespace boost::stacktrace
 
 #endif // BOOST_STACKTRACE_DETAIL_FRAME_MSVC_IPP

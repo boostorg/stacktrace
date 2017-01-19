@@ -47,6 +47,9 @@ class frame;
 
 namespace detail {
     BOOST_STACKTRACE_FUNCTION std::string to_string(const frame* frames, std::size_t size);
+
+    enum helper{ max_frames_dump = 128 };
+    BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, void** frames);
 } // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
@@ -168,18 +171,17 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 struct this_thread_frames {
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
-
-/*
-    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(const char* file) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION static std::size_t dump(const char* file) BOOST_NOEXCEPT;
 
 #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(platform_specific fd) BOOST_NOEXCEPT;
 #elif defined(BOOST_WINDOWS)
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(void* fd) BOOST_NOEXCEPT;
 #else
+    // POSIX
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t dump(int fd) BOOST_NOEXCEPT;
 #endif
-*/
+
 };
 
 }} // namespace boost::stacktrace
@@ -193,8 +195,10 @@ struct this_thread_frames {
 #       include <boost/stacktrace/detail/frame_noop.ipp>
 #   elif defined(BOOST_MSVC)
 #       include <boost/stacktrace/detail/frame_msvc.ipp>
+#       include <boost/stacktrace/detail/from_dump.ipp>
 #   else
 #       include <boost/stacktrace/detail/frame_unwind.ipp>
+#       include <boost/stacktrace/detail/from_dump.ipp>
 #   endif
 #endif
 /// @endcond

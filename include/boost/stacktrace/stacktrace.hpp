@@ -78,7 +78,7 @@ public:
     BOOST_NOINLINE explicit basic_stacktrace(std::size_t max_depth = static_cast<std::size_t>(-1), const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
         : impl_(a)
     {
-        const size_t buffer_size = 128;
+        BOOST_CONSTEXPR_OR_CONST size_t buffer_size = 128;
         if (!max_depth) {
             return;
         }
@@ -228,6 +228,20 @@ public:
 
     const boost::container::vector<frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
         return impl_;
+    }
+
+    static basic_stacktrace from_dump(const char* file, const allocator_type& a = allocator_type()) {
+        basic_stacktrace st(0, a);
+        void* buf[boost::stacktrace::detail::max_frames_dump];
+        const std::size_t size = boost::stacktrace::detail::from_dump(file, buf);
+        st.impl_.reserve(size);
+        for (std::size_t i = 0; i < size; ++i) {
+            st.impl_.push_back(
+                boost::stacktrace::frame(buf[i])
+            );
+        }
+
+        return st;
     }
 };
 
