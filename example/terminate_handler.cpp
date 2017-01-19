@@ -58,7 +58,7 @@ int main(int argc, const char* argv[]) {
             command_1 = command_1.parent_path() / (command_1.stem().string() + "_1") / command_1.extension();
             boost::filesystem::copy_file(argv[0], command_1, boost::filesystem::copy_option::overwrite_if_exists);
             command_1 += " 1";
-            if (std::system(command_1.c_str())) {
+            if (std::system(command_1.string().c_str())) {
                 std::exit(-1);
             }
         }
@@ -68,7 +68,7 @@ int main(int argc, const char* argv[]) {
             command_2 = command_2.parent_path() / (command_2.stem().string() + "_2") / command_2.extension();
             boost::filesystem::copy_file(argv[0], command_2, boost::filesystem::copy_option::overwrite_if_exists);
             command_2 += " 2";
-            if (std::system(command_2.c_str())) {
+            if (std::system(command_2.string().c_str())) {
                 std::exit(-2);
             }
         }
