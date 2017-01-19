@@ -314,7 +314,7 @@ std::size_t this_thread_frames::dump(void* fd) BOOST_NOEXCEPT {
 }
 
 std::size_t this_thread_frames::dump(const char* file) BOOST_NOEXCEPT {
-    void* const fd = ::CreateFile(file, GENERIC_WRITE, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL);
+    void* const fd = ::CreateFile(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     if (fd == INVALID_HANDLE_VALUE) {
         return 0;
     }
