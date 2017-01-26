@@ -61,6 +61,9 @@ int main(int argc, const char* argv[]) {
             boost::filesystem::copy_file(argv[0], command_1, boost::filesystem::copy_option::overwrite_if_exists);
             command_1 += " 1";
             std::system(command_1.string().c_str());
+            if (ret) {
+                std::exit(ret);
+            }
         }
 
         {
@@ -108,6 +111,7 @@ int main(int argc, const char* argv[]) {
         } /*->*/
 
         // cleaning up
+        ifs.close();
         boost::filesystem::remove("./backtrace.dump");
     }
 //]
