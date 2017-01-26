@@ -21,10 +21,12 @@
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/frame.hpp>
 
+/// @cond
 namespace boost {
     // Forward declaration
     template <class It> std::size_t hash_range(It, It);
 }
+/// @endcond
 
 namespace boost { namespace stacktrace {
 
@@ -294,74 +296,6 @@ public:
     }
 };
 
-
-/// @brief Stores current function call sequence into the memory.
-///
-/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
-///
-/// @b Async-Handler-Safety: Safe.
-///
-/// @returns Stored call sequence depth.
-///
-/// @param memory Preallocated buffer to store current function call sequence into. Must at least as big as max_frames * sizeof(void*).
-///
-/// @param max_frames Max call sequence depth to store.
-BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory[], std::size_t max_frames) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::this_thread_frames::collect(memory, max_frames);
-}
-
-namespace detail {
-    template <class T>
-    BOOST_FORCEINLINE std::size_t safe_dump_to_impl(T file) BOOST_NOEXCEPT {
-        void* buffer[boost::stacktrace::detail::max_frames_dump + 1];
-        const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, boost::stacktrace::detail::max_frames_dump);
-        buffer[frames_count] = 0;
-        return boost::stacktrace::detail::dump(file, buffer, frames_count + 1);
-    }
-}
-
-/// @brief Opens a file and rewrites its content with current function call sequence.
-///
-/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
-///
-/// @b Async-Handler-Safety: Safe.
-///
-/// @returns Stored call sequence depth.
-///
-/// @param file File to store current function call sequence.
-BOOST_FORCEINLINE std::size_t safe_dump_to(const char* file) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::safe_dump_to_impl(file);
-}
-
-#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
-
-/// @brief Writes into the provided file descriptor the current function call sequence.
-///
-/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
-///
-/// @b Async-Handler-Safety: Safe.
-///
-/// @returns Stored call sequence depth.
-///
-/// @param file File to store current function call sequence.
-BOOST_FORCEINLINE std::size_t safe_dump_to(platform_specific fd) BOOST_NOEXCEPT;
-
-#elif defined(BOOST_WINDOWS)
-
-BOOST_FORCEINLINE std::size_t safe_dump_to(void* fd) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::safe_dump_to_impl(fd);
-}
-
-#else
-
-// POSIX
-BOOST_FORCEINLINE std::size_t safe_dump_to(int fd) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::safe_dump_to_impl(fd);
-}
-
-#endif
-
-
 /// @brief Compares stacktraces for less, order is platform dependent.
 ///
 /// @b Complexity: Amortized O(1); worst case O(size())
@@ -416,6 +350,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
     return os << boost::stacktrace::detail::to_string(bt.as_vector().data(), bt.size());
 }
 
+/// This is the typedef to use unless you'd like to provide a specific allocator to boost::stacktrace::basic_stacktrace.
 typedef basic_stacktrace<> stacktrace;
 
 }} // namespace boost::stacktrace

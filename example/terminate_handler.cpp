@@ -96,20 +96,22 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
+//[getting_started_on_program_restart
     if (boost::filesystem::exists("./backtrace.dump")) {
         // there is a backtrace
         std::ifstream ifs("./backtrace.dump");
 
         boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump(ifs);
-        std::cout << "Previous run crashed: " << st << std::endl; /*<-*/
+        std::cout << "Previous run crashed:\n" << st << std::endl; /*<-*/
 
         if (!st) {
             return 6;
         } /*->*/
+
         // cleaning up
         boost::filesystem::remove("./backtrace.dump");
     }
-
+//]
 
     return 0;
 

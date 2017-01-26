@@ -14,5 +14,6 @@
 
 #include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/stacktrace.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 #endif // BOOST_STACKTRACE_HPP

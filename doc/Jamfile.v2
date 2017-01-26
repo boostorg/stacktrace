@@ -21,7 +21,8 @@ doxygen autodoc
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
                                    \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\
                                    \"BOOST_STATIC_CONSTEXPR=static constexpr\" \\
-                                   \"BOOST_STACKTRACE_FUNCTION\" \\
+                                   \"BOOST_FORCEINLINE=inline\" \\
+                                   \"BOOST_STACKTRACE_FUNCTION=inline\" \\
                                    \"BOOST_STACKTRACE_DOXYGEN_INVOKED\""
         <xsl:param>"boost.doxygen.reftitle=Reference"
    ;
