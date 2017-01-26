@@ -236,6 +236,35 @@ std::string to_string(const frame* frames, std::size_t size) {
     return res;
 }
 
+
+std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    return ::CaptureStackBackTrace(
+        0,
+        static_cast<boost::detail::winapi::ULONG_>(size),
+        memory,
+        0
+    );
+}
+
+std::size_t dump(void* fd, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
+    if (!::WriteFile(fd, memory, sizeof(void*) * mem_size, 0, 0)) {
+        return 0;
+    }
+
+    return mem_size;
+}
+
+std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
+    void* const fd = ::CreateFile(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if (fd == INVALID_HANDLE_VALUE) {
+        return 0;
+    }
+
+    const std::size_t size = boost::stacktrace::detail::dump(fd, memory, mem_size);
+    ::CloseHandle(fd);
+    return size;
+}
+
 } // namespace detail
 
 std::string frame::name() const {
@@ -289,38 +318,6 @@ std::string to_string(const frame& f) {
     std::string res;
     boost::stacktrace::detail::to_string_impl(idebug, f.address(), res);
     return res;
-}
-
-
-std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
-    return ::CaptureStackBackTrace(
-        0,
-        static_cast<boost::detail::winapi::ULONG_>(size),
-        memory,
-        0
-    );
-}
-
-std::size_t this_thread_frames::dump(void* fd) BOOST_NOEXCEPT {
-    BOOST_CONSTEXPR_OR_CONST std::size_t buf_size = boost::stacktrace::detail::max_frames_dump;
-    BOOST_CONSTEXPR_OR_CONST std::size_t frames_to_skip = 1;
-    void* buf[buf_size];
-    const std::size_t size = boost::stacktrace::this_thread_frames::collect(buf, buf_size);
-    if (!::WriteFile(fd, buf + frames_to_skip, sizeof(void*) * (size - frames_to_skip), 0, 0)) {
-        return 0;
-    }
-
-    return size;
-}
-
-std::size_t this_thread_frames::dump(const char* file) BOOST_NOEXCEPT {
-    void* const fd = ::CreateFile(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-    if (fd == INVALID_HANDLE_VALUE) {
-        return 0;
-    }
-    const std::size_t size = boost::stacktrace::this_thread_frames::dump(fd);
-    ::CloseHandle(fd);
-    return size;
 }
 
 }} // namespace boost::stacktrace

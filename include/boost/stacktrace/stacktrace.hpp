@@ -49,6 +49,18 @@ class basic_stacktrace {
             );
         }
     }
+
+    template <class Vector, class InIt, class Categ>
+    static void try_reserve(Vector& v, InIt, InIt, Categ) {
+        v.reserve(boost::stacktrace::detail::max_frames_dump);
+    }
+
+    template <class Vector, class InIt>
+    static void try_reserve(Vector& v, InIt first, InIt last, std::random_access_iterator_tag) {
+        const size_type size = static_cast<size_type>(last - first);
+        v.reserve(size > 1024 ? 1024 : size); // Dealing with suspiciously big sizes
+    }
+
     /// @endcond
 
 public:
@@ -71,9 +83,9 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     ///
-    /// @param max_depth max stack depth
+    /// @param max_depth Max call sequence depth to collect.
     ///
-    /// @throws Nothing. Note that default construction of allocator may throw, hovewer it is
+    /// @throws Nothing. Note that default construction of allocator may throw, however it is
     /// performed outside the constructor and exception in `allocator_type()` would not result in calling `std::terminate`.
     BOOST_NOINLINE explicit basic_stacktrace(std::size_t max_depth = static_cast<std::size_t>(-1), const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
         : impl_(a)
@@ -90,7 +102,7 @@ public:
         try {
             {   // Fast path without additional allocations
                 void* buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::this_thread_frames::collect(buffer, buffer_size);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buffer, size);
@@ -102,7 +114,7 @@ public:
             typedef typename Allocator::template rebind<void*>::other allocator_void_t;
             boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::this_thread_frames::collect(buf.data(), buf.size());
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size());
                 if (buf.size() > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buf.data(), size);
@@ -230,23 +242,127 @@ public:
         return impl_;
     }
 
-    static basic_stacktrace from_dump(const char* file, const allocator_type& a = allocator_type()) {
-        basic_stacktrace st(0, a);
-        void* buf[boost::stacktrace::detail::max_frames_dump];
-        const std::size_t size = boost::stacktrace::detail::from_dump(file, buf);
-        st.impl_.reserve(size);
-        for (std::size_t i = 0; i < size; ++i) {
-            st.impl_.push_back(
-                boost::stacktrace::frame(buf[i])
-            );
+    /// Constructs stacktrace from basic_istreamable that references the dumped stacktrace.
+    ///
+    /// @b Complexity: O(N)
+    template <class Char, class Trait>
+    static basic_stacktrace from_dump(std::basic_istream<Char, Trait>& in, const allocator_type& a = allocator_type()) {
+        typedef typename std::basic_istream<Char, Trait>::pos_type pos_type;
+        basic_stacktrace ret(0, a);
+
+        // reserving space
+        const pos_type pos = in.tellg();
+        in.seekg(0, in.end);
+        ret.impl_.reserve(in.tellg() / sizeof(void*));
+        in.seekg(pos);
+
+        void* ptr = 0;
+        while (in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr))) {
+            if (!ptr) {
+                break;
+            }
+
+            ret.impl_.emplace_back(ptr);
         }
 
-        return st;
+        return ret;
+    }
+
+    /// Constructs stacktrace from data pointed by iterator range. Iterators must have either `void*`, `const void*` or `boost::stacktrace::frame` value_type.
+    ///
+    /// @b Complexity: std::distance(first, last)
+    template <class InIt>
+    static basic_stacktrace from_dump(InIt first, InIt last, const allocator_type& a = allocator_type()) {
+        basic_stacktrace ret(0, a);
+
+        try_reserve(
+            ret.impl_,
+            first,
+            last,
+            typename boost::container::iterator_traits<InIt>::iterator_category()
+        );
+
+        for (; first != last; ++first) {
+            if (!*first) {
+                break;
+            }
+
+            ret.impl_.emplace_back(*first);
+        }
+
+        return ret;
     }
 };
 
 
-/// @brief Compares stacktraces for less, order is platform dependant.
+/// @brief Stores current function call sequence into the memory.
+///
+/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
+///
+/// @b Async-Handler-Safety: Safe.
+///
+/// @returns Stored call sequence depth.
+///
+/// @param memory Preallocated buffer to store current function call sequence into. Must at least as big as max_frames * sizeof(void*).
+///
+/// @param max_frames Max call sequence depth to store.
+BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory[], std::size_t max_frames) BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::this_thread_frames::collect(memory, max_frames);
+}
+
+namespace detail {
+    template <class T>
+    BOOST_FORCEINLINE std::size_t safe_dump_to_impl(T file) BOOST_NOEXCEPT {
+        void* buffer[boost::stacktrace::detail::max_frames_dump + 1];
+        const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, boost::stacktrace::detail::max_frames_dump);
+        buffer[frames_count] = 0;
+        return boost::stacktrace::detail::dump(file, buffer, frames_count + 1);
+    }
+}
+
+/// @brief Opens a file and rewrites its content with current function call sequence.
+///
+/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
+///
+/// @b Async-Handler-Safety: Safe.
+///
+/// @returns Stored call sequence depth.
+///
+/// @param file File to store current function call sequence.
+BOOST_FORCEINLINE std::size_t safe_dump_to(const char* file) BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::safe_dump_to_impl(file);
+}
+
+#ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
+
+/// @brief Writes into the provided file descriptor the current function call sequence.
+///
+/// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
+///
+/// @b Async-Handler-Safety: Safe.
+///
+/// @returns Stored call sequence depth.
+///
+/// @param file File to store current function call sequence.
+BOOST_FORCEINLINE std::size_t safe_dump_to(platform_specific fd) BOOST_NOEXCEPT;
+
+#elif defined(BOOST_WINDOWS)
+
+BOOST_FORCEINLINE std::size_t safe_dump_to(void* fd) BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::safe_dump_to_impl(fd);
+}
+
+#else
+
+// POSIX
+BOOST_FORCEINLINE std::size_t safe_dump_to(int fd) BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::safe_dump_to_impl(fd);
+}
+
+#endif
+
+
+/// @brief Compares stacktraces for less, order is platform dependent.
 ///
 /// @b Complexity: Amortized O(1); worst case O(size())
 ///

@@ -100,25 +100,6 @@ std::string to_string(const frame* frames, std::size_t size) {
     return res;
 }
 
-} // namespace detail
-
-
-std::string frame::name() const {
-    ::Dl_info dli;
-    const bool dl_ok = !!::dladdr(addr_, &dli);
-    if (dl_ok && dli.dli_sname) {
-        return boost::stacktrace::detail::try_demangle(dli.dli_sname);
-    }
-
-    return boost::stacktrace::detail::name_impl(addr_);
-}
-
-std::string to_string(const frame& f) {
-    boost::stacktrace::detail::to_string_impl impl;
-    return impl(f.address());
-}
-
-
 std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
     std::size_t frames_count = 0;
     if (!size) {
@@ -137,33 +118,47 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_N
 }
 
 
-std::size_t this_thread_frames::dump(int fd) BOOST_NOEXCEPT {
-    BOOST_CONSTEXPR_OR_CONST std::size_t buf_size = boost::stacktrace::detail::max_frames_dump;
-    BOOST_CONSTEXPR_OR_CONST std::size_t frames_to_skip = 1;
-    void* buf[buf_size];
-    const std::size_t size = boost::stacktrace::this_thread_frames::collect(buf, buf_size);
-
-    // We do not retry, becase this function must be typically called from signal handler so it's:
+std::size_t dump(int fd, void** memory, std::size_t size) BOOST_NOEXCEPT {
+    // We do not retry, because this function must be typically called from signal handler so it's:
     //  * to scary to continue in case of EINTR
     //  * EAGAIN or EWOULDBLOCK may occur only in case of O_NONBLOCK is set for fd,
     // so it seems that user does not want to block
-    if (::write(fd, buf + frames_to_skip, sizeof(void*) * (size - frames_to_skip)) == -1) {
+    if (::write(fd, memory, sizeof(void*) * size) == -1) {
         return 0;
     }
 
     return size;
 }
 
-std::size_t this_thread_frames::dump(const char* file) BOOST_NOEXCEPT {
+std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
     const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IFREG | S_IWUSR | S_IRUSR);
     if (fd == -1) {
         return 0;
     }
 
-    const std::size_t size = boost::stacktrace::this_thread_frames::dump(fd);
+    const std::size_t size = boost::stacktrace::detail::dump(fd, memory, mem_size);
     ::close(fd);
     return size;
 }
+
+} // namespace detail
+
+
+std::string frame::name() const {
+    ::Dl_info dli;
+    const bool dl_ok = !!::dladdr(addr_, &dli);
+    if (dl_ok && dli.dli_sname) {
+        return boost::stacktrace::detail::try_demangle(dli.dli_sname);
+    }
+
+    return boost::stacktrace::detail::name_impl(addr_);
+}
+
+std::string to_string(const frame& f) {
+    boost::stacktrace::detail::to_string_impl impl;
+    return impl(f.address());
+}
+
 
 }} // namespace boost::stacktrace
 

@@ -7,4 +7,3 @@
 #define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
 #define BOOST_STACKTRACE_LINK
 #include <boost/stacktrace/detail/frame_unwind.ipp>
-#include <boost/stacktrace/detail/from_dump.ipp>

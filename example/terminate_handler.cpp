@@ -34,7 +34,7 @@ BOOST_NOINLINE void foo(int i) {
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
-    boost::stacktrace::this_thread_frames::dump("./backtrace.dump");
+    boost::stacktrace::safe_dump_to("./backtrace.dump");
     std::_Exit(-1);
 }
 //]
@@ -48,7 +48,9 @@ void setup_handlers() {
 
 
 #include <iostream>     // std::cerr
-#include <boost/filesystem.hpp>
+#include <fstream>     // std::ifstream
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
@@ -59,7 +61,7 @@ int main(int argc, const char* argv[]) {
             boost::filesystem::copy_file(argv[0], command_1, boost::filesystem::copy_option::overwrite_if_exists);
             command_1 += " 1";
             if (std::system(command_1.string().c_str())) {
-                std::exit(-1);
+                std::exit(1);
             }
         }
 
@@ -69,24 +71,48 @@ int main(int argc, const char* argv[]) {
             boost::filesystem::copy_file(argv[0], command_2, boost::filesystem::copy_option::overwrite_if_exists);
             command_2 += " 2";
             if (std::system(command_2.string().c_str())) {
-                std::exit(-2);
+                std::exit(2);
             }
         }
 
         return 0;
     }
 
-    switch(argv[1][0]) {
-    case '1':
+    if (argv[1][0] == '1') {
         setup_handlers();
         foo(5);
-        return -11;
-    case '2':
-        boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump("./backtrace.dump");
-        std::cout << st << std::endl;
+        return 3;
+    }
+
+    if (argv[1][0] != '2') {
+        return 4;
+    }
+
+    if (!boost::filesystem::exists("./backtrace.dump")) {
+        if (std::string(argv[0]).find("noop") == std::string::npos) {
+            return 5;
+        }
+
         return 0;
     }
-    return 3;
+
+    if (boost::filesystem::exists("./backtrace.dump")) {
+        // there is a backtrace
+        std::ifstream ifs("./backtrace.dump");
+
+        boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump(ifs);
+        std::cout << "Previous run crashed: " << st << std::endl; /*<-*/
+
+        if (!st) {
+            return 6;
+        } /*->*/
+        // cleaning up
+        boost::filesystem::remove("./backtrace.dump");
+    }
+
+
+    return 0;
+
 }
 
 

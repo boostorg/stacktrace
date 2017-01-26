@@ -8,4 +8,3 @@
 #define BOOST_STACKTRACE_USE_BACKTRACE
 #define BOOST_STACKTRACE_LINK
 #include <boost/stacktrace/detail/frame_unwind.ipp>
-#include <boost/stacktrace/detail/from_dump.ipp>
