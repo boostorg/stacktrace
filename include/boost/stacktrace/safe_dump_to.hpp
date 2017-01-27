@@ -27,11 +27,11 @@ namespace boost { namespace stacktrace {
 ///
 /// @returns Stored call sequence depth.
 ///
-/// @param memory Preallocated buffer to store current function call sequence into. Must at least as big as max_frames * sizeof(void*).
+/// @param memory Preallocated buffer to store current function call sequence into.
 ///
-/// @param max_frames Max call sequence depth to store.
-BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory[], std::size_t max_frames) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::this_thread_frames::collect(memory, max_frames);
+/// @param size Size of the preallocated buffer.
+BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory, std::size_t size) BOOST_NOEXCEPT {
+    return boost::stacktrace::detail::this_thread_frames::collect(static_cast<void**>(memory), size / sizeof(void*));
 }
 
 /// @cond

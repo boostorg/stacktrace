@@ -46,55 +46,65 @@ void setup_handlers() {
 //]
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+BOOST_CONSTEXPR_OR_CONST std::size_t shared_memory_size = 4096 * 8;
+
+//[getting_started_terminate_handlers_shmem
+#include <boost/stacktrace.hpp>
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
+
+boost::interprocess::shared_memory_object g_shm; // inited at program start
+boost::interprocess::mapped_region g_region;     // inited at program start
+
+
+void my_signal_handler2(int signum) {
+    ::signal(signum, SIG_DFL);
+    bool* b = static_cast<bool*>(g_region.get_address());
+    *b = true;                                  // flag that memory constains stacktrace
+    boost::stacktrace::safe_dump_to(b + 1, g_region.get_size() - sizeof(bool));
+    std::_Exit(-1);
+}
+//]
 
 #include <iostream>     // std::cerr
 #include <fstream>     // std::ifstream
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-int main(int argc, const char* argv[]) {
-    if (argc < 2) {
-        // We are copying files to make sure that stacktrace printing works independently from executable name
-        {
-            boost::filesystem::path command_1 = argv[0];
-            command_1 = command_1.parent_path() / (command_1.stem().string() + "_1" + command_1.extension().string());
-            boost::filesystem::copy_file(argv[0], command_1, boost::filesystem::copy_option::overwrite_if_exists);
-            command_1 += " 1";
-            const int ret = std::system(command_1.string().c_str());
-            if (ret) {
-                std::exit(ret);
-            }
-        }
 
-        {
-            boost::filesystem::path command_2 = argv[0];
-            command_2 = command_2.parent_path() / (command_2.stem().string() + "_2" + command_2.extension().string());
-            boost::filesystem::copy_file(argv[0], command_2, boost::filesystem::copy_option::overwrite_if_exists);
-            command_2 += " 2";
-            const int ret = std::system(command_2.string().c_str());
-            if (ret) {
-                std::exit(ret);
-            }
-        }
+inline void copy_and_run(const char* exec_name, const char* param) {
+    boost::filesystem::path command = exec_name;
+    command = command.parent_path() / (command.stem().string() + param + command.extension().string());
+    boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_option::overwrite_if_exists);
 
-        return 0;
+    boost::filesystem::path command_args = command;
+    command_args += " 1";
+    const int ret = std::system(command_args.string().c_str());
+
+    boost::filesystem::remove(command);
+    if (ret) {
+        std::exit(ret);
     }
+}
 
-    if (argv[1][0] == '1') {
-        setup_handlers();
-        foo(5);
-        return 3;
-    }
+int run_1(const char* /*argv*/[]) {
+    setup_handlers();
+    foo(5);
+    return 11;
+}
 
-    if (argv[1][0] != '2') {
-        return 4;
-    }
-
+int run_2(const char* argv[]) {
     if (!boost::filesystem::exists("./backtrace.dump")) {
         if (std::string(argv[0]).find("noop") == std::string::npos) {
-            return 5;
+            return 21;
         }
 
+        boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump(std::cin);
+        if (st) {
+            return 22;
+        }
         return 0;
     }
 
@@ -107,7 +117,7 @@ int main(int argc, const char* argv[]) {
         std::cout << "Previous run crashed:\n" << st << std::endl; /*<-*/
 
         if (!st) {
-            return 6;
+            return 23;
         } /*->*/
 
         // cleaning up
@@ -117,7 +127,87 @@ int main(int argc, const char* argv[]) {
 //]
 
     return 0;
+}
 
+
+int run_3(const char* /*argv*/[]) {
+    using namespace boost::interprocess;
+    {
+        shared_memory_object shm_obj(open_or_create, "shared_memory", read_write);
+        shm_obj.swap(g_shm);
+    }
+    g_shm.truncate(shared_memory_size);
+
+    {
+        mapped_region m(g_shm, read_write, 0, shared_memory_size);
+        m.swap(g_region);
+    }
+    bool* b = static_cast<bool*>(g_region.get_address());
+    *b = false;
+
+    ::signal(SIGSEGV, &my_signal_handler2);
+    ::signal(SIGABRT, &my_signal_handler2);
+    foo(5);
+    return 31;
+}
+
+int run_4(const char* argv[]) {
+    using namespace boost::interprocess;
+    {
+        shared_memory_object shm_obj(open_only, "shared_memory", read_write);
+        shm_obj.swap(g_shm);
+    }
+
+    {
+        mapped_region m(g_shm, read_write, 0, shared_memory_size);
+        m.swap(g_region);
+    }
+
+//[getting_started_on_program_restart_shmem
+    bool* b = static_cast<bool*>(g_region.get_address());   // getting flag that memory constains stacktrace
+    if (*b) {                                               // checking that memory constains stacktrace
+        boost::stacktrace::stacktrace st 
+            = boost::stacktrace::stacktrace::from_dump(b + 1, g_region.get_size() - sizeof(bool));
+
+        std::cout << "Previous run crashed and left trace in shared memory:\n" << st << std::endl;
+        *b = false; /*<-*/
+        shared_memory_object::remove("shared_memory");
+        if (std::string(argv[0]).find("noop") == std::string::npos) {
+            if (!st) {
+                return 43;
+            }
+        } else {
+           if (st) {
+                return 44;
+            }
+        }
+    } else {
+        return 42; /*->*/
+    }
+//]
+
+
+    return 0;
+}
+
+int main(int argc, const char* argv[]) {
+    if (argc < 2) {
+        // We are copying files to make sure that stacktrace printing works independently from executable name
+        copy_and_run(argv[0], " 1");
+        copy_and_run(argv[0], " 2");
+        copy_and_run(argv[0], " 3");
+        copy_and_run(argv[0], " 4");
+        return 0;
+    }
+
+    switch (argv[1][0]) {
+    case '1': return run_1(argv);
+    case '2': return run_2(argv);
+    case '3': return run_3(argv);
+    case '4': return run_4(argv);
+    }
+
+    return 404;
 }
 
 

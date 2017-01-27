@@ -8,6 +8,7 @@
 lib dl : : <link>shared ;
 lib gcc_s ;
 lib Dbghelp ;
+lib rt ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
@@ -77,7 +78,7 @@ for local p in [ glob ../example/*.cpp ]
     local additional_dependency = ;
     if $(target_name) = "terminate_handler"
     {
-        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system ;
+        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }
 
     stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT) $(additional_dependency)       : backtrace_$(p[1]:B) ] ;

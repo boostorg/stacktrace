@@ -51,18 +51,6 @@ class basic_stacktrace {
             );
         }
     }
-
-    template <class Vector, class InIt, class Categ>
-    static void try_reserve(Vector& v, InIt, InIt, Categ) {
-        v.reserve(boost::stacktrace::detail::max_frames_dump);
-    }
-
-    template <class Vector, class InIt>
-    static void try_reserve(Vector& v, InIt first, InIt last, std::random_access_iterator_tag) {
-        const size_type size = static_cast<size_type>(last - first);
-        v.reserve(size > 1024 ? 1024 : size); // Dealing with suspiciously big sizes
-    }
-
     /// @endcond
 
 public:
@@ -270,20 +258,15 @@ public:
         return ret;
     }
 
-    /// Constructs stacktrace from data pointed by iterator range. Iterators must have either `void*`, `const void*` or `boost::stacktrace::frame` value_type.
+    /// Constructs stacktrace from raw memory dump.
     ///
-    /// @b Complexity: std::distance(first, last)
-    template <class InIt>
-    static basic_stacktrace from_dump(InIt first, InIt last, const allocator_type& a = allocator_type()) {
+    /// @b Complexity: O(size) in worst case
+    static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, a);
+        const void* const* first = static_cast<const void* const*>(begin);
+        const void* const* const last = first + size / sizeof(void*);
 
-        try_reserve(
-            ret.impl_,
-            first,
-            last,
-            typename boost::container::iterator_traits<InIt>::iterator_category()
-        );
-
+        ret.impl_.reserve(size > 1024 ? 1024 : size); // Dealing with suspiciously big sizes
         for (; first != last; ++first) {
             if (!*first) {
                 break;

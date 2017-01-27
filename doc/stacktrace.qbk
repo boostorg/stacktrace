@@ -61,7 +61,7 @@ Segmentation Faults and `std::terminate` calls sometimes happen in programs. Pro
 
 `std::terminate` calls `std::abort`, so we need to capture stack traces on Segmentation Faults and Abort signals.
 
-[warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - dump raw stacktrace into file/socket/shared memory and parse it on program restart.]
+[warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - [*dump raw stacktrace into file/socket/shared memory and parse it on program restart].]
 
 Let's write a handler to safely dump stacktrace:
 
@@ -180,7 +180,8 @@ Just define *BOOST_STACKTRACE_LINK* for a whole project. Now you can enable/disa
 * link with `boost_stacktrace_noop` to disable backtracing
 * link with other `boost_stacktrace_*` libraries
 
-See [link boost_stacktrace.build_macros section "Build Macros"] for more info.
+
+See [link boost_stacktrace.configuration_and_build section "Configuration and Build"] for more info.
 
 [endsect]
 
@@ -231,6 +232,43 @@ Terminate called:
  1# foo(int)
  2# bar(int)
  3# foo(int)
+```
+
+[endsect]
+
+
+[section Store stacktraces into shared memory]
+
+There's a way to serialize stacktrace in async safe manner and share that serialized representation with another preocess. Here's another example with signal handlers.
+
+This example is very close to the [link boost_stacktrace.getting_started.handle_terminates_aborts_and_seg "Handle terminates, aborts and Segmentation Faults"], but this time we are dumping stacktrace into shared memory:
+
+[getting_started_terminate_handlers_shmem]
+
+After registring signal handlers and catching a signal, we may print stacktrace dumps on program restart:
+
+[getting_started_on_program_restart_shmem]
+
+The program output will be the following:
+
+```
+Previous run crashed and left trace in shared memory:
+ 0# 0x00007FD51C7218EF
+ 1# my_signal_handler2(int) at ../example/terminate_handler.cpp:68
+ 2# 0x00007FD51B833CB0
+ 3# 0x00007FD51B833C37
+ 4# 0x00007FD51B837028
+ 5# 0x00007FD51BE44BBD
+ 6# 0x00007FD51BE42B96
+ 7# 0x00007FD51BE42BE1
+ 8# bar(int) at ../example/terminate_handler.cpp:18
+ 9# foo(int) at ../example/terminate_handler.cpp:22
+10# bar(int) at ../example/terminate_handler.cpp:14
+11# foo(int) at ../example/terminate_handler.cpp:22
+12# run_3(char const**) at ../example/terminate_handler.cpp:152
+13# main at ../example/terminate_handler.cpp:207
+14# 0x00007FD51B81EF45
+15# 0x0000000000402999
 ```
 
 [endsect]
