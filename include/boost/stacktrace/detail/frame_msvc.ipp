@@ -21,6 +21,7 @@
 #include "Dbgeng.h"
 
 #include <boost/detail/winapi/get_current_process.hpp>
+#include <boost/detail/winapi/file_management.hpp>
 
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "Dbgeng.lib")
@@ -247,7 +248,7 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_N
 }
 
 std::size_t dump(void* fd, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
-    if (!::WriteFile(fd, memory, sizeof(void*) * mem_size, 0, 0)) {
+    if (!boost::detail::winapi::WriteFile(fd, memory, static_cast<boost::detail::winapi::DWORD_>(sizeof(void*) * mem_size), 0, 0)) {
         return 0;
     }
 
@@ -255,7 +256,7 @@ std::size_t dump(void* fd, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
 }
 
 std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
-    void* const fd = ::CreateFile(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    void* const fd = boost::detail::winapi::CreateFileA(file, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     if (fd == INVALID_HANDLE_VALUE) {
         return 0;
     }
