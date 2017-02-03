@@ -21,9 +21,6 @@ BOOST_NOINLINE void foo(int i) {
     bar(--i);
 }
 
-// Ignoring _Exit for testing purposes
-#define _Exit(x) exit(x+1)
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //[getting_started_terminate_handlers
@@ -74,17 +71,20 @@ void my_signal_handler2(int signum) {
 #include <boost/filesystem/operations.hpp>
 
 
-inline void copy_and_run(const char* exec_name, const char* param) {
+inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     boost::filesystem::path command = exec_name;
     command = command.parent_path() / (command.stem().string() + param + command.extension().string());
     boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_option::overwrite_if_exists);
 
     boost::filesystem::path command_args = command;
-    command_args += " 1";
+    command_args += ' ';
+    command_args += param;
     const int ret = std::system(command_args.string().c_str());
 
     boost::filesystem::remove(command);
-    if (ret) {
+    if (not_null && !ret) {
+        std::exit(97);
+    } else if (!not_null && ret) {
         std::exit(ret);
     }
 }
@@ -193,10 +193,10 @@ int run_4(const char* argv[]) {
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
         // We are copying files to make sure that stacktrace printing works independently from executable name
-        copy_and_run(argv[0], " 1");
-        copy_and_run(argv[0], " 2");
-        copy_and_run(argv[0], " 3");
-        copy_and_run(argv[0], " 4");
+        copy_and_run(argv[0], '1', true);
+        copy_and_run(argv[0], '2', false);
+        copy_and_run(argv[0], '3', true);
+        copy_and_run(argv[0], '4', false);
         return 0;
     }
 
