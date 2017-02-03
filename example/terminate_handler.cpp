@@ -72,6 +72,7 @@ void my_signal_handler2(int signum) {
 
 
 inline void copy_and_run(const char* exec_name, char param, bool not_null) {
+    std::cout << "Running with param " << param << std::endl;
     boost::filesystem::path command = exec_name;
     command = command.parent_path() / (command.stem().string() + param + command.extension().string());
     boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_option::overwrite_if_exists);
@@ -81,6 +82,7 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     command_args += param;
     const int ret = std::system(command_args.string().c_str());
 
+    std::cout << "End Running with param " << param << "; ret code is " << ret << std::endl;
     boost::filesystem::remove(command);
     if (not_null && !ret) {
         std::exit(97);
