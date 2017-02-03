@@ -243,7 +243,8 @@ public:
         // reserving space
         const pos_type pos = in.tellg();
         in.seekg(0, in.end);
-        ret.impl_.reserve(in.tellg() / sizeof(void*));
+        const std::size_t size = static_cast<std::size_t>(in.tellg() / sizeof(void*));
+        ret.impl_.reserve(size > 1024 ? 1024 : size);
         in.seekg(pos);
 
         void* ptr = 0;
