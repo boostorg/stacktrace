@@ -23,8 +23,6 @@
 #include <dlfcn.h>      // ::dladdr
 #include <execinfo.h>
 #include <cstdio>
-#include <unistd.h>     // ::write
-#include <fcntl.h>      // ::open
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>
@@ -32,6 +30,12 @@
 #   include <boost/stacktrace/detail/addr2line_impls.hpp>
 #else
 #   include <boost/stacktrace/detail/unwind_base_impls.hpp>
+#endif
+
+#ifdef BOOST_WINDOWS
+#   include <boost/stacktrace/detail/safe_dump_win.ipp>
+#else
+#   include <boost/stacktrace/detail/safe_dump_posix.ipp>
 #endif
 
 namespace boost { namespace stacktrace { namespace detail {
@@ -52,6 +56,23 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
         return ::_URC_END_OF_STACK;
     }
     return ::_URC_NO_REASON;
+}
+
+std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+    std::size_t frames_count = 0;
+    if (!size) {
+        return frames_count;
+    }
+
+    boost::stacktrace::detail::unwind_state state = { memory, memory + size };
+    ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
+    frames_count = state.current - memory;
+
+    if (memory[frames_count - 1] == 0) {
+        -- frames_count;
+    }
+
+    return frames_count;
 }
 
 template <class Base>
@@ -100,46 +121,6 @@ std::string to_string(const frame* frames, std::size_t size) {
     return res;
 }
 
-std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
-    std::size_t frames_count = 0;
-    if (!size) {
-        return frames_count;
-    }
-
-    boost::stacktrace::detail::unwind_state state = { memory, memory + size };
-    ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
-    frames_count = state.current - memory;
-
-    if (memory[frames_count - 1] == 0) {
-        -- frames_count;
-    }
-
-    return frames_count;
-}
-
-
-std::size_t dump(int fd, void** memory, std::size_t size) BOOST_NOEXCEPT {
-    // We do not retry, because this function must be typically called from signal handler so it's:
-    //  * to scary to continue in case of EINTR
-    //  * EAGAIN or EWOULDBLOCK may occur only in case of O_NONBLOCK is set for fd,
-    // so it seems that user does not want to block
-    if (::write(fd, memory, sizeof(void*) * size) == -1) {
-        return 0;
-    }
-
-    return size;
-}
-
-std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
-    const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IFREG | S_IWUSR | S_IRUSR);
-    if (fd == -1) {
-        return 0;
-    }
-
-    const std::size_t size = boost::stacktrace::detail::dump(fd, memory, mem_size);
-    ::close(fd);
-    return size;
-}
 
 } // namespace detail
 
