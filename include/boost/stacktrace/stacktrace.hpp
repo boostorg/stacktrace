@@ -57,7 +57,7 @@ class basic_stacktrace {
     }
 
     static std::size_t frames_count_from_buffer_size(std::size_t buffer_size) BOOST_NOEXCEPT {
-        const std::size_t ret = (buffer_size > sizeof(void*) ? buffer_size / sizeof(void*) - 1 : 0);
+        const std::size_t ret = (buffer_size > sizeof(void*) ? buffer_size / sizeof(void*) - 1 /*first void* holds the version*/ : 0);
         return (ret > 1024 ? 1024 : ret); // Dealing with suspiciously big sizes
     }
     /// @endcond
@@ -256,7 +256,7 @@ public:
         in.seekg(pos);
 
         void* ptr = 0;
-        if (!in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr)) || !is_dump_version_supported(ptr)) {
+        if (!in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr)) || !frames_count || !is_dump_version_supported(ptr)) {
             return ret;
         }
 
@@ -277,14 +277,14 @@ public:
     /// @b Complexity: O(size) in worst case
     static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, a);
-        const std::size_t frames_count = frames_count_from_buffer_size(size);
         const void* const* first = static_cast<const void* const*>(begin);
-        const void* const* const last = first + frames_count;
-
-        if (first == last || !is_dump_version_supported(*first)) {
+        if (size < sizeof(void*) || !is_dump_version_supported(*first)) {
             return ret;
         }
+        ++ first;
 
+        const std::size_t frames_count = frames_count_from_buffer_size(size);
+        const void* const* const last = first + frames_count;
         ret.impl_.reserve(frames_count);
         for (; first != last; ++first) {
             if (!*first) {
