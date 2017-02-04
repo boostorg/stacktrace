@@ -31,7 +31,9 @@ namespace boost { namespace stacktrace {
 ///
 /// @param size Size of the preallocated buffer.
 BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory, std::size_t size) BOOST_NOEXCEPT {
-    return boost::stacktrace::detail::this_thread_frames::collect(static_cast<void**>(memory), size / sizeof(void*));
+    void** mem = static_cast<void**>(memory);
+    *mem = reinterpret_cast<void*>(0x1); // format version
+    return boost::stacktrace::detail::this_thread_frames::collect(mem + 1, size / sizeof(void*) - 1);
 }
 
 /// @cond
