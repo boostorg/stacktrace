@@ -253,7 +253,6 @@ public:
         const pos_type pos = in.tellg();
         in.seekg(0, in.end);
         const std::size_t frames_count = frames_count_from_buffer_size(static_cast<std::size_t>(in.tellg()));
-        ret.impl_.reserve(frames_count);
         in.seekg(pos);
 
         void* ptr = 0;
@@ -261,6 +260,7 @@ public:
             return ret;
         }
 
+        ret.impl_.reserve(frames_count);
         while (in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr))) {
             if (!ptr) {
                 break;
@@ -277,7 +277,7 @@ public:
     /// @b Complexity: O(size) in worst case
     static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, a);
-        const std::size_t frames_count = (size > sizeof(void*) ? size / sizeof(void*) - 1 : 0);
+        const std::size_t frames_count = frames_count_from_buffer_size(size);
         const void* const* first = static_cast<const void* const*>(begin);
         const void* const* const last = first + frames_count;
 
