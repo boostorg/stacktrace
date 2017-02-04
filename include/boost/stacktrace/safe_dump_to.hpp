@@ -38,10 +38,10 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory, std::size_t size) BOOST
 namespace detail {
     template <class T>
     BOOST_FORCEINLINE std::size_t safe_dump_to_impl(T file) BOOST_NOEXCEPT {
-        void* buffer[boost::stacktrace::detail::max_frames_dump + 1];
-        const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, boost::stacktrace::detail::max_frames_dump);
-        buffer[frames_count] = 0;
-        return boost::stacktrace::detail::dump(file, buffer, frames_count + 1);
+        void* buffer[boost::stacktrace::detail::max_frames_dump + 2] = { reinterpret_cast<void*>(0x1) }; // format version
+        const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer + 1, boost::stacktrace::detail::max_frames_dump);
+        buffer[frames_count + 1] = 0;
+        return boost::stacktrace::detail::dump(file, buffer, frames_count + 2);
     }
 }
 /// @endcond

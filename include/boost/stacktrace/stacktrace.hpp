@@ -51,6 +51,15 @@ class basic_stacktrace {
             );
         }
     }
+    
+    static bool is_dump_version_supported(const void* version) BOOST_NOEXCEPT {
+        return reinterpret_cast<void*>(0x1) == version;
+    }
+
+    static std::size_t frames_count_from_buffer_size(std::size_t buffer_size) BOOST_NOEXCEPT {
+        const std::size_t ret = (buffer_size > sizeof(void*) ? buffer_size / sizeof(void*) - 1 : 0);
+        return (ret > 1024 ? 1024 : ret); // Dealing with suspiciously big sizes
+    }
     /// @endcond
 
 public:
@@ -243,11 +252,15 @@ public:
         // reserving space
         const pos_type pos = in.tellg();
         in.seekg(0, in.end);
-        const std::size_t size = static_cast<std::size_t>(in.tellg() / sizeof(void*));
-        ret.impl_.reserve(size > 1024 ? 1024 : size);
+        const std::size_t frames_count = frames_count_from_buffer_size(static_cast<std::size_t>(in.tellg()));
+        ret.impl_.reserve(frames_count);
         in.seekg(pos);
 
         void* ptr = 0;
+        if (!in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr)) || !is_dump_version_supported(ptr)) {
+            return ret;
+        }
+
         while (in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr))) {
             if (!ptr) {
                 break;
@@ -264,10 +277,15 @@ public:
     /// @b Complexity: O(size) in worst case
     static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, a);
+        const std::size_t frames_count = (size > sizeof(void*) ? size / sizeof(void*) - 1 : 0);
         const void* const* first = static_cast<const void* const*>(begin);
-        const void* const* const last = first + size / sizeof(void*);
+        const void* const* const last = first + frames_count;
 
-        ret.impl_.reserve(size > 1024 ? 1024 : size); // Dealing with suspiciously big sizes
+        if (first == last || !is_dump_version_supported(*first)) {
+            return ret;
+        }
+
+        ret.impl_.reserve(frames_count);
         for (; first != last; ++first) {
             if (!*first) {
                 break;
