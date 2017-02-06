@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <string>
 
-int main(int /*argc*/, const char* argv[]) {
-    std::string s = "addr2line -e " + argv[0] + " 0";
+int main() {
+    std::string s = "addr2line -h";
     return std::system(s.c_str());
 }

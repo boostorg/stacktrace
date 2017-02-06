@@ -41,13 +41,13 @@ local NOOP_DEPS = $(HIDE_SYMBS) ;
 local BASIC_DEPS = $(RDYNAMIC) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
 
 local LINKSHARED_BT    = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace  $(BT_DEPS)   ;
-local LINKSHARED_UNWD  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line  $(UNWD_DEPS) ;
+local LINKSHARED_AD2L  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line  $(UNWD_DEPS) ;
 local LINKSHARED_WIND  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg     $(WIND_DEPS) ;
 local LINKSHARED_NOOP  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop       $(NOOP_DEPS) ;
 local LINKSHARED_BASIC = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic      $(BASIC_DEPS) ;
 
 lib test_impl_lib_backtrace : test_impl.cpp : $(LINKSHARED_BT) ;
-lib test_impl_lib_addr2line : test_impl.cpp : $(LINKSHARED_UNWD) ;
+lib test_impl_lib_addr2line : test_impl.cpp : $(LINKSHARED_AD2L) ;
 lib test_impl_lib_windbg    : test_impl.cpp : $(LINKSHARED_WIND) ;
 lib test_impl_lib_noop      : test_impl.cpp : $(LINKSHARED_NOOP) ;
 
@@ -65,7 +65,7 @@ test-suite stacktrace_tests
 
     # Test with shared linked implementations
     [ run test.cpp      : : : <library>.//test_impl_lib_backtrace   $(LINKSHARED_BT)    : backtrace_lib ]
-    [ run test.cpp      : : : <library>.//test_impl_lib_addr2line   $(LINKSHARED_UNWD)  : addr2line_lib ]
+    [ run test.cpp      : : : <library>.//test_impl_lib_addr2line   $(LINKSHARED_AD2L)  : addr2line_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_windbg      $(LINKSHARED_WIND)  : windbg_lib ]
     [ run test_noop.cpp : : : <library>.//test_impl_lib_noop        $(LINKSHARED_NOOP)  : noop_lib ]
     [ run test.cpp      : : : <library>.//test_impl_lib_basic       $(LINKSHARED_BASIC) : basic_lib ]
@@ -82,7 +82,7 @@ for local p in [ glob ../example/*.cpp ]
     }
 
     stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BT) $(additional_dependency)       : backtrace_$(p[1]:B) ] ;
-    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_UNWD) $(additional_dependency)     : addr2line_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : $(LINKSHARED_AD2L) $(additional_dependency)     : addr2line_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : $(LINKSHARED_WIND) $(additional_dependency)    : windbg_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : $(LINKSHARED_NOOP) $(additional_dependency)     : noop_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : $(LINKSHARED_BASIC) $(additional_dependency)    : basic_$(p[1]:B) ] ;
