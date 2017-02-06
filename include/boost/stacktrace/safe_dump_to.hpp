@@ -15,7 +15,8 @@
 #include <boost/stacktrace/frame.hpp>
 
 
-/// @file safe_dump_to.hpp This header contains low-level async-signal-safe functions for dumping call stacks.
+/// @file safe_dump_to.hpp This header contains low-level async-signal-safe functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
+/// so you could read them by using 'od -tx8 -An stacktrace_dump_failename' Linux command or using boost::stacktrace::stacktrace::from_dump functions.
 
 namespace boost { namespace stacktrace {
 
