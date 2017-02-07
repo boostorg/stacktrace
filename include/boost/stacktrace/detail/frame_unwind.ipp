@@ -50,7 +50,7 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
     unwind_state* state = static_cast<unwind_state*>(arg);
     if (state->frames_to_skip) {
         --state->frames_to_skip;
-        return ::_URC_NO_REASON;
+        return ::_Unwind_GetIP(context) ? ::_URC_NO_REASON : ::_URC_END_OF_STACK;
     }
 
     *state->current = reinterpret_cast<void*>(
@@ -74,7 +74,7 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::si
     ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
     frames_count = state.current - memory;
 
-    if (memory[frames_count - 1] == 0) {
+    if (frames_count && memory[frames_count - 1] == 0) {
         -- frames_count;
     }
 

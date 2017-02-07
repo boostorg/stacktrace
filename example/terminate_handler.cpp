@@ -195,6 +195,8 @@ int run_4(const char* argv[]) {
 #include <sstream>
 
 int test_inplace() {
+    const bool is_noop = !boost::stacktrace::stacktrace();
+
     {
         boost::stacktrace::safe_dump_to("./backtrace2.dump"); 
         boost::stacktrace::stacktrace ss2;
@@ -228,6 +230,61 @@ int test_inplace() {
         if (ss1 && ss1[0].name() != ss2[0].name()) {
             std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 54;
+        }
+    }
+
+    {
+        void* data[1024];
+        boost::stacktrace::safe_dump_to(1024, data, sizeof(data));
+        if (boost::stacktrace::stacktrace::from_dump(data, sizeof(data))) {
+            std::cerr << "Stacktrace not empty!\n";
+            return 55;
+        }
+    }
+
+    {
+        void* data[1024];
+        boost::stacktrace::safe_dump_to(1, data, sizeof(data));
+        if (!is_noop && !boost::stacktrace::stacktrace::from_dump(data, sizeof(data))) {
+            std::cerr << "Stacktrace empty!\n";
+            return 56;
+        }
+        const std::size_t size_1_skipped = boost::stacktrace::stacktrace::from_dump(data, sizeof(data)).size();
+        boost::stacktrace::safe_dump_to(0, data, sizeof(data));
+        const std::size_t size_0_skipped = boost::stacktrace::stacktrace::from_dump(data, sizeof(data)).size();
+
+        if (!is_noop && (size_1_skipped + 1 != size_0_skipped)) {
+            std::cerr << "failed to skip 1 frame!\n";
+            return 57;
+        }
+    }
+
+    {
+        boost::stacktrace::safe_dump_to(0, 1, "./backtrace3.dump");
+        std::ifstream ifs("./backtrace3.dump");
+        boost::stacktrace::stacktrace ss1 = boost::stacktrace::stacktrace::from_dump(ifs);
+        ifs.close();
+
+        boost::stacktrace::safe_dump_to(1, 1, "./backtrace3.dump");
+        ifs.open("./backtrace3.dump");
+        boost::stacktrace::stacktrace ss2 = boost::stacktrace::stacktrace::from_dump(ifs);
+        ifs.close();
+
+        boost::filesystem::remove("./backtrace3.dump");
+
+        if (ss1.size() != ss2.size()) {
+            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 58;
+        }
+
+        if (!is_noop && ss1.size() != 1) {
+            std::cerr << "Stacktraces does not have size 1:\n" << ss1 << '\n';
+            return 59;
+        }
+
+        if (ss1 && ss1[0].name() == ss2[0].name()) {
+            std::cerr << "Stacktraces must differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 60;
         }
     }
 

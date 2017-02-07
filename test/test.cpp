@@ -235,9 +235,11 @@ void test_frame() {
     BOOST_TEST(empty_frame.source_line() == 0);
 }
 
+// Template parameter bool BySkip is to produce different functions on each BySkip. This simplifies debugging when one of the tests catches error
+template <bool BySkip>
 void test_empty_basic_stacktrace() {
     typedef boost::stacktrace::stacktrace st_t;
-    st_t st(0);
+    st_t st = BySkip ? st_t(100500, 1024) :  st_t(0, 0);
 
     BOOST_TEST(!st);
     BOOST_TEST(st.empty());
@@ -252,10 +254,10 @@ void test_empty_basic_stacktrace() {
     BOOST_TEST(st.crbegin() == st.crend());
     BOOST_TEST(st.rbegin() == st.crend());
 
-    BOOST_TEST(hash_value(st) == hash_value(st_t(0)));
-    BOOST_TEST(st == st_t(0));
-    BOOST_TEST(!(st < st_t(0)));
-    BOOST_TEST(!(st > st_t(0)));
+    BOOST_TEST(hash_value(st) == hash_value(st_t(0, 0)));
+    BOOST_TEST(st == st_t(0, 0));
+    BOOST_TEST(!(st < st_t(0, 0)));
+    BOOST_TEST(!(st > st_t(0, 0)));
 }
 
 int main() {
@@ -264,7 +266,8 @@ int main() {
     test_comparisons();
     test_iterators();
     test_frame();
-    test_empty_basic_stacktrace();
+    test_empty_basic_stacktrace<true>();
+    test_empty_basic_stacktrace<false>();
 
     BOOST_TEST(&bar1 != &bar2);
     boost::stacktrace::stacktrace b1 = bar1();
@@ -275,7 +278,8 @@ int main() {
 
     test_nested<250>();
     test_nested<300>();
-    BOOST_TEST(boost::stacktrace::stacktrace(1).size() == 1);
+    BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);
+    BOOST_TEST(boost::stacktrace::stacktrace(1, 1).size() == 1);
 
     return boost::report_errors();
 }
