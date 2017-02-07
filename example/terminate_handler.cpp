@@ -192,6 +192,49 @@ int run_4(const char* argv[]) {
     return 0;
 }
 
+#include <sstream>
+
+int test_inplace() {
+    {
+        boost::stacktrace::safe_dump_to("./backtrace2.dump"); 
+        boost::stacktrace::stacktrace ss2;
+        std::ifstream ifs("./backtrace2.dump");
+        boost::stacktrace::stacktrace ss1 = boost::stacktrace::stacktrace::from_dump(ifs);
+        ifs.close();
+        boost::filesystem::remove("./backtrace2.dump");
+
+        if (ss1.size() != ss2.size()) {
+            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 51;
+        }
+
+        if (ss1 && ss1[0].name() != ss2[0].name()) {
+            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 52;
+        }
+    }
+
+    {
+        void* data[1024];
+        boost::stacktrace::safe_dump_to(data, sizeof(data));
+        boost::stacktrace::stacktrace ss2;
+        boost::stacktrace::stacktrace ss1 = boost::stacktrace::stacktrace::from_dump(data, sizeof(data));
+
+        if (ss1.size() != ss2.size()) {
+            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 53;
+        }
+
+        if (ss1 && ss1[0].name() != ss2[0].name()) {
+            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+            return 54;
+        }
+    }
+
+    return 0;
+}
+
+
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
         // We are copying files to make sure that stacktrace printing works independently from executable name
@@ -199,7 +242,8 @@ int main(int argc, const char* argv[]) {
         copy_and_run(argv[0], '2', false);
         copy_and_run(argv[0], '3', true);
         copy_and_run(argv[0], '4', false);
-        return 0;
+
+        return test_inplace();
     }
 
     switch (argv[1][0]) {

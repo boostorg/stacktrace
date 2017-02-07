@@ -20,11 +20,7 @@ std::string to_string(const frame* /*frames*/, std::size_t /*count*/) {
     return std::string();
 }
 
-std::size_t from_dump(const char* /*filename*/, void** /*frames*/) {
-    return 0;
-}
-
-std::size_t this_thread_frames::collect(void** /*memory*/, std::size_t /*size*/) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(void** /*memory*/, std::size_t /*size*/, std::size_t /*skip*/) BOOST_NOEXCEPT {
     return 0;
 }
 

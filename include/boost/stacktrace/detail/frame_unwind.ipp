@@ -41,12 +41,18 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct unwind_state {
+    std::size_t frames_to_skip;
     void** current;
     void** end;
 };
 
 inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg) {
     unwind_state* state = static_cast<unwind_state*>(arg);
+    if (state->frames_to_skip) {
+        --state->frames_to_skip;
+        return ::_URC_NO_REASON;
+    }
+
     *state->current = reinterpret_cast<void*>(
         ::_Unwind_GetIP(context)
     );
@@ -58,13 +64,13 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
     return ::_URC_NO_REASON;
 }
 
-std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
     std::size_t frames_count = 0;
     if (!size) {
         return frames_count;
     }
 
-    boost::stacktrace::detail::unwind_state state = { memory, memory + size };
+    boost::stacktrace::detail::unwind_state state = { skip + 1, memory, memory + size };
     ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
     frames_count = state.current - memory;
 

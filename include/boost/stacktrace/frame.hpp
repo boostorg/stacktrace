@@ -60,7 +60,7 @@ namespace detail {
 
 
 struct this_thread_frames { // struct is required to avoid warning about usage of inline+BOOST_NOINLINE
-    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT;
 };
 
 } // namespace detail

@@ -37,15 +37,15 @@ class basic_stacktrace {
     boost::container::vector<frame, Allocator> impl_;
 
     /// @cond
-    static const std::size_t frames_to_skip = 2;
+    static const std::size_t frames_to_skip = 1;
 
     void fill(void** begin, std::size_t size) {
-        if (size < frames_to_skip) {
+        if (!size) {
             return;
         }
 
-        impl_.reserve(static_cast<std::size_t>(size - frames_to_skip));
-        for (std::size_t i = frames_to_skip; i < size; ++i) {
+        impl_.reserve(static_cast<std::size_t>(size));
+        for (std::size_t i = 0; i < size; ++i) {
             impl_.push_back(
                 frame(begin[i])
             );
@@ -72,6 +72,9 @@ public:
     typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
     typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
 
+    // @param skip How many latest calls to skip and do not store in *this.
+
+
     /// @brief Stores the current function call sequence inside the class.
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
@@ -85,19 +88,15 @@ public:
     BOOST_NOINLINE explicit basic_stacktrace(std::size_t max_depth = static_cast<std::size_t>(-1), const allocator_type& a = allocator_type()) BOOST_NOEXCEPT
         : impl_(a)
     {
-        BOOST_CONSTEXPR_OR_CONST size_t buffer_size = 128;
+        BOOST_CONSTEXPR_OR_CONST std::size_t buffer_size = 128;
         if (!max_depth) {
             return;
-        }
-
-        if (static_cast<std::size_t>(-1) - frames_to_skip >= max_depth) {
-            max_depth += frames_to_skip;
         }
 
         try {
             {   // Fast path without additional allocations
                 void* buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size, frames_to_skip);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buffer, size);
@@ -109,7 +108,7 @@ public:
             typedef typename Allocator::template rebind<void*>::other allocator_void_t;
             boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size());
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size(), frames_to_skip);
                 if (buf.size() > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buf.data(), size);
@@ -274,7 +273,7 @@ public:
     static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, a);
         const void* const* first = static_cast<const void* const*>(begin);
-        const std::size_t frames_count = frames_count_from_buffer_size(size);        
+        const std::size_t frames_count = frames_count_from_buffer_size(size);
         if (!frames_count) {
             return ret;
         }

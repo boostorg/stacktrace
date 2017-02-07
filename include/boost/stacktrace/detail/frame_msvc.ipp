@@ -33,9 +33,9 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-std::size_t this_thread_frames::collect(void** memory, std::size_t size) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
     return ::CaptureStackBackTrace(
-        0,
+        skip + 1,
         static_cast<boost::detail::winapi::ULONG_>(size),
         memory,
         0
