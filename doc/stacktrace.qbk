@@ -290,7 +290,7 @@ In header only mode library could be tuned by macro. If one of the link macro fr
     [[Macro name or default] [Library] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary. Compiling with `-rdynamic` flag, without `-fisibility=hidden` or marking a functions as exported produce a better stacktraces.]] ]
     [[['default MSVC]] [*boost_stacktrace_windbg*] [ Uses COM and MSVC to show debug info. ] [MSVC] [yes] [yes]]
     [[['default other platforms]] [*boost_stacktrace_basic*] [Uses compiler intrinsics to collect stacktrace and `::dladdr` to show information about the symbol. Requires linking with *libdl* library.] [GCC/MinGW/Clang...] [no] [yes]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or can be downloaded [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here] ] [GCC/MinGW/Clang...] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or built into your compiler. Otherwise it can be downloaded [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here] ] [GCC/MinGW/Clang...] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [*boost_stacktrace_addr2line*] [Use *addr2line* program to retrieve stacktrace. Requires linking with *libdl* library and calls `::fork`.] [GCC/MinGW/Clang...] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_NOOP*] [*boost_stacktrace_noop*] [Use this if you wish to disable backtracing. `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
 ]
@@ -310,6 +310,7 @@ In order of helping and advising:
 * Great thanks to Bjorn Reese for highlighting the async-signal-safety issues.
 * Great thanks to Nat Goodspeed for requesting [classref boost::stacktrace::frame] like class.
 * Great thanks to Niall Douglas for making an initial review, helping with some platforms and giving great hints on library design.
+* Great thanks to all the library reviewers.
 
 [endsect]
 
