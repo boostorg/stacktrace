@@ -21,7 +21,6 @@
 #include <unwind.h>
 
 #include <dlfcn.h>      // ::dladdr
-#include <execinfo.h>
 #include <cstdio>
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
