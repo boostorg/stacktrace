@@ -50,7 +50,7 @@ public:
         file_name_[0] = '\0';
 
         boost::detail::winapi::MEMORY_BASIC_INFORMATION_ mbi;
-        if (!boost::detail::winapi::VirtualQuery(ptr, &mbi, sizeof(mbi))) {
+        if (!boost::detail::winapi::VirtualQuery(addr, &mbi, sizeof(mbi))) {
             return;
         }
 

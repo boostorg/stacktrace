@@ -8,6 +8,7 @@
 #include <signal.h>     // ::signal
 #include <boost/stacktrace/frame.hpp>
 #include <iostream>     // std::cerr
+#include <cstdlib>      // std::exit
 
 void print_signal_handler_and_exit() {
     void* p = reinterpret_cast<void*>(::signal(SIGSEGV, SIG_DFL));
