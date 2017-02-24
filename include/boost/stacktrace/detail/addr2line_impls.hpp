@@ -89,9 +89,9 @@ public:
 inline std::string addr2line(const char* flag, const void* addr) {
     std::string res;
 
-    ::Dl_info dli;
-    if (!!::dladdr(addr, &dli) && dli.dli_fname) {
-        res = dli.dli_fname;
+    boost::stacktrace::detail::location_from_symbol loc(addr);
+    if (!loc.empty()) {
+        res = loc.name();
     } else {
         res.resize(16);
         int rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);

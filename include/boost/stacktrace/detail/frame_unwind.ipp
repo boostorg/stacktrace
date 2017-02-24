@@ -16,11 +16,10 @@
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/try_demangle.hpp>
+#include <boost/stacktrace/detail/location_from_symbol.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <unwind.h>
-
-#include <dlfcn.h>      // ::dladdr
 #include <cstdio>
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
@@ -96,10 +95,10 @@ public:
             return Base::res;
         }
 
-        ::Dl_info dli;
-        if (!!::dladdr(addr, &dli) && dli.dli_sname) {
+        boost::stacktrace::detail::location_from_symbol loc(addr);
+        if (!loc.empty()) {
             Base::res += " in ";
-            Base::res += dli.dli_fname;
+            Base::res += loc.name();
         }
 
         return Base::res;
@@ -131,12 +130,13 @@ std::string to_string(const frame* frames, std::size_t size) {
 
 
 std::string frame::name() const {
+#ifndef BOOST_WINDOWS
     ::Dl_info dli;
     const bool dl_ok = !!::dladdr(addr_, &dli);
     if (dl_ok && dli.dli_sname) {
         return boost::stacktrace::detail::try_demangle(dli.dli_sname);
     }
-
+#endif
     return boost::stacktrace::detail::name_impl(addr_);
 }
 
