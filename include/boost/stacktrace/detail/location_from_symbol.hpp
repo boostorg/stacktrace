@@ -41,7 +41,7 @@ public:
         return dli_.dli_fname;
     }
 #else
-    BOOST_STATIC_CONSTEXPR(boost::detail::winapi::DWORD_, DEFAULT_PATH_SIZE_ = 260);
+    BOOST_STATIC_CONSTEXPR boost::detail::winapi::DWORD_ DEFAULT_PATH_SIZE_ = 260;
 
     char file_name_[DEFAULT_PATH_SIZE_];
 
