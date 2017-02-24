@@ -2,27 +2,23 @@
 # subject to the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Copyright Antony Polukhin 2016.
+# Copyright Antony Polukhin 2016-2017.
 
 #
 # See https://svn.boost.org/trac/boost/wiki/TravisCoverals for description of this file
 # and how it can be used with Boost libraries.
 #
-# File revision #2
+# File revision #3
 
 init:
-    - set BRANCH_TO_TEST=%APPVEYOR_REPO_BRANCH%
-    - set BOOST_REMOVE=stacktrace
-
-os: Visual Studio 2015
-configuration: Debug
-platform: x64
+    - set BRANCH_TO_TEST=%APPVEYOR_REPO_BRANCH%  # Change to branch you wish to test. Use %APPVEYOR_REPO_BRANCH% for current branch.
+    - set BOOST_REMOVE=stacktrace                # Remove this folder from lib from full clone of Boost. If you are testing `any` repo, write here `any`.
 
 ###############################################################################################################
 # From this point and below code is same for all the Boost libs
 ###############################################################################################################
 
-version: 1.61.{build}-{branch}
+version: 1.64.{build}-{branch}
  
 # branches to build
 branches:
@@ -32,6 +28,7 @@ branches:
 skip_tags: true
 
 before_build:
+    - set PATH=%PATH%;C:\\MinGW\\bin
     # Set this to the name of the library
     - set PROJECT_TO_TEST=%APPVEYOR_PROJECT_NAME%
     - echo "Testing %PROJECT_TO_TEST%"
@@ -59,7 +56,7 @@ build_script:
 after_build:
 before_test:
 test_script:
-  - ..\..\..\b2.exe address-model=64 architecture=x86 cxxflags="-DBOOST_TRAVISCI_BUILD" -sBOOST_BUILD_PATH=.
+    - ..\..\..\b2.exe address-model=32 architecture=x86 toolset=msvc,gcc cxxflags="-DBOOST_TRAVISCI_BUILD" -sBOOST_BUILD_PATH=.
 
 after_test:
 on_success:
