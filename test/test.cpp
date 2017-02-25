@@ -24,6 +24,14 @@ using boost::stacktrace::frame;
 #   define BOOST_ST_API
 #endif
 
+
+#if defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE)
+    // MinGW with basic functionality
+#   define BOOST_STACKTRACE_SYMNAME 0
+#else
+#   define BOOST_STACKTRACE_SYMNAME 1
+#endif
+
 typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
 BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
 BOOST_ST_API stacktrace return_from_nested_namespaces();
@@ -48,10 +56,12 @@ void test_deeply_nested_namespaces() {
     std::stringstream ss;
     ss << return_from_nested_namespaces();
     std::cout << ss.str() << '\n';
+#if BOOST_STACKTRACE_SYMNAME
     BOOST_TEST(ss.str().find("main") != std::string::npos);
 
     BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
     BOOST_TEST(ss.str().find("return_from_nested_namespaces") != std::string::npos);
+#endif
 
     stacktrace ns1 = return_from_nested_namespaces();
     BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
@@ -82,11 +92,13 @@ void test_nested() {
     BOOST_TEST(ss1.str().find(" in ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" in ") != std::string::npos);
 
+#if BOOST_STACKTRACE_SYMNAME
     BOOST_TEST(ss1.str().find("foo2") != std::string::npos);
     BOOST_TEST(ss2.str().find("foo2") != std::string::npos);
 
     BOOST_TEST(ss1.str().find("foo1") != std::string::npos);
     BOOST_TEST(ss2.str().find("foo1") != std::string::npos);
+#endif
 
     //BOOST_TEST(false);
 }

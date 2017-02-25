@@ -16,7 +16,6 @@
 #include <boost/stacktrace/detail/try_demangle.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <execinfo.h>
 #include <cstdio>
 
 #include <sys/types.h>
