@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <string>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 int main() {
     std::string s = "addr2line -h";
     return std::system(s.c_str());

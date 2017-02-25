@@ -24,8 +24,8 @@ BOOST_NOINLINE void foo(int i) {
 #if defined(BOOST_GCC) && defined(BOOST_WINDOWS)
 
 // MinGW workaround
-#include <cstdlib>      // std::_Exit
-namespace std { using ::_Exit; };
+#include <cstdlib>      // ::_Exit
+namespace std { using ::_Exit; }
 
 #endif
 

@@ -85,14 +85,14 @@ void test_nested() {
 
     BOOST_TEST(ss1.str().find(" 1# ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" 1# ") != std::string::npos);
-
-    BOOST_TEST(ss1.str().find("main") != std::string::npos);
-    BOOST_TEST(ss2.str().find("main") != std::string::npos);
     
     BOOST_TEST(ss1.str().find(" in ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" in ") != std::string::npos);
 
 #if BOOST_STACKTRACE_SYMNAME
+    BOOST_TEST(ss1.str().find("main") != std::string::npos);
+    BOOST_TEST(ss2.str().find("main") != std::string::npos);
+
     BOOST_TEST(ss1.str().find("foo2") != std::string::npos);
     BOOST_TEST(ss2.str().find("foo2") != std::string::npos);
 
