@@ -30,7 +30,7 @@ project
 local RDYNAMIC = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
     <target-os>qnxnto,<toolset>qcc:<linkflags>"-Bdynamic" <target-os>qnxnto,<toolset>gcc:<linkflags>"-rdynamic"
     <target-os>android:<linkflags>"-rdynamic" <target-os>linux:<linkflags>"-rdynamic" <target-os>darwin,<toolset>gcc:<linkflags>"-dynamic"
-    <target-os>darwin,<toolset>clang:<linkflags>"-rdynamic" <target-os>iphone:<linkflags>"-rdynamic" ;
+    <target-os>darwin,<toolset>clang:<linkflags>"-rdynamic" <target-os>iphone:<linkflags>"-rdynamic" <toolset>gcc-mingw:<linkflags>"-rdynamic" ;
 
 local HIDE_SYMBS = <target-os>linux:<cxxflags>"-fvisibility=hidden" ;
 

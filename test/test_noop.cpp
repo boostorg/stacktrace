@@ -11,9 +11,18 @@
 #include <boost/functional/hash.hpp>
 
 using boost::stacktrace::stacktrace;
+using boost::stacktrace::frame;
+
+#ifdef BOOST_STACKTRACE_DYN_LINK
+#   define BOOST_ST_API BOOST_SYMBOL_IMPORT
+#else
+#   define BOOST_ST_API
+#endif
+
 typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
-BOOST_SYMBOL_IMPORT std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
-BOOST_SYMBOL_IMPORT stacktrace return_from_nested_namespaces();
+BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
+BOOST_ST_API stacktrace return_from_nested_namespaces();
+
 
 BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
     if (i) {
