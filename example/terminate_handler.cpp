@@ -290,7 +290,7 @@ int test_inplace() {
             return 59;
         }
 
-        if (ss1 && ss1[0].name() == ss2[0].name()) {
+        if (ss1 && ss1[0].address() == ss2[0].address()) {
             std::cerr << "Stacktraces must differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 60;
         }
