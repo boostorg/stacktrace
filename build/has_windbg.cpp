@@ -8,9 +8,10 @@
 #include <cstring>
 #include <windows.h>
 #include "Dbgeng.h"
+
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "Dbgeng.lib")
 
 int main() {
-    CoInitializeEx(0, COINIT_MULTITHREADED);
+    ::CoInitializeEx(0, COINIT_MULTITHREADED);
 }
