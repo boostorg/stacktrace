@@ -191,7 +191,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 #ifndef BOOST_STACKTRACE_LINK
 #   if defined(BOOST_STACKTRACE_USE_NOOP)
 #       include <boost/stacktrace/detail/frame_noop.ipp>
-#   elif defined(BOOST_MSVC)
+#   elif defined(BOOST_WINDOWS)
 #       include <boost/stacktrace/detail/frame_msvc.ipp>
 #   else
 #       include <boost/stacktrace/detail/frame_unwind.ipp>
