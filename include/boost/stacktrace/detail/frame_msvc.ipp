@@ -31,6 +31,10 @@
 #   include <boost/stacktrace/detail/safe_dump_posix.ipp>
 #endif
 
+//#ifndef BOOST_MSVC
+//#   define __uuidof(x) ::IID_ ## x
+//#endif
+
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
@@ -85,10 +89,10 @@ public:
 
 inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
     com_holder<::IDebugClient> iclient(com);
-    ::DebugCreate(::IID_IDebugClient, iclient.to_void_ptr_ptr());
+    ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr());
 
     com_holder<::IDebugControl> icontrol(com);
-    iclient->QueryInterface(::IID_IDebugControl, icontrol.to_void_ptr_ptr());
+    iclient->QueryInterface(__uuidof(IDebugControl), icontrol.to_void_ptr_ptr());
 
     const bool res1 = (S_OK == iclient->AttachProcess(
         0,
@@ -104,7 +108,7 @@ inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_i
         return false;
     }
 
-    const bool res = (S_OK == iclient->QueryInterface(::IID_IDebugSymbols, idebug.to_void_ptr_ptr()));
+    const bool res = (S_OK == iclient->QueryInterface(__uuidof(IDebugSymbols), idebug.to_void_ptr_ptr()));
     if (!res) {
         return false;
     }
