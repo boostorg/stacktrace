@@ -13,7 +13,8 @@ project
 
 lib dl : : <link>shared ;
 lib gcc_s : : <link>shared ;
-lib Dbghelp ;
+lib Dbgeng ;
+lib ole32 ;
 
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
@@ -44,7 +45,7 @@ explicit libbacktrace ;
 mp-run-simple has_addr2line.cpp : : : : addr2line ;
 explicit addr2line ;
 
-mp-run-simple has_windbg.cpp : : : : WinDbg ;
+mp-run-simple has_windbg.cpp : : : <library>Dbgeng <library>ole32 : WinDbg ;
 explicit WinDbg ;
 
 lib boost_stacktrace_noop

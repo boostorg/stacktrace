@@ -35,7 +35,7 @@
 #endif
 
 // Testing. Remove later
-#   define __uuidof(x) ::IID_ ## x
+//#   define __uuidof(x) ::IID_ ## x
 
 namespace boost { namespace stacktrace { namespace detail {
 
