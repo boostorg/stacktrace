@@ -112,7 +112,7 @@ lib boost_stacktrace_windbg
     ../src/windbg.cpp
   : # requirements
     <warnings>all
-    <library>Dbghelp
+    <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds ../build//WinDbg : : <build>no ]
   : # default build

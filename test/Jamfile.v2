@@ -7,8 +7,9 @@
 
 lib dl : : <link>shared ;
 lib gcc_s ;
-lib Dbghelp ;
 lib rt ;
+lib Dbgeng ;
+lib ole32 ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
@@ -36,7 +37,7 @@ local HIDE_SYMBS = <target-os>linux:<cxxflags>"-fvisibility=hidden" ;
 
 local BT_DEPS   = $(HIDE_SYMBS) <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
 local UNWD_DEPS = $(HIDE_SYMBS) <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
-local WIND_DEPS = $(HIDE_SYMBS) <library>Dbghelp [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local WIND_DEPS = $(HIDE_SYMBS) <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbg : : <build>no ] ;
 local NOOP_DEPS = $(HIDE_SYMBS) ;
 local BASIC_DEPS = $(RDYNAMIC) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
 
