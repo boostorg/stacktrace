@@ -18,12 +18,15 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <windows.h>
-#include "Dbgeng.h"
+#include "dbgeng.h"
 
 #include <boost/detail/winapi/get_current_process.hpp>
 
-#pragma comment(lib, "ole32.lib")
-#pragma comment(lib, "Dbgeng.lib")
+#ifdef BOOST_MSVC
+#   pragma comment(lib, "ole32.lib")
+#   pragma comment(lib, "Dbgeng.lib")
+#   pragma comment(lib, "uuid.lib")
+#endif
 
 #ifdef BOOST_WINDOWS
 #   include <boost/stacktrace/detail/safe_dump_win.ipp>
@@ -31,9 +34,8 @@
 #   include <boost/stacktrace/detail/safe_dump_posix.ipp>
 #endif
 
-//#ifndef BOOST_MSVC
-//#   define __uuidof(x) ::IID_ ## x
-//#endif
+// Testing. Remove later
+#   define __uuidof(x) ::IID_ ## x
 
 namespace boost { namespace stacktrace { namespace detail {
 
