@@ -4,13 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
 #include <cstring>
 #include <windows.h>
 #include "dbgeng.h"
-
-#pragma comment(lib, "ole32.lib")
-#pragma comment(lib, "Dbgeng.lib")
 
 int main() {
     ::CoInitializeEx(0, COINIT_MULTITHREADED);
