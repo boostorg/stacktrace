@@ -44,6 +44,9 @@ class basic_stacktrace {
 
         impl_.reserve(static_cast<std::size_t>(size));
         for (std::size_t i = 0; i < size; ++i) {
+            if (!begin[i]) {
+                return;
+            }
             impl_.push_back(
                 frame(begin[i])
             );
