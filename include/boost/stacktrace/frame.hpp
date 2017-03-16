@@ -73,7 +73,7 @@ class frame {
 
 public:
     /// @brief Constructs frame that references NULL address.
-    /// Calls to source_file() and source_line() wil lreturn empty string.
+    /// Calls to source_file() and source_line() will return empty string.
     /// Calls to source_line() will return 0.
     ///
     /// @b Complexity: O(1).
@@ -102,7 +102,7 @@ public:
     frame& operator=(const frame&) = default;
 #endif
 
-    /// @brief Constructs frame that can extract information from addr at runtime.
+    /// @brief Constructs frame that references addr and could later generate information about that address using platform specific features.
     ///
     /// @b Complexity: O(1).
     ///
@@ -114,11 +114,15 @@ public:
 
     /// @returns Name of the frame (function name in a human readable form).
     ///
+    /// @b Complexity: unknown (lots of platform specific work).
+    ///
     /// @b Async-Handler-Safety: Unsafe.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     BOOST_STACKTRACE_FUNCTION std::string name() const;
 
     /// @returns Address of the frame function.
+    ///
+    /// @b Complexity: O(1).
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
@@ -130,11 +134,15 @@ public:
     /// if this->source_line() == 0.
     /// @throws std::bad_alloc if not enough memory to construct resulting string.
     ///
+    /// @b Complexity: unknown (lots of platform specific work).
+    ///
     /// @b Async-Handler-Safety: Unsafe.
     BOOST_STACKTRACE_FUNCTION std::string source_file() const;
 
     /// @returns Code line in the source file, were the function of the frame is defined.
     /// @throws std::bad_alloc if not enough memory to construct string for internal needs.
+    ///
+    /// @b Complexity: unknown (lots of platform specific work).
     ///
     /// @b Async-Handler-Safety: Unsafe.
     BOOST_STACKTRACE_FUNCTION std::size_t source_line() const;
@@ -168,7 +176,7 @@ inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { retu
 inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
 inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
-/// Hashing support, O(1) complexity; Async-Handler-Safe.
+/// Fast hashing support, O(1) complexity; Async-Handler-Safe.
 inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
     return reinterpret_cast<std::size_t>(f.address());
 }
@@ -191,7 +199,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 #ifndef BOOST_STACKTRACE_LINK
 #   if defined(BOOST_STACKTRACE_USE_NOOP)
 #       include <boost/stacktrace/detail/frame_noop.ipp>
-#   elif defined(BOOST_WINDOWS)
+#   elif defined(BOOST_MSVC) || defined(BOOST_STACKTRACE_USE_WINDBG)
 #       include <boost/stacktrace/detail/frame_msvc.ipp>
 #   else
 #       include <boost/stacktrace/detail/frame_unwind.ipp>

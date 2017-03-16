@@ -105,7 +105,7 @@ public:
     typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
     typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
 
-    /// @brief Stores the current function call sequence inside *this.
+    /// @brief Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations.
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
@@ -116,7 +116,7 @@ public:
         init(0 , static_cast<std::size_t>(-1));
     }
 
-    /// @brief Stores the current function call sequence inside *this.
+    /// @brief Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations.
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
@@ -129,7 +129,7 @@ public:
         init(0 , static_cast<std::size_t>(-1));
     }
 
-    /// @brief Stores [skip, skip + max_depth) of the current function call sequence inside *this.
+    /// @brief Stores [skip, skip + max_depth) of the current function call sequence inside *this without any decoding or any other heavy platform specific operations.
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
@@ -197,7 +197,7 @@ public:
     /// index close to this->size() contains function `main()`.
     /// @returns frame that references the actual frame info, stored inside *this.
     ///
-    /// @b Complexity: Amortized O(1), O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
+    /// @b Complexity: O(1).
     ///
     /// @b Async-Handler-Safety: Safe.
     const_reference operator[](std::size_t frame_no) const BOOST_NOEXCEPT {
@@ -361,7 +361,7 @@ bool operator!=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
     return !(lhs == rhs);
 }
 
-/// Hashing support, O(st.size()) complexity; Async-Handler-Safe.
+/// Fast hashing support, O(st.size()) complexity; Async-Handler-Safe.
 template <class Allocator>
 std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
     return boost::hash_range(st.as_vector().data(), st.as_vector().data()+ st.as_vector().size());
