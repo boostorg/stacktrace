@@ -91,7 +91,8 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     const int ret = std::system(command_args.string().c_str());
 
     std::cout << "End Running with param " << param << "; ret code is " << ret << std::endl;
-    boost::filesystem::remove(command);
+    boost::system::error_code ignore;
+    boost::filesystem::remove(command, ignore);
     if (not_null && !ret) {
         std::exit(97);
     } else if (!not_null && ret) {
