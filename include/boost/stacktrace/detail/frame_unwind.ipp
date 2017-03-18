@@ -130,7 +130,7 @@ std::string to_string(const frame* frames, std::size_t size) {
 
 
 std::string frame::name() const {
-#ifndef BOOST_WINDOWS
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     ::Dl_info dli;
     const bool dl_ok = !!::dladdr(addr_, &dli);
     if (dl_ok && dli.dli_sname) {

@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#ifndef BOOST_WINDOWS
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 #   include <dlfcn.h>
 #else
 #   include <boost/detail/winapi/dll.hpp>
@@ -21,7 +21,7 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 class location_from_symbol {
-#ifndef BOOST_WINDOWS
+#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     ::Dl_info dli_;
 
 public:
