@@ -219,7 +219,7 @@ int test_inplace() {
             return 51;
         }
 
-#ifndef !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
+#if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
         // This is very dependent on compiler and link flags. No sane way to make it work, because
         // BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
         if (ss1 && ss1[0].name() != ss2[0].name()) {

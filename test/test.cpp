@@ -110,7 +110,7 @@ void test_comparisons_base(Bt nst, Bt st) {
     cst = cst;
     BOOST_TEST(nst);
     BOOST_TEST(st);
-#ifndef !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
+#if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
     // This is very dependent on compiler and link flags. No sane way to make it work, because
     // BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
     BOOST_TEST(nst[0] != st[0]);
