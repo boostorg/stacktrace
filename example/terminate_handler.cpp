@@ -240,10 +240,14 @@ int test_inplace() {
             return 53;
         }
 
+#if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
+        // This is very dependent on compiler and link flags. No sane way to make it work, because
+        // BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
         if (ss1 && ss1[0].name() != ss2[0].name()) {
             std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 54;
         }
+#endif
     }
 
     {
