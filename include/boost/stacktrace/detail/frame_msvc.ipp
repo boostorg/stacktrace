@@ -94,11 +94,11 @@ public:
 };
 
 
-inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
-    com_holder<::IDebugClient> iclient(com);
+inline bool try_init_com(com_holder< ::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
+    com_holder< ::IDebugClient> iclient(com);
     ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr());
 
-    com_holder<::IDebugControl> icontrol(com);
+    com_holder< ::IDebugControl> icontrol(com);
     iclient->QueryInterface(__uuidof(IDebugControl), icontrol.to_void_ptr_ptr());
 
     const bool res1 = (S_OK == iclient->AttachProcess(
@@ -123,7 +123,7 @@ inline bool try_init_com(com_holder<::IDebugSymbols>& idebug, const com_global_i
     return true;
 }
 
-inline std::string get_name_impl(const com_holder<::IDebugSymbols>& idebug, const void* addr, std::string* module_name = 0) {
+inline std::string get_name_impl(const com_holder< ::IDebugSymbols>& idebug, const void* addr, std::string* module_name = 0) {
     std::string result;
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
@@ -171,7 +171,7 @@ inline std::string get_name_impl(const com_holder<::IDebugSymbols>& idebug, cons
 }
 
 
-inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_holder<::IDebugSymbols>& idebug, const void* addr) {
+inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_holder< ::IDebugSymbols>& idebug, const void* addr) {
     std::pair<std::string, std::size_t> result;
     const ULONG64 offset = reinterpret_cast<ULONG64>(addr);
 
@@ -217,7 +217,7 @@ inline std::pair<std::string, std::size_t> get_source_file_line_impl(const com_h
     return result;
 }
 
-inline void to_string_impl(const com_holder<::IDebugSymbols>& idebug, const void* addr, std::string& res) {
+inline void to_string_impl(const com_holder< ::IDebugSymbols>& idebug, const void* addr, std::string& res) {
     std::string module_name;
     std::string name = boost::stacktrace::detail::get_name_impl(idebug, addr, &module_name);
     if (!name.empty()) {
@@ -241,7 +241,7 @@ inline void to_string_impl(const com_holder<::IDebugSymbols>& idebug, const void
 
 std::string to_string(const frame* frames, std::size_t size) {
     boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<::IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_holder< ::IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return std::string();
     }
@@ -266,7 +266,7 @@ std::string to_string(const frame* frames, std::size_t size) {
 
 std::string frame::name() const {
     boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<::IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_holder< ::IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return std::string();
     }
@@ -277,7 +277,7 @@ std::string frame::name() const {
 
 std::string frame::source_file() const {
     boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<::IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_holder< ::IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return std::string();
     }
@@ -288,7 +288,7 @@ std::size_t frame::source_line() const {
     ULONG line_num = 0;
 
     boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<::IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_holder< ::IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return 0;
     }
@@ -307,7 +307,7 @@ std::size_t frame::source_line() const {
 
 std::string to_string(const frame& f) {
     boost::stacktrace::detail::com_global_initer com_guard;
-    boost::stacktrace::detail::com_holder<::IDebugSymbols> idebug(com_guard);
+    boost::stacktrace::detail::com_holder< ::IDebugSymbols> idebug(com_guard);
     if (!boost::stacktrace::detail::try_init_com(idebug, com_guard)) {
         return std::string();
     }
