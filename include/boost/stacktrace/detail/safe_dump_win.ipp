@@ -21,8 +21,6 @@
 #include <boost/detail/winapi/handles.hpp>
 #include <boost/detail/winapi/access_rights.hpp>
 
-#include <windows.h> // CaptureStackBackTrace
-
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t dump(void* fd, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
