@@ -15,8 +15,8 @@
 #include <boost/stacktrace/frame.hpp>
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/stacktrace/detail/try_demangle.hpp>
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
+#include <boost/core/demangle.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <unwind.h>
@@ -86,7 +86,7 @@ public:
         Base::res.clear();
         Base::prepare_function_name(addr);
         if (!Base::res.empty()) {
-            Base::res = boost::stacktrace::detail::try_demangle(Base::res.c_str());
+            Base::res = boost::core::demangle(Base::res.c_str());
         } else {
             Base::res = to_hex_array(addr).data();
         }
@@ -134,7 +134,7 @@ std::string frame::name() const {
     ::Dl_info dli;
     const bool dl_ok = !!::dladdr(addr_, &dli);
     if (dl_ok && dli.dli_sname) {
-        return boost::stacktrace::detail::try_demangle(dli.dli_sname);
+        return boost::core::demangle(dli.dli_sname);
     }
 #endif
     return boost::stacktrace::detail::name_impl(addr_);

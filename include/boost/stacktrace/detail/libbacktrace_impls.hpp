@@ -13,7 +13,7 @@
 #endif
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/stacktrace/detail/try_demangle.hpp>
+#include <boost/core/demangle.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <backtrace.h>
@@ -83,7 +83,7 @@ inline std::string name_impl(const void* addr) {
     boost::stacktrace::detail::pc_data data = {&res, 0, 0};
     ::backtrace_pcinfo(state, reinterpret_cast<uintptr_t>(addr), boost::stacktrace::detail::libbacktrace_full_callback, 0, &data);
     if (!res.empty()) {
-        res = boost::stacktrace::detail::try_demangle(res.c_str());
+        res = boost::core::demangle(res.c_str());
     }
 
     return res;

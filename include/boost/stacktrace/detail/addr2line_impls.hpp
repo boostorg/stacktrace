@@ -13,7 +13,7 @@
 #endif
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/stacktrace/detail/try_demangle.hpp>
+#include <boost/core/demangle.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <cstdio>
@@ -154,7 +154,7 @@ typedef to_string_impl_base<to_string_using_addr2line> to_string_impl;
 inline std::string name_impl(const void* addr) {
     std::string res = boost::stacktrace::detail::addr2line("-fe", addr);
     res = res.substr(0, res.find_last_of('\n'));
-    res = boost::stacktrace::detail::try_demangle(res.c_str());
+    res = boost::core::demangle(res.c_str());
 
     if (res == "??") {
         res.clear();
