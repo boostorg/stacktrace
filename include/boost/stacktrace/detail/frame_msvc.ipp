@@ -236,11 +236,8 @@ public:
             return result;
         }
 
+        // If 'delimiter' is equal to 'std::string::npos' then we have only module name.
         const std::size_t delimiter = result.find_first_of('!');
-        if (delimiter == std::string::npos) {
-            return minwg_demangling_workaround(result);
-        }
-        
         if (module_name) {
             *module_name = result.substr(0, delimiter);
         }

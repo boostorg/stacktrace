@@ -23,8 +23,6 @@ lib backtrace
 project
   : requirements
     <toolset>msvc:<asynch-exceptions>on
-    <toolset>gcc:<cxxflags>"-fPIE -fPIC"
-    <toolset>gcc:<linkflags>"-fPIE -fPIC"
     <warnings>all
     <test-info>always_show_run_output
   ;
@@ -97,13 +95,13 @@ test-suite stacktrace_tests
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL   $(BT_DEPS)      : backtrace_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_ADDR2LINE    $(AD2L_DEPS)    : addr2line_ho_no_dbg ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_NOOP         $(NOOP_DEPS)    : noop_ho_no_dbg ]
-    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                           $(WIND_DEPS)    : windbg_ho_no_dbg ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                        <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL   $(WIND_DEPS)    : windbg_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                           $(BASIC_DEPS)   : basic_ho_no_dbg ]
 
     # Test with shared linked implementations without debug symbols
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg   $(LINKSHARED_BT) <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL    : backtrace_lib_no_dbg ]
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_addr2line_no_dbg   $(LINKSHARED_AD2L)  : addr2line_lib_no_dbg ]
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg      $(LINKSHARED_WIND)  : windbg_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg      $(LINKSHARED_WIND) <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  : windbg_lib_no_dbg ]
     [ run test_noop.cpp : : : <debug-symbols>off <library>.//test_impl_lib_noop_no_dbg        $(LINKSHARED_NOOP)  : noop_lib_no_dbg ]
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg       $(LINKSHARED_BASIC) : basic_lib_no_dbg ]
 
