@@ -232,7 +232,7 @@ void test_frame() {
         if (i > 1 && i < min_size - 3) {       // Begin ...and end of the trace may match, skipping
             BOOST_TEST(st[i] != fv);
             
-#if defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL) && defined(BOOST_MSVC)
+#if !(defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL) && defined(BOOST_MSVC))
             // MSVC can not get function name withhout debug symbols even if it is exported
             BOOST_TEST(st[i].name() != fv.name());
             BOOST_TEST(st[i] != fv);
