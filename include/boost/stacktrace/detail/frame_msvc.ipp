@@ -61,10 +61,11 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::si
 }
 
 class com_global_initer: boost::noncopyable {
-    bool ok;
+    bool ok_;
+
 public:
     com_global_initer() BOOST_NOEXCEPT
-        : ok(false)
+        : ok_(false)
     {
         // COINIT_MULTITHREADED means that we must serialize access to the objects manually.
         // This is the fastest way to work. If user calls CoInitializeEx before us - we 
@@ -73,11 +74,11 @@ public:
         // If we call CoInitializeEx befire user - user may end up with different mode, which is a problem.
         // So we need to call that initialization function as late as possible.
         const boost::detail::winapi::DWORD_ res = ::CoInitializeEx(0, COINIT_MULTITHREADED);
-        ok = (res == S_OK || res = S_FALSE);
+        ok_ = (res == S_OK || res == S_FALSE);
     }
 
     ~com_global_initer() BOOST_NOEXCEPT {
-        if (ok) {
+        if (ok_) {
             ::CoUninitialize();
         }
     }
