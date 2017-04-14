@@ -8,7 +8,7 @@
 # See https://svn.boost.org/trac/boost/wiki/TravisCoverals for description of this file
 # and how it can be used with Boost libraries.
 #
-# File revision #3
+# File revision #3 (without git status)
 
 init:
     - set BRANCH_TO_TEST=%APPVEYOR_REPO_BRANCH%  # Change to branch you wish to test. Use %APPVEYOR_REPO_BRANCH% for current branch.
@@ -42,7 +42,6 @@ before_build:
     - git submodule update --init --merge
     - git remote set-branches --add origin %BRANCH_TO_TEST%
     - git pull --recurse-submodules
-    - git status
     - rm -rf %BOOST%/libs/%BOOST_REMOVE%
     - mv %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%PROJECT_TO_TEST%
     - set TRAVIS_BUILD_DIR=%BOOST%/libs/%PROJECT_TO_TEST%
