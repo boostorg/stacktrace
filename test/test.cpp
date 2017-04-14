@@ -25,8 +25,9 @@ using boost::stacktrace::frame;
 #endif
 
 
-#if defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE)
-    // MinGW with basic functionality
+#if (defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE)) \
+    || defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL)
+
 #   define BOOST_STACKTRACE_SYMNAME 0
 #else
 #   define BOOST_STACKTRACE_SYMNAME 1
