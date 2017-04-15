@@ -28,7 +28,7 @@ env:
 
         # Files, which coverage results must be ignored (files from other projects).
         # Example: - IGNORE_COVERAGE='*/boost/progress.hpp */filesystem/src/*'
-        - IGNORE_COVERAGE='*/numeric/conversion/converter_policies.hpp */boost/progress.hpp */filesystem/src/* */pthread/once_atomic.cpp */src/pthread/thread.cpp '
+        - IGNORE_COVERAGE='*/numeric/conversion/converter_policies.hpp */boost/progress.hpp */filesystem/src/* */pthread/once_atomic.cpp */src/pthread/thread.cpp thread/src/future.cpp '
 
         # Explicitly remove the following library from Boost. This may be usefull, if you're for example running Travis
         # from `Boost.DLL` repo, while Boost already has `dll`.
