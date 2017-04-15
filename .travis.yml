@@ -27,7 +27,7 @@ env:
         - BRANCH_TO_TEST=develop
 
         # Files, which coverage results must be ignored (files from other projects).
-        # Example: - IGNORE_COVERAGE='*/boost/progress.hpp */filesystem/src/*'
+        # Example: - IGNORE_COVERAGE='*/boost/progress.hpp */filesystem/src/* */thread/src/*'
         - IGNORE_COVERAGE='*/numeric/conversion/converter_policies.hpp */boost/progress.hpp */filesystem/src/*'
 
         # Explicitly remove the following library from Boost. This may be usefull, if you're for example running Travis
