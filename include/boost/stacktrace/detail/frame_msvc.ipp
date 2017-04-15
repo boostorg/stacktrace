@@ -177,11 +177,7 @@ public:
 
 #else
 
-    com_holder< ::IDebugSymbols>* idebug_;
-public:
-    debugging_symbols() BOOST_NOEXCEPT
-        : idebug_(0)
-    {
+    static com_holder< ::IDebugSymbols>& get_thread_local_debug_inst() BOOST_NOEXCEPT {
         // [class.mfct]: A static local variable or local type in a member function always refers to the same entity, whether
         // or not the member function is inline.
         static thread_local boost::stacktrace::detail::com_global_initer com;
@@ -191,8 +187,14 @@ public:
             try_init_com(idebug, com);
         }
 
-        idebug_ = &idebug;
+        return idebug;
     }
+
+    com_holder< ::IDebugSymbols>& idebug_;
+public:
+    debugging_symbols() BOOST_NOEXCEPT
+        : idebug_( get_thread_local_debug_inst() )
+    {}
 
 #endif // #ifndef BOOST_STACKTRACE_USE_WINDBG_CACHED
 
