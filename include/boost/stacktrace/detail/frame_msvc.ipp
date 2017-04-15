@@ -180,7 +180,7 @@ public:
     com_holder< ::IDebugSymbols>* idebug_;
 public:
     debugging_symbols() BOOST_NOEXCEPT
-        , idebug_(0)
+        : idebug_(0)
     {
         // [class.mfct]: A static local variable or local type in a member function always refers to the same entity, whether
         // or not the member function is inline.
