@@ -44,18 +44,27 @@ inline void libbacktrace_error_callback(void* /*data*/, const char* /*msg*/, int
 }
 
 
-// Not async-signal-safe, so this method is not called from async-safe functions.
-//
-// This function is not async signal safe because:
-// * Dynamic initialization of a block-scope variable with static storage duration could lock a mutex
-// * No guarantees on `backtrace_create_state` function.
 extern inline ::backtrace_state* construct_state() BOOST_NOEXCEPT {
+    return ::backtrace_create_state(
+        0, 0 /*thread-safe*/, boost::stacktrace::detail::libbacktrace_error_callback, 0
+    );
+
+    // TODO: this does not seem to work well when this function is in .so:
+    // Not async-signal-safe, so this method is not called from async-safe functions.
+    //
+    // This function is not async signal safe because:
+    // * Dynamic initialization of a block-scope variable with static storage duration could lock a mutex
+    // * No guarantees on `backtrace_create_state` function.
+
     // [dcl.inline]: A static local variable in an inline function with external linkage always refers to the same object.
+
+    /*  
     static ::backtrace_state* state = ::backtrace_create_state(
-        0, 1 /*thread-safe*/, boost::stacktrace::detail::libbacktrace_error_callback, 0
+        0, 1 , boost::stacktrace::detail::libbacktrace_error_callback, 0
     );
 
     return state;
+    */
 }
 
 struct to_string_using_backtrace {

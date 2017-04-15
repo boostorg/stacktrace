@@ -6,6 +6,8 @@
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
+#include <sstream>
+
 #include <boost/stacktrace.hpp>
 #include <boost/thread.hpp>
 #include <boost/optional.hpp>
@@ -38,17 +40,23 @@ BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
 }
 
 void main_test_loop() {
-    std::size_t loops = 100;
-    std::size_t Depth = 21;
+    std::size_t loops = 150;
+    std::size_t Depth = 25;
 
     boost::optional<std::pair<stacktrace, stacktrace> > ethalon;
+    std::stringstream ss_ethalon;
 
     while (--loops) {
         std::pair<stacktrace, stacktrace> res = foo2(Depth, foo1);
         if (ethalon) {
             BOOST_TEST(res == *ethalon);
+
+            std::stringstream ss;
+            ss << res.first;
+            BOOST_TEST(ss.str() == ss_ethalon.str());
         } else {
             ethalon = res;
+            ss_ethalon << ethalon->first;
         }
     }
 }
