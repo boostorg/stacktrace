@@ -40,7 +40,7 @@ BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
 }
 
 void main_test_loop() {
-    std::size_t loops = 150;
+    std::size_t loops = 100;
     std::size_t Depth = 25;
 
     boost::optional<std::pair<stacktrace, stacktrace> > ethalon;
