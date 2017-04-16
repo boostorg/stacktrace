@@ -89,11 +89,13 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_basic         $(LINKSHARED_BASIC)         : basic_lib ]
 
     # Thread safety with debug symbols
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)            : backtrace_lib_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)          : windbg_lib_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)   : windbg_cached_lib_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)         : basic_lib_thread_safety ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)            : backtrace_lib_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)          : windbg_lib_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)   : windbg_cached_lib_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)         : basic_lib_threaded ]
 
+
+    ##### Tests with disabled debug symbols #####
 
     # Header only tests without debug symbols
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE     <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(BT_DEPS)       : backtrace_ho_no_dbg ]
@@ -112,10 +114,10 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)                                                         : basic_lib_no_dbg ]
 
     # Thread safety without debug symbols
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)          : backtrace_lib_no_dbg_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg        $(LINKSHARED_WIND)        : windbg_lib_no_dbg_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED) : windbg_cached_lib_no_dbg_thread_safety ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic         $(LINKSHARED_BASIC)       : basic_lib_no_dbg_thread_safety ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)          : backtrace_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)        : windbg_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED) : windbg_cached_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)       : basic_lib_no_dbg_threaded ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite. 
@@ -134,6 +136,9 @@ for local p in [ glob ../example/*.cpp ]
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_WIND_CACHED)  $(additional_dependency)    : windbg_cached_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_NOOP)         $(additional_dependency)    : noop_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BASIC)        $(additional_dependency)    : basic_$(p[1]:B) ] ;
+
+
+    ##### Tests with disabled debug symbols #####
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_BT)          $(additional_dependency)    : backtrace_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_AD2L)        $(additional_dependency)    : addr2line_$(p[1]:B)_no_dbg ] ;
