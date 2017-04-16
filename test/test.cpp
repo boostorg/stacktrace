@@ -60,7 +60,9 @@ void test_deeply_nested_namespaces() {
 #if BOOST_STACKTRACE_SYMNAME
     BOOST_TEST(ss.str().find("main") != std::string::npos);
 
-    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos);
+    BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos
+        || ss.str().find("1# return_from_nested_namespaces") != std::string::npos); // GCC with -O1 has strange inlining, so this line is true while the prev one is false.
+
     BOOST_TEST(ss.str().find("return_from_nested_namespaces") != std::string::npos);
 #endif
 
@@ -298,7 +300,6 @@ int main() {
     BOOST_TEST(b2.size() == 4);
     test_comparisons_base(bar1(), bar2());
 
-    test_nested<250>();
     test_nested<300>();
     BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);
     BOOST_TEST(boost::stacktrace::stacktrace(1, 1).size() == 1);
