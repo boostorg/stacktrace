@@ -28,7 +28,7 @@ env:
 
         # Files, which coverage results must be ignored (files from other projects).
         # Example: - IGNORE_COVERAGE='*/boost/progress.hpp */filesystem/src/*'
-        - IGNORE_COVERAGE='*/numeric/conversion/converter_policies.hpp */boost/progress.hpp */filesystem/src/* */pthread/once_atomic.cpp */src/pthread/thread.cpp thread/src/future.cpp '
+        - IGNORE_COVERAGE='*/numeric/conversion/converter_policies.hpp */boost/progress.hpp */filesystem/src/* */thread/src/* */pthread/once_atomic.cpp */src/pthread/thread.cpp */thread/src/future.cpp '
 
         # Explicitly remove the following library from Boost. This may be usefull, if you're for example running Travis
         # from `Boost.DLL` repo, while Boost already has `dll`.
@@ -42,6 +42,8 @@ env:
         - CXX_FLAGS="-std=c++98" LINK_FLAGS="" TOOLSET=gcc-6
         - CXX_FLAGS="-std=c++11" LINK_FLAGS="" TOOLSET=gcc-6
         - CXX_FLAGS="-std=c++1y" LINK_FLAGS="" TOOLSET=gcc-6
+        - CXX_FLAGS="-std=c++11 -O0" LINK_FLAGS="" TOOLSET=gcc-6
+        - CXX_FLAGS="-std=c++11 -O1" LINK_FLAGS="" TOOLSET=gcc-6
         #- CXX_FLAGS="-std=c++11 -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
         #- CXX_FLAGS="-std=c++1y -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
 
