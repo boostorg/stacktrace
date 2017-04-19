@@ -33,7 +33,7 @@ std::size_t dump(int fd, void** memory, std::size_t size) BOOST_NOEXCEPT {
 }
 
 std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
-    const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IFREG | S_IWUSR | S_IRUSR);
+    const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IWUSR | S_IRUSR);
     if (fd == -1) {
         return 0;
     }
