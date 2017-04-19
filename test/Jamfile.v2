@@ -13,10 +13,10 @@ lib ole32 ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
-  : 
+  :
   : <search>$(LIBBACKTRACE_PATH)/lib <link>static
   :
-  : <include>$(LIBBACKTRACE_PATH)/include 
+  : <include>$(LIBBACKTRACE_PATH)/include
   ;
 
 
@@ -89,11 +89,27 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_basic         $(LINKSHARED_BASIC)         : basic_lib ]
 
     # Thread safety with debug symbols
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)            : backtrace_lib_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)          : windbg_lib_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)   : windbg_cached_lib_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)         : basic_lib_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
+        : backtrace_lib_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
+        : windbg_lib_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)
+        : windbg_cached_lib_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)
+        : basic_lib_threaded ]
 
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg
+            $(LINKSHARED_WIND) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_MT
+        : windbg_lib_threaded_com_mt ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached
+            $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
+        : windbg_cached_lib_threaded_com_st ]
 
     ##### Tests with disabled debug symbols #####
 
@@ -114,13 +130,30 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)                                                         : basic_lib_no_dbg ]
 
     # Thread safety without debug symbols
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)          : backtrace_lib_no_dbg_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)        : windbg_lib_no_dbg_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED) : windbg_cached_lib_no_dbg_threaded ]
-    [ run thread_safety_checking.cpp : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)       : basic_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)
+        : backtrace_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)
+        : windbg_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED)
+        : windbg_cached_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)
+        : basic_lib_no_dbg_threaded ]
+
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg
+            $(LINKSHARED_WIND) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_MT
+        : windbg_lib_threaded_com_mt ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached
+            $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
+        : windbg_cached_lib_threaded_com_st ]
   ;
 
-# Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite. 
+# Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite.
 for local p in [ glob ../example/*.cpp ]
 {
     local target_name = $(p[1]:B) ;
