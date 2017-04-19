@@ -11,6 +11,12 @@
 #include <sys/wait.h>
 
 int main() {
-    std::string s = "addr2line -h";
+
+#ifdef BOOST_STACKTRACE_ADDR2LINE_LOCATION
+    std::string s = BOOST_STACKTRACE_ADDR2LINE_LOCATION " -h";
+#else
+    std::string s = "/usr/bin/addr2line -h";
+#endif
+
     return std::system(s.c_str());
 }

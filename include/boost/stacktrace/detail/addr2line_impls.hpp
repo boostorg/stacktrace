@@ -34,7 +34,13 @@ public:
         , pid(0)
     {
         int pdes[2];
-        char prog_name[] = "addr2line";
+        #ifdef BOOST_STACKTRACE_ADDR2LINE_LOCATION
+        // TODO: static_assert that BOOST_STACKTRACE_ADDR2LINE_LOCATION is an absolute path!
+        char prog_name[] = BOOST_STACKTRACE_ADDR2LINE_LOCATION ;
+        #else
+        char prog_name[] = "/usr/bin/addr2line";
+        #endif
+
         char* argp[] = {
             prog_name,
             const_cast<char*>(flag),
@@ -50,19 +56,22 @@ public:
         pid = ::fork();
         switch (pid) {
         case -1:
-            // failed
+            // Failed...
             ::close(pdes[0]);
             ::close(pdes[1]);
             return;
 
         case 0:
-            // we are the child
+            // We are the child.
             ::close(STDERR_FILENO);
             ::close(pdes[0]);
             if (pdes[1] != STDOUT_FILENO) {
                 ::dup2(pdes[1], STDOUT_FILENO);
             }
-            ::execvp(prog_name, argp);
+
+            // Do not use `execlp()`, `execvp()`, and `execvpe()` here!
+            // `exec*p*` functions are vulnerable to PATH variable evaluation attacks.
+            ::execv(prog_name, argp);
             ::_exit(127);
         }
 
