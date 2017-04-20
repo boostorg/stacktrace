@@ -167,11 +167,6 @@ void test_iterators() {
     BOOST_TEST(st.crbegin() == st.crbegin());
     BOOST_TEST(st.rbegin() == st.rbegin());
 
-    BOOST_TEST(++st.begin() == ++st.begin());
-    BOOST_TEST(++st.cbegin() == ++st.cbegin());
-    BOOST_TEST(++st.crbegin() == ++st.crbegin());
-    BOOST_TEST(++st.rbegin() == ++st.rbegin());
-
     BOOST_TEST(st.begin() + 1 == st.begin() + 1);
     BOOST_TEST(st.cbegin() + 1 == st.cbegin() + 1);
     BOOST_TEST(st.crbegin() + 1 == st.crbegin() + 1);
@@ -186,12 +181,6 @@ void test_iterators() {
     BOOST_TEST(st.cend() == st.cend());
     BOOST_TEST(st.crend() == st.crend());
     BOOST_TEST(st.rend() == st.rend());
-
-    BOOST_TEST(--st.end() == --st.end());
-    BOOST_TEST(--st.cend() == --st.cend());
-    BOOST_TEST(--st.crend() == --st.crend());
-    BOOST_TEST(--st.rend() == --st.rend());
-
 
     BOOST_TEST(st.end() > st.begin());
     BOOST_TEST(st.end() > st.cbegin());
