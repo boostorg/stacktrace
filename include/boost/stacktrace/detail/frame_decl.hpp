@@ -23,7 +23,8 @@
 
 namespace boost { namespace stacktrace {
 
-/// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
+/// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp "boost/stacktrace/frame.hpp"
+/// @brief Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame {
 public:
     typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;

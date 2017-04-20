@@ -11,6 +11,7 @@ doxygen autodoc
    :
       [ glob ../../../boost/stacktrace.hpp ]
       [ glob ../../../boost/stacktrace/*.hpp ]
+#      [ glob ../../../boost/stacktrace/detail/frame_decl.hpp ]
    :
         <doxygen:param>EXTRACT_ALL=NO
         <doxygen:param>HIDE_UNDOC_MEMBERS=YES
@@ -18,11 +19,15 @@ doxygen autodoc
         <doxygen:param>ENABLE_PREPROCESSING=YES
         <doxygen:param>EXPAND_ONLY_PREDEF=YES
         <doxygen:param>MACRO_EXPANSION=YES
+        <doxygen:param>SEARCH_INCLUDES=YES
+        <doxygen:param>INCLUDE_PATH=../../../
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
                                    \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\
+                                   \"BOOST_CONSTEXPR_EXPLICIT_OPERATOR_BOOL()=explicit constexpr operator bool() const noexcept;\" \\
                                    \"BOOST_STATIC_CONSTEXPR=static constexpr\" \\
                                    \"BOOST_FORCEINLINE=inline\" \\
                                    \"BOOST_STACKTRACE_FUNCTION=inline\" \\
+                                   \"BOOST_CONSTEXPR=constexpr\" \\
                                    \"BOOST_STACKTRACE_DOXYGEN_INVOKED\""
         <xsl:param>"boost.doxygen.reftitle=Reference"
    ;

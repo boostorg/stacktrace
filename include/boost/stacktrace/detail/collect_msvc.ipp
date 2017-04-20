@@ -14,12 +14,12 @@
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 
-#include <windows.h>
+#include <boost/detail/winapi/capture_stack.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
-    return ::CaptureStackBackTrace(
+    return boost::detail::winapi::CaptureStackBackTrace(
         skip,
         static_cast<boost::detail::winapi::ULONG_>(max_frames_count),
         out_frames,

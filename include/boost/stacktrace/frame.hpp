@@ -22,10 +22,9 @@
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.pp>
 
+/// @includedoc boost/stacktrace/detail/frame_decl.hpp
 
 namespace boost { namespace stacktrace {
-
-/// @verbinclude boost/stacktrace/detail/frame_decl.hpp
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
 BOOST_CONSTEXPR inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
