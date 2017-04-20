@@ -17,54 +17,16 @@
 
 #include <boost/core/explicit_operator_bool.hpp>
 
-// Link or header only
-#if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
-#   define BOOST_STACKTRACE_LINK
-#endif
-
-#if defined(BOOST_STACKTRACE_LINK) && !defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_ALL_DYN_LINK)
-#   define BOOST_STACKTRACE_DYN_LINK
-#endif
-
-#ifdef BOOST_STACKTRACE_LINK
-#   if defined(BOOST_STACKTRACE_DYN_LINK)
-#       ifdef BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
-#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_EXPORT
-#       else
-#           define BOOST_STACKTRACE_FUNCTION BOOST_SYMBOL_IMPORT
-#       endif
-#   else
-#       define BOOST_STACKTRACE_FUNCTION
-#   endif
-#elif !defined(BOOST_STACKTRACE_DOXYGEN_INVOKED)
-#   define BOOST_STACKTRACE_FUNCTION inline
-#endif
+#include <boost/stacktrace/detail/push_options.pp>
 
 namespace boost { namespace stacktrace {
 
 class frame;
 
-
 namespace detail {
     BOOST_STACKTRACE_FUNCTION std::string to_string(const frame* frames, std::size_t size);
 
     typedef const void* native_frame_ptr_t; // TODO: change to `typedef void(*native_frame_ptr_t)();`
-
-    enum helper{ max_frames_dump = 128 };
-    BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, native_frame_ptr_t* out_frames);
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
-#if defined(BOOST_WINDOWS)
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
-#else
-    // POSIX
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
-#endif
-
-
-struct this_thread_frames { // struct is required to avoid warning about usage of inline+BOOST_NOINLINE
-    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT;
-};
-
 } // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
@@ -200,7 +162,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 /// @cond
 
-#undef BOOST_STACKTRACE_FUNCTION
+#include <boost/stacktrace/detail/pop_options.pp>
 
 #ifndef BOOST_STACKTRACE_LINK
 #   if defined(BOOST_STACKTRACE_USE_NOOP)

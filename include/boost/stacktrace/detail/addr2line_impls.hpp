@@ -46,11 +46,10 @@ public:
     {
         int pdes[2];
         #ifdef BOOST_STACKTRACE_ADDR2LINE_LOCATION
-        char prog_name[] = BOOST_STACKTRACE_ADDR2LINE_LOCATION ;
-
+        char prog_name[] = BOOST_STRINGIZE( BOOST_STACKTRACE_ADDR2LINE_LOCATION );
         #if !defined(BOOST_NO_CXX11_CONSTEXPR) && !defined(BOOST_NO_CXX11_STATIC_ASSERT)
         static_assert(
-            boost::stacktrace::detail::is_abs_path( BOOST_STACKTRACE_ADDR2LINE_LOCATION ),
+            boost::stacktrace::detail::is_abs_path( BOOST_STRINGIZE( BOOST_STACKTRACE_ADDR2LINE_LOCATION ) ),
             "BOOST_STACKTRACE_ADDR2LINE_LOCATION must be an absolute path"
         );
         #endif

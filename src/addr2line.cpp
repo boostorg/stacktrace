@@ -8,3 +8,4 @@
 #define BOOST_STACKTRACE_USE_ADDR2LINE
 #define BOOST_STACKTRACE_LINK
 #include <boost/stacktrace/detail/frame_unwind.ipp>
+#include <boost/stacktrace/safe_dump_to.hpp>

@@ -115,11 +115,13 @@ test-suite stacktrace_tests
 
     # Header only tests without debug symbols
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE     <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(BT_DEPS)       : backtrace_ho_no_dbg ]
-    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_ADDR2LINE                                                    $(AD2L_DEPS)     : addr2line_ho_no_dbg ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_NOOP                                                         $(NOOP_DEPS)     : noop_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                            <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_WINDBG_CACHED <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_cached_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                                                                           $(BASIC_DEPS)    : basic_ho_no_dbg ]
+    [ run test.cpp test_impl.cpp
+        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_ADDR2LINE <define>BOOST_STACKTRACE_ADDR2LINE_LOCATION="/usr/bin/addr2line"                   $(AD2L_DEPS)
+        : addr2line_ho_no_dbg ]
 
     # Test with shared linked implementations without debug symbols
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)          <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL     : backtrace_lib_no_dbg ]

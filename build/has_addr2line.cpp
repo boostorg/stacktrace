@@ -7,13 +7,15 @@
 #include <cstdlib>
 #include <string>
 
+#include <boost/config.hpp>
+
 #include <sys/types.h>
 #include <sys/wait.h>
 
 int main() {
 
 #ifdef BOOST_STACKTRACE_ADDR2LINE_LOCATION
-    std::string s = BOOST_STACKTRACE_ADDR2LINE_LOCATION " -h";
+    std::string s = BOOST_STRINGIZE( BOOST_STACKTRACE_ADDR2LINE_LOCATION ); " -h";
 #else
     std::string s = "/usr/bin/addr2line -h";
 #endif

@@ -20,6 +20,7 @@
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/frame.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 /// @cond
 namespace boost {

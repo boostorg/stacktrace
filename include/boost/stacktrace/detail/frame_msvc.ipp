@@ -28,11 +28,6 @@
 #   pragma comment(lib, "Dbgeng.lib")
 #endif
 
-#ifdef BOOST_WINDOWS
-#   include <boost/stacktrace/detail/safe_dump_win.ipp>
-#else
-#   include <boost/stacktrace/detail/safe_dump_posix.ipp>
-#endif
 
 #ifdef __CRT_UUID_DECL // for __MINGW32__
     __CRT_UUID_DECL(IDebugClient,0x27fe5639,0x8407,0x4f47,0x83,0x64,0xee,0x11,0x8f,0xb0,0x8a,0xc8);
@@ -50,15 +45,6 @@
 //#   define __uuidof(x) ::IID_ ## x
 
 namespace boost { namespace stacktrace { namespace detail {
-
-std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
-    return ::CaptureStackBackTrace(
-        skip,
-        static_cast<boost::detail::winapi::ULONG_>(max_frames_count),
-        out_frames,
-        0
-    );
-}
 
 class com_global_initer: boost::noncopyable {
     bool ok_;
