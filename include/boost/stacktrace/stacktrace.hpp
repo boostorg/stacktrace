@@ -16,7 +16,7 @@
 
 #include <iosfwd>
 #include <string>
-#include <boost/container/vector.hpp>
+#include <vector>
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/frame.hpp>
@@ -34,7 +34,7 @@ namespace boost { namespace stacktrace {
 /// @tparam Allocator Allocator to use during stack capture.
 template <class Allocator>
 class basic_stacktrace {
-    boost::container::vector<frame, Allocator> impl_;
+    std::vector<frame, Allocator> impl_;
 
     /// @cond
     void fill(void** begin, std::size_t size) {
@@ -77,7 +77,7 @@ class basic_stacktrace {
 
             // Failed to fit in `buffer_size`. Allocating memory:
             typedef typename Allocator::template rebind<void*>::other allocator_void_t;
-            boost::container::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
+            std::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
                 const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size(), frames_to_skip + 1);
                 if (buf.size() > frames_count || frames_count >= max_depth) {
@@ -95,18 +95,18 @@ class basic_stacktrace {
     /// @endcond
 
 public:
-    typedef typename boost::container::vector<frame, Allocator>::value_type             value_type;
-    typedef typename boost::container::vector<frame, Allocator>::allocator_type         allocator_type;
-    typedef typename boost::container::vector<frame, Allocator>::const_pointer          pointer;
-    typedef typename boost::container::vector<frame, Allocator>::const_pointer          const_pointer;
-    typedef typename boost::container::vector<frame, Allocator>::const_reference        reference;
-    typedef typename boost::container::vector<frame, Allocator>::const_reference        const_reference;
-    typedef typename boost::container::vector<frame, Allocator>::size_type              size_type;
-    typedef typename boost::container::vector<frame, Allocator>::difference_type        difference_type;
-    typedef typename boost::container::vector<frame, Allocator>::const_iterator         iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_iterator         const_iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
-    typedef typename boost::container::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
+    typedef typename std::vector<frame, Allocator>::value_type             value_type;
+    typedef typename std::vector<frame, Allocator>::allocator_type         allocator_type;
+    typedef typename std::vector<frame, Allocator>::const_pointer          pointer;
+    typedef typename std::vector<frame, Allocator>::const_pointer          const_pointer;
+    typedef typename std::vector<frame, Allocator>::const_reference        reference;
+    typedef typename std::vector<frame, Allocator>::const_reference        const_reference;
+    typedef typename std::vector<frame, Allocator>::size_type              size_type;
+    typedef typename std::vector<frame, Allocator>::difference_type        difference_type;
+    typedef typename std::vector<frame, Allocator>::const_iterator         iterator;
+    typedef typename std::vector<frame, Allocator>::const_iterator         const_iterator;
+    typedef typename std::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
+    typedef typename std::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
 
     /// @brief Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations.
     ///
@@ -262,7 +262,7 @@ public:
     bool operator!() const BOOST_NOEXCEPT { return !size(); }
     /// @endcond
 
-    const boost::container::vector<frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
+    const std::vector<frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
         return impl_;
     }
 
@@ -291,7 +291,7 @@ public:
                 break;
             }
 
-            ret.impl_.emplace_back(ptr);
+            ret.impl_.push_back(frame(ptr));
         }
 
         return ret;
@@ -315,7 +315,7 @@ public:
                 break;
             }
 
-            ret.impl_.emplace_back(*first);
+            ret.impl_.push_back(frame(*first));
         }
 
         return ret;

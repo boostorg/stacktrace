@@ -7,6 +7,7 @@
 
 #include <boost/stacktrace.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <stdexcept>
 
 #include <boost/functional/hash.hpp>
 
