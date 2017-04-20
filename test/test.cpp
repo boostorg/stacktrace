@@ -274,13 +274,21 @@ void test_empty_basic_stacktrace() {
 }
 
 int main() {
+    std::cerr << "!!! Debugging 1\n";
     test_deeply_nested_namespaces();
+    std::cerr << "!!! Debugging 2\n";
     test_nested<15>();
+    std::cerr << "!!! Debugging 3\n";
     test_comparisons();
+    std::cerr << "!!! Debugging 4\n";
     test_iterators();
+    std::cerr << "!!! Debugging 5\n";
     test_frame();
+    std::cerr << "!!! Debugging 6\n";
     test_empty_basic_stacktrace<true>();
+    std::cerr << "!!! Debugging 7\n";
     test_empty_basic_stacktrace<false>();
+    std::cerr << "!!! Debugging 8\n";
 
     BOOST_TEST(&bar1 != &bar2);
     boost::stacktrace::stacktrace b1 = bar1();
@@ -289,9 +297,12 @@ int main() {
     BOOST_TEST(b2.size() == 4);
     test_comparisons_base(bar1(), bar2());
 
+    std::cerr << "!!! Debugging 9\n";
     test_nested<300>();
+    std::cerr << "!!! Debugging 10\n";
     BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);
     BOOST_TEST(boost::stacktrace::stacktrace(1, 1).size() == 1);
+    std::cerr << "!!! Debugging 11\n";
 
     return boost::report_errors();
 }
