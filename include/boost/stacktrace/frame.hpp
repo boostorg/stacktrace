@@ -17,6 +17,8 @@
 
 #include <boost/core/explicit_operator_bool.hpp>
 
+#include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
+
 #include <boost/stacktrace/detail/push_options.pp>
 
 namespace boost { namespace stacktrace {
@@ -25,8 +27,6 @@ class frame;
 
 namespace detail {
     BOOST_STACKTRACE_FUNCTION std::string to_string(const frame* frames, std::size_t size);
-
-    typedef const void* native_frame_ptr_t; // TODO: change to `typedef void(*native_frame_ptr_t)();`
 } // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.

@@ -35,7 +35,7 @@ namespace boost { namespace stacktrace {
 /// @tparam Allocator Allocator to use during stack capture.
 template <class Allocator>
 class basic_stacktrace {
-    std::vector<frame, Allocator> impl_;
+    std::vector<boost::stacktrace::frame, Allocator> impl_;
     typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
 
     /// @cond
@@ -97,18 +97,18 @@ class basic_stacktrace {
     /// @endcond
 
 public:
-    typedef typename std::vector<frame, Allocator>::value_type             value_type;
-    typedef typename std::vector<frame, Allocator>::allocator_type         allocator_type;
-    typedef typename std::vector<frame, Allocator>::const_pointer          pointer;
-    typedef typename std::vector<frame, Allocator>::const_pointer          const_pointer;
-    typedef typename std::vector<frame, Allocator>::const_reference        reference;
-    typedef typename std::vector<frame, Allocator>::const_reference        const_reference;
-    typedef typename std::vector<frame, Allocator>::size_type              size_type;
-    typedef typename std::vector<frame, Allocator>::difference_type        difference_type;
-    typedef typename std::vector<frame, Allocator>::const_iterator         iterator;
-    typedef typename std::vector<frame, Allocator>::const_iterator         const_iterator;
-    typedef typename std::vector<frame, Allocator>::const_reverse_iterator reverse_iterator;
-    typedef typename std::vector<frame, Allocator>::const_reverse_iterator const_reverse_iterator;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::value_type             value_type;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::allocator_type         allocator_type;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_pointer          pointer;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_pointer          const_pointer;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_reference        reference;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_reference        const_reference;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::size_type              size_type;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::difference_type        difference_type;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_iterator         iterator;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_iterator         const_iterator;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_reverse_iterator reverse_iterator;
+    typedef typename std::vector<boost::stacktrace::frame, Allocator>::const_reverse_iterator const_reverse_iterator;
 
     /// @brief Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations.
     ///
@@ -264,7 +264,7 @@ public:
     bool operator!() const BOOST_NOEXCEPT { return !size(); }
     /// @endcond
 
-    const std::vector<frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
+    const std::vector<boost::stacktrace::frame, Allocator>& as_vector() const BOOST_NOEXCEPT {
         return impl_;
     }
 

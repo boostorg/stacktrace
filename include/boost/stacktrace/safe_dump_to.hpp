@@ -12,8 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/frame.hpp>
-
 #include <boost/stacktrace/detail/push_options.pp>
 
 /// @file safe_dump_to.hpp This header contains low-level async-signal-safe functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
@@ -21,10 +19,10 @@
 
 namespace boost { namespace stacktrace {
 
-
 /// @cond
 namespace detail {
 
+    typedef const void* native_frame_ptr_t; // TODO: change to `typedef void(*native_frame_ptr_t)();`
     enum helper{ max_frames_dump = 128 };
 
     BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, native_frame_ptr_t* out_frames);
