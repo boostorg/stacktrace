@@ -80,7 +80,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    frame() BOOST_NOEXCEPT
+    BOOST_CONSTEXPR frame() BOOST_NOEXCEPT
         : addr_(0)
     {}
 
@@ -108,7 +108,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    explicit frame(const void* addr) BOOST_NOEXCEPT
+    BOOST_CONSTEXPR explicit frame(const void* addr) BOOST_NOEXCEPT
         : addr_(addr)
     {}
 
@@ -126,7 +126,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    const void* address() const BOOST_NOEXCEPT {
+    BOOST_CONSTEXPR const void* address() const BOOST_NOEXCEPT {
         return addr_;
     }
 
@@ -153,7 +153,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
+    BOOST_CONSTEXPR_EXPLICIT_OPERATOR_BOOL()
 
     /// @brief Checks that frame references NULL address.
     /// @returns `true` if `this->address() == 0`
@@ -161,20 +161,20 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    bool empty() const BOOST_NOEXCEPT { return !address(); }
+    BOOST_CONSTEXPR bool empty() const BOOST_NOEXCEPT { return !address(); }
     
     /// @cond
-    bool operator!() const BOOST_NOEXCEPT { return !address(); }
+    BOOST_CONSTEXPR bool operator!() const BOOST_NOEXCEPT { return !address(); }
     /// @endcond
 };
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
-inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
-inline bool operator> (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
-inline bool operator<=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
-inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
-inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
-inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+BOOST_CONSTEXPR inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
+BOOST_CONSTEXPR inline bool operator> (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
+BOOST_CONSTEXPR inline bool operator<=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
+BOOST_CONSTEXPR inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
+BOOST_CONSTEXPR inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
+BOOST_CONSTEXPR inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
 
 /// Fast hashing support, O(1) complexity; Async-Handler-Safe.
 inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
