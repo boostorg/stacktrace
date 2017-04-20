@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/frame.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 #include <unistd.h>     // ::write
 #include <fcntl.h>      // ::open
