@@ -25,15 +25,19 @@ namespace boost { namespace stacktrace {
 namespace detail {
     struct suppress_noinline_warnings {
         BOOST_NOINLINE static std::size_t safe_dump_to_impl(void* memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
-            void** mem = static_cast<void**>(memory);
-            const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(mem, size / sizeof(void*) - 1, skip + 1);
+            typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
+
+            native_frame_ptr_t* mem = static_cast<native_frame_ptr_t*>(memory);
+            const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(mem, size / sizeof(native_frame_ptr_t) - 1, skip + 1);
             mem[frames_count] = 0;
             return frames_count + 1;
         }
 
         template <class T>
         BOOST_NOINLINE static std::size_t safe_dump_to_impl(T file, std::size_t skip, std::size_t max_depth) BOOST_NOEXCEPT {
-            void* buffer[boost::stacktrace::detail::max_frames_dump + 1];
+            typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
+
+            native_frame_ptr_t buffer[boost::stacktrace::detail::max_frames_dump + 1];
             if (max_depth > boost::stacktrace::detail::max_frames_dump) {
                 max_depth = boost::stacktrace::detail::max_frames_dump;
             }

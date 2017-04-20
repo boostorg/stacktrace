@@ -48,27 +48,33 @@ class frame;
 namespace detail {
     BOOST_STACKTRACE_FUNCTION std::string to_string(const frame* frames, std::size_t size);
 
+    typedef const void* native_frame_ptr_t; // TODO: change to `typedef void(*native_frame_ptr_t)();`
+
     enum helper{ max_frames_dump = 128 };
-    BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, void** frames);
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(const char* file, void** memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, native_frame_ptr_t* out_frames);
+    BOOST_STACKTRACE_FUNCTION std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
 #if defined(BOOST_WINDOWS)
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(void* fd, void** memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
 #else
     // POSIX
-    BOOST_STACKTRACE_FUNCTION std::size_t dump(int fd, void** memory, std::size_t size) BOOST_NOEXCEPT;
+    BOOST_STACKTRACE_FUNCTION std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT;
 #endif
 
 
 struct this_thread_frames { // struct is required to avoid warning about usage of inline+BOOST_NOINLINE
-    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT;
+    BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT;
 };
 
 } // namespace detail
 
 /// Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame {
+public:
+    typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
+
+private:
     /// @cond
-    const void* addr_;
+    native_frame_ptr_t addr_;
     /// @endcond
 
 public:
@@ -108,7 +114,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR explicit frame(const void* addr) BOOST_NOEXCEPT
+    BOOST_CONSTEXPR explicit frame(native_frame_ptr_t addr) BOOST_NOEXCEPT
         : addr_(addr)
     {}
 
@@ -126,7 +132,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR const void* address() const BOOST_NOEXCEPT {
+    BOOST_CONSTEXPR native_frame_ptr_t address() const BOOST_NOEXCEPT {
         return addr_;
     }
 

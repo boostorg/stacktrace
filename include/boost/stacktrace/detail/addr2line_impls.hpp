@@ -15,14 +15,25 @@
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/core/demangle.hpp>
 #include <boost/lexical_cast.hpp>
-
 #include <cstdio>
 
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
 
+
 namespace boost { namespace stacktrace { namespace detail {
+
+
+#if defined(BOOST_STACKTRACE_ADDR2LINE_LOCATION) && !defined(BOOST_NO_CXX11_CONSTEXPR)
+
+constexpr bool is_abs_path(const char* path) BOOST_NOEXCEPT {
+    return *path != '\0' && (
+        *path == ':' || *path == '/' || is_abs_path(path + 1)
+    );
+}
+
+#endif
 
 class addr2line_pipe {
     ::FILE* p;
@@ -35,8 +46,15 @@ public:
     {
         int pdes[2];
         #ifdef BOOST_STACKTRACE_ADDR2LINE_LOCATION
-        // TODO: static_assert that BOOST_STACKTRACE_ADDR2LINE_LOCATION is an absolute path!
         char prog_name[] = BOOST_STACKTRACE_ADDR2LINE_LOCATION ;
+
+        #if !defined(BOOST_NO_CXX11_CONSTEXPR) && !defined(BOOST_NO_CXX11_STATIC_ASSERT)
+        static_assert(
+            boost::stacktrace::detail::is_abs_path( BOOST_STACKTRACE_ADDR2LINE_LOCATION ),
+            "BOOST_STACKTRACE_ADDR2LINE_LOCATION must be an absolute path"
+        );
+        #endif
+
         #else
         char prog_name[] = "/usr/bin/addr2line";
         #endif

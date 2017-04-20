@@ -51,11 +51,11 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
     return ::CaptureStackBackTrace(
         skip,
-        static_cast<boost::detail::winapi::ULONG_>(size),
-        memory,
+        static_cast<boost::detail::winapi::ULONG_>(max_frames_count),
+        out_frames,
         0
     );
 }

@@ -220,9 +220,10 @@ int test_inplace() {
         }
 
 #if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
-        // This is very dependent on compiler and link flags. No sane way to make it work, because
-        // BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
-        if (ss1 && ss1[0].name() != ss2[0].name()) {
+        // This is very dependent on compiler and link flags. No sane way to make it work, because:
+        // * BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
+        // * BOOST_FORCEINLINE could be ignored by GCC depending on the std::vector default constructor length.
+        if (ss1.size() > 1 && ss1[1].name() != ss2[1].name()) {
             std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 52;
         }
@@ -241,9 +242,10 @@ int test_inplace() {
         }
 
 #if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
-        // This is very dependent on compiler and link flags. No sane way to make it work, because
-        // BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
-        if (ss1 && ss1[0].name() != ss2[0].name()) {
+        // This is very dependent on compiler and link flags. No sane way to make it work, because:
+        // * BOOST_NOINLINE could be ignored by MSVC compiler if link-time optimization is enabled.
+        // * BOOST_FORCEINLINE could be ignored by GCC depending on the std::vector default constructor length.
+        if (ss1.size() > 1 && ss1[1].name() != ss2[1].name()) {
             std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 54;
         }

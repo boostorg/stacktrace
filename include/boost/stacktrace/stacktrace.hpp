@@ -35,9 +35,10 @@ namespace boost { namespace stacktrace {
 template <class Allocator>
 class basic_stacktrace {
     std::vector<frame, Allocator> impl_;
+    typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
 
     /// @cond
-    void fill(void** begin, std::size_t size) {
+    void fill(native_frame_ptr_t* begin, std::size_t size) {
         if (!size) {
             return;
         }
@@ -54,7 +55,7 @@ class basic_stacktrace {
     }
 
     static std::size_t frames_count_from_buffer_size(std::size_t buffer_size) BOOST_NOEXCEPT {
-        const std::size_t ret = (buffer_size > sizeof(void*) ? buffer_size / sizeof(void*) : 0);
+        const std::size_t ret = (buffer_size > sizeof(native_frame_ptr_t) ? buffer_size / sizeof(native_frame_ptr_t) : 0);
         return (ret > 1024 ? 1024 : ret); // Dealing with suspiciously big sizes
     }
 
@@ -66,7 +67,7 @@ class basic_stacktrace {
 
         try {
             {   // Fast path without additional allocations
-                void* buffer[buffer_size];
+                native_frame_ptr_t buffer[buffer_size];
                 const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size, frames_to_skip + 1);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
@@ -76,8 +77,8 @@ class basic_stacktrace {
             }
 
             // Failed to fit in `buffer_size`. Allocating memory:
-            typedef typename Allocator::template rebind<void*>::other allocator_void_t;
-            std::vector<void*, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
+            typedef typename Allocator::template rebind<native_frame_ptr_t>::other allocator_void_t;
+            std::vector<native_frame_ptr_t, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
                 const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size(), frames_to_skip + 1);
                 if (buf.size() > frames_count || frames_count >= max_depth) {
@@ -284,7 +285,7 @@ public:
             return ret;
         }
 
-        void* ptr = 0;
+        native_frame_ptr_t ptr = 0;
         ret.impl_.reserve(frames_count);
         while (in.read(reinterpret_cast<Char*>(&ptr), sizeof(ptr))) {
             if (!ptr) {
@@ -302,13 +303,13 @@ public:
     /// @b Complexity: O(size) in worst case
     static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, 0, a);
-        const void* const* first = static_cast<const void* const*>(begin);
+        const native_frame_ptr_t* first = static_cast<const native_frame_ptr_t*>(begin);
         const std::size_t frames_count = frames_count_from_buffer_size(size);
         if (!frames_count) {
             return ret;
         }
 
-        const void* const* const last = first + frames_count;
+        const native_frame_ptr_t* const last = first + frames_count;
         ret.impl_.reserve(frames_count);
         for (; first != last; ++first) {
             if (!*first) {

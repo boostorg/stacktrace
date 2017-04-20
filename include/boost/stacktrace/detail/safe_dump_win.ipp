@@ -23,15 +23,15 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-std::size_t dump(void* fd, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
-    if (!boost::detail::winapi::WriteFile(fd, memory, static_cast<boost::detail::winapi::DWORD_>(sizeof(void*) * mem_size), 0, 0)) {
+std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
+    if (!boost::detail::winapi::WriteFile(fd, frames, static_cast<boost::detail::winapi::DWORD_>(sizeof(native_frame_ptr_t) * frames_count), 0, 0)) {
         return 0;
     }
 
-    return mem_size;
+    return frames_count;
 }
 
-std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
+std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
     void* const fd = boost::detail::winapi::CreateFileA(
         file,
         boost::detail::winapi::GENERIC_WRITE_,
@@ -46,7 +46,7 @@ std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NO
         return 0;
     }
 
-    const std::size_t size = boost::stacktrace::detail::dump(fd, memory, mem_size);
+    const std::size_t size = boost::stacktrace::detail::dump(fd, frames, frames_count);
     boost::detail::winapi::CloseHandle(fd);
     return size;
 }

@@ -20,25 +20,25 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-std::size_t dump(int fd, void** memory, std::size_t size) BOOST_NOEXCEPT {
+std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
     // We do not retry, because this function must be typically called from signal handler so it's:
     //  * to scary to continue in case of EINTR
     //  * EAGAIN or EWOULDBLOCK may occur only in case of O_NONBLOCK is set for fd,
     // so it seems that user does not want to block
-    if (::write(fd, memory, sizeof(void*) * size) == -1) {
+    if (::write(fd, frames, sizeof(native_frame_ptr_t) * frames_count) == -1) {
         return 0;
     }
 
-    return size;
+    return frames_count;
 }
 
-std::size_t dump(const char* file, void** memory, std::size_t mem_size) BOOST_NOEXCEPT {
+std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
     const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IWUSR | S_IRUSR);
     if (fd == -1) {
         return 0;
     }
 
-    const std::size_t size = boost::stacktrace::detail::dump(fd, memory, mem_size);
+    const std::size_t size = boost::stacktrace::detail::dump(fd, frames, frames_count);
     ::close(fd);
     return size;
 }

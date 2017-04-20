@@ -40,18 +40,18 @@ namespace boost { namespace stacktrace { namespace detail {
 
 struct unwind_state {
     std::size_t frames_to_skip;
-    void** current;
-    void** end;
+    native_frame_ptr_t* current;
+    native_frame_ptr_t* end;
 };
 
 inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg) {
-    unwind_state* state = static_cast<unwind_state*>(arg);
+    unwind_state* const state = static_cast<unwind_state*>(arg);
     if (state->frames_to_skip) {
         --state->frames_to_skip;
         return ::_Unwind_GetIP(context) ? ::_URC_NO_REASON : ::_URC_END_OF_STACK;
     }
 
-    *state->current = reinterpret_cast<void*>(
+    *state->current =  reinterpret_cast<native_frame_ptr_t>(
         ::_Unwind_GetIP(context)
     );
 
@@ -62,17 +62,17 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
     return ::_URC_NO_REASON;
 }
 
-std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
     std::size_t frames_count = 0;
-    if (!size) {
+    if (!max_frames_count) {
         return frames_count;
     }
 
-    boost::stacktrace::detail::unwind_state state = { skip + 1, memory, memory + size };
+    boost::stacktrace::detail::unwind_state state = { skip + 1, out_frames, out_frames + max_frames_count };
     ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
-    frames_count = state.current - memory;
+    frames_count = state.current - out_frames;
 
-    if (frames_count && memory[frames_count - 1] == 0) {
+    if (frames_count && out_frames[frames_count - 1] == 0) {
         -- frames_count;
     }
 
@@ -82,7 +82,7 @@ std::size_t this_thread_frames::collect(void** memory, std::size_t size, std::si
 template <class Base>
 class to_string_impl_base: private Base {
 public:
-    std::string operator()(const void* addr) {
+    std::string operator()(boost::stacktrace::detail::native_frame_ptr_t addr) {
         Base::res.clear();
         Base::prepare_function_name(addr);
         if (!Base::res.empty()) {
