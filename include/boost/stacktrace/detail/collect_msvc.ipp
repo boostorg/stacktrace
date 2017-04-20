@@ -22,7 +22,7 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
     return boost::detail::winapi::CaptureStackBackTrace(
         skip,
         static_cast<boost::detail::winapi::ULONG_>(max_frames_count),
-        out_frames,
+        const_cast<boost::detail::winapi::PVOID_*>(out_frames),
         0
     );
 }
