@@ -15,7 +15,7 @@
 #if !defined( BOOST_USE_WINDOWS_H )
 extern "C" {
 
-BOOST_SYMBOL_IMPORT boost::detail::winapi::USHORT_ WINAPI CaptureStackBackTrace(
+BOOST_SYMBOL_IMPORT boost::detail::winapi::USHORT_ WINAPI RtlCaptureStackBackTrace(
     boost::detail::winapi::ULONG_  FramesToSkip,
     boost::detail::winapi::ULONG_  FramesToCapture,
     boost::detail::winapi::PVOID_  *BackTrace,
@@ -27,7 +27,7 @@ BOOST_SYMBOL_IMPORT boost::detail::winapi::USHORT_ WINAPI CaptureStackBackTrace(
 
 namespace boost { namespace detail { namespace winapi {
 
-using ::CaptureStackBackTrace;
+using ::RtlCaptureStackBackTrace;
 
 } // namespace winapi
 } // namespace detail
