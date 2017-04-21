@@ -153,6 +153,8 @@ test-suite stacktrace_tests
         : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached
             $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
         : windbg_cached_lib_threaded_com_st ]
+
+    [ run test_void_ptr_cast.cpp ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite.
