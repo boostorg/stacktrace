@@ -21,6 +21,9 @@
 
 #include <boost/stacktrace/detail/push_options.pp>
 
+/// @file boost/stacktrace/detail/frame_decl.hpp
+/// Use <boost/stacktrace/frame.hpp> instead!
+
 namespace boost { namespace stacktrace {
 
 /// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp "boost/stacktrace/frame.hpp"

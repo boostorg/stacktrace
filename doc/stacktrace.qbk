@@ -1,6 +1,7 @@
 [library Boost.Stacktrace
     [quickbook 1.6]
     [version 1.0]
+    [id stacktrace]
     [copyright 2016-2017 Antony Polukhin]
     [category Language Features Emulation]
     [license
