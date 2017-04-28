@@ -89,7 +89,7 @@ class basic_stacktrace {
                 }
 
                 buf.resize(buf.size() * 2);
-            } while (1);
+            } while (buf.size() < buf.max_size()); // close to `true`, but suppresses `C4127: conditional expression is constant`.
         } catch (...) {
             // ignore exception
         }
