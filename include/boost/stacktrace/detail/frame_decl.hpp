@@ -21,12 +21,16 @@
 
 #include <boost/stacktrace/detail/push_options.pp>
 
+
+/// @headerfile boost/stacktrace/detail/frame_decl.hpp boost/stacktrace/detail/frame.hpp
+/// Use <boost/stacktrace/frame.hpp> instead!
+
 /// @file boost/stacktrace/detail/frame_decl.hpp
 /// Use <boost/stacktrace/frame.hpp> instead!
 
 namespace boost { namespace stacktrace {
 
-/// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp "boost/stacktrace/frame.hpp"
+/// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp "boost/stacktrace/frame.hpp" <boost/stacktrace/detail/frame.hpp>
 /// @brief Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
 class frame {
 public:

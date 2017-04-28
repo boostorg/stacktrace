@@ -19,7 +19,7 @@ void print_signal_handler_and_exit() {
 //]
 
 
-void my_signal_handler(int signum) {
+void my_signal_handler(int /*signum*/) {
     std::exit(1);
 }
 

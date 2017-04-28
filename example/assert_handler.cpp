@@ -35,7 +35,7 @@ namespace std { inline void ignore_abort(){ std::exit(0); } }
 #include <boost/stacktrace.hpp>
 
 namespace boost {
-    inline void assertion_failed_msg(char const* expr, char const* msg, char const* function, char const* file, long line) {
+    inline void assertion_failed_msg(char const* expr, char const* msg, char const* function, char const* /*file*/, long /*line*/) {
         std::cerr << "Expression '" << expr << "' is false in function '" << function << "': " << (msg ? msg : "<...>") << ".\n"
             << "Backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
         std::abort();
