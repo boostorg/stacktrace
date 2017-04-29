@@ -176,16 +176,23 @@ public:
     ~basic_stacktrace() BOOST_NOEXCEPT = default;
 #endif
 
-#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
-    basic_stacktrace(basic_stacktrace&& st) = default;
+    basic_stacktrace(basic_stacktrace&& st) BOOST_NOEXCEPT
+        : impl_(std::move(st.impl_))
+    {}
 
     /// @b Complexity: O(st.size())
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
-    basic_stacktrace& operator=(basic_stacktrace&& st) = default;
+    basic_stacktrace& operator=(basic_stacktrace&& st)
+        BOOST_NOEXCEPT_IF(( std::is_nothrow_move_assignable< std::vector<boost::stacktrace::frame, Allocator> >::value ))
+    {
+        impl_ = std::move(st.impl_);
+        return *this;
+    }
 #endif
 
     /// @returns Number of function names stored inside the class.
