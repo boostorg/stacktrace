@@ -81,10 +81,10 @@ class basic_stacktrace {
             typedef typename Allocator::template rebind<native_frame_ptr_t>::other allocator_void_t;
             std::vector<native_frame_ptr_t, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buf.data(), buf.size(), frames_to_skip + 1);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(&buf[0], buf.size(), frames_to_skip + 1);
                 if (buf.size() > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
-                    fill(buf.data(), size);
+                    fill(&buf[0], size);
                     return;
                 }
 
@@ -376,13 +376,17 @@ bool operator!=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
 /// Fast hashing support, O(st.size()) complexity; Async-Handler-Safe.
 template <class Allocator>
 std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
-    return boost::hash_range(st.as_vector().data(), st.as_vector().data()+ st.as_vector().size());
+    return boost::hash_range(st.as_vector().begin(), st.as_vector().end());
 }
 
 /// Outputs stacktrace in a human readable format to output stream; unsafe to use in async handlers.
 template <class CharT, class TraitsT, class Allocator>
 std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT>& os, const basic_stacktrace<Allocator>& bt) {
-    return os << boost::stacktrace::detail::to_string(bt.as_vector().data(), bt.size());
+    if (bt) {
+        os << boost::stacktrace::detail::to_string(&bt.as_vector()[0], bt.size());
+    }
+
+    return os;
 }
 
 /// This is the typedef to use unless you'd like to provide a specific allocator to boost::stacktrace::basic_stacktrace.
