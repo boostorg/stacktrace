@@ -21,22 +21,17 @@ BOOST_NOINLINE void foo(int i) {
     bar(--i);
 }
 
-// MinGW and MSVC workarounds
-#include <cstdlib>      // ::_Exit
-namespace std { using ::_Exit; }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //[getting_started_terminate_handlers
 
-#include <signal.h>     // ::signal
-#include <cstdlib>      // std::_Exit
+#include <signal.h>     // ::signal, ::raise
 #include <boost/stacktrace.hpp>
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
     boost::stacktrace::safe_dump_to("./backtrace.dump");
-    std::_Exit(-1);
+    ::raise(SIGABRT);
 }
 //]
 
@@ -65,7 +60,7 @@ void my_signal_handler2(int signum) {
     bool* b = static_cast<bool*>(g_region.get_address());
     *b = true;                                  // flag that memory constains stacktrace
     boost::stacktrace::safe_dump_to(b + 1, g_region.get_size() - sizeof(bool));
-    std::_Exit(-1);
+    ::raise(SIGABRT);
 }
 //]
 
