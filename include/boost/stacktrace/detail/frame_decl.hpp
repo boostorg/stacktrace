@@ -123,7 +123,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_CONSTEXPR_EXPLICIT_OPERATOR_BOOL()
+    BOOST_EXPLICIT_OPERATOR_BOOL()
 
     /// @brief Checks that frame references NULL address.
     /// @returns `true` if `this->address() == 0`
