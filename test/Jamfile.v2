@@ -37,13 +37,14 @@ local HIDE_SYMBS = <target-os>linux:<cxxflags>"-fvisibility=hidden" ;
 local BT_DEPS   = $(HIDE_SYMBS) <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
 local AD2L_DEPS = $(HIDE_SYMBS) <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
 local WIND_DEPS = $(HIDE_SYMBS) <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local WICA_DEPS = $(HIDE_SYMBS) <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
 local NOOP_DEPS = $(HIDE_SYMBS) ;
 local BASIC_DEPS = $(RDYNAMIC) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
 local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg        $(WIND_DEPS) ;
-local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WIND_DEPS) ;
+local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
 local LINKSHARED_NOOP         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop          $(NOOP_DEPS) ;
 local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic         $(BASIC_DEPS) ;
 
@@ -77,7 +78,7 @@ test-suite stacktrace_tests
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE      $(AD2L_DEPS)    : addr2line_ho ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_NOOP           $(NOOP_DEPS)    : noop_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on                                             $(WIND_DEPS)    : windbg_ho ]
-    [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_WINDBG_CACHED  $(WIND_DEPS)    : windbg_cached_ho ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_WINDBG_CACHED  $(WICA_DEPS)    : windbg_cached_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on                                             $(BASIC_DEPS)   : basic_ho ]
 
     # Test with shared linked implementations with debug symbols
@@ -117,7 +118,7 @@ test-suite stacktrace_tests
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE     <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(BT_DEPS)       : backtrace_ho_no_dbg ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_NOOP                                                         $(NOOP_DEPS)     : noop_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                            <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_ho_no_dbg ]
-    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_WINDBG_CACHED <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_cached_ho_no_dbg ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_WINDBG_CACHED <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WICA_DEPS)     : windbg_cached_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                                                                           $(BASIC_DEPS)    : basic_ho_no_dbg ]
     [ run test.cpp test_impl.cpp
         : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_ADDR2LINE <define>BOOST_STACKTRACE_ADDR2LINE_LOCATION="/usr/bin/addr2line"                   $(AD2L_DEPS)

@@ -48,6 +48,9 @@ explicit addr2line ;
 mp-run-simple has_windbg.cpp : : : <library>Dbgeng <library>ole32 : WinDbg ;
 explicit WinDbg ;
 
+mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
+explicit WinDbgCached ;
+
 lib boost_stacktrace_noop
   : # sources
     ../src/noop.cpp
@@ -129,7 +132,7 @@ lib boost_stacktrace_windbg_cached
     <warnings>all
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds ../build//WinDbg : : <build>no ]
+    [ check-target-builds ../build//WinDbgCached : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
