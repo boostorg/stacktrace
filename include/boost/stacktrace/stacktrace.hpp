@@ -18,6 +18,10 @@
 #include <string>
 #include <vector>
 
+#ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
+#   include <type_traits>
+#endif
+
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
@@ -188,7 +192,11 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
     basic_stacktrace& operator=(basic_stacktrace&& st)
+#ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
         BOOST_NOEXCEPT_IF(( std::is_nothrow_move_assignable< std::vector<boost::stacktrace::frame, Allocator> >::value ))
+#else
+        BOOST_NOEXCEPT
+#endif
     {
         impl_ = std::move(st.impl_);
         return *this;
