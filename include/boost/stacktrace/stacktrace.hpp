@@ -26,6 +26,11 @@
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
 
+#ifdef BOOST_INTEL
+#   pragma warning(push)
+#   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
+#endif
+
 /// @cond
 namespace boost {
     // Forward declaration
@@ -401,5 +406,9 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 typedef basic_stacktrace<> stacktrace;
 
 }} // namespace boost::stacktrace
+
+#ifdef BOOST_INTEL
+#   pragma warning(pop)
+#endif
 
 #endif // BOOST_STACKTRACE_STACKTRACE_HPP

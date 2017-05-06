@@ -14,6 +14,11 @@
 
 #include <boost/stacktrace/detail/push_options.pp>
 
+#ifdef BOOST_INTEL
+#   pragma warning(push)
+#   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
+#endif
+
 /// @file safe_dump_to.hpp This header contains low-level async-signal-safe functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
 /// so you could read them by using 'od -tx8 -An stacktrace_dump_failename' Linux command or using boost::stacktrace::stacktrace::from_dump functions.
 
@@ -181,6 +186,10 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 
 
 }} // namespace boost::stacktrace
+
+#ifdef BOOST_INTEL
+#   pragma warning(pop)
+#endif
 
 #include <boost/stacktrace/detail/pop_options.pp>
 
