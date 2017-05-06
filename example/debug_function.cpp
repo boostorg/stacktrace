@@ -11,8 +11,10 @@
 #include <cstdlib>      // std::exit
 
 void print_signal_handler_and_exit() {
-    void* p = reinterpret_cast<void*>(::signal(SIGSEGV, SIG_DFL));
-    boost::stacktrace::frame f(p);
+    typedef void(*function_t)(int);
+
+    function_t old_signal_function = ::signal(SIGSEGV, SIG_DFL);
+    boost::stacktrace::frame f(old_signal_function);
     std::cout << f << std::endl;
     std::exit(0);
 }

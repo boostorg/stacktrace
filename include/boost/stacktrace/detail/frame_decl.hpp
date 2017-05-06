@@ -18,6 +18,7 @@
 #include <boost/core/explicit_operator_bool.hpp>
 
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
+#include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
 #include <boost/stacktrace/detail/push_options.pp>
 
@@ -80,6 +81,17 @@ public:
     /// @throws Nothing.
     BOOST_CONSTEXPR explicit frame(native_frame_ptr_t addr) BOOST_NOEXCEPT
         : addr_(addr)
+    {}
+
+    /// @brief Constructs frame that references function_addr and could later generate information about that function using platform specific features.
+    ///
+    /// @b Complexity: O(1).
+    ///
+    /// @b Async-Handler-Safety: Safe.
+    /// @throws Nothing.
+    template <class T>
+    explicit frame(T* function_addr) BOOST_NOEXCEPT
+        : addr_(boost::stacktrace::detail::void_ptr_cast<native_frame_ptr_t>(function_addr))
     {}
 
     /// @returns Name of the frame (function name in a human readable form).
