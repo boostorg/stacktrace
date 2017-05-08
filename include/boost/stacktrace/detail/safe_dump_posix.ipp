@@ -33,7 +33,17 @@ std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_co
 }
 
 std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
-    const int fd = ::open(file, O_CREAT | O_WRONLY | O_TRUNC, S_IWUSR | S_IRUSR);
+    const int fd = ::open(
+        file,
+        O_CREAT | O_WRONLY | O_TRUNC,
+#if defined(S_IWUSR) && defined(S_IRUSR)    // Workarounds for some Android OSes
+        S_IWUSR | S_IRUSR
+#elif defined(S_IWRITE) && defined(S_IREAD)
+        S_IWRITE | S_IREAD
+#else
+        0
+#endif
+    );
     if (fd == -1) {
         return 0;
     }
