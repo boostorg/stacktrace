@@ -10,8 +10,24 @@
 #include <boost/detail/winapi/get_current_process.hpp>
 #include <windows.h>
 #include <dbghelp.h>
+#include <Shlobj.h>
 
 namespace boost { namespace stacktrace { namespace detail {
+
+bool initialize_sym(HANDLE process_handle) {
+    std::string sym_search_path;
+
+    if( (getenv("_NT_SYMBOL_PATH") == NULL) && (getenv("_NT_ALTERNATE_SYMBOL_PATH") == NULL)) {
+        char local_app_data[MAX_PATH];
+        HRESULT hr = SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, local_app_data);
+        if (SUCCEEDED(hr))
+            sym_search_path = std::string("srv*") + std::string(local_app_data) + std::string("\\drmingw*http://msdl.microsoft.com/download/symbols");
+        else
+            sym_search_path = "srv*http://msdl.microsoft.com/download/symbols";
+    }
+
+    return SymInitialize(process_handle, sym_search_path.c_str(), true);
+}
 
 bool get_line_from_addr( HANDLE process_handle, boost::stacktrace::detail::native_frame_ptr_t addr, std::string& file_name, uint32_t& line_number)
 {
@@ -48,7 +64,7 @@ struct to_string_using_mgwhelp {
     void prepare_function_name(const void* addr) {
         if( !is_inited)
         {
-            if( !SymInitialize( process_handle, nullptr, true))
+            if( !initialize_sym( process_handle))
                 return;
             is_inited = true;
         }
@@ -72,8 +88,25 @@ struct to_string_using_mgwhelp {
 template <class Base> class to_string_impl_base;
 typedef to_string_impl_base<to_string_using_mgwhelp> to_string_impl;
 
-inline std::string name_impl(const void* /*addr*/) {
-//    std::cout << "name_impl" << std::endl;
+inline std::string name_impl(const void* addr) {
+    HANDLE process_handle = boost::detail::winapi::GetCurrentProcess();
+
+    char buffer[ sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(char)];
+    PSYMBOL_INFO symbol_info = (PSYMBOL_INFO)buffer;
+    symbol_info->SizeOfStruct = sizeof(SYMBOL_INFO);
+    symbol_info->MaxNameLen = MAX_SYM_NAME;
+
+    DWORD64 displacement = 0;
+    DWORD options = SymGetOptions();
+
+    if( SymFromAddr(process_handle, (DWORD64)addr, &displacement, symbol_info))
+        if (options & SYMOPT_UNDNAME)
+            return symbol_info->Name;
+        else {
+            char result[MAX_SYM_NAME];
+            UnDecorateSymbolName( symbol_info->Name, result, MAX_SYM_NAME, UNDNAME_NAME_ONLY);
+            return result;
+        }
     return std::string();
 }
 
