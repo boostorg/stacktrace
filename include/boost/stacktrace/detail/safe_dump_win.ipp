@@ -24,7 +24,11 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
-    if (!boost::detail::winapi::WriteFile(fd, frames, static_cast<boost::detail::winapi::DWORD_>(sizeof(native_frame_ptr_t) * frames_count), 0, 0)) {
+    boost::detail::winapi::DWORD_ written;
+    const boost::detail::winapi::DWORD_ bytes_to_write = static_cast<boost::detail::winapi::DWORD_>(
+        sizeof(native_frame_ptr_t) * frames_count
+    );
+    if (!boost::detail::winapi::WriteFile(fd, frames, bytes_to_write, &written, 0)) {
         return 0;
     }
 
