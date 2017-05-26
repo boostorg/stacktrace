@@ -57,9 +57,10 @@ boost::interprocess::mapped_region g_region;     // inited at program start
 
 void my_signal_handler2(int signum) {
     ::signal(signum, SIG_DFL);
-    bool* b = static_cast<bool*>(g_region.get_address());
-    *b = true;                                  // flag that memory constains stacktrace
-    boost::stacktrace::safe_dump_to(b + 1, g_region.get_size() - sizeof(bool));
+    void** f = static_cast<void**>(g_region.get_address());
+    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now constains stacktrace.
+    boost::stacktrace::safe_dump_to(f + 1, g_region.get_size() - sizeof(void*));
+
     ::raise(SIGABRT);
 }
 //]
@@ -144,8 +145,8 @@ int run_3(const char* /*argv*/[]) {
         mapped_region m(g_shm, read_write, 0, shared_memory_size);
         m.swap(g_region);
     }
-    bool* b = static_cast<bool*>(g_region.get_address());
-    *b = false;
+    void** f = static_cast<void**>(g_region.get_address());
+    *f = 0;
 
     ::signal(SIGSEGV, &my_signal_handler2);
     ::signal(SIGABRT, &my_signal_handler2);
@@ -166,13 +167,13 @@ int run_4(const char* argv[]) {
     }
 
 //[getting_started_on_program_restart_shmem
-    bool* b = static_cast<bool*>(g_region.get_address());   // getting flag that memory constains stacktrace
-    if (*b) {                                               // checking that memory constains stacktrace
+    void** f = static_cast<void**>(g_region.get_address());
+    if (*f) {                                                 // Checking if memory constains stacktrace.
         boost::stacktrace::stacktrace st 
-            = boost::stacktrace::stacktrace::from_dump(b + 1, g_region.get_size() - sizeof(bool));
+            = boost::stacktrace::stacktrace::from_dump(f + 1, g_region.get_size() - sizeof(bool));
 
         std::cout << "Previous run crashed and left trace in shared memory:\n" << st << std::endl;
-        *b = false; /*<-*/
+        *f = 0; /*<-*/
         shared_memory_object::remove("shared_memory");
         if (std::string(argv[0]).find("noop") == std::string::npos) {
             if (!st) {

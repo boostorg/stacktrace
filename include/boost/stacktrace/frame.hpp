@@ -22,8 +22,6 @@
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.pp>
 
-/// @includedoc boost/stacktrace/detail/frame_decl.hpp
-
 namespace boost { namespace stacktrace {
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.

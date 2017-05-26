@@ -54,7 +54,7 @@ Code from above will output something like this:
  6# _start
 ```
 
-[note By default the Stacktrace library is very conservative in methods to decode stacktrace. If your output does not look as fancy as in example from above, see [link boost_stacktrace.configuration_and_build section "Configuration and Build"] for allowing advanced features of the library. ]
+[note By default the Stacktrace library is very conservative in methods to decode stacktrace. If your output does not look as fancy as in example from above, see [link stacktrace.configuration_and_build section "Configuration and Build"] for allowing advanced features of the library. ]
 
 
 [endsect]
@@ -185,7 +185,7 @@ Just define *BOOST_STACKTRACE_LINK* for a whole project. Now you can enable/disa
 * link with other `boost_stacktrace_*` libraries
 
 
-See [link boost_stacktrace.configuration_and_build section "Configuration and Build"] for more info.
+See [link stacktrace.configuration_and_build section "Configuration and Build"] for more info.
 
 [endsect]
 
@@ -243,13 +243,13 @@ Terminate called:
 
 [section Store stacktraces into shared memory]
 
-There's a way to serialize stacktrace in async safe manner and share that serialized representation with another preocess. Here's another example with signal handlers.
+There's a way to serialize stacktrace in async safe manner and share that serialized representation with another process. Here's another example with signal handlers.
 
-This example is very close to the [link boost_stacktrace.getting_started.handle_terminates_aborts_and_seg "Handle terminates, aborts and Segmentation Faults"], but this time we are dumping stacktrace into shared memory:
+This example is very close to the [link stacktrace.getting_started.handle_terminates_aborts_and_seg "Handle terminates, aborts and Segmentation Faults"], but this time we are dumping stacktrace into shared memory:
 
 [getting_started_terminate_handlers_shmem]
 
-After registring signal handlers and catching a signal, we may print stacktrace dumps on program restart:
+After registering signal handlers and catching a signal, we may print stacktrace dumps on program restart:
 
 [getting_started_on_program_restart_shmem]
 
@@ -292,11 +292,13 @@ By default Boost.Stacktrace is a header-only library, but you may change that an
 In header only mode library could be tuned by macro. If one of the link macro from above is defined, you have to manually link with one of the libraries:
 [table:libconfig Config
     [[Macro name or default] [Library] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces with *source code locations* if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary. Compiling with `-rdynamic` flag, without `-fisibility=hidden` or marking functions as exported produce a better stacktraces.]] ]
-    [[['default for MSVC] / *BOOST_STACKTRACE_USE_WINDBG*] [*boost_stacktrace_windbg*] [ Uses COM to show debug info. ] [Windows] [yes] [yes]]
+    [[['default for MSVC] / *BOOST_STACKTRACE_USE_WINDBG*] [*boost_stacktrace_windbg*] [ Uses COM to show debug info. ] [Windows] [yes] [no]]
     [[['default other platforms]] [*boost_stacktrace_basic*] [Uses compiler intrinsics to collect stacktrace and if possible `::dladdr` to show information about the symbol. Requires linking with *libdl* library on POSIX platforms.] [Not MSVC compiler on POSIX or Windows] [no] [yes]]
-    [[*BOOST_STACKTRACE_USE_WINDBG_CACHED*] [*boost_stacktrace_windbg_cached*] [ Uses COM to show debug info and caches COM instances in TLS for better performance. Useful only for cases when traces are gathered very often. ] [Windows] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* on POSIX and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or built into your compiler. Otherwise it can be downloaded [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here] ] [GCC/MinGW/Clang... on POSIX or Windows] [yes] [yes]]
-    [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [*boost_stacktrace_addr2line*] [Use *addr2line* program to retrieve stacktrace. Requires linking with *libdl* library and calls `::fork`.] [GCC/MinGW/Clang... on POSIX] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_WINDBG_CACHED*] [*boost_stacktrace_windbg_cached*] [ Uses COM to show debug info and caches COM instances in TLS for better performance. Useful only for cases when traces are gathered very often. [footnote This may affect other components of your program that use COM, because this mode calls the `CoInitializeEx(0, COINIT_MULTITHREADED)` on first use and does not call `::CoUninitialize();` until the current thread is destroyed. ] ] [Windows] [yes] [no]]
+    [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* on POSIX and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or built into your compiler.
+
+     Otherwise (if you are a *MinGW* user for example) it can be downloaded [@https://github.com/ianlancetaylor/libbacktrace from here] or [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here]. ] [GCC/MinGW/Clang... on POSIX or Windows] [yes] [yes]]
+    [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [*boost_stacktrace_addr2line*] [Use *addr2line* program to retrieve stacktrace. Requires linking with *libdl* library and `::fork` system call. Macro *BOOST_STACKTRACE_ADDR2LINE_LOCATION* must be defined to the absolute path to the addr2line executable if it is not located in /usr/bin/addr2line. ] [GCC/MinGW/Clang... on POSIX] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_NOOP*] [*boost_stacktrace_noop*] [Use this if you wish to disable backtracing. `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
 ]
 

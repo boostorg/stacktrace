@@ -22,17 +22,13 @@
 
 #include <boost/stacktrace/detail/push_options.pp>
 
-
-/// @headerfile boost/stacktrace/detail/frame_decl.hpp boost/stacktrace/detail/frame.hpp
-/// Use <boost/stacktrace/frame.hpp> instead!
-
 /// @file boost/stacktrace/detail/frame_decl.hpp
-/// Use <boost/stacktrace/frame.hpp> instead!
+/// Use <boost/stacktrace/frame.hpp> header instead of this one!
 
 namespace boost { namespace stacktrace {
 
-/// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp "boost/stacktrace/frame.hpp" <boost/stacktrace/detail/frame.hpp>
-/// @brief Non-owning class that references the frame information stored inside the boost::stacktrace::stacktrace class.
+/// @class boost::stacktrace::frame boost/stacktrace/detail/frame_decl.hpp <boost/stacktrace/frame.hpp>
+/// @brief Class that stores frame/function address and can get information about it at runtime.
 class frame {
 public:
     typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
@@ -62,7 +58,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    frame(const frame&) = default;
+    constexpr frame(const frame&) = default;
 
     /// @brief Copy assigns frame.
     ///
@@ -70,7 +66,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    frame& operator=(const frame&) = default;
+    constexpr frame& operator=(const frame&) = default;
 #endif
 
     /// @brief Constructs frame that references addr and could later generate information about that address using platform specific features.
