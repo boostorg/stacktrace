@@ -14,7 +14,7 @@
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 
-#include <boost/detail/winapi/capture_stack.hpp>
+#include <boost/detail/winapi/stack_backtrace.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 
