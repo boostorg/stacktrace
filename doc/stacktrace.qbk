@@ -65,7 +65,7 @@ Segmentation Faults and `std::terminate` calls sometimes happen in programs. Pro
 
 `std::terminate` calls `std::abort`, so we need to capture stack traces on Segmentation Faults and Abort signals.
 
-[warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - [*dump raw stacktrace into file/socket/shared memory and parse it on program restart].]
+[warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - [*dump raw stacktrace into file/socket and parse it on program restart].]
 
 Let's write a handler to safely dump stacktrace:
 
@@ -240,7 +240,7 @@ Terminate called:
 
 [endsect]
 
-
+[/
 [section Store stacktraces into shared memory]
 
 There's a way to serialize stacktrace in async safe manner and share that serialized representation with another process. Here's another example with signal handlers.
@@ -275,7 +275,8 @@ Previous run crashed and left trace in shared memory:
 15# 0x0000000000402999
 ```
 
-[endsect]
+[endsect] 
+]
 
 [endsect]
 
