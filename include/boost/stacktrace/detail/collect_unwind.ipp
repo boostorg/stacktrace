@@ -26,14 +26,16 @@ struct unwind_state {
 };
 
 inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg) {
+    // Note: do not write `::_Unwind_GetIP` because it is a macro on some platforms.
+    // Use `_Unwind_GetIP` instead!
     unwind_state* const state = static_cast<unwind_state*>(arg);
     if (state->frames_to_skip) {
         --state->frames_to_skip;
-        return ::_Unwind_GetIP(context) ? ::_URC_NO_REASON : ::_URC_END_OF_STACK;
+        return _Unwind_GetIP(context) ? ::_URC_NO_REASON : ::_URC_END_OF_STACK;
     }
 
     *state->current =  reinterpret_cast<native_frame_ptr_t>(
-        ::_Unwind_GetIP(context)
+        _Unwind_GetIP(context)
     );
 
     ++state->current;
