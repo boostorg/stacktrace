@@ -47,7 +47,7 @@ boostbook standalone
 alias boostdoc
     : stacktrace
     :
-    : <dependency>autodoc
+    :
     : ;
 
 explicit boostdoc ;
