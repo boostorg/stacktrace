@@ -33,7 +33,7 @@ Boost.Stacktrace library is a simple C++03 library that provides information abo
 ```
 #include <boost/stacktrace.hpp>
 
-// ... somewere inside the `bar(int)` function that is called recursively:
+// ... somewhere inside the `bar(int)` function that is called recursively:
 std::cout << boost::stacktrace::stacktrace();
 ```
 
@@ -146,7 +146,7 @@ You can provide more information along with exception by embedding stacktraces i
 
 [getting_started_class_traced]
 
-* Write a helper class for throwing any exception with stacktrce:
+* Write a helper class for throwing any exception with stacktrace:
 
 [getting_started_class_with_trace]
 
@@ -177,7 +177,7 @@ Code from above will output:
 
 [section Enabling and disabling stacktraces]
 
-At some point arises a requirement to easily enable/disable stacktraces for a whole project. That could be easily achived.
+At some point arises a requirement to easily enable/disable stacktraces for a whole project. That could be easily achieved.
 
 Just define *BOOST_STACKTRACE_LINK* for a whole project. Now you can enable/disable stacktraces by just linking with different libraries:
 
