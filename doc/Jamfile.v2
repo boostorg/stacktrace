@@ -31,6 +31,7 @@ doxygen autodoc
                                    \"BOOST_CONSTEXPR=constexpr\" \\
                                    \"BOOST_STACKTRACE_DOXYGEN_INVOKED\""
         <xsl:param>"boost.doxygen.reftitle=Reference"
+        <xsl:param>"boost.doxygen.refid=stacktrace.reference"
    ;
 
 xml stacktrace : stacktrace.qbk : <dependency>autodoc ;
@@ -47,7 +48,7 @@ boostbook standalone
 alias boostdoc
     : stacktrace
     :
-    : <dependency>autodoc
+    :
     : ;
 
 explicit boostdoc ;
