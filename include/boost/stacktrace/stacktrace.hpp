@@ -288,7 +288,7 @@ public:
         return impl_;
     }
 
-    /// Constructs stacktrace from basic_istreamable that references the dumped stacktrace.
+    /// Constructs stacktrace from basic_istreamable that references the dumped stacktrace. Terminating zero frame is discarded.
     ///
     /// @b Complexity: O(N)
     template <class Char, class Trait>
@@ -319,13 +319,13 @@ public:
         return ret;
     }
 
-    /// Constructs stacktrace from raw memory dump.
+    /// Constructs stacktrace from raw memory dump. Terminating zero frame is discarded.
     ///
     /// @b Complexity: O(size) in worst case
-    static basic_stacktrace from_dump(const void* begin, std::size_t size, const allocator_type& a = allocator_type()) {
+    static basic_stacktrace from_dump(const void* begin, std::size_t buffer_size_in_bytes, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, 0, a);
         const native_frame_ptr_t* first = static_cast<const native_frame_ptr_t*>(begin);
-        const std::size_t frames_count = frames_count_from_buffer_size(size);
+        const std::size_t frames_count = frames_count_from_buffer_size(buffer_size_in_bytes);
         if (!frames_count) {
             return ret;
         }

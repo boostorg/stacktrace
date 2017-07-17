@@ -199,15 +199,15 @@ int test_inplace() {
     const bool is_noop = !boost::stacktrace::stacktrace();
 
     {
-        boost::stacktrace::safe_dump_to("./backtrace2.dump"); 
+        const std::size_t frames_ss1 = boost::stacktrace::safe_dump_to("./backtrace2.dump");
         boost::stacktrace::stacktrace ss2;
         std::ifstream ifs("./backtrace2.dump");
         boost::stacktrace::stacktrace ss1 = boost::stacktrace::stacktrace::from_dump(ifs);
         ifs.close();
         boost::filesystem::remove("./backtrace2.dump");
 
-        if (ss1.size() != ss2.size()) {
-            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+        if (ss2.size() != ss1.size()) {
+            std::cerr << "Stacktraces differ. Dumped size == " << frames_ss1 << ".\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 51;
         }
 
@@ -224,12 +224,12 @@ int test_inplace() {
 
     {
         void* data[1024];
-        boost::stacktrace::safe_dump_to(data, sizeof(data));
+        const std::size_t frames_ss1 = boost::stacktrace::safe_dump_to(data, sizeof(data));
         boost::stacktrace::stacktrace ss2;
         boost::stacktrace::stacktrace ss1 = boost::stacktrace::stacktrace::from_dump(data, sizeof(data));
 
-        if (ss1.size() != ss2.size()) {
-            std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
+        if (ss1.size() + 1 != frames_ss1 || ss1.size() != ss2.size()) {
+            std::cerr << "Stacktraces differ. Dumped size == " << frames_ss1 << ".\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 53;
         }
 

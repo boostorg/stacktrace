@@ -76,7 +76,7 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param memory Preallocated buffer to store current function call sequence into.
 ///
@@ -91,7 +91,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory, std::size_t size) BOOST
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param skip How many top calls to skip and do not store.
 ///
@@ -109,7 +109,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, void* memory, std::
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param file File to store current function call sequence.
 BOOST_FORCEINLINE std::size_t safe_dump_to(const char* file) BOOST_NOEXCEPT {
@@ -122,7 +122,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(const char* file) BOOST_NOEXCEPT {
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param skip How many top calls to skip and do not store.
 ///
@@ -141,7 +141,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param file File to store current function call sequence.
 BOOST_FORCEINLINE std::size_t safe_dump_to(platform_specific_descriptor fd) BOOST_NOEXCEPT;
@@ -152,7 +152,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(platform_specific_descriptor fd) BOOS
 ///
 /// @b Async-Handler-Safety: Safe.
 ///
-/// @returns Stored call sequence depth.
+/// @returns Stored call sequence depth including terminating zero frame.
 ///
 /// @param skip How many top calls to skip and do not store.
 ///
