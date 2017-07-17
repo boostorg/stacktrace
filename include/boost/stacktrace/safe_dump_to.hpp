@@ -203,7 +203,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 #       else
 #           include <boost/stacktrace/detail/safe_dump_posix.ipp>
 #       endif
-#       if defined(BOOST_MSVC)
+#       if defined(BOOST_WINDOWS) && !defined(BOOST_GCC)
 #           include <boost/stacktrace/detail/collect_msvc.ipp>
 #       else
 #           include <boost/stacktrace/detail/collect_unwind.ipp>

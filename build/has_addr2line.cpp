@@ -8,7 +8,7 @@
 #include <string>
 
 #include <boost/config.hpp>
-
+#include <unwind.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 

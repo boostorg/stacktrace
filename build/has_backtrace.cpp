@@ -5,6 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <backtrace.h>
+#include <unwind.h>
 
 int main() {
     backtrace_state* state = backtrace_create_state(
