@@ -46,6 +46,10 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
     BOOST_NOINLINE static std::size_t safe_dump_to_impl(void* memory, std::size_t size, std::size_t skip) BOOST_NOEXCEPT {
         typedef boost::stacktrace::detail::native_frame_ptr_t native_frame_ptr_t;
 
+        if (size < sizeof(native_frame_ptr_t)) {
+            return 0;
+        }
+
         native_frame_ptr_t* mem = static_cast<native_frame_ptr_t*>(memory);
         const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(mem, size / sizeof(native_frame_ptr_t) - 1, skip + 1);
         mem[frames_count] = 0;
