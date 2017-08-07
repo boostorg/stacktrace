@@ -16,7 +16,7 @@
 #endif
 
 int foo() {
-    static thread_local std::string i = "Testing";
+    static thread_local std::string i = std::string();
     
     return i.size();
 }
