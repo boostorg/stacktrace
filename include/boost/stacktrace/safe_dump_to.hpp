@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/push_options.pp>
+#include <boost/stacktrace/detail/push_options.h>
 
 #ifdef BOOST_INTEL
 #   pragma warning(push)
@@ -195,7 +195,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 #   pragma warning(pop)
 #endif
 
-#include <boost/stacktrace/detail/pop_options.pp>
+#include <boost/stacktrace/detail/pop_options.h>
 
 #if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
 #   if defined(BOOST_STACKTRACE_USE_NOOP)

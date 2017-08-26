@@ -20,7 +20,7 @@
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 
 #include <boost/stacktrace/detail/frame_decl.hpp>
-#include <boost/stacktrace/detail/push_options.pp>
+#include <boost/stacktrace/detail/push_options.h>
 
 namespace boost { namespace stacktrace {
 
@@ -50,7 +50,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 /// @cond
 
-#include <boost/stacktrace/detail/pop_options.pp>
+#include <boost/stacktrace/detail/pop_options.h>
 
 #ifndef BOOST_STACKTRACE_LINK
 #   if defined(BOOST_STACKTRACE_USE_NOOP)

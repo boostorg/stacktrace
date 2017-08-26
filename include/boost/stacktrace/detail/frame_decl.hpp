@@ -20,7 +20,7 @@
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
-#include <boost/stacktrace/detail/push_options.pp>
+#include <boost/stacktrace/detail/push_options.h>
 
 /// @file boost/stacktrace/detail/frame_decl.hpp
 /// Use <boost/stacktrace/frame.hpp> header instead of this one!
@@ -154,6 +154,6 @@ namespace detail {
 }} // namespace boost::stacktrace
 
 
-#include <boost/stacktrace/detail/pop_options.pp>
+#include <boost/stacktrace/detail/pop_options.h>
 
 #endif // BOOST_STACKTRACE_DETAIL_FRAME_DECL_HPP
