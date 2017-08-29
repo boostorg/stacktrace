@@ -12,7 +12,7 @@
 #include "dbgeng.h"
 
 #ifdef BOOST_NO_CXX11_THREAD_LOCAL
-#   error Your compiler does not support C++11 thread_local storage. It's impossible to build with BOOST_STACKTRACE_USE_WINDBG_CACHED.
+#   error Your compiler does not support C++11 thread_local storage. It`s impossible to build with BOOST_STACKTRACE_USE_WINDBG_CACHED.
 #endif
 
 int foo() {
