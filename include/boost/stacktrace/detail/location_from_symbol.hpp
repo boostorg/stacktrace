@@ -20,8 +20,8 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-class location_from_symbol {
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+class location_from_symbol {
     ::Dl_info dli_;
 
 public:
@@ -40,9 +40,19 @@ public:
     const char* name() const BOOST_NOEXCEPT {
         return dli_.dli_fname;
     }
-#else
-    BOOST_STATIC_CONSTEXPR boost::detail::winapi::DWORD_ DEFAULT_PATH_SIZE_ = 260;
+};
 
+class program_location {
+public:
+    const char* name() const BOOST_NOEXCEPT {
+        return 0;
+    }
+};
+
+#else
+
+class location_from_symbol {
+    BOOST_STATIC_CONSTEXPR boost::detail::winapi::DWORD_ DEFAULT_PATH_SIZE_ = 260;
     char file_name_[DEFAULT_PATH_SIZE_];
 
 public:
@@ -68,8 +78,27 @@ public:
     const char* name() const BOOST_NOEXCEPT {
         return file_name_;
     }
-#endif
 };
+
+class program_location {
+    BOOST_STATIC_CONSTEXPR boost::detail::winapi::DWORD_ DEFAULT_PATH_SIZE_ = 260;
+    char file_name_[DEFAULT_PATH_SIZE_];
+
+public:
+    program_location() BOOST_NOEXCEPT {
+        file_name_[0] = '\0';
+
+        const boost::detail::winapi::HMODULE_ handle = 0;
+        if (!boost::detail::winapi::GetModuleFileNameA(handle, file_name_, DEFAULT_PATH_SIZE_)) {
+            file_name_[0] = '\0';
+        }
+    }
+
+    const char* name() const BOOST_NOEXCEPT {
+        return file_name_[0] ? file_name_ : 0;
+    }
+};
+#endif
 
 }}} // namespace boost::stacktrace::detail
 
