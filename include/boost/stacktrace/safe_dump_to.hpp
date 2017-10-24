@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/detail/winapi/config.hpp>
+#include <boost/winapi/config.hpp>
 #include <boost/stacktrace/detail/push_options.h>
 
 #ifdef BOOST_INTEL

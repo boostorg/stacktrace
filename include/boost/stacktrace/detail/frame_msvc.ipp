@@ -21,8 +21,6 @@
 #include <windows.h>
 #include "dbgeng.h"
 
-#include <boost/detail/winapi/get_current_process.hpp>
-
 #ifdef BOOST_MSVC
 #   pragma comment(lib, "ole32.lib")
 #   pragma comment(lib, "Dbgeng.lib")
@@ -59,7 +57,7 @@ public:
         //
         // If we call CoInitializeEx befire user - user may end up with different mode, which is a problem.
         // So we need to call that initialization function as late as possible.
-        const boost::detail::winapi::DWORD_ res = ::CoInitializeEx(0, COINIT_MULTITHREADED);
+        const DWORD res = ::CoInitializeEx(0, COINIT_MULTITHREADED);
         ok_ = (res == S_OK || res == S_FALSE);
     }
 
