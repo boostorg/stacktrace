@@ -296,8 +296,12 @@ int main(int argc, const char* argv[]) {
         // We are copying files to make sure that stacktrace printing works independently from executable name
         copy_and_run(argv[0], '1', true);
         copy_and_run(argv[0], '2', false);
+
+#ifndef BOOST_WINDOWS
+        // There are some issues with async-safety of shared mmory writes on Windows.
         copy_and_run(argv[0], '3', true);
         copy_and_run(argv[0], '4', false);
+#endif
 
         return test_inplace();
     }
