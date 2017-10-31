@@ -309,6 +309,27 @@ In header only mode library could be tuned by macro. If one of the link macro fr
 * if you wish to disable backtracing and you use the library in header only mode, you just need to define *BOOST_STACKTRACE_USE_NOOP* for the whole project
 * if you wish to disable backtracing and *BOOST_STACKTRACE_LINK* is defined, you just need link with *-lboost_stacktrace_noop*
 
+[section MinGW specific notes]
+
+MinGW-w64 users may use the *BOOST_STACKTRACE_USE_WINDBG* and *BOOST_STACKTRACE_USE_WINDBG_CACHED* for getting the best results.
+
+MinGW (without -w64) users have to install libbacktrace for getting better stacktraces. Follow the instruction:
+
+Let's assume that you've installed MinGw into C:\MinGW and downloaded [@https://github.com/ianlancetaylor/libbacktrace libbacktrace sources] into C:\libbacktrace-master
+
+* Configure & build libbacktrace from console:
+    * C:\MinGW\msys\1.0\bin\sh.exe
+    * cd /c/libbacktrace-master
+    * ./configure CC=/c/MinGW/bin/gcc.exe  CXX=/c/MinGW/bin/g++.exe
+    * make
+    * ./libtool --mode=install /usr/bin/install -c libbacktrace.la '/c/libbacktrace-master'
+* Add info to the project-config.jam in the Boost folder:
+    * using gcc : 6 : "C:\\MinGW\\bin\\g++.exe" : <compileflags>-I"C:\\libbacktrace-master\\" <linkflags>-L"C:\\libbacktrace-master\\" ; 
+* Now you can use a header only version by defining *BOOST_STACKTRACE_USE_BACKTRACE* for your project or build the stacktrace library from Boost folder:
+    * b2.exe toolset=gcc-6 --with-stacktrace
+
+[endsect]
+
 [endsect]
 
 [section Acknowledgements]
