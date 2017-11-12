@@ -295,10 +295,10 @@ In header only mode library could be tuned by macro. If one of the link macro fr
     [[Macro name or default] [Library] [Effect] [Platforms] [Uses debug information [footnote This will provide more readable backtraces with *source code locations* if the binary is built with debug information.]] [Uses dynamic exports information [footnote This will provide readable function names in backtrace for functions that are exported by the binary. Compiling with `-rdynamic` flag, without `-fisibility=hidden` or marking functions as exported produce a better stacktraces.]] ]
     [[['default for MSVC, Intel on Windows, MinGW-w64] / *BOOST_STACKTRACE_USE_WINDBG*] [*boost_stacktrace_windbg*] [ Uses COM to show debug info. May require linking with *ole32* and *dbgeng*. ] [MSVC, MinGW-w64, Intel on Windows] [yes] [no]]
     [[['default for other platforms]] [*boost_stacktrace_basic*] [Uses compiler intrinsics to collect stacktrace and if possible `::dladdr` to show information about the symbol. Requires linking with *libdl* library on POSIX platforms.] [Any compiler on POSIX or MinGW] [no] [yes]]
-    [[*BOOST_STACKTRACE_USE_WINDBG_CACHED*] [*boost_stacktrace_windbg_cached*] [ Uses COM to show debug info and caches COM instances in TLS for better performance. Useful only for cases when traces are gathered very often. [footnote This may affect other components of your program that use COM, because this mode calls the `CoInitializeEx(0, COINIT_MULTITHREADED)` on first use and does not call `::CoUninitialize();` until the current thread is destroyed. ] May require linking with *ole32* and *dbgeng*. ] [MSVC, MinGW-w64, Intel on Windows] [yes] [no]]
+    [[*BOOST_STACKTRACE_USE_WINDBG_CACHED*] [*boost_stacktrace_windbg_cached*] [ Uses COM to show debug info and caches COM instances in TLS for better performance. Useful only for cases when traces are gathered very often. [footnote This may affect other components of your program that use COM, because this mode calls the `CoInitializeEx(0, COINIT_MULTITHREADED)` on first use and does not call `::CoUninitialize();` until the current thread is destroyed. ] May require linking with *ole32* and *dbgeng*. ] [MSVC, Intel on Windows] [yes] [no]]
     [[*BOOST_STACKTRACE_USE_BACKTRACE*] [*boost_stacktrace_backtrace*] [Requires linking with *libdl* on POSIX and *libbacktrace* libraries. *libbacktrace* is probably already installed in your system, or built into your compiler.
 
-     Otherwise (if you are a *MinGW* user for example) it can be downloaded [@https://github.com/ianlancetaylor/libbacktrace from here] or [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here]. ] [Any compiler on POSIX or MinGW] [yes] [yes]]
+     Otherwise (if you are a *MinGW*/*MinGW-w64* user for example) it can be downloaded [@https://github.com/ianlancetaylor/libbacktrace from here] or [@https://github.com/gcc-mirror/gcc/tree/master/libbacktrace from here]. ] [Any compiler on POSIX, or MinGW, or MinGW-w64] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_ADDR2LINE*] [*boost_stacktrace_addr2line*] [Use *addr2line* program to retrieve stacktrace. Requires linking with *libdl* library and `::fork` system call. Macro *BOOST_STACKTRACE_ADDR2LINE_LOCATION* must be defined to the absolute path to the addr2line executable if it is not located in /usr/bin/addr2line. ] [Any compiler on POSIX] [yes] [yes]]
     [[*BOOST_STACKTRACE_USE_NOOP*] [*boost_stacktrace_noop*] [Use this if you wish to disable backtracing. `stacktrace::size()` with that macro always returns 0. ] [All] [no] [no]]
 ]
@@ -309,13 +309,11 @@ In header only mode library could be tuned by macro. If one of the link macro fr
 * if you wish to disable backtracing and you use the library in header only mode, you just need to define *BOOST_STACKTRACE_USE_NOOP* for the whole project
 * if you wish to disable backtracing and *BOOST_STACKTRACE_LINK* is defined, you just need link with *-lboost_stacktrace_noop*
 
-[section MinGW specific notes]
+[section MinGW and MinGW-w64 specific notes]
 
-MinGW-w64 users may use the *BOOST_STACKTRACE_USE_WINDBG* and *BOOST_STACKTRACE_USE_WINDBG_CACHED* for getting the best results.
+MinGW-w64 and MinGW (without -w64) users have to install libbacktrace for getting better stacktraces. Follow the instruction:
 
-MinGW (without -w64) users have to install libbacktrace for getting better stacktraces. Follow the instruction:
-
-Let's assume that you've installed MinGw into C:\MinGW and downloaded [@https://github.com/ianlancetaylor/libbacktrace libbacktrace sources] into C:\libbacktrace-master
+Let's assume that you've installed MinGW into C:\MinGW and downloaded [@https://github.com/ianlancetaylor/libbacktrace libbacktrace sources] into C:\libbacktrace-master
 
 * Configure & build libbacktrace from console:
     * C:\MinGW\msys\1.0\bin\sh.exe
