@@ -51,6 +51,8 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
+local libraries ;
+
 lib boost_stacktrace_noop
   : # sources
     ../src/noop.cpp
@@ -62,7 +64,7 @@ lib boost_stacktrace_noop
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_noop ;
+libraries += boost_stacktrace_noop ;
 
 lib boost_stacktrace_backtrace
   : # sources
@@ -78,7 +80,7 @@ lib boost_stacktrace_backtrace
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_backtrace ;
+libraries += boost_stacktrace_backtrace ;
 
 lib boost_stacktrace_addr2line
   : # sources
@@ -93,7 +95,7 @@ lib boost_stacktrace_addr2line
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_addr2line ;
+libraries += boost_stacktrace_addr2line ;
 
 lib boost_stacktrace_basic
   : # sources
@@ -108,7 +110,7 @@ lib boost_stacktrace_basic
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_basic ;
+libraries += boost_stacktrace_basic ;
 
 lib boost_stacktrace_windbg
   : # sources
@@ -123,7 +125,7 @@ lib boost_stacktrace_windbg
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_windbg ;
+libraries += boost_stacktrace_windbg ;
 
 lib boost_stacktrace_windbg_cached
   : # sources
@@ -138,5 +140,6 @@ lib boost_stacktrace_windbg_cached
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-boost-install boost_stacktrace_windbg_cached ;
+libraries += boost_stacktrace_windbg_cached ;
 
+boost-install $(libraries) ;
