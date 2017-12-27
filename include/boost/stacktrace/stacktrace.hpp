@@ -87,7 +87,11 @@ class basic_stacktrace {
             }
 
             // Failed to fit in `buffer_size`. Allocating memory:
+#ifdef BOOST_NO_CXX11_ALLOCATOR
             typedef typename Allocator::template rebind<native_frame_ptr_t>::other allocator_void_t;
+#else
+            typedef typename std::allocator_traits<Allocator>::template rebind_alloc<native_frame_ptr_t> allocator_void_t;
+#endif
             std::vector<native_frame_ptr_t, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
                 const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(&buf[0], buf.size(), frames_to_skip + 1);
