@@ -13,8 +13,9 @@
 #endif
 
 #if defined(BOOST_WINDOWS)
-#include <boost/detail/winapi/config.hpp>
+#include <boost/winapi/config.hpp>
 #endif
+
 #include <boost/stacktrace/detail/push_options.h>
 
 #ifdef BOOST_INTEL

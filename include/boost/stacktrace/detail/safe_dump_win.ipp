@@ -16,19 +16,19 @@
 
 #include <boost/core/noncopyable.hpp>
 
-#include <boost/detail/winapi/get_current_process.hpp>
-#include <boost/detail/winapi/file_management.hpp>
-#include <boost/detail/winapi/handles.hpp>
-#include <boost/detail/winapi/access_rights.hpp>
+#include <boost/winapi/get_current_process.hpp>
+#include <boost/winapi/file_management.hpp>
+#include <boost/winapi/handles.hpp>
+#include <boost/winapi/access_rights.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
-    boost::detail::winapi::DWORD_ written;
-    const boost::detail::winapi::DWORD_ bytes_to_write = static_cast<boost::detail::winapi::DWORD_>(
+    boost::winapi::DWORD_ written;
+    const boost::winapi::DWORD_ bytes_to_write = static_cast<boost::winapi::DWORD_>(
         sizeof(native_frame_ptr_t) * frames_count
     );
-    if (!boost::detail::winapi::WriteFile(fd, frames, bytes_to_write, &written, 0)) {
+    if (!boost::winapi::WriteFile(fd, frames, bytes_to_write, &written, 0)) {
         return 0;
     }
 
@@ -36,22 +36,22 @@ std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_
 }
 
 std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
-    void* const fd = boost::detail::winapi::CreateFileA(
+    void* const fd = boost::winapi::CreateFileA(
         file,
-        boost::detail::winapi::GENERIC_WRITE_,
+        boost::winapi::GENERIC_WRITE_,
         0,
         0,
-        boost::detail::winapi::CREATE_ALWAYS_,
-        boost::detail::winapi::FILE_ATTRIBUTE_NORMAL_,
+        boost::winapi::CREATE_ALWAYS_,
+        boost::winapi::FILE_ATTRIBUTE_NORMAL_,
         0
     );
 
-    if (fd == boost::detail::winapi::invalid_handle_value) {
+    if (fd == boost::winapi::invalid_handle_value) {
         return 0;
     }
 
     const std::size_t size = boost::stacktrace::detail::dump(fd, frames, frames_count);
-    boost::detail::winapi::CloseHandle(fd);
+    boost::winapi::CloseHandle(fd);
     return size;
 }
 
