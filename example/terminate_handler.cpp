@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2018.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -30,9 +30,7 @@ BOOST_NOINLINE void foo(int i) {
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
- #ifndef BOOST_WINDOWS
     boost::stacktrace::safe_dump_to("./backtrace.dump");
- #endif
     ::raise(SIGABRT);
 }
 //]
@@ -295,12 +293,12 @@ int test_inplace() {
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
+#ifndef BOOST_WINDOWS
         // We are copying files to make sure that stacktrace printing works independently from executable name
         copy_and_run(argv[0], '1', true);
         copy_and_run(argv[0], '2', false);
 
-#ifndef BOOST_WINDOWS
-        // There are some issues with async-safety of shared mmory writes on Windows.
+        // There are some issues with async-safety of shared memory writes on Windows.
         copy_and_run(argv[0], '3', true);
         copy_and_run(argv[0], '4', false);
 #endif
