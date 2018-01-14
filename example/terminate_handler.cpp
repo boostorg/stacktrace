@@ -271,6 +271,13 @@ int test_inplace() {
 
         boost::filesystem::remove("./backtrace3.dump");
 
+#ifdef BOOST_WINDOWS
+        // `ss2` could be empty on some combinations of Windows+MSVC.
+        if (!ss2) {
+            return 0;
+        }
+#endif
+
         if (ss1.size() != ss2.size()) {
             std::cerr << "Stacktraces differ:\n" << ss1 << "\n vs \n" << ss2 << '\n';
             return 58;
