@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2018.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -68,8 +68,8 @@ int main() {
         std::cerr << e.what() << '\n';
         const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
         if (st) {
-            std::cerr << *st << '\n'; /*<-*/ std::exit(0); /*->*/
-        } /*<-*/ std::exit(3); /*->*/
+            std::cerr << *st << '\n'; /*<-*/ return 0; /*->*/
+        } /*<-*/ return 3; /*->*/
     }
     //]
 
