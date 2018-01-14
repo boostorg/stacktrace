@@ -13,6 +13,7 @@
 #endif
 
 #include <boost/core/explicit_operator_bool.hpp>
+#include <boost/container_hash/hash_fwd.hpp>
 
 #include <iosfwd>
 #include <string>
@@ -30,13 +31,6 @@
 #   pragma warning(push)
 #   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
 #endif
-
-/// @cond
-namespace boost {
-    // Forward declaration
-    template <class It> std::size_t hash_range(It, It);
-}
-/// @endcond
 
 namespace boost { namespace stacktrace {
 
