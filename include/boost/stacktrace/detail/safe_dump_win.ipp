@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2018.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -24,6 +24,7 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
+#if 0 // This code potentially could cause deadlocks (according to the MSDN). Disabled
     boost::winapi::DWORD_ written;
     const boost::winapi::DWORD_ bytes_to_write = static_cast<boost::winapi::DWORD_>(
         sizeof(native_frame_ptr_t) * frames_count
@@ -33,9 +34,12 @@ std::size_t dump(void* fd, const native_frame_ptr_t* frames, std::size_t frames_
     }
 
     return frames_count;
+#endif
+    return 0;
 }
 
 std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t frames_count) BOOST_NOEXCEPT {
+#if 0 // This code causing deadlocks on some platforms. Disabled
     void* const fd = boost::winapi::CreateFileA(
         file,
         boost::winapi::GENERIC_WRITE_,
@@ -53,6 +57,8 @@ std::size_t dump(const char* file, const native_frame_ptr_t* frames, std::size_t
     const std::size_t size = boost::stacktrace::detail::dump(fd, frames, frames_count);
     boost::winapi::CloseHandle(fd);
     return size;
+#endif
+    return 0;
 }
 
 }}} // namespace boost::stacktrace::detail

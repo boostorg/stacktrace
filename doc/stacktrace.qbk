@@ -67,6 +67,8 @@ Segmentation Faults and `std::terminate` calls sometimes happen in programs. Pro
 
 [warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - [*dump raw stacktrace into file/socket and parse it on program restart].]
 
+[warning Not all the platforms provide means for even getting stacktrace in async signal safe way. No stack trace will be saved on such platforms. ]
+
 Let's write a handler to safely dump stacktrace:
 
 [getting_started_terminate_handlers]
