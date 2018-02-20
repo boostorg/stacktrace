@@ -18,7 +18,7 @@
 int foo() {
     static thread_local std::string i = std::string();
     
-    return i.size();
+    return static_cast<int>(i.size());
 }
 
 int main() {
