@@ -98,7 +98,7 @@ public:
 };
 
 
-static std::string minwg_demangling_workaround(const std::string& s) {
+static std::string mingw_demangling_workaround(const std::string& s) {
 #ifdef BOOST_GCC
     if (s.empty()) {
         return s;
@@ -237,7 +237,7 @@ public:
             return result;
         }
 
-        result = minwg_demangling_workaround(
+        result = mingw_demangling_workaround(
             result.substr(delimiter + 1)
         );
 
