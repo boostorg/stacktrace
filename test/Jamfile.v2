@@ -1,4 +1,4 @@
-#  Copyright (C) 2016-2017, Antony Polukhin.
+#  Copyright (C) 2016-2018, Antony Polukhin.
 #
 # Use, modification and distribution is subject to the Boost Software License,
 # Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -135,24 +135,24 @@ test-suite stacktrace_tests
 
     # Thread safety without debug symbols
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)
+        : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg     <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer $(LINKSHARED_BT)
         : backtrace_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)
+        : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg        <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer $(LINKSHARED_WIND)
         : windbg_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED)
+        : : : <debug-symbols>off <library>.//test_impl_lib_windbg_cached_no_dbg <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer $(LINKSHARED_WIND_CACHED)
         : windbg_cached_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)
+        : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg         <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer $(LINKSHARED_BASIC)
         : basic_lib_no_dbg_threaded ]
 
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg
+        : : : <debug-symbols>off <library>.//test_impl_lib_windbg <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer
             $(LINKSHARED_WIND) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_MT
         : windbg_lib_threaded_com_mt ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached
+        : : : <debug-symbols>off <library>.//test_impl_lib_windbg_cached <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer
             $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
         : windbg_cached_lib_threaded_com_st ]
 
