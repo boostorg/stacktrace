@@ -24,6 +24,7 @@ project
   : requirements
     <toolset>msvc:<asynch-exceptions>on
     <toolset>intel:<cxxflags>-wd2196
+    <target-os>linux:<linkflags>-lpthread
     <warnings>all
     <test-info>always_show_run_output
   ;
