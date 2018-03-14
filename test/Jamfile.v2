@@ -182,6 +182,7 @@ test-suite stacktrace_tests
         : windbg_cached_lib_threaded_com_st ]
 
     [ run test_void_ptr_cast.cpp ]
+    [ run test_num_conv.cpp ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite.

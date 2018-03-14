@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2018.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -13,9 +13,9 @@
 #endif
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
 #include <boost/core/demangle.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <backtrace.h>
 
@@ -99,7 +99,7 @@ struct to_string_using_backtrace {
         res += " at ";
         res += filename;
         res += ':';
-        res += boost::lexical_cast<boost::array<char, 40> >(line).data();
+        res += boost::stacktrace::detail::to_dec_array(line).data();
         return true;
     }
 
