@@ -9,6 +9,8 @@
 #include <boost/stacktrace/detail/try_dec_convert.hpp>
 
 #include <boost/core/lightweight_test.hpp>
+#include <string>
+#include <iostream>
 
 
 void test_to_hex_array() {
