@@ -8,6 +8,7 @@
     "Antony Polukhin <antoshkka -at- gmail.com>"
   ],
   "description": "Gather, store, copy and print backtraces.",
+  "std": [ "proposal" ],
   "category": [
     "System", "Correctness"
   ]
