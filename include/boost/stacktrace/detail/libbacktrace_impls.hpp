@@ -17,7 +17,11 @@
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
 #include <boost/core/demangle.hpp>
 
-#include <backtrace.h>
+#ifdef BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE
+#   include BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE
+#else
+#   include <backtrace.h>
+#endif
 
 namespace boost { namespace stacktrace { namespace detail {
 
