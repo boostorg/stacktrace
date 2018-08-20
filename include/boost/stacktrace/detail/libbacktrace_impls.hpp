@@ -32,6 +32,13 @@ struct pc_data {
     std::size_t line;
 };
 
+inline void libbacktrace_syminfo_callback(void *data, uintptr_t /*pc*/, const char *symname, uintptr_t /*symval*/, uintptr_t /*symsize*/) {
+    pc_data& d = *static_cast<pc_data*>(data);
+    if (d.function && symname) {
+        *d.function = symname;
+    }
+}
+
 inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
     pc_data& d = *static_cast<pc_data*>(data);
     if (d.filename && filename) {
@@ -90,6 +97,14 @@ struct to_string_using_backtrace {
                 boost::stacktrace::detail::libbacktrace_full_callback,
                 boost::stacktrace::detail::libbacktrace_error_callback,
                 &data
+            ) 
+            ||
+            ::backtrace_syminfo(
+                state,
+                reinterpret_cast<uintptr_t>(addr),
+                boost::stacktrace::detail::libbacktrace_syminfo_callback,
+                boost::stacktrace::detail::libbacktrace_error_callback,
+                &data
             );
         }
         line = data.line;
@@ -127,6 +142,14 @@ inline std::string name_impl(const void* addr) {
             state,
             reinterpret_cast<uintptr_t>(addr),
             boost::stacktrace::detail::libbacktrace_full_callback,
+            boost::stacktrace::detail::libbacktrace_error_callback,
+            &data
+        )
+        ||
+        ::backtrace_syminfo(
+            state,
+            reinterpret_cast<uintptr_t>(addr),
+            boost::stacktrace::detail::libbacktrace_syminfo_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data
         );
