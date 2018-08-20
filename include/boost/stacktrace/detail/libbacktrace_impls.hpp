@@ -145,6 +145,14 @@ inline std::string name_impl(const void* addr) {
             boost::stacktrace::detail::libbacktrace_full_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data
+        )
+        ||
+        ::backtrace_syminfo(
+            state,
+            reinterpret_cast<uintptr_t>(addr),
+            boost::stacktrace::detail::libbacktrace_syminfo_callback,
+            boost::stacktrace::detail::libbacktrace_error_callback,
+            &data
         );
     }
     if (!res.empty()) {
