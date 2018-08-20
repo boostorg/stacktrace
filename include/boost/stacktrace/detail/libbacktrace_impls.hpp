@@ -105,8 +105,7 @@ struct to_string_using_backtrace {
                 boost::stacktrace::detail::libbacktrace_syminfo_callback,
                 boost::stacktrace::detail::libbacktrace_error_callback,
                 &data
-            )
-            ;
+            );
         }
         line = data.line;
     }
