@@ -39,6 +39,11 @@ inline void libbacktrace_syminfo_callback(void *data, uintptr_t /*pc*/, const ch
     }
 }
 
+// Old versions of libbacktrace have different signature for the callback
+inline void libbacktrace_syminfo_callback(void *data, uintptr_t pc, const char *symname, uintptr_t symval) {
+    boost::stacktrace::detail::libbacktrace_syminfo_callback(data, pc, symname, symval, 0);
+}
+
 inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
     pc_data& d = *static_cast<pc_data*>(data);
     if (d.filename && filename) {
