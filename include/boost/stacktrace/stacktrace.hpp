@@ -319,6 +319,10 @@ public:
 
     /// Constructs stacktrace from raw memory dump. Terminating zero frame is discarded.
     ///
+    /// @param begin Begining of the memory where the stacktrace was saved using the boost::stacktrace::safe_dump_to
+    ///
+    /// @param buffer_size_in_bytes Size of the memory. Usually the same value that was passed to the boost::stacktrace::safe_dump_to
+    ///
     /// @b Complexity: O(size) in worst case
     static basic_stacktrace from_dump(const void* begin, std::size_t buffer_size_in_bytes, const allocator_type& a = allocator_type()) {
         basic_stacktrace ret(0, 0, a);
