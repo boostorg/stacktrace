@@ -38,8 +38,7 @@ BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
 BOOST_ST_API stacktrace return_from_nested_namespaces();
 BOOST_ST_API boost::stacktrace::stacktrace bar1();
 BOOST_ST_API boost::stacktrace::stacktrace bar2();
-
-BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
+BOOST_SYMBOL_EXPORT BOOSBOBBOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
     if (i) {
         return foo2(i - 1, foo1);
     }
