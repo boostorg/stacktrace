@@ -27,21 +27,21 @@ project
     <target-os>linux:<linkflags>-lpthread
     <warnings>all
     <test-info>always_show_run_output
+    <visibility>hidden
   ;
 
-local RDYNAMIC = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
+local FORCE_SYMBOL_EXPORT = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
     <target-os>qnxnto,<toolset>qcc:<linkflags>"-Bdynamic" <target-os>qnxnto,<toolset>gcc:<linkflags>"-rdynamic"
     <target-os>android:<linkflags>"-rdynamic" <target-os>linux:<linkflags>"-rdynamic" <target-os>darwin,<toolset>gcc:<linkflags>"-dynamic"
-    <target-os>darwin,<toolset>clang:<linkflags>"-rdynamic" <target-os>iphone:<linkflags>"-rdynamic" ;
+    <target-os>darwin,<toolset>clang:<linkflags>"-rdynamic" <target-os>iphone:<linkflags>"-rdynamic"
+    <define>BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE ;
 
-local HIDE_SYMBS = <target-os>linux:<cxxflags>"-fvisibility=hidden" ;
-
-local BT_DEPS   = $(HIDE_SYMBS) <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
-local AD2L_DEPS = $(HIDE_SYMBS) <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
-local WIND_DEPS = $(HIDE_SYMBS) <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbg : : <build>no ] ;
-local WICA_DEPS = $(HIDE_SYMBS) <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
-local NOOP_DEPS = $(HIDE_SYMBS) ;
-local BASIC_DEPS = $(RDYNAMIC) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
+local BT_DEPS   = <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
+local AD2L_DEPS = <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
+local WIND_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbg : : <build>no ] ;
+local WICA_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
+local NOOP_DEPS = ;
+local BASIC_DEPS = $(FORCE_SYMBOL_EXPORT) <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
@@ -117,7 +117,7 @@ test-suite stacktrace_tests
     ##### Tests with disabled debug symbols #####
 
     # Header only tests without debug symbols
-    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE     <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(BT_DEPS)       : backtrace_ho_no_dbg ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE                            $(FORCE_SYMBOL_EXPORT)  $(BT_DEPS)       : backtrace_ho_no_dbg ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_NOOP                                                         $(NOOP_DEPS)     : noop_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                            <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_WINDBG_CACHED <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WICA_DEPS)     : windbg_cached_ho_no_dbg ]
@@ -127,12 +127,12 @@ test-suite stacktrace_tests
         : addr2line_ho_no_dbg ]
 
     # Test with shared linked implementations without debug symbols
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)          <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL     : backtrace_lib_no_dbg ]
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_addr2line_no_dbg     $(LINKSHARED_AD2L)                                                          : addr2line_lib_no_dbg ]
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)        <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL     : windbg_lib_no_dbg ]
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL     : windbg_cached_lib_no_dbg ]
-    [ run test_noop.cpp : : : <debug-symbols>off <library>.//test_impl_lib_noop_no_dbg          $(LINKSHARED_NOOP)                                                          : noop_lib_no_dbg ]
-    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)                                                         : basic_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)                             $(FORCE_SYMBOL_EXPORT)     : backtrace_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_addr2line_no_dbg     $(LINKSHARED_AD2L)                                                      : addr2line_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)        <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL : windbg_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL : windbg_cached_lib_no_dbg ]
+    [ run test_noop.cpp : : : <debug-symbols>off <library>.//test_impl_lib_noop_no_dbg          $(LINKSHARED_NOOP)                                                      : noop_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_basic_no_dbg         $(LINKSHARED_BASIC)                                                     : basic_lib_no_dbg ]
 
     # Thread safety without debug symbols
     [ run thread_safety_checking.cpp

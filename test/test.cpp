@@ -14,49 +14,25 @@
 
 #include <boost/functional/hash.hpp>
 
+#include "test_impl.hpp"
 
 using boost::stacktrace::stacktrace;
 using boost::stacktrace::frame;
-
-#ifdef BOOST_STACKTRACE_DYN_LINK
-#   define BOOST_ST_API BOOST_SYMBOL_IMPORT
-#else
-#   define BOOST_ST_API
-#endif
 
 
 #if (defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE)) \
     || defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL)
 
-#   define BOOST_STACKTRACE_SYMNAME 0
+#   define BOOST_STACKTRACE_TEST_SHOULD_OUTPUT_READABLE_NAMES 0
 #else
-#   define BOOST_STACKTRACE_SYMNAME 1
+#   define BOOST_STACKTRACE_TEST_SHOULD_OUTPUT_READABLE_NAMES 1
 #endif
-
-typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
-BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
-BOOST_ST_API stacktrace return_from_nested_namespaces();
-BOOST_ST_API boost::stacktrace::stacktrace bar1();
-BOOST_ST_API boost::stacktrace::stacktrace bar2();
-BOOST_SYMBOL_EXPORT BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
-    if (i) {
-        return foo2(i - 1, foo1);
-    }
-
-    std::pair<stacktrace, stacktrace> ret;
-    try {
-        throw std::logic_error("test");
-    } catch (const std::logic_error& /*e*/) {
-        ret.second = stacktrace();
-        return ret;
-    }
-}
 
 void test_deeply_nested_namespaces() {
     std::stringstream ss;
     ss << return_from_nested_namespaces();
     std::cout << ss.str() << '\n';
-#if BOOST_STACKTRACE_SYMNAME
+#if BOOST_STACKTRACE_TEST_SHOULD_OUTPUT_READABLE_NAMES
     BOOST_TEST(ss.str().find("main") != std::string::npos);
 
     BOOST_TEST(ss.str().find("get_backtrace_from_nested_namespaces") != std::string::npos
@@ -72,7 +48,7 @@ void test_deeply_nested_namespaces() {
 // Template parameter Depth is to produce different functions on each Depth. This simplifies debugging when one of the tests catches error
 template <std::size_t Depth>
 void test_nested() {
-    std::pair<stacktrace, stacktrace> res = foo2(Depth, foo1);
+    std::pair<stacktrace, stacktrace> res = function_from_library(Depth, function_from_main_translation_unit);
 
     std::stringstream ss1, ss2;
 
@@ -91,15 +67,15 @@ void test_nested() {
     BOOST_TEST(ss1.str().find(" in ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" in ") != std::string::npos);
 
-#if BOOST_STACKTRACE_SYMNAME
+#if BOOST_STACKTRACE_TEST_SHOULD_OUTPUT_READABLE_NAMES
     BOOST_TEST(ss1.str().find("main") != std::string::npos);
     BOOST_TEST(ss2.str().find("main") != std::string::npos);
 
-    BOOST_TEST(ss1.str().find("foo2") != std::string::npos);
-    BOOST_TEST(ss2.str().find("foo2") != std::string::npos);
+    BOOST_TEST(ss1.str().find("function_from_library") != std::string::npos);
+    BOOST_TEST(ss2.str().find("function_from_library") != std::string::npos);
 
-    BOOST_TEST(ss1.str().find("foo1") != std::string::npos);
-    BOOST_TEST(ss2.str().find("foo1") != std::string::npos);
+    BOOST_TEST(ss1.str().find("function_from_main_translation_unit") != std::string::npos);
+    BOOST_TEST(ss2.str().find("function_from_main_translation_unit") != std::string::npos);
 #endif
 
     //BOOST_TEST(false);
@@ -269,12 +245,12 @@ int main() {
     test_empty_basic_stacktrace<true>();
     test_empty_basic_stacktrace<false>();
 
-    BOOST_TEST(&bar1 != &bar2);
-    boost::stacktrace::stacktrace b1 = bar1();
+    BOOST_TEST(&make_some_stacktrace1 != &make_some_stacktrace2);
+    boost::stacktrace::stacktrace b1 = make_some_stacktrace1();
     BOOST_TEST(b1.size() == 4);
-    boost::stacktrace::stacktrace b2 = bar2();
+    boost::stacktrace::stacktrace b2 = make_some_stacktrace2();
     BOOST_TEST(b2.size() == 4);
-    test_comparisons_base(bar1(), bar2());
+    test_comparisons_base(make_some_stacktrace1(), make_some_stacktrace2());
 
     test_nested<300>();
     BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);

@@ -4,40 +4,17 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include "test_impl.hpp"
 
 #include <boost/stacktrace.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <stdexcept>
 
+
 #include <boost/functional/hash.hpp>
 
 using boost::stacktrace::stacktrace;
 using boost::stacktrace::frame;
-
-#ifdef BOOST_STACKTRACE_DYN_LINK
-#   define BOOST_ST_API BOOST_SYMBOL_IMPORT
-#else
-#   define BOOST_ST_API
-#endif
-
-typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
-BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
-BOOST_ST_API stacktrace return_from_nested_namespaces();
-
-
-BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
-    if (i) {
-        return foo2(i - 1, foo1);
-    }
-
-    std::pair<stacktrace, stacktrace> ret;
-    try {
-        throw std::logic_error("test");
-    } catch (const std::logic_error& /*e*/) {
-        ret.second = stacktrace();
-        return ret;
-    }
-}
 
 void test_deeply_nested_namespaces() {
     BOOST_TEST(return_from_nested_namespaces().size() == 0);
@@ -46,7 +23,7 @@ void test_deeply_nested_namespaces() {
 }
 
 void test_nested() {
-    std::pair<stacktrace, stacktrace> res = foo2(15, foo1);
+    std::pair<stacktrace, stacktrace> res = function_from_library(15, function_from_main_translation_unit);
 
     BOOST_TEST(!res.first);
     BOOST_TEST(res.first.empty());

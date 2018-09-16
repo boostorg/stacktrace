@@ -4,6 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include "test_impl.hpp"
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
 #include <sstream>
@@ -15,31 +16,8 @@
 
 #include <boost/timer/timer.hpp>
 
-#ifdef BOOST_STACKTRACE_DYN_LINK
-#   define BOOST_ST_API BOOST_SYMBOL_IMPORT
-#else
-#   define BOOST_ST_API
-#endif
-
 using boost::stacktrace::stacktrace;
 
-typedef std::pair<stacktrace, stacktrace> (*foo1_t)(int i);
-BOOST_ST_API std::pair<stacktrace, stacktrace> foo2(int i, foo1_t foo1);
-BOOST_ST_API stacktrace return_from_nested_namespaces();
-
-BOOST_NOINLINE std::pair<stacktrace, stacktrace> foo1(int i) {
-    if (i) {
-        return foo2(i - 1, foo1);
-    }
-
-    std::pair<stacktrace, stacktrace> ret;
-    try {
-        throw std::logic_error("test");
-    } catch (const std::logic_error& /*e*/) {
-        ret.second = stacktrace();
-        return ret;
-    }
-}
 
 void main_test_loop() {
     std::size_t loops = 100;
@@ -49,7 +27,7 @@ void main_test_loop() {
     std::stringstream ss_ethalon;
 
     while (--loops) {
-        std::pair<stacktrace, stacktrace> res = foo2(Depth, foo1);
+        std::pair<stacktrace, stacktrace> res = function_from_library(Depth, function_from_main_translation_unit);
         if (ethalon) {
             BOOST_TEST(res == *ethalon);
 
