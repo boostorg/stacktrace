@@ -19,14 +19,18 @@
 
 using namespace boost::stacktrace;
 
-#if defined(BOOST_STACKTRACE_DYN_LINK) || (defined(BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE) && !defined(BOOST_WINDOWS))
+#ifdef BOOST_STACKTRACE_DYN_LINK
 # ifdef BOOST_STACKTRACE_TEST_IMPL_LIB
 #   define BOOST_ST_API BOOST_SYMBOL_EXPORT
 # else
 #   define BOOST_ST_API BOOST_SYMBOL_IMPORT
 # endif
 #else
+# ifdef BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE
+#   define BOOST_ST_API BOOST_SYMBOL_VISIBLE
+# else
 #   define BOOST_ST_API
+# endif
 #endif
 
 typedef std::pair<boost::stacktrace::stacktrace, boost::stacktrace::stacktrace> st_pair;
@@ -36,8 +40,8 @@ BOOST_ST_API boost::stacktrace::stacktrace return_from_nested_namespaces();
 BOOST_ST_API boost::stacktrace::stacktrace make_some_stacktrace1();
 BOOST_ST_API boost::stacktrace::stacktrace make_some_stacktrace2();
 
-#ifdef defined(BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE) && !defined(BOOST_WINDOWS)
-  BOOST_SYMBOL_EXPORT
+#ifdef BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE
+  BOOST_SYMBOL_VISIBLE
 #endif
 inline st_pair function_from_main_translation_unit(int i) {
     if (i) {
