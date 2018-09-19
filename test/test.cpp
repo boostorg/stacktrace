@@ -47,14 +47,16 @@ void test_deeply_nested_namespaces() {
 
 // Template parameter Depth is to produce different functions on each Depth. This simplifies debugging when one of the tests catches error
 template <std::size_t Depth>
-void test_nested() {
+void test_nested(bool print = true) {
     std::pair<stacktrace, stacktrace> res = function_from_library(Depth, function_from_main_translation_unit);
 
     std::stringstream ss1, ss2;
 
     ss1 << res.first;
     ss2 << res.second;
-    std::cout << "'" << ss1.str() << "'\n\n" << ss2.str() << std::endl;
+    if (print) {
+        std::cout << "'" << ss1.str() << "'\n\n" << ss2.str() << std::endl;
+    }
     BOOST_TEST(!ss1.str().empty());
     BOOST_TEST(!ss2.str().empty());
 
@@ -252,7 +254,7 @@ int main() {
     BOOST_TEST(b2.size() == 4);
     test_comparisons_base(make_some_stacktrace1(), make_some_stacktrace2());
 
-    test_nested<300>();
+    test_nested<260>(false);
     BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);
     BOOST_TEST(boost::stacktrace::stacktrace(1, 1).size() == 1);
 
