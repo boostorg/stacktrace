@@ -8,7 +8,7 @@
 project
   : source-location .
   : requirements
-    <target-os>linux:<cxxflags>"-fvisibility=hidden"
+    <visibility>hidden
   ;
 
 lib dl ;
