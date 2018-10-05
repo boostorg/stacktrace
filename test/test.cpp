@@ -171,7 +171,7 @@ void test_iterators() {
 
 void test_frame() {
     stacktrace nst = return_from_nested_namespaces();
-    stacktrace st;
+    stacktrace st = make_some_stacktrace1();
 
     const std::size_t min_size = (nst.size() < st.size() ? nst.size() : st.size());
     BOOST_TEST(min_size > 2);
