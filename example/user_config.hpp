@@ -29,6 +29,9 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 #ifndef USER_CONFIG2_HPP
 #define USER_CONFIG2_HPP
+
+#include <ios> // std::streamsize
+
 //[getting_started_user_config_impl
 namespace boost { namespace stacktrace {
 
