@@ -60,30 +60,54 @@ inline void libbacktrace_error_callback(void* /*data*/, const char* /*msg*/, int
     // Do nothing, just return.
 }
 
-
-inline ::backtrace_state* construct_state(const program_location& prog_location) BOOST_NOEXCEPT {
-    // Currently `backtrace_create_state` can not detect file name on Windows https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82543
-    // That's why we provide a `prog_location` here.
-    return ::backtrace_create_state(
-        prog_location.name(), 0 /*thread-safe*/, boost::stacktrace::detail::libbacktrace_error_callback, 0
-    );
-
-    // TODO: this does not seem to work well when this function is in .so:
-    // Not async-signal-safe, so this method is not called from async-safe functions.
-    //
-    // This function is not async signal safe because:
-    // * Dynamic initialization of a block-scope variable with static storage duration could lock a mutex
-    // * No guarantees on `backtrace_create_state` function.
-
+// Not async-signal-safe, so this method is not called from async-safe functions.
+//
+// This function is not async signal safe because:
+// * Dynamic initialization of a block-scope variable with static storage duration could lock a mutex
+// * No guarantees on `backtrace_create_state` function.
+//
+// Currently `backtrace_create_state` can not detect file name on Windows https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82543
+// That's why we provide a `prog_location` here.
+BOOST_SYMBOL_VISIBLE inline ::backtrace_state* construct_state(const program_location& prog_location) BOOST_NOEXCEPT {
     // [dcl.inline]: A static local variable in an inline function with external linkage always refers to the same object.
 
-    /*  
-    static ::backtrace_state* state = ::backtrace_create_state(
-        0, 1 , boost::stacktrace::detail::libbacktrace_error_callback, 0
-    );
+    // TODO: The most obvious solution:
+    //
+    //static ::backtrace_state* state = ::backtrace_create_state(
+    //    prog_location.name(),
+    //    1, // allow safe concurrent usage of the same state
+    //    boost::stacktrace::detail::libbacktrace_error_callback,
+    //    0 // pointer to data that will be passed to callback
+    //);
+    //
+    //
+    // Unfortunately, that solution segfaults when `construct_state()` function is in .so file
+    // and multiple threads concurrently work with state.
 
+
+#ifndef BOOST_HAS_THREADS
+    static
+#else
+
+    // Result of `construct_state()` invocation is not stored by the callers, so `thread_local`
+    // gives a single `state` per thread and that state is not shared between threads in any way.
+
+#   ifndef BOOST_NO_CXX11_THREAD_LOCAL
+    thread_local
+#   elif defined(__GNUC__)
+    static __thread
+#   else
+    /* just a local variable */
+#   endif
+
+#endif
+      ::backtrace_state* state = ::backtrace_create_state(
+        prog_location.name(),
+        0,
+        boost::stacktrace::detail::libbacktrace_error_callback,
+        0
+    );
     return state;
-    */
 }
 
 struct to_string_using_backtrace {

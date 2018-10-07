@@ -18,7 +18,7 @@
 
 int main() {
   int result = 0;
-  for (unsigned i = 0; i < 10000; ++i) {
+  for (unsigned i = 0; i < 10000000; ++i) {
     result += make_some_stacktrace1()[0].source_line();
   }
 
