@@ -73,7 +73,6 @@ class basic_stacktrace {
             {   // Fast path without additional allocations
                 native_frame_ptr_t buffer[buffer_size];
                 const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size < max_depth ? buffer_size : max_depth, frames_to_skip + 1);
-                    fill(buffer, size);
                 if (buffer_size > frames_count || frames_count == max_depth) {
                     fill(buffer, frames_count);
                     return;
