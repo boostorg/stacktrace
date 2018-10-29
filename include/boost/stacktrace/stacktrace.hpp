@@ -15,7 +15,6 @@
 #include <boost/core/explicit_operator_bool.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
-#include <algorithm>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -73,7 +72,7 @@ class basic_stacktrace {
         try {
             {   // Fast path without additional allocations
                 native_frame_ptr_t buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, std::min(buffer_size, max_depth), frames_to_skip + 1);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size < max_depth ? buffer_size : max_depth, frames_to_skip + 1);
                 if (buffer_size > frames_count || frames_count >= max_depth) {
                     const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
                     fill(buffer, size);
