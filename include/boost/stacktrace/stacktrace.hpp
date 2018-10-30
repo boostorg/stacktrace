@@ -72,10 +72,9 @@ class basic_stacktrace {
         try {
             {   // Fast path without additional allocations
                 native_frame_ptr_t buffer[buffer_size];
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size, frames_to_skip + 1);
-                if (buffer_size > frames_count || frames_count >= max_depth) {
-                    const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
-                    fill(buffer, size);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(buffer, buffer_size < max_depth ? buffer_size : max_depth, frames_to_skip + 1);
+                if (buffer_size > frames_count || frames_count == max_depth) {
+                    fill(buffer, frames_count);
                     return;
                 }
             }
@@ -88,10 +87,9 @@ class basic_stacktrace {
 #endif
             std::vector<native_frame_ptr_t, allocator_void_t> buf(buffer_size * 2, 0, impl_.get_allocator());
             do {
-                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(&buf[0], buf.size(), frames_to_skip + 1);
-                if (buf.size() > frames_count || frames_count >= max_depth) {
-                    const std::size_t size = (max_depth < frames_count ? max_depth : frames_count);
-                    fill(&buf[0], size);
+                const std::size_t frames_count = boost::stacktrace::detail::this_thread_frames::collect(&buf[0], buf.size() < max_depth ? buf.size() : max_depth, frames_to_skip + 1);
+                if (buf.size() > frames_count || frames_count == max_depth) {
+                    fill(&buf[0], frames_count);
                     return;
                 }
 
