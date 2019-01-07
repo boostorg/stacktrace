@@ -14,7 +14,12 @@
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 
+#if defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
+#include <execinfo.h>
+#include <algorithm>
+#else
 #include <unwind.h>
+#endif
 #include <cstdio>
 
 #if !defined(_GNU_SOURCE) && !defined(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED) && !defined(BOOST_WINDOWS)
@@ -23,6 +28,7 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
+#if !defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
 struct unwind_state {
     std::size_t frames_to_skip;
     native_frame_ptr_t* current;
@@ -48,16 +54,32 @@ inline _Unwind_Reason_Code unwind_callback(::_Unwind_Context* context, void* arg
     }
     return ::_URC_NO_REASON;
 }
+#endif //!defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
 
 std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
     std::size_t frames_count = 0;
     if (!max_frames_count) {
         return frames_count;
     }
+    skip += 1;
 
-    boost::stacktrace::detail::unwind_state state = { skip + 1, out_frames, out_frames + max_frames_count };
+#if defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
+    frames_count = static_cast<size_t>(::backtrace(const_cast<void **>(out_frames), static_cast<int>(max_frames_count)));
+    // NOTE: There is no way to pass "skip" count to backtrace function so we need to perform left shift operation.
+    // If number of elements in result backtrace is >= max_frames_count then "skip" elements are wasted.
+    if (frames_count && skip) {
+    	if (skip >= frames_count) {
+    		frames_count = 0;
+    	} else {
+    		std::copy(out_frames + skip, out_frames + frames_count, out_frames);
+    		frames_count -= skip;
+    	}
+    }
+#else
+    boost::stacktrace::detail::unwind_state state = { skip, out_frames, out_frames + max_frames_count };
     ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
     frames_count = state.current - out_frames;
+#endif //defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
 
     if (frames_count && out_frames[frames_count - 1] == 0) {
         -- frames_count;
