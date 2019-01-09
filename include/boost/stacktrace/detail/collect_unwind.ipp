@@ -14,6 +14,13 @@
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 
+// On iOS 32-bit ARM architecture _Unwind_Backtrace function doesn't exist, symbol is undefined.
+// Forcing libc backtrace() function usage.
+#include <boost/predef.h>
+#if defined(BOOST_OS_IOS_AVAILABLE) && defined(BOOST_ARCH_ARM_AVAILABLE) && BOOST_VERSION_NUMBER_MAJOR(BOOST_ARCH_ARM) < 8
+#define BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION
+#endif
+
 #if defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
 #include <execinfo.h>
 #include <algorithm>
