@@ -71,7 +71,10 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
     skip += 1;
 
 #if defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
+    // According to https://opensource.apple.com/source/Libc/Libc-1272.200.26/gen/backtrace.c.auto.html
+    // it looks like the `::backtrace` is async signal safe.
     frames_count = static_cast<size_t>(::backtrace(const_cast<void **>(out_frames), static_cast<int>(max_frames_count)));
+
     // NOTE: There is no way to pass "skip" count to backtrace function so we need to perform left shift operation.
     // If number of elements in result backtrace is >= max_frames_count then "skip" elements are wasted.
     if (frames_count && skip) {
