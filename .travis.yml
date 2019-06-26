@@ -39,11 +39,11 @@ env:
 
     matrix:
         # Note that "--coverage -fsanitize=address,leak,undefined -DBOOST_TRAVISCI_BUILD" are added automatically lower in code
-        - CXX_FLAGS="-std=c++98" LINK_FLAGS="" TOOLSET=gcc-6
-        - CXX_FLAGS="-std=c++11" LINK_FLAGS="" TOOLSET=gcc-6
-        - CXX_FLAGS="-std=c++1y" LINK_FLAGS="" TOOLSET=gcc-6
-        - CXX_FLAGS="-std=c++11 -O0" LINK_FLAGS="" TOOLSET=gcc-6
-        - CXX_FLAGS="-std=c++11 -O1" LINK_FLAGS="" TOOLSET=gcc-6
+        - CXX_FLAGS="-std=c++98" LINK_FLAGS="" TOOLSET=gcc-8
+        - CXX_FLAGS="-std=c++11" LINK_FLAGS="" TOOLSET=gcc-8
+        - CXX_FLAGS="-std=c++1y" LINK_FLAGS="" TOOLSET=gcc-8
+        - CXX_FLAGS="-std=c++11 -O0" LINK_FLAGS="" TOOLSET=gcc-8
+        - CXX_FLAGS="-std=c++11 -O1" LINK_FLAGS="" TOOLSET=gcc-8
         #- CXX_FLAGS="-std=c++11 -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
         #- CXX_FLAGS="-std=c++1y -stdlib=libc++" LINK_FLAGS="-stdlib=libc++" TOOLSET=clang
 
@@ -61,8 +61,8 @@ addons:
     packages:
     - git
     - python-yaml
-    - gcc-6
-    - g++-6
+    - gcc-8
+    - g++-8
     - clang
     - libc++-dev
 
@@ -91,7 +91,6 @@ before_install:
 script:
     # `--coverage` flags required to generate coverage info for Coveralls
     - ../../../b2 -a "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.3 " address-model=64 architecture=x86 toolset=$TOOLSET cxxflags="--coverage -fsanitize=address,undefined -DBOOST_TRAVISCI_BUILD $CXX_FLAGS" linkflags="$LINK_FLAGS --coverage -lasan -lubsan"
-    - rm -rf ../../../bin.v2/
     - ../../../b2 -a address-model=64 architecture=x86 toolset=$TOOLSET cxxflags="-fsanitize=thread -DBOOST_TRAVISCI_BUILD $CXX_FLAGS" linkflags="$LINK_FLAGS -ltsan"
 
 after_success:
@@ -103,7 +102,7 @@ after_success:
     - find ../../../bin.v2/ -name "*.no" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
     - wget https://github.com/linux-test-project/lcov/archive/v1.12.zip
     - unzip v1.12.zip
-    - LCOV="`pwd`/lcov-1.12/bin/lcov --gcov-tool gcov-6"
+    - LCOV="`pwd`/lcov-1.12/bin/lcov --gcov-tool gcov-8"
 
     # Preparing Coveralls data by changind data format to a readable one
     - echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
