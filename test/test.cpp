@@ -79,8 +79,6 @@ void test_nested(bool print = true) {
     BOOST_TEST(ss1.str().find("function_from_main_translation_unit") != std::string::npos);
     BOOST_TEST(ss2.str().find("function_from_main_translation_unit") != std::string::npos);
 #endif
-
-    //BOOST_TEST(false);
 }
 
 template <class Bt>
@@ -208,9 +206,9 @@ void test_frame() {
 
     boost::stacktrace::frame empty_frame;
     BOOST_TEST(!empty_frame);
-    BOOST_TEST(empty_frame.source_file() == "");
-    BOOST_TEST(empty_frame.name() == "");
-    BOOST_TEST(empty_frame.source_line() == 0);
+    BOOST_TEST_EQ(empty_frame.source_file(), "");
+    BOOST_TEST_EQ(empty_frame.name(), "");
+    BOOST_TEST_EQ(empty_frame.source_line(), 0);
 }
 
 // Template parameter bool BySkip is to produce different functions on each BySkip. This simplifies debugging when one of the tests catches error
