@@ -195,6 +195,10 @@ inline std::string name_impl(const void* addr) {
 std::string frame::source_file() const {
     std::string res;
 
+    if (!addr_) {
+        return res;
+    }
+
     boost::stacktrace::detail::program_location prog_location;
     ::backtrace_state* state = boost::stacktrace::detail::construct_state(prog_location);
 
@@ -213,6 +217,10 @@ std::string frame::source_file() const {
 }
 
 std::size_t frame::source_line() const {
+    if (!addr_) {
+        return 0;
+    }
+
     boost::stacktrace::detail::program_location prog_location;
     ::backtrace_state* state = boost::stacktrace::detail::construct_state(prog_location);
 
