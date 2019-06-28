@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <cctype>
+
 #include <boost/core/lightweight_test.hpp>
 
 #include <boost/functional/hash.hpp>
@@ -43,6 +45,25 @@ void test_deeply_nested_namespaces() {
 
     stacktrace ns1 = return_from_nested_namespaces();
     BOOST_TEST(ns1 != return_from_nested_namespaces()); // Different addresses in test_deeply_nested_namespaces() function
+}
+
+std::size_t count_unprintable_chars(const std::string& s) {
+    std::size_t result = 0;
+    for (std::size_t i = 0; i < s.size(); ++i) {
+        result += (std::isprint(s[i]) ? 0 : 1);
+    }
+
+    return result;
+}
+
+void test_frames_string_data_validity() {
+    stacktrace trace = return_from_nested_namespaces();
+    for (std::size_t i = 0; i < trace.size(); ++i) {
+        BOOST_TEST_EQ(count_unprintable_chars(trace[i].source_file()), 0);
+        BOOST_TEST_EQ(count_unprintable_chars(trace[i].name()), 0);
+    }
+
+    BOOST_TEST(to_string(trace).find('\0') == std::string::npos);
 }
 
 // Template parameter Depth is to produce different functions on each Depth. This simplifies debugging when one of the tests catches error
@@ -238,6 +259,7 @@ void test_empty_basic_stacktrace() {
 
 int main() {
     test_deeply_nested_namespaces();
+    test_frames_string_data_validity();
     test_nested<15>();
     test_comparisons();
     test_iterators();
