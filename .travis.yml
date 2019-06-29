@@ -101,9 +101,9 @@ after_success:
     - find ../../../bin.v2/ -name "*.gcno" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
     - find ../../../bin.v2/ -name "*.da" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
     - find ../../../bin.v2/ -name "*.no" -exec cp "{}" $TRAVIS_BUILD_DIR/coverals/ \;
-    - wget https://github.com/linux-test-project/lcov/archive/v1.12.zip
-    - unzip v1.12.zip
-    - LCOV="`pwd`/lcov-1.12/bin/lcov --gcov-tool gcov-8"
+    - wget https://github.com/linux-test-project/lcov/archive/v1.14.zip
+    - unzip v1.14.zip
+    - LCOV="`pwd`/lcov-1.14/bin/lcov --gcov-tool gcov-8"
 
     # Preparing Coveralls data by changind data format to a readable one
     - echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
