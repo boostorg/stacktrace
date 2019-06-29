@@ -98,7 +98,7 @@ public:
 };
 
 
-static std::string mingw_demangling_workaround(const std::string& s) {
+inline std::string mingw_demangling_workaround(const std::string& s) {
 #ifdef BOOST_GCC
     if (s.empty()) {
         return s;
@@ -112,6 +112,12 @@ static std::string mingw_demangling_workaround(const std::string& s) {
 #else
     return s;
 #endif
+}
+
+inline void trim_right_zeroes(std::string& s) {
+    while (s.back() == '\0') {
+        s.pop_back();
+    }
 }
 
 class debugging_symbols: boost::noncopyable {
@@ -217,6 +223,7 @@ public:
                 &size,
                 0
             ));
+            trim_right_zeroes(result);
         } else if (res) {
             result = name;
         }
@@ -301,6 +308,7 @@ public:
             &size,
             0
         ));
+        trim_right_zeroes(result.first);
         result.second = line_num;
 
         if (!res) {
