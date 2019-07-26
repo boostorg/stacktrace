@@ -115,9 +115,9 @@ inline std::string mingw_demangling_workaround(const std::string& s) {
 }
 
 inline void trim_right_zeroes(std::string& s) {
-    // MSVC-9 does not have back() and pop_back() functions
+    // MSVC-9 does not have back() and pop_back() functions in std::string
     while (!s.empty()) {
-        const std::size_t last = staic_cast<std::size_t>(s.size() - 1);
+        const std::size_t last = static_cast<std::size_t>(s.size() - 1);
         if (s[last] != '\0') {
             break;
         }
