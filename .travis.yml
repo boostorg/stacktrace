@@ -129,7 +129,9 @@ before_install:
 
 script:
   - sh -c "../../../b2 -j2 $B2_ARGS"
-  - ../../../dist/bin/inspect .. # inspect tool run
+  # inspect tool run without -link and checks
+  - ../../../dist/bin/inspect .. -license -copyright -crlf -end -path_name -tab -ascii -apple_macro -deprecated_macro -minmax -unnamed -assert_macro
+
 
 after_success:
   # Copying Coveralls data to a separate folder
