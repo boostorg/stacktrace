@@ -100,7 +100,7 @@ before_install:
   - BOOST=$HOME/boost-local
   - git clone -b $BOOST_BRANCH --depth 10 https://github.com/boostorg/boost.git $BOOST
   - cd $BOOST
-  - git submodule update --init --depth 10 --jobs 2 tools/build tools/boostdep tools/inspect libs/filesystem
+  - git submodule update --init --depth 10 --jobs 2 tools/build tools/boostdep tools/inspect libs/filesystem libs/interprocess  # Boost.Interprocess is required for examples
   - python tools/boostdep/depinst/depinst.py --git_args "--depth 10 --jobs 2" $BOOST/libs/filesystem
 
   # Replacing Boost module with this project and installing Boost dependencies
