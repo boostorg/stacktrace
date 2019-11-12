@@ -94,6 +94,7 @@ addons:
     packages:
     - git
     - python-yaml
+    - binutils  # for addr2line tests of Boost.Stacktrace
 
 before_install:
   # Cloning minimal set of Boost libraries
