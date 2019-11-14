@@ -142,7 +142,7 @@ Now we do know the steps that led to the assertion and can find the error withou
 
 [section Exceptions with stacktrace]
 
-You can provide more information along with exception by embedding stacktraces into the exception. There are many ways to do that, here's how to doe that using Boost.Exception:
+You can provide more information along with exception by embedding stacktraces into the exception. There are many ways to do that, here's how to do that using Boost.Exception:
 
 * Declare a `boost::error_info` typedef that holds the stacktrace:
 
