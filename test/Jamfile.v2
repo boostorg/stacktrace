@@ -37,7 +37,9 @@ local FORCE_SYMBOL_EXPORT = <target-os>freebsd:<linkflags>"-rdynamic" <target-os
     <define>BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE ;
 
 local BT_DEPS   = <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
-local AD2L_DEPS = <target-os>linux:<library>dl  [ check-target-builds ../build//addr2line : : <build>no ] ;
+local AD2L_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//addr2line : : <build>no ]
+     <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  # Some old versions of addr2line may not produce readable names for a modern compilers
+     ;
 local WIND_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbg : : <build>no ] ;
 local WICA_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
 local NOOP_DEPS = ;
