@@ -22,7 +22,7 @@ env:
 
     # Files, which coverage results must be ignored (files from other projects).
     # Example: - IGNORE_COVERAGE='*/boost/progress.hpp */filesystem/src/*'
-    - IGNORE_COVERAGE='*/filesystem/src/* */thread/src/* */timer/src/* operators.hpp'
+    - IGNORE_COVERAGE='*/filesystem/src/* */thread/src/pthread/* */timer/src/* operators.hpp'
 
     # boost-local/libs/ folder to put this library into. This may be useful, if you're for example running Travis
     # from `Boost.DLL` repo while Boost already has `dll` and with to replace `dll` with content of`Boost.DLL`.
