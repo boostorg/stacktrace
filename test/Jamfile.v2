@@ -5,6 +5,8 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
+import ../../config/checks/config : requires ;
+
 lib dl : : <link>shared ;
 lib gcc_s ;
 lib rt ;
@@ -197,6 +199,11 @@ for local p in [ glob ../example/*.cpp ]
     if $(target_name) = "terminate_handler"
     {
         additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
+    }
+
+    if $(target_name) = "throwing_st"
+    {
+        additional_dependency = [ requires rtti ] ;
     }
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BT)           $(additional_dependency)    : backtrace_$(p2[1]:B) ] ;
