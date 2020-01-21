@@ -24,9 +24,6 @@ BOOST_NOINLINE void foo(int i) {
     bar(--i);
 }
 
-namespace std { inline void ignore_abort(){ std::exit(0); } }
-#define abort ignore_abort
-
 //[getting_started_assert_handlers
 
 // BOOST_ENABLE_ASSERT_DEBUG_HANDLER is defined for the whole project
@@ -38,7 +35,8 @@ namespace boost {
     inline void assertion_failed_msg(char const* expr, char const* msg, char const* function, char const* /*file*/, long /*line*/) {
         std::cerr << "Expression '" << expr << "' is false in function '" << function << "': " << (msg ? msg : "<...>") << ".\n"
             << "Backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
-        std::abort();
+        /*<-*/ std::exit(0); /*->*/
+        /*=std::abort();*/
     }
 
     inline void assertion_failed(char const* expr, char const* function, char const* file, long line) {
