@@ -330,6 +330,17 @@ Let's assume that you've installed MinGW into C:\MinGW and downloaded [@https://
 
 [endsect]
 
+[section Windows deployment and symbol files]
+
+Function names may not be resolved after deployment of your application to a different system.
+
+There are multiple ways to deal with that issue if you distribute PDB files along with your application:
+
+* Link your application and shared libraries with a properly set `/PDBALTPATH` flag, for example `/PDBALTPATH:%_PDB%`. See [@https://docs.microsoft.com/en-us/cpp/build/reference/pdbaltpath-use-alternate-pdb-path official documentation for more info].
+* Set the `_NT_ALT_SYMBOL_PATH` or `_NT_SYMBOL_PATH` environment variables of the target system to the path of the PDBs. See [@https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/symbol-path#controlling-the-symbol-path official documentation for more info].
+
+[endsect]
+
 [endsect]
 
 [section Acknowledgements]
