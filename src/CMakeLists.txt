@@ -22,7 +22,7 @@ organizeFiles(${sources})
 
 add_library(boost_stacktrace_windbg SHARED ${sources})
 target_include_directories(boost_stacktrace_windbg PRIVATE ../../..)
-target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1;BOOST_STACKTRACE_USE_WINDBG_CACHED)
+target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
 #target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
 set_target_properties(boost_stacktrace_windbg PROPERTIES FOLDER stacktrace_libs)
 
