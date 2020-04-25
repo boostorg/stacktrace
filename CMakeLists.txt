@@ -4,11 +4,14 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+# Reorganize projects into folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 project(stacktrace)
 
-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs )
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+#set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs )
+#set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+#set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
 
 # Organizes files as in file system within visual studio project.
 macro(organizeFiles sources)
@@ -26,5 +29,6 @@ macro(organizeFiles sources)
 endmacro()
 
 add_subdirectory(src)
+add_subdirectory(example)
 add_subdirectory(test)
 
