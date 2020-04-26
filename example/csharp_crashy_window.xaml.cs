@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace csharp_wpf_exe
+namespace csharp_crashy_app
 {
     public partial class MainWindow : Window
     {
