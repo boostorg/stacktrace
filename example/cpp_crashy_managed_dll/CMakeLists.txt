@@ -4,6 +4,9 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
+include(boost_helpers)
+
 # These variables affects also other C++ projects, that's why separate cmake for this c++ dll
 
 # Clr compiling requires these:
@@ -22,4 +25,5 @@ organizeFiles(${srcs})
 set_target_properties(cpp_crashy_managed_dll PROPERTIES VS_GLOBAL_CLRSupport "true")
 set_property(TARGET cpp_crashy_managed_dll PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
 target_include_directories(cpp_crashy_managed_dll PRIVATE ../../../..)
+boost_project(cpp_crashy_managed_dll)
 
