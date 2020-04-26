@@ -20,10 +20,11 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
+// RtlLookupFunctionEntry is available on 64-bit windows API only
+#ifdef _WIN64
     std::size_t iframe = 0;
     std::size_t max_frame = max_frames_count + skip;
 
-#ifdef _WIN64
     CONTEXT ContextRecord;
     RtlCaptureContext(&ContextRecord);
 
@@ -55,53 +56,22 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
 
         out_frames[iframe - skip] = (PVOID)ContextRecord.Rip;
     }
-#else
-    //
-    //  This approach was taken from StackInfoManager.cpp / FillStackInfo
-    //  http://www.codeproject.com/Articles/11221/Easy-Detection-of-Memory-Leaks
-    //  - slightly simplified the function itself.
-    //
-    int regEBP;
-    __asm mov regEBP, ebp;
 
-    long* pFrame = (long*)regEBP;           // pointer to current function frame
-    void* pNextInstruction;
-
-    //
-    // Using __try/_catch is faster than using ReadProcessMemory or VirtualProtect.
-    // We return whatever frames we have collected so far after exception was encountered.
-    //
-    __try {
-        for (; iframe < max_frame; iframe++)
-        {
-            pNextInstruction = (void*)(*(pFrame + 1));
-
-            if (!pNextInstruction)     // Last frame
-            {
-                break;
-            }
-
-            if (iframe < skip)
-            {
-                continue;
-            }
-
-            out_frames[iframe - skip] = pNextInstruction;
-            pFrame = (long*)(*pFrame);
-        }
-    }
-    __except (EXCEPTION_EXECUTE_HANDLER)
-    {
-    }
-#endif
     if (iframe <= skip)
     {
         return 0;
     }
 
     return iframe - skip;
+#else
+    return boost::winapi::RtlCaptureStackBackTrace(
+        static_cast<boost::winapi::ULONG_>(skip),
+        static_cast<boost::winapi::ULONG_>(max_frames_count),
+        const_cast<boost::winapi::PVOID_*>(out_frames),
+        0
+    );
+#endif
 }
-
 
 }}} // namespace boost::stacktrace
 
