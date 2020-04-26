@@ -7,6 +7,10 @@ cmake_minimum_required(VERSION 3.15)
 # Reorganize projects into folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+enable_language(CSharp)
+enable_language(CXX)
+enable_language(C)
+
 project(stacktrace)
 
 #set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libs )
