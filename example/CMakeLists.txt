@@ -47,3 +47,5 @@ set_target_properties( csharp_crashy_app PROPERTIES
 )
 csharp_set_xaml_cs_properties(${wpf_exe_srcs})
 
+add_dependencies(csharp_crashy_app cpp_crashy_managed_dll)
+

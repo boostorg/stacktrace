@@ -21,4 +21,5 @@ set_target_properties(cpp_crashy_managed_dll PROPERTIES FOLDER stacktrace/exampl
 organizeFiles(${srcs})
 set_target_properties(cpp_crashy_managed_dll PROPERTIES VS_GLOBAL_CLRSupport "true")
 set_property(TARGET cpp_crashy_managed_dll PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
+target_include_directories(cpp_crashy_managed_dll PRIVATE ../../../..)
 

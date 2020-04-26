@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="200">
     <Grid>
-        <Button Content="Normal .net exception" HorizontalAlignment="Stretch" Margin="10,10,10,0" VerticalAlignment="Top" Click="Button_Click" x:Name="NormalExceptionButton"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0" Content="Normal .net exception" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NormalExceptionButton"/>
+        <Button Grid.Row="1" Content="Get call stack" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeGetCallStack"/>
     </Grid>
 </Window>
