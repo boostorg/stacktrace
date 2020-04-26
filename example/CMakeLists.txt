@@ -35,7 +35,11 @@ add_subdirectory(cpp_crashy_managed_dll)
 boost_project(cpp_crashy_managed_dll)
 
 # C Sharp example test application
-set(CMAKE_CSharp_FLAGS "/define:TRACE /langversion:7.3 /platform:x64")
+set(CMAKE_CSharp_FLAGS "/define:TRACE /langversion:7.3")
+
+if(${CMAKE_GENERATOR_PLATFORM} STREQUAL "x64")
+    set(CMAKE_CSharp_FLAGS "${CMAKE_CSharp_FLAGS} /platform:x64")
+endif()
 
 include(CSharpUtilities)
 
