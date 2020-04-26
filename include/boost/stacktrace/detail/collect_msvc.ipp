@@ -64,7 +64,7 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
     int regEBP;
     __asm mov regEBP, ebp;
 
-    long* pFrame = (long*)regEBP;				// pointer to current function frame
+    long* pFrame = (long*)regEBP;           // pointer to current function frame
     void* pNextInstruction;
 
     //
