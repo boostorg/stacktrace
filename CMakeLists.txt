@@ -18,9 +18,9 @@ project(stacktrace)
 #set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
 
 # Organizes files as in file system within visual studio project.
-macro(organizeFiles sources)
+macro(organizeFiles)
     # Reorganize files into folders in project
-    foreach(relPath IN LISTS sources)
+    foreach(relPath IN ITEMS ${ARGN})
         get_filename_component(dir "${relPath}" DIRECTORY)
         # source_group uses '\\' , fs '/' as group separator
         string(REPLACE "/" "\\" dir "${dir}")
