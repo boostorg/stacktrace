@@ -15,7 +15,7 @@ string(REPLACE "/EHsc" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 # C++ crashy dll
-set(srcs ../cpp_crashy_managed_dll.cpp)
+set(srcs cpp_crashy_managed_dll.cpp)
 add_library(cpp_crashy_managed_dll SHARED ${srcs})
 set_target_properties(cpp_crashy_managed_dll PROPERTIES FOLDER stacktrace/example)
 organizeFiles(${srcs})
