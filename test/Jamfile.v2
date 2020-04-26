@@ -196,7 +196,7 @@ for local p in [ glob ../example/*.cpp ]
 {
     local target_name = $(p[1]:B) ;
     local additional_dependency = ;
-    if $(target_name) = "terminate_handler"
+    if $(target_name) = "cpp_crashy_app"
     {
         additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }

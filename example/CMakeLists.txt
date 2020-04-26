@@ -5,20 +5,20 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(sources 
-    terminate_handler.cpp
+    cpp_crashy_app.cpp
     ../CMakeLists.txt
 )
 
 organizeFiles(${sources})
 
-add_executable(terminate_handler ${sources})
+add_executable(cpp_crashy_app ${sources})
 
-target_include_directories(terminate_handler PRIVATE ../../..)
-set_target_properties(terminate_handler PROPERTIES FOLDER stacktrace/example)
+target_include_directories(cpp_crashy_app PRIVATE ../../..)
+set_target_properties(cpp_crashy_app PROPERTIES FOLDER stacktrace/example)
 
-target_compile_definitions(terminate_handler PRIVATE BOOST_ALL_NO_LIB)
+target_compile_definitions(cpp_crashy_app PRIVATE BOOST_ALL_NO_LIB)
 
-target_link_libraries( terminate_handler PUBLIC
+target_link_libraries( cpp_crashy_app PUBLIC
     boost_date_time
     boost_filesystem
 )
