@@ -4,14 +4,15 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-set(sources 
+# C++ crashy exe
+set(srcs 
     cpp_crashy_app.cpp
     ../CMakeLists.txt
 )
 
-organizeFiles(${sources})
+organizeFiles(${srcs})
 
-add_executable(cpp_crashy_app ${sources})
+add_executable(cpp_crashy_app ${srcs})
 
 target_include_directories(cpp_crashy_app PRIVATE ../../..)
 set_target_properties(cpp_crashy_app PROPERTIES FOLDER stacktrace/example)
@@ -22,6 +23,9 @@ target_link_libraries( cpp_crashy_app PUBLIC
     boost_date_time
     boost_filesystem
 )
+
+# C++ crashy dll
+add_subdirectory(cpp_crashy_managed_dll)
 
 # C Sharp example test application
 set(CMAKE_CSharp_FLAGS "/define:TRACE /langversion:7.3 /platform:x64")
