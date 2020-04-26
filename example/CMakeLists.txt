@@ -33,11 +33,11 @@ set(wpf_exe_srcs
     csharp_crashy_window.xaml
     csharp_crashy_window.xaml.cs
 )
-add_executable(csharp_wpf_exe ${wpf_exe_srcs})
-set_target_properties(csharp_wpf_exe PROPERTIES FOLDER stacktrace/example)
+add_executable(csharp_crashy_app ${wpf_exe_srcs})
+set_target_properties(csharp_crashy_app PROPERTIES FOLDER stacktrace/example)
 
-set_target_properties( csharp_wpf_exe PROPERTIES
-    VS_GLOBAL_ROOTNAMESPACE "csharp_wpf_exe"
+set_target_properties( csharp_crashy_app PROPERTIES
+    VS_GLOBAL_ROOTNAMESPACE "csharp_crashy_app"
     VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2"
     VS_DOTNET_REFERENCES "System;System.Data;System.XML;Microsoft.CSharp;WindowsBase;PresentationCore;PresentationFramework;System.ComponentModel.Composition;System.Xaml"
 )
