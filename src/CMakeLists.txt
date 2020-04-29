@@ -4,6 +4,9 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
+include(boost_helpers)
+
 set(stacktraceIncludeDir ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 # Just in case if we have stripped repository, boost/include is official place for boost includes
@@ -25,4 +28,24 @@ target_include_directories(boost_stacktrace_windbg PRIVATE ../../..)
 target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
 #target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
 set_target_properties(boost_stacktrace_windbg PROPERTIES FOLDER stacktrace/src)
+
+
+set(sources 
+    ${headers}
+    ../Build/Jamfile.v2
+    minhook/src/buffer.c
+    minhook/src/hook.c
+    minhook/src/trampoline.c
+    minhook/src/hde/hde64.c
+    minhook/src/hde/hde32.c
+)
+
+organizeFiles(${sources})
+
+add_library(boost_stacktrace STATIC ${sources})
+target_include_directories(boost_stacktrace PRIVATE ../../..)
+target_compile_definitions(boost_stacktrace PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
+set_target_properties(boost_stacktrace PROPERTIES FOLDER stacktrace/src)
+
+#boost_project(boost_stacktrace)
 

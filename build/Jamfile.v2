@@ -127,6 +127,24 @@ lib boost_stacktrace_windbg
 
 libraries += boost_stacktrace_windbg ;
 
+lib boost_stacktrace
+  : # sources
+    ../src/minhook/src/buffer.c
+    ../src/minhook/src/hook.c
+    ../src/minhook/src/trampoline.c
+    ../src/minhook/src/hde/hde64.c
+    ../src/minhook/src/hde/hde32.c
+  : # requirements
+    <warnings>all
+    <link>static:<define>BOOST_STACKTRACE_DYN_LINK=1
+    [ check-target-builds ../build//WinDbgCached : : <build>no ]
+  : # default build
+  : # usage-requirements
+  ;
+
+libraries += boost_stacktrace ;
+
+
 lib boost_stacktrace_windbg_cached
   : # sources
     ../src/windbg_cached.cpp
