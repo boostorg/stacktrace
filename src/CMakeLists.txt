@@ -38,6 +38,15 @@ set(sources
     minhook/src/trampoline.c
     minhook/src/hde/hde64.c
     minhook/src/hde/hde32.c
+
+    minhook/src/buffer.h
+    minhook/src/hde/hde32.h
+    minhook/src/hde/hde64.h
+    minhook/include/MinHook.h
+    minhook/src/hde/pstdint.h
+    minhook/src/hde/table32.h
+    minhook/src/hde/table64.h
+    minhook/src/trampoline.h
 )
 
 organizeFiles(${sources})
