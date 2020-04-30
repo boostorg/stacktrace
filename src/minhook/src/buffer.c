@@ -162,7 +162,7 @@ static PMEMORY_BLOCK GetMemoryBlock(LPVOID pOrigin)
     minAddr = (ULONG_PTR)si.lpMinimumApplicationAddress;
     maxAddr = (ULONG_PTR)si.lpMaximumApplicationAddress;
 
-    // pOrigin ± 512MB
+    // pOrigin +- 512MB
     if ((ULONG_PTR)pOrigin > MAX_MEMORY_RANGE && minAddr < (ULONG_PTR)pOrigin - MAX_MEMORY_RANGE)
         minAddr = (ULONG_PTR)pOrigin - MAX_MEMORY_RANGE;
 
