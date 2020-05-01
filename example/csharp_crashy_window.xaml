@@ -10,9 +10,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Content="Normal .net exception" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NormalExceptionButton"/>
-        <Button Grid.Row="1" Content="Get call stack" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeGetCallStack"/>
+        <Button Grid.Row="1" Content="Get call stack" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeGetCallStackButton"/>
+        <Button Grid.Row="2" Content="Native crash" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashButton"/>
     </Grid>
 </Window>

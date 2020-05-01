@@ -63,16 +63,15 @@ namespace boost {
         #endif
         };
 
+        exception_handler::__C_specific_handler_pfunc exception_handler::__C_specific_handler_Original = nullptr;
         exception_handler::exception_function_handler exception_handler::handler_ = nullptr;
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
         LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch) {
-
             unsigned int code = rec->ExceptionCode;
 #else
         void exception_handler::posixSignalHandler(int signum) BOOST_NOEXCEPT {
             unsigned int code = signum;
-
 #endif
             const char* str = "Unknown exception code";
             auto it = exception_handler::platform_exception_codes.find(code);
@@ -94,7 +93,7 @@ namespace boost {
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             inExceptionCall = false;
-            return EXCEPTION_CONTINUE_SEARCH;
+            return __C_specific_handler_Original(rec, frame, context, dispatch);
 #else
             // Default signal handler for that signal
             ::signal(signum, SIG_DFL);
@@ -116,8 +115,22 @@ namespace boost {
             bool ok = true;
 
             #if defined(BOOST_WINDOWS)
-            //GetModuleHandleA();
+            HMODULE h = GetModuleHandleA("vcruntime140_clr0400");
+            if (!h) {
+                return false;
+            }
+            FARPROC p = GetProcAddress(h, "__C_specific_handler");
+            MH_STATUS r = MH_Initialize();
 
+            if ( (r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
+                MH_CreateHookApi(L"vcruntime140_clr0400", "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&__C_specific_handler_Original) == MH_OK &&
+                MH_EnableHook(p) == MH_OK
+            )
+            {
+                return true;
+            }
+
+            return false;
             #endif
 
             #ifndef WINDOWS_STYLE_EXCEPTION_HANDLING

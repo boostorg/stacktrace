@@ -11,9 +11,61 @@ std::string getCallStack()
     return to_string(boost::stacktrace::stacktrace());
 }
 
+// Must reside behind "#pragma unmanaged", otherwise crash will be handled by managed exception handler.
+void crashingFunction()
+{
+    int* p = nullptr;
+    *p = 0;
+}
+
 #pragma managed
+#define BOOST_STACKTRACE
+#include <boost/stacktrace/exception_handler.hpp>
+
+
+public ref class NativeException : public System::Exception
+{
+public:
+    System::String^ _stackTrace;
+    System::String^ _message;
+
+    NativeException(const std::string message, const std::string stackTrace)
+    {
+        _stackTrace = gcnew System::String(stackTrace.c_str());
+        _message = gcnew System::String(message.c_str());
+    }
+
+    property System::String^ StackTrace
+    {
+        System::String^ get() override
+        {
+            return _stackTrace;
+        }
+    }
+
+    property System::String^ Message
+    {
+        System::String^ get() override
+        {
+            return _message;
+        }
+    }
+
+    System::String^ ToString() override
+    {
+        return _message + "\n" + _stackTrace;
+    }
+};
+
+
+void throwDotNetException(boost::stacktrace::low_level_exception_info& ex_info)
+{
+    throw gcnew NativeException(ex_info.name, getCallStack());
+}
 
 using namespace System;
+
+
 
 public ref class TestCppCrash
 {
@@ -22,5 +74,14 @@ public:
     {
         return gcnew String(::getCallStack().c_str());
     }
+
+    static void initCppUnhandledExceptionDispatcher() {
+        static boost::stacktrace::exception_handler handler(throwDotNetException);
+    }
+
+    static void crashingFunction() {
+        ::crashingFunction();
+    }
+
 };
 

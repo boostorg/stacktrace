@@ -13,7 +13,7 @@
 #include <map>
 
 #if defined(BOOST_WINDOWS)
-//#define WINDOWS_STYLE_EXCEPTION_HANDLING
+    #define WINDOWS_STYLE_EXCEPTION_HANDLING
 #endif
 
 #ifdef WINDOWS_STYLE_EXCEPTION_HANDLING
@@ -37,15 +37,6 @@ namespace boost {
         {
         public:
             typedef std::function<void(low_level_exception_info& ex_info)> exception_function_handler;
-        private:
-            static exception_function_handler handler_;
-
-        #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-            LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
-        #else
-            static void posixSignalHandler(int signum) BOOST_NOEXCEPT;
-        #endif
-
         public:
             static const std::map<unsigned int, const char*> platform_exception_codes;
 
@@ -54,6 +45,18 @@ namespace boost {
             bool init(exception_function_handler handler) BOOST_NOEXCEPT;
             void deinit() BOOST_NOEXCEPT;
             ~exception_handler() BOOST_NOEXCEPT;
+
+        private:
+            static exception_function_handler handler_;
+
+#if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+            using __C_specific_handler_pfunc = LONG(WINAPI*)(struct _EXCEPTION_RECORD*, void*, struct _CONTEXT*, struct _DISPATCHER_CONTEXT*);
+            static __C_specific_handler_pfunc __C_specific_handler_Original;
+
+            static LONG WINAPI __C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
+#else
+            static void posixSignalHandler(int signum) BOOST_NOEXCEPT;
+#endif
         };
     };
 };

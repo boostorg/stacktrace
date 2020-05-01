@@ -16,6 +16,8 @@ string(REPLACE "/EHsc" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 # "Basic Run-time checks" - "Both (/RTC1, equiv. to /RTCsu) (/RTC1)" => "Default"
 string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+# Being able to debug dll
+set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} /ASSEMBLYDEBUG")
 
 # C++ crashy dll
 set(srcs cpp_crashy_managed_dll.cpp)
@@ -27,3 +29,4 @@ set_property(TARGET cpp_crashy_managed_dll PROPERTY VS_DOTNET_TARGET_FRAMEWORK_V
 target_include_directories(cpp_crashy_managed_dll PRIVATE ../../../..)
 boost_project(cpp_crashy_managed_dll)
 
+target_link_libraries( cpp_crashy_managed_dll PUBLIC boost_stacktrace )

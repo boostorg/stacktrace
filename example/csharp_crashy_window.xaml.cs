@@ -33,13 +33,17 @@ namespace csharp_crashy_app
                 testClass.testString = "testX";
             }
 
-            if (e.Source == NativeGetCallStack)
+            if (e.Source == NativeGetCallStackButton)
             {
                 Console.Clear();
                 Console.WriteLine("----------- C++ native call stack -----------");
                 Console.WriteLine(TestCppCrash.getCallStack());
             }
 
+            if (e.Source == NativeCrashButton)
+            {
+                TestCppCrash.crashingFunction();
+            }
         }
     }
 
