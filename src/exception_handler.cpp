@@ -24,6 +24,8 @@
 #endif
     #include <boost/stacktrace/safe_dump_to.hpp>
 
+// Requires C++ 11 features
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
 
 namespace boost {
 
@@ -154,3 +156,5 @@ namespace boost {
 
     };
 };
+
+#endif //__cplusplus

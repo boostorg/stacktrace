@@ -5,7 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 // No include guards! Intentionally.
-#if defined(BOOST_STACKTRACE) && __cplusplus < 201103L      // requires C++11 features
+#if defined(BOOST_STACKTRACE) && ((defined(_MSVC_LANG) && _MSVC_LANG < 201103L) || __cplusplus < 201103L)
     #undef BOOST_STACKTRACE
 #endif
 
