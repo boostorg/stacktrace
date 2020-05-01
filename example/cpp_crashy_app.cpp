@@ -15,7 +15,7 @@ BOOST_NOINLINE void bar(int i) {
     if (i >= 0) {
         foo(a[i]);
     } else {
-        int* pb = nullptr;
+        int* pb = 0;
         *pb = 0;
     }
 }
