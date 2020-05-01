@@ -33,6 +33,7 @@ set_target_properties(boost_stacktrace_windbg PROPERTIES FOLDER stacktrace/src)
 set(sources 
     ${headers}
     ../Build/Jamfile.v2
+    exception_handler.cpp
     minhook/src/buffer.c
     minhook/src/hook.c
     minhook/src/trampoline.c
@@ -47,14 +48,16 @@ set(sources
     minhook/src/hde/table32.h
     minhook/src/hde/table64.h
     minhook/src/trampoline.h
+    minhook/LICENSE.txt
 )
 
 organizeFiles(${sources})
 
 add_library(boost_stacktrace STATIC ${sources})
+target_include_directories(boost_stacktrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(boost_stacktrace PRIVATE ../../..)
 target_compile_definitions(boost_stacktrace PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
 set_target_properties(boost_stacktrace PROPERTIES FOLDER stacktrace/src)
 
-#boost_project(boost_stacktrace)
+boost_project(boost_stacktrace)
 

@@ -13,6 +13,7 @@ set(srcs
     cpp_crashy_app.cpp
     ../CMakeLists.txt
     ../cmake/boost_helpers.cmake
+    ../Build/Jamfile.v2
 )
 
 organizeFiles(${srcs})
@@ -28,6 +29,7 @@ target_compile_definitions(cpp_crashy_app PRIVATE BOOST_ALL_NO_LIB)
 target_link_libraries( cpp_crashy_app PUBLIC
     boost_date_time
     boost_filesystem
+    boost_stacktrace
 )
 
 # C++ crashy dll

@@ -5,6 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/array.hpp>
+#include <signal.h>     // ::signal, ::raise
+
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
@@ -13,7 +15,8 @@ BOOST_NOINLINE void bar(int i) {
     if (i >= 0) {
         foo(a[i]);
     } else {
-        std::terminate();
+        int* pb = nullptr;
+        *pb = 0;
     }
 }
 
@@ -24,21 +27,17 @@ BOOST_NOINLINE void foo(int i) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //[getting_started_terminate_handlers
-
-#include <signal.h>     // ::signal, ::raise
+#include <boost/stacktrace/exception_handler.hpp>
 #include <boost/stacktrace.hpp>
 
-void my_signal_handler(int signum) {
-    ::signal(signum, SIG_DFL);
+void my_signal_handler(boost::stacktrace::low_level_exception_info& ex_info) {
     boost::stacktrace::safe_dump_to("./backtrace.dump");
-    ::raise(SIGABRT);
 }
 //]
 
 void setup_handlers() {
 //[getting_started_setup_handlers
-    ::signal(SIGSEGV, &my_signal_handler);
-    ::signal(SIGABRT, &my_signal_handler);
+    static boost::stacktrace::exception_handler ex_handler(&my_signal_handler);
 //]
 }
 
