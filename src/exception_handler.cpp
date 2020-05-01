@@ -13,6 +13,11 @@
     #include <signal.h>     // ::signal, ::raise
 #endif
 
+// Linked implementation
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#include <boost/stacktrace/detail/frame_msvc.ipp>
+#include <boost/stacktrace/safe_dump_to.hpp>
+
 
 namespace boost {
 
@@ -55,6 +60,9 @@ namespace boost {
         exception_handler::exception_function_handler exception_handler::handler_ = nullptr;
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+        LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch) {
+
+            unsigned int code = rec->ExceptionCode;
 #else
         void exception_handler::posixSignalHandler(int signum) BOOST_NOEXCEPT {
             unsigned int code = signum;
@@ -79,6 +87,8 @@ namespace boost {
             }
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+            inExceptionCall = false;
+            return EXCEPTION_CONTINUE_SEARCH;
 #else
             // Default signal handler for that signal
             ::signal(signum, SIG_DFL);
@@ -88,12 +98,10 @@ namespace boost {
             inExceptionCall = false;
         }
 
-        exception_handler::exception_handler() BOOST_NOEXCEPT
-        {
+        exception_handler::exception_handler() BOOST_NOEXCEPT {
         }
 
-        exception_handler::exception_handler(exception_function_handler handler) BOOST_NOEXCEPT
-        {
+        exception_handler::exception_handler(exception_function_handler handler) BOOST_NOEXCEPT {
             init(handler);
         }
 
@@ -101,11 +109,18 @@ namespace boost {
             handler_ = handler;
             bool ok = true;
 
+            #if defined(BOOST_WINDOWS)
+            //GetModuleHandleA();
+
+            #endif
+
+            #ifndef WINDOWS_STYLE_EXCEPTION_HANDLING
             for (const auto& kv : platform_exception_codes) {
                 if (::signal(kv.first, posixSignalHandler) == SIG_ERR) {
                     ok = false;
                 }
             }
+            #endif
 
             return ok;
         }

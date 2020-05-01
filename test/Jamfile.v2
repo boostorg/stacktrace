@@ -53,6 +53,7 @@ local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <
 local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
 local LINKSHARED_NOOP         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop          $(NOOP_DEPS) ;
 local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic         $(BASIC_DEPS) $(FORCE_SYMBOL_EXPORT) ;
+local LINKSTATIC_STACKTRACE   = <link>static <define>BOOST_STACKTRACE          <library>/boost/stacktrace//boost_stacktrace               ;
 
 # Libs with debug symbols
 lib test_impl_lib_backtrace         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_BT) ;
@@ -198,7 +199,7 @@ for local p in [ glob ../example/*.cpp ]
     local additional_dependency = ;
     if $(target_name) = "cpp_crashy_app"
     {
-        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <library>boost_stacktrace <target-os>linux:<library>rt ;
+        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }
 
     if $(target_name) = "throwing_st"
@@ -212,6 +213,7 @@ for local p in [ glob ../example/*.cpp ]
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_WIND_CACHED)  $(additional_dependency)    : windbg_cached_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_NOOP)         $(additional_dependency)    : noop_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BASIC)        $(additional_dependency)    : basic_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSTATIC_STACKTRACE)   $(additional_dependency)    : stacktrace_$(p[1]:B) ] ;
 
 
     ##### Tests with disabled debug symbols #####
@@ -222,6 +224,7 @@ for local p in [ glob ../example/*.cpp ]
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_WIND_CACHED) $(additional_dependency)    : windbg_cached_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_NOOP)        $(additional_dependency)    : noop_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_BASIC)       $(additional_dependency)    : basic_$(p[1]:B)_no_dbg ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSTATIC_STACKTRACE)  $(additional_dependency)    : stacktrace_$(p[1]:B)_no_dbg ] ;
 
 }
 

@@ -134,11 +134,13 @@ lib boost_stacktrace
     ../src/minhook/src/trampoline.c
     ../src/minhook/src/hde/hde64.c
     ../src/minhook/src/hde/hde32.c
+    ../src/exception_handler.cpp
   : # requirements
     <warnings>all
-    <link>static:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <link>static:<define>BOOST_STACKTRACE=1
   : # default build
   : # usage-requirements
+    #<link>static:<define>BOOST_STACKTRACE=1
   ;
 
 libraries += boost_stacktrace ;

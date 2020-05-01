@@ -24,7 +24,7 @@ boost_project(cpp_crashy_app)
 target_include_directories(cpp_crashy_app PRIVATE ../../..)
 set_target_properties(cpp_crashy_app PROPERTIES FOLDER stacktrace/example)
 
-target_compile_definitions(cpp_crashy_app PRIVATE BOOST_ALL_NO_LIB)
+target_compile_definitions(cpp_crashy_app PRIVATE BOOST_ALL_NO_LIB;BOOST_STACKTRACE)
 
 target_link_libraries( cpp_crashy_app PUBLIC
     boost_date_time

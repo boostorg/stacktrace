@@ -26,6 +26,7 @@ BOOST_NOINLINE void foo(int i) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef BOOST_STACKTRACE
 //[getting_started_terminate_handlers
 #include <boost/stacktrace/exception_handler.hpp>
 #include <boost/stacktrace.hpp>
@@ -40,6 +41,11 @@ void setup_handlers() {
     static boost::stacktrace::exception_handler ex_handler(&my_signal_handler);
 //]
 }
+#else
+void setup_handlers()
+{
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

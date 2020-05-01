@@ -16,6 +16,7 @@ endif()
 
 file(GLOB_RECURSE headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
     ${stacktraceIncludeDir}/*.hpp 
+    ${stacktraceIncludeDir}/*.h 
     ${stacktraceIncludeDir}/*.ipp
 )
 
@@ -56,7 +57,7 @@ organizeFiles(${sources})
 add_library(boost_stacktrace STATIC ${sources})
 target_include_directories(boost_stacktrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(boost_stacktrace PRIVATE ../../..)
-target_compile_definitions(boost_stacktrace PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
+target_compile_definitions(boost_stacktrace PRIVATE BOOST_STACKTRACE=1)
 set_target_properties(boost_stacktrace PROPERTIES FOLDER stacktrace/src)
 
 boost_project(boost_stacktrace)

@@ -6,6 +6,7 @@
 
 #ifndef BOOST_EXCEPTION_HANDLER_HPP
 #define BOOST_EXCEPTION_HANDLER_HPP
+#ifdef BOOST_STACKTRACE
 
 #include <boost/config.hpp>
 #include <functional>
@@ -15,6 +16,9 @@
 //#define WINDOWS_STYLE_EXCEPTION_HANDLING
 #endif
 
+#ifdef WINDOWS_STYLE_EXCEPTION_HANDLING
+    #include <windows.h>                    //WINAPI, etc...
+#endif
 
 namespace boost {
     namespace stacktrace {
@@ -37,6 +41,7 @@ namespace boost {
             static exception_function_handler handler_;
 
         #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+            LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
         #else
             static void posixSignalHandler(int signum) BOOST_NOEXCEPT;
         #endif
@@ -53,6 +58,7 @@ namespace boost {
     };
 };
 
+#endif //BOOST_STACKTRACE
 #endif //BOOST_EXCEPTION_HANDLER_HPP
 
 
