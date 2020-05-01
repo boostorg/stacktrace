@@ -5,6 +5,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 // No include guards! Intentionally.
+#if defined(BOOST_STACKTRACE) && __cplusplus < 201103L      // requires C++11 features
+    #undef BOOST_STACKTRACE
+#endif
+
 #if defined(BOOST_STACKTRACE)
     // Including boost/stacktrace library's API, static linking
     #define BOOST_STACKTRACE_LINK
