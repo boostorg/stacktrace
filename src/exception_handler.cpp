@@ -65,7 +65,9 @@ namespace boost {
         #endif
         };
 
+#if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
         exception_handler::__C_specific_handler_pfunc exception_handler::__C_specific_handler_Original = nullptr;
+#endif
         exception_handler::exception_function_handler exception_handler::handler_ = nullptr;
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
