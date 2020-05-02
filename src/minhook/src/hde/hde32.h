@@ -11,6 +11,7 @@
 
 #ifndef _HDE32_H_
 #define _HDE32_H_
+#if defined(_WIN32) //Windows only
 
 /* stdint.h - C99 standard header
  * http://en.wikipedia.org/wiki/stdint.h
@@ -104,4 +105,5 @@ unsigned int hde32_disasm(const void *code, hde32s *hs);
 }
 #endif
 
+#endif //_WIN32
 #endif /* _HDE32_H_ */

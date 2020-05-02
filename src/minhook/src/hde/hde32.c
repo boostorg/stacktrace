@@ -7,7 +7,7 @@
  *
  */
 
-#if defined(_M_IX86) || defined(__i386__)
+#if defined(_WIN32) && (defined(_M_IX86) || defined(__i386__))
 
 #include "hde32.h"
 #include "table32.h"
@@ -325,4 +325,4 @@ unsigned int hde32_disasm(const void *code, hde32s *hs)
     return (unsigned int)hs->len;
 }
 
-#endif // defined(_M_IX86) || defined(__i386__)
+#endif // defined(_WIN32) && (defined(_M_IX86) || defined(__i386__))

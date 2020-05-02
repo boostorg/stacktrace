@@ -29,7 +29,7 @@
  */
 
 #pragma once
-
+#if defined(_WIN32) //Windows only
 #pragma pack(push, 1)
 
 // Structs for writing x86/x64 instructions.
@@ -105,3 +105,5 @@ typedef struct _TRAMPOLINE
 } TRAMPOLINE, *PTRAMPOLINE;
 
 BOOL CreateTrampolineFunction(PTRAMPOLINE ct);
+
+#endif //_WIN32

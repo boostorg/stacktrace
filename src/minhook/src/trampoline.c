@@ -27,7 +27,7 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#if defined(_WIN32) //Windows only
 #include <windows.h>
 
 #ifndef ARRAYSIZE
@@ -316,3 +316,5 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 
     return TRUE;
 }
+
+#endif //_WIN32

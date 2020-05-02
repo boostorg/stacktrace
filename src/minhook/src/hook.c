@@ -27,7 +27,7 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#if defined(_WIN32) //Windows only
 #include <windows.h>
 #include <tlhelp32.h>
 #include <limits.h>
@@ -889,3 +889,5 @@ const char * WINAPI MH_StatusToString(MH_STATUS status)
 
     return "(unknown)";
 }
+
+#endif //_WIN32
