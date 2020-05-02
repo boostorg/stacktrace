@@ -135,7 +135,7 @@ lib boost_stacktrace
     ../src/minhook/src/hde/hde64.c
     ../src/minhook/src/hde/hde32.c
     ../src/exception_handler.cpp
-  : # requirements
+  : requirements <include>../src
     <warnings>all
     <link>static:<define>BOOST_STACKTRACE=1
   : # default build
