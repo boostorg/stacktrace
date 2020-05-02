@@ -20,6 +20,9 @@
     #include <windows.h>                    //WINAPI, etc...
 #endif
 
+// Requires C++ 11 features
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
+
 namespace boost {
     namespace stacktrace {
 
@@ -60,6 +63,8 @@ namespace boost {
         };
     };
 };
+
+#endif //__cplusplus
 
 #endif //BOOST_STACKTRACE
 #endif //BOOST_EXCEPTION_HANDLER_HPP
