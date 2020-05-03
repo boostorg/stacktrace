@@ -13,6 +13,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Content="Normal .net exception" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NormalExceptionButton"/>
@@ -20,5 +21,6 @@
         <Button Grid.Row="2" Content="Native crash" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashButton"/>
         <Button Grid.Row="3" Content="Native crash (catched by managed)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashCatchedByManagedButton"/>
         <Button Grid.Row="4" Content="Native crash (via Invoke)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashViaInvokeButton"/>
+        <Button Grid.Row="5" Content="Native crash (catched by native)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashCatchedByNativeButton"/>
     </Grid>
 </Window>

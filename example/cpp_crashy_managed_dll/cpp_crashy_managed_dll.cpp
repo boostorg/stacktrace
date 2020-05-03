@@ -19,6 +19,18 @@ void crashingFunction()
     *p = 0;
 }
 
+void crashingFunctionBehindNativeCatch()
+{
+    try {
+        crashingFunction();
+    }
+    catch (...) {
+    
+    }
+
+}
+
+
 #pragma managed
 
 
@@ -94,6 +106,10 @@ public:
 
     static void crashingFunction() {
         ::crashingFunction();
+    }
+
+    static void crashingFunctionBehindNativeCatch() {
+        ::crashingFunctionBehindNativeCatch();
     }
 
 };

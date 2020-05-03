@@ -74,7 +74,10 @@ namespace csharp_crashy_app
                 typeof(TestCppCrash).GetMethod("crashingFunction", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).Invoke(null, new object[] { });
             }
 
-
+            if (e.Source == NativeCrashCatchedByNativeButton)
+            {
+                TestCppCrash.crashingFunctionBehindNativeCatch();
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-# Copyright 2018 Tarmo Pikaro
+# Copyright 2020 Tarmo Pikaro
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
 
@@ -18,6 +18,9 @@ string(REPLACE "/EHsc" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 # Being able to debug dll
 set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} /ASSEMBLYDEBUG")
+
+# Disable incremental linking (Shows as warning for clr compiled dll's)
+string(REPLACE "/INCREMENTAL" "" CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 
 # C++ crashy dll
 set(srcs cpp_crashy_managed_dll.cpp)
