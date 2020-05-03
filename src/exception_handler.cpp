@@ -74,8 +74,11 @@ namespace boost {
         LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch) {
             unsigned int code = rec->ExceptionCode;
 
-            // .net exceptions - don't care, let .net handle them. (We also can trigger them)
-            if (code == 0xe0434352 || code == 0xe0564552)
+            if (
+                // .net exceptions - don't care, let .net handle them. (We also can trigger them)
+                code == 0xe0434352 || code == 0xe0564552 ||
+                // STATUS_UNWIND_CONSOLIDATE (occurs when called via Invoke, may be related to unwind of stack frame) - we don't care about it anyway.
+                code == 0x80000029)
             {
                 return __C_specific_handler_Original(rec, frame, context, dispatch);
             }

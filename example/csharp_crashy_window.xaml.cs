@@ -68,6 +68,13 @@ namespace csharp_crashy_app
             {
                 NativeCrash_ManagedGuarded();
             }
+
+            if (e.Source == NativeCrashViaInvokeButton)
+            {
+                typeof(TestCppCrash).GetMethod("crashingFunction", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).Invoke(null, new object[] { });
+            }
+
+
         }
     }
 
