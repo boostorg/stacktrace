@@ -62,6 +62,16 @@ void throwDotNetException(boost::stacktrace::low_level_exception_info& ex_info)
     throw gcnew NativeException(ex_info.name, getCallStack());
 }
 
+void enableCppUnhandledExceptionDispatcher(bool b) {
+    static boost::stacktrace::exception_handler handler(throwDotNetException);
+
+    if (!b)
+    {
+        handler.deinit();
+    }
+}
+
+
 using namespace System;
 
 
@@ -75,7 +85,11 @@ public:
     }
 
     static void initCppUnhandledExceptionDispatcher() {
-        static boost::stacktrace::exception_handler handler(throwDotNetException);
+        enableCppUnhandledExceptionDispatcher(true);
+    }
+
+    static void deinitCppUnhandledExceptionDispatcher() {
+        enableCppUnhandledExceptionDispatcher(false);
     }
 
     static void crashingFunction() {

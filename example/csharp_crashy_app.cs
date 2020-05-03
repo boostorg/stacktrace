@@ -29,6 +29,12 @@ public partial class App : Application
         e.Handled = true;
     }
 
+    protected override void OnExit(ExitEventArgs e)
+    {
+        TestCppCrash.deinitCppUnhandledExceptionDispatcher();
+        base.OnExit(e);
+    }
+
     [DllImport("kernel32")]
     private extern static bool SetConsoleFont(IntPtr hOutput, uint index);
 

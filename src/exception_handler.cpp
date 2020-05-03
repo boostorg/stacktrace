@@ -158,17 +158,19 @@ namespace boost {
             
             handler_ = nullptr;
 
+            #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             if (__C_specific_handler_proc)
             {
-                MH_STATUS r = MH_DisableHook(__C_specific_handler_proc);
+                MH_STATUS r = MH_RemoveHook(__C_specific_handler_proc);
                 r = MH_Uninitialize();
                 __C_specific_handler_proc = nullptr;
             }
+            #endif
 
         }
         
         exception_handler::~exception_handler() BOOST_NOEXCEPT {
-            //deinit();
+            deinit();
         }
 
     };
