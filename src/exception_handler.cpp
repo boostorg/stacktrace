@@ -164,6 +164,7 @@ namespace boost {
                 MH_STATUS r = MH_RemoveHook(__C_specific_handler_proc);
                 r = MH_Uninitialize();
                 __C_specific_handler_proc = nullptr;
+                __C_specific_handler_Original = nullptr;
             }
             #endif
 

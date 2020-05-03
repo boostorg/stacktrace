@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,28 @@ namespace csharp_crashy_app
             InitializeComponent();
         }
 
+        [HandleProcessCorruptedStateExceptions]
+        void NativeCrash_ManagedGuarded()
+        {
+            try
+            {
+                TestCppCrash.crashingFunction();
+            }
+            catch (Exception ex)
+            {
+                WriteLine("NativeCrash_ManagedGuarded exception: " + ex.ToString());
+            }
+        }
+
+        void WriteLine(string format, params object[] arg)
+        {
+            String msg = String.Format(format, arg);
+            Console.Clear();
+            Console.WriteLine(msg);
+            //MessageBox.Show(msg);
+        }
+
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (e.Source == NormalExceptionButton)
@@ -33,14 +56,17 @@ namespace csharp_crashy_app
 
             if (e.Source == NativeGetCallStackButton)
             {
-                Console.Clear();
-                Console.WriteLine("----------- C++ native call stack -----------");
-                Console.WriteLine(TestCppCrash.getCallStack());
+                WriteLine(TestCppCrash.getCallStack());
             }
 
             if (e.Source == NativeCrashButton)
             {
                 TestCppCrash.crashingFunction();
+            }
+
+            if (e.Source == NativeCrashCatchedByManagedButton)
+            {
+                NativeCrash_ManagedGuarded();
             }
         }
     }
