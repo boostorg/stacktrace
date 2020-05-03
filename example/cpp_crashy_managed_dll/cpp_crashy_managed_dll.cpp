@@ -19,15 +19,17 @@ void crashingFunction()
     *p = 0;
 }
 
+void throwManagedException(const std::string& msg);
+
+// C++ catches exception, but it can also see where crash occurred
 void crashingFunctionBehindNativeCatch()
 {
     try {
         crashingFunction();
     }
     catch (...) {
-    
+        throwManagedException("crashingFunctionBehindNativeCatch: crashed");
     }
-
 }
 
 
@@ -73,6 +75,12 @@ void throwDotNetException(boost::stacktrace::low_level_exception_info& ex_info)
 {
     throw gcnew NativeException(ex_info.name, getCallStack());
 }
+
+void throwManagedException(const std::string& msg)
+{
+    throw gcnew NativeException(msg, getCallStack());
+}
+
 
 void enableCppUnhandledExceptionDispatcher(bool b) {
     static boost::stacktrace::exception_handler handler(throwDotNetException);
