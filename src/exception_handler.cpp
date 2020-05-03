@@ -73,6 +73,12 @@ namespace boost {
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
         LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch) {
             unsigned int code = rec->ExceptionCode;
+
+            // .net exceptions - don't care, let .net handle them. (We also can trigger them)
+            if (code == 0xe0434352 || code == 0xe0564552)
+            {
+                return __C_specific_handler_Original(rec, frame, context, dispatch);
+            }
 #else
         void exception_handler::posixSignalHandler(int signum) BOOST_NOEXCEPT {
             unsigned int code = signum;
@@ -83,20 +89,16 @@ namespace boost {
                 str = it->second;
             }
 
-            static bool inExceptionCall = false;
-
-            low_level_exception_info exinfo;
-            exinfo.code = code;
-            exinfo.name = str;
-            exinfo.handled = false;
-            if (handler_ != nullptr && !inExceptionCall)
+            if (handler_ != nullptr)
             {
-                inExceptionCall = true;
+                low_level_exception_info exinfo;
+                exinfo.code = code;
+                exinfo.name = str;
+                exinfo.handled = false;
                 handler_(exinfo);
             }
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-            inExceptionCall = false;
             return __C_specific_handler_Original(rec, frame, context, dispatch);
 #else
             // Default signal handler for that signal
@@ -104,10 +106,14 @@ namespace boost {
             // Abort application. (On windows native app cannot auto-retry, as execution continue from same place as before, exception loop continues)
             ::raise(SIGABRT);       // This will trigger also exception handler call, which we are handling, inExceptionCall will guard against double call.
 #endif
-            inExceptionCall = false;
         }
 
-        exception_handler::exception_handler() BOOST_NOEXCEPT {
+        exception_handler::exception_handler() BOOST_NOEXCEPT
+#if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+            :
+            __C_specific_handler_proc(nullptr) 
+#endif
+        {
         }
 
         exception_handler::exception_handler(exception_function_handler handler) BOOST_NOEXCEPT {
@@ -118,26 +124,26 @@ namespace boost {
             handler_ = handler;
             bool ok = true;
 
-            #if defined(BOOST_WINDOWS)
+            int count = exception_handler::platform_exception_codes.size();
+
+            #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             HMODULE h = GetModuleHandleA("vcruntime140_clr0400");
             if (!h) {
                 return false;
             }
-            FARPROC p = GetProcAddress(h, "__C_specific_handler");
+            __C_specific_handler_proc = (void*)GetProcAddress(h, "__C_specific_handler");
             MH_STATUS r = MH_Initialize();
 
             if ( (r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
                 MH_CreateHookApi(L"vcruntime140_clr0400", "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&__C_specific_handler_Original) == MH_OK &&
-                MH_EnableHook(p) == MH_OK
+                MH_EnableHook(__C_specific_handler_proc) == MH_OK
             )
             {
                 return true;
             }
 
             return false;
-            #endif
-
-            #ifndef WINDOWS_STYLE_EXCEPTION_HANDLING
+            #else
             for (const auto& kv : platform_exception_codes) {
                 if (::signal(kv.first, posixSignalHandler) == SIG_ERR) {
                     ok = false;
@@ -149,11 +155,20 @@ namespace boost {
         }
 
         void exception_handler::deinit() BOOST_NOEXCEPT {
+            
             handler_ = nullptr;
+
+            if (__C_specific_handler_proc)
+            {
+                MH_STATUS r = MH_DisableHook(__C_specific_handler_proc);
+                r = MH_Uninitialize();
+                __C_specific_handler_proc = nullptr;
+            }
+
         }
         
         exception_handler::~exception_handler() BOOST_NOEXCEPT {
-            deinit();
+            //deinit();
         }
 
     };

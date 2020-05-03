@@ -23,8 +23,6 @@ namespace csharp_crashy_app
             InitializeComponent();
         }
 
-        public object Screen { get; }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (e.Source == NormalExceptionButton)

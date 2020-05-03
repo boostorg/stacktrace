@@ -5,6 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 #pragma unmanaged
 #include <boost/stacktrace.hpp>
+#include <boost/stacktrace/exception_handler.hpp>
 
 std::string getCallStack()
 {
@@ -19,8 +20,6 @@ void crashingFunction()
 }
 
 #pragma managed
-#define BOOST_STACKTRACE
-#include <boost/stacktrace/exception_handler.hpp>
 
 
 public ref class NativeException : public System::Exception

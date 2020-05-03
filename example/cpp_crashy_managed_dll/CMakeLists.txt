@@ -30,3 +30,5 @@ target_include_directories(cpp_crashy_managed_dll PRIVATE ../../../..)
 boost_project(cpp_crashy_managed_dll)
 
 target_link_libraries( cpp_crashy_managed_dll PUBLIC boost_stacktrace )
+target_compile_definitions(cpp_crashy_managed_dll PRIVATE BOOST_STACKTRACE=1)
+

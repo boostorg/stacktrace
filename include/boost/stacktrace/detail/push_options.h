@@ -5,10 +5,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 // No include guards! Intentionally.
-#if defined(BOOST_STACKTRACE) && ((defined(_MSVC_LANG) && _MSVC_LANG < 201103L) || __cplusplus < 201103L)
-    #undef BOOST_STACKTRACE
-#endif
-
 #if defined(BOOST_STACKTRACE)
     // Including boost/stacktrace library's API, static linking
     #define BOOST_STACKTRACE_LINK

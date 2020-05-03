@@ -57,6 +57,7 @@ namespace boost {
             static __C_specific_handler_pfunc __C_specific_handler_Original;
 
             static LONG WINAPI __C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
+            void* __C_specific_handler_proc;
 #else
             static void posixSignalHandler(int signum) BOOST_NOEXCEPT;
 #endif
