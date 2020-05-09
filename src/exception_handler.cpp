@@ -167,9 +167,6 @@ namespace boost {
 
         bool exception_handler::init(exception_handler::exception_function_handler handler) BOOST_NOEXCEPT {
             handler_ = handler;
-            bool ok = true;
-
-            int count = exception_handler::platform_exception_codes.size();
 
             #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             const wchar_t* dll2Hook = L"vcruntime140_clr0400";
@@ -204,14 +201,15 @@ namespace boost {
 
             return false;
             #else
+            bool ok = true;
             for (const auto& kv : platform_exception_codes) {
                 if (::signal(kv.first, posixSignalHandler) == SIG_ERR) {
                     ok = false;
                 }
             }
+            return ok;
             #endif
 
-            return ok;
         }
 
         void exception_handler::deinit() BOOST_NOEXCEPT {

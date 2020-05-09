@@ -30,6 +30,7 @@ init(..)
 
 macro(boost_project project)
     #target_compile_options(${project} PRIVATE /W4 /WX)
+    target_compile_options(${project} PRIVATE /W4)
     target_include_directories(${project} PRIVATE ${srcRoot}/include)
 endmacro()
 
