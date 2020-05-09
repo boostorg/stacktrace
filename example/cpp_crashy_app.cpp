@@ -128,7 +128,7 @@ int run_5(const char*[]) {
 
 // Example of translating low level exception to standard exceptions.
 // Same thing can be done also using catch(...), faulty function will be preserved in call stack 
-// if you capture it in catch.
+// if you capture it in catch. With this approach however you can get exception code and name.
 void translate_exception(boost::stacktrace::low_level_exception_info& ex_info) {
     std::string s;
 
