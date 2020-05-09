@@ -11,6 +11,17 @@ macro(init)
     endif ()
 
     set (srcRoot ${CMAKE_CURRENT_SOURCE_DIR}/${srcRoot})
+
+    #https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+    #if(MSVC)
+    #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
+    #endif()
+
+    # Can be tested with following code snippet:
+    # #define STRX_(x)  #x
+    # #define STRX(x)  STRX_(x)
+    # #pragma message(STRX(__cplusplus))
+
 endmacro()
 
 # After include we set srcRoot to be default one

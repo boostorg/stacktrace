@@ -26,7 +26,7 @@ BOOST_NOINLINE void foo(int i) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef BOOST_STACKTRACE
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
 //[getting_started_terminate_handlers
 #include <boost/stacktrace/exception_handler.hpp>
 #include <boost/stacktrace.hpp>
