@@ -132,7 +132,7 @@ namespace boost {
             // and 0x406d1388 (thread named, http://blogs.msdn.com/b/stevejs/archive/2005/12/19/505815.aspx).
 
             if (code < 0x80000000)
-                return EXCEPTION_CONTINUE_SEARCH;
+                return UnhandledExceptionFilter_Original(expointers);
             
             const char* str = "Unknown exception code";
             auto it = exception_handler::platform_exception_codes.find(code);
