@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
@@ -17,11 +18,12 @@ using System.Windows.Shapes;
 
 namespace csharp_crashy_app
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
         }
 
         [HandleProcessCorruptedStateExceptions]
@@ -79,6 +81,23 @@ namespace csharp_crashy_app
                 TestCppCrash.crashingFunctionBehindNativeCatch();
             }
         }
+
+        bool _IsNativeExceptionHandlerEnabled = true;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsNativeExceptionHandlerEnabled {
+            get {
+                return _IsNativeExceptionHandlerEnabled;
+            }
+
+            set {
+                _IsNativeExceptionHandlerEnabled = value;
+                TestCppCrash.enableCppUnhandledExceptionDispatcher(value);
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(IsNativeExceptionHandlerEnabled)));
+            }
+        }
+
     }
 
     public class TestClass

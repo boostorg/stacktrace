@@ -104,12 +104,8 @@ public:
         return gcnew String(::getCallStack().c_str());
     }
 
-    static void initCppUnhandledExceptionDispatcher() {
-        enableCppUnhandledExceptionDispatcher(true);
-    }
-
-    static void deinitCppUnhandledExceptionDispatcher() {
-        enableCppUnhandledExceptionDispatcher(false);
+    static void enableCppUnhandledExceptionDispatcher(bool b) {
+        ::enableCppUnhandledExceptionDispatcher(b);
     }
 
     static void crashingFunction() {
