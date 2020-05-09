@@ -85,6 +85,12 @@ namespace csharp_crashy_app
             {
                 TestCppCrash.nativeJumpByNullFunction();
             }
+
+            if (e.Source == NativeStackOverflowButton)
+            {
+                TestCppCrash.nativeStackOverflowFunction();
+            }
+
         }
 
         bool _IsNativeExceptionHandlerEnabled = true;

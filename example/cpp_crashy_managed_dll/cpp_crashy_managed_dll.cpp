@@ -22,9 +22,24 @@ void crashingFunction()
 // Performs jump by null pointer. Call stack is non tracable (dont know where we were at the moment of exception)
 void nativeJumpByNullFunction()
 {
-    void(*func)(void);
+    void(*func)(void) = nullptr;
     func();
 }
+
+#ifdef _MSC_VER
+    #pragma warning(push)
+    // warning C4717: 'nativeStackOverflowFunction': recursive on all control paths, function will cause runtime stack overflow
+    #pragma warning(disable: 4717)
+#endif
+
+void nativeStackOverflowFunction()
+{
+    nativeStackOverflowFunction();
+}
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 void throwManagedException(const std::string& msg);
 
@@ -121,6 +136,10 @@ public:
 
     static void nativeJumpByNullFunction() {
         ::nativeJumpByNullFunction();
+    }
+
+    static void nativeStackOverflowFunction() {
+        ::nativeStackOverflowFunction();
     }
 
     static void crashingFunctionBehindNativeCatch() {
