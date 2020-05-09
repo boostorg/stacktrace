@@ -325,4 +325,8 @@ unsigned int hde32_disasm(const void *code, hde32s *hs)
     return (unsigned int)hs->len;
 }
 
+#else
+    #ifdef _MSC_VER
+        #pragma warning(disable: 4206) //nonstandard extension used: translation unit is empty
+    #endif
 #endif // defined(_WIN32) && (defined(_M_IX86) || defined(__i386__))

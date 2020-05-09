@@ -29,8 +29,8 @@ init(..)
 
 
 macro(boost_project project)
-    #target_compile_options(${project} PRIVATE /W4 /WX)
-    target_compile_options(${project} PRIVATE /W4)
+    #/WX - threat warnings as error
+    target_compile_options(${project} PRIVATE /W4 /WX)
     target_include_directories(${project} PRIVATE ${srcRoot}/include)
 endmacro()
 
