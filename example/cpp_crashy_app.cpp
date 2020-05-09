@@ -25,14 +25,20 @@ BOOST_NOINLINE void foo(int i) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if defined(BOOST_STACKTRACE) && ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
+    #define EXCEPTION_HANDLER_ENABLED
+#endif
 
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
+
+#if defined(EXCEPTION_HANDLER_ENABLED)
 //[getting_started_terminate_handlers
 #include <boost/stacktrace/exception_handler.hpp>
 #include <boost/stacktrace.hpp>
+#include <iostream>     //std::cout
 
 void my_signal_handler(boost::stacktrace::low_level_exception_info& ex_info) {
-    boost::stacktrace::safe_dump_to("./backtrace.dump");
+    std::cout << "my_signal_handler called, exception: " << ex_info.name << " (" << std::hex << ex_info.code << ")" << std::endl;
+    std::cout << boost::stacktrace::stacktrace();
 }
 //]
 
@@ -102,6 +108,54 @@ int run_1(const char* /*argv*/[]) {
     foo(5);
     return 11;
 }
+
+#if defined(EXCEPTION_HANDLER_ENABLED)
+// Just try out that we don't interfere with standard exceptions.
+int run_5(const char*[]) {
+    setup_handlers();
+
+    try {
+        throw std::exception("test exception");
+    
+    }
+    catch (std::exception ex)
+    {
+        std::cout << " std::exception thrown: " << ex.what() << std::endl;
+    }
+
+    return 11;
+}
+
+// Example of translating low level exception to standard exceptions.
+// Same thing can be done also using catch(...), faulty function will be preserved in call stack 
+// if you capture it in catch.
+void translate_exception(boost::stacktrace::low_level_exception_info& ex_info) {
+    std::string s;
+
+    s = ex_info.name;
+    s += "\n";
+    s += boost::stacktrace::to_string(boost::stacktrace::stacktrace());
+    
+    throw std::exception(s.c_str());
+}
+
+int run_6(const char* []) {
+    static boost::stacktrace::exception_handler ex_handler(&translate_exception);
+
+    try {
+        int* p = nullptr;
+        *p = 0;
+    }
+    catch (std::exception ex)
+    {
+        std::cout << " std::exception thrown: " << ex.what() << std::endl;
+    }
+
+    std::cout << "Application running after low level exception" << std::endl;
+    return 0;
+}
+#endif //EXCEPTION_HANDLER_ENABLED
+
 
 int run_2(const char* argv[]) {
     if (!boost::filesystem::exists("./backtrace.dump")) {
@@ -323,6 +377,10 @@ int main(int argc, const char* argv[]) {
     case '2': return run_2(argv);
     case '3': return run_3(argv);
     case '4': return run_4(argv);
+#ifdef EXCEPTION_HANDLER_ENABLED
+    case '5': return run_5(argv);
+    case '6': return run_6(argv);
+#endif
     }
 
     return 404;

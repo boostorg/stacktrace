@@ -32,7 +32,6 @@ namespace boost {
         public:
             unsigned int code;
             const char* name;
-            bool handled;
         };
 
         /// Registers exception handler
@@ -55,9 +54,13 @@ namespace boost {
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             using __C_specific_handler_pfunc = LONG(WINAPI*)(struct _EXCEPTION_RECORD*, void*, struct _CONTEXT*, struct _DISPATCHER_CONTEXT*);
             static __C_specific_handler_pfunc __C_specific_handler_Original;
-
             static LONG WINAPI __C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
-            void* __C_specific_handler_proc;
+
+            using UnhandledExceptionFilter_pfunc = LONG(WINAPI*)(_EXCEPTION_POINTERS* ExceptionInfo);
+            static UnhandledExceptionFilter_pfunc UnhandledExceptionFilter_Original;
+            static LONG WINAPI UnhandledExceptionFilter_Detour(_EXCEPTION_POINTERS* ExceptionInfo);
+
+            void* oldHookProc;
 #else
             static void posixSignalHandler(int signum) BOOST_NOEXCEPT;
 #endif

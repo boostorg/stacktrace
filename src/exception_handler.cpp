@@ -67,6 +67,7 @@ namespace boost {
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
         exception_handler::__C_specific_handler_pfunc exception_handler::__C_specific_handler_Original = nullptr;
+        exception_handler::UnhandledExceptionFilter_pfunc exception_handler::UnhandledExceptionFilter_Original = nullptr;
 #endif
         exception_handler::exception_function_handler exception_handler::handler_ = nullptr;
 
@@ -97,7 +98,6 @@ namespace boost {
                 low_level_exception_info exinfo;
                 exinfo.code = code;
                 exinfo.name = str;
-                exinfo.handled = false;
                 handler_(exinfo);
             }
 
@@ -111,10 +111,52 @@ namespace boost {
 #endif
         }
 
+#if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+        // 
+        // Please note - it's not possible to debug first lines of following function, as it interferes with
+        // Visual studio debugger, but after first line - debugger should work correctly.
+        // 
+        // Using also MH_EnableHook instead of "SetUnhandledExceptionFilter(&UnhandledExceptionFilter_Detour);"
+        // to be able to debug same function.
+        // 
+        LONG CALLBACK exception_handler::UnhandledExceptionFilter_Detour(PEXCEPTION_POINTERS expointers)
+        {
+            unsigned int code = expointers->ExceptionRecord->ExceptionCode;
+
+            // Borrowed from ovr_sdk_win\ovr_sdk_win_1.43.0\LibOVRKernel\Src\Kernel\OVR_DebugHelp.cpp:
+
+            // Exception codes < 0x80000000 are not true exceptions but rather are debugger notifications.
+            // They include DBG_TERMINATE_THREAD,
+            // DBG_TERMINATE_PROCESS, DBG_CONTROL_BREAK, DBG_COMMAND_EXCEPTION, DBG_CONTROL_C,
+            // DBG_PRINTEXCEPTION_C, DBG_RIPEXCEPTION,
+            // and 0x406d1388 (thread named, http://blogs.msdn.com/b/stevejs/archive/2005/12/19/505815.aspx).
+
+            if (code < 0x80000000)
+                return EXCEPTION_CONTINUE_SEARCH;
+            
+            const char* str = "Unknown exception code";
+            auto it = exception_handler::platform_exception_codes.find(code);
+            if (it != exception_handler::platform_exception_codes.end()) {
+                str = it->second;
+            }
+
+            if (handler_ != nullptr)
+            {
+                low_level_exception_info exinfo;
+                exinfo.code = code;
+                exinfo.name = str;
+                handler_(exinfo);
+            }
+
+            return UnhandledExceptionFilter_Original(expointers);
+        }
+#endif
+
+
         exception_handler::exception_handler() BOOST_NOEXCEPT
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
             :
-            __C_specific_handler_proc(nullptr) 
+            oldHookProc(nullptr)
 #endif
         {
         }
@@ -130,19 +172,34 @@ namespace boost {
             int count = exception_handler::platform_exception_codes.size();
 
             #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-            HMODULE h = GetModuleHandleA("vcruntime140_clr0400");
-            if (!h) {
-                return false;
-            }
-            __C_specific_handler_proc = (void*)GetProcAddress(h, "__C_specific_handler");
-            MH_STATUS r = MH_Initialize();
+            const wchar_t* dll2Hook = L"vcruntime140_clr0400";
 
-            if ( (r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
-                MH_CreateHookApi(L"vcruntime140_clr0400", "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&__C_specific_handler_Original) == MH_OK &&
-                MH_EnableHook(__C_specific_handler_proc) == MH_OK
-            )
-            {
-                return true;
+            HMODULE h = GetModuleHandleW(dll2Hook);
+            if (h) {
+                // C++ code running under managed host application (C#)
+                oldHookProc = (void*)GetProcAddress(h, "__C_specific_handler");
+                MH_STATUS r = MH_Initialize();
+
+                if ((r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
+                    MH_CreateHookApi(dll2Hook, "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&__C_specific_handler_Original) == MH_OK &&
+                    MH_EnableHook(oldHookProc) == MH_OK ) {
+                        return true;
+                }
+            }
+            else {
+                // C++ code running as native application
+                dll2Hook = L"kernelbase";
+                h = GetModuleHandleW(dll2Hook);
+                oldHookProc = (void*)GetProcAddress(h, "UnhandledExceptionFilter");
+
+                MH_STATUS r = MH_Initialize();
+
+                // Almost the same as SetUnhandledExceptionFilter(&UnhandledExceptionFilter_Detour);
+                if ((r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
+                    MH_CreateHookApi(dll2Hook, "UnhandledExceptionFilter", &UnhandledExceptionFilter_Detour, (LPVOID*)&UnhandledExceptionFilter_Original) == MH_OK &&
+                    MH_EnableHook(oldHookProc) == MH_OK) {
+                    return true;
+                }
             }
 
             return false;
@@ -162,11 +219,11 @@ namespace boost {
             handler_ = nullptr;
 
             #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-            if (__C_specific_handler_proc)
+            if (oldHookProc)
             {
-                MH_STATUS r = MH_RemoveHook(__C_specific_handler_proc);
+                MH_STATUS r = MH_RemoveHook(oldHookProc);
                 r = MH_Uninitialize();
-                __C_specific_handler_proc = nullptr;
+                oldHookProc = nullptr;
                 __C_specific_handler_Original = nullptr;
             }
             #endif
