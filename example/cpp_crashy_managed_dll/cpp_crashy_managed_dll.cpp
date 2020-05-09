@@ -19,6 +19,13 @@ void crashingFunction()
     *p = 0;
 }
 
+// Performs jump by null pointer. Call stack is non tracable (dont know where we were at the moment of exception)
+void nativeJumpByNullFunction()
+{
+    void(*func)(void);
+    func();
+}
+
 void throwManagedException(const std::string& msg);
 
 // C++ catches exception, but it can also see where crash occurred
@@ -110,6 +117,10 @@ public:
 
     static void crashingFunction() {
         ::crashingFunction();
+    }
+
+    static void nativeJumpByNullFunction() {
+        ::nativeJumpByNullFunction();
     }
 
     static void crashingFunctionBehindNativeCatch() {

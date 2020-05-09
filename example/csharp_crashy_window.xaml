@@ -15,6 +15,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Content="Normal .net exception" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NormalExceptionButton"/>
@@ -23,6 +24,7 @@
         <Button Grid.Row="3" Content="Native crash (catched by managed)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashCatchedByManagedButton"/>
         <Button Grid.Row="4" Content="Native crash (via Invoke)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashViaInvokeButton"/>
         <Button Grid.Row="5" Content="Native crash (catched by native)" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeCrashCatchedByNativeButton"/>
-        <CheckBox Grid.Row="6" Content="Enable C++ exception handler" IsChecked="{Binding IsNativeExceptionHandlerEnabled, Mode=TwoWay}" />
+        <Button Grid.Row="6" Content="Native jump by null pointer" HorizontalAlignment="Stretch" Margin="10,5,10,5" VerticalAlignment="Top" Click="Button_Click" x:Name="NativeJumpCrashButton"/>
+        <CheckBox Grid.Row="7" Content="Enable C++ exception handler" IsChecked="{Binding IsNativeExceptionHandlerEnabled, Mode=TwoWay}" />
     </Grid>
 </Window>

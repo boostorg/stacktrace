@@ -80,6 +80,11 @@ namespace csharp_crashy_app
             {
                 TestCppCrash.crashingFunctionBehindNativeCatch();
             }
+
+            if (e.Source == NativeJumpCrashButton)
+            {
+                TestCppCrash.nativeJumpByNullFunction();
+            }
         }
 
         bool _IsNativeExceptionHandlerEnabled = true;
