@@ -46,6 +46,7 @@ local WIND_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build/
 local WICA_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
 local NOOP_DEPS = ;
 local BASIC_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
+local STACKTRACE_DEPS = <target-os>linux:<library>dl ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
@@ -53,7 +54,7 @@ local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <
 local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
 local LINKSHARED_NOOP         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop          $(NOOP_DEPS) ;
 local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic         $(BASIC_DEPS) $(FORCE_SYMBOL_EXPORT) ;
-local LINKSTATIC_STACKTRACE   = <link>static <define>BOOST_STACKTRACE          <library>/boost/stacktrace//boost_stacktrace               ;
+local LINKSTATIC_STACKTRACE   = <link>static <define>BOOST_STACKTRACE          <library>/boost/stacktrace//boost_stacktrace               $(STACKTRACE_DEPS) ;
 
 # Libs with debug symbols
 lib test_impl_lib_backtrace         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_BT) ;
