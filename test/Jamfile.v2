@@ -46,7 +46,7 @@ local WIND_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build/
 local WICA_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
 local NOOP_DEPS = ;
 local BASIC_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
-local STACKTRACE_DEPS = <target-os>linux:<library>dl ;
+local STACKTRACE_DEPS = <target-os>linux:<linkflags>"-ldl" ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
