@@ -7,31 +7,6 @@ cmake_minimum_required(VERSION 3.15)
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(boost_helpers)
 
-
-# C++ crashy exe
-set(srcs 
-    cpp_crashy_app.cpp
-    ../CMakeLists.txt
-    ../cmake/boost_helpers.cmake
-    ../Build/Jamfile.v2
-)
-
-organizeFiles(${srcs})
-
-add_executable(cpp_crashy_app ${srcs})
-boost_project(cpp_crashy_app)
-
-target_include_directories(cpp_crashy_app PRIVATE ../../..)
-set_target_properties(cpp_crashy_app PROPERTIES FOLDER stacktrace/example)
-
-target_compile_definitions(cpp_crashy_app PRIVATE BOOST_ALL_NO_LIB;BOOST_STACKTRACE)
-
-target_link_libraries( cpp_crashy_app PUBLIC
-    boost_date_time
-    boost_filesystem
-    boost_stacktrace
-)
-
 # C++ crashy dll
 add_subdirectory(cpp_crashy_managed_dll)
 boost_project(cpp_crashy_managed_dll)
