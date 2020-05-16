@@ -57,8 +57,14 @@ public partial class App : Application
     [STAThread]
     public static void Main()
     {
-        SetConsoleFont(GetStdHandle(-11), 14);
-        Console.SetWindowSize(Console.WindowWidth, 50);
+        try
+        {
+            SetConsoleFont(GetStdHandle(-11), 14);
+            Console.SetWindowSize(Console.WindowWidth, 50);
+        }
+        catch (Exception)
+        { 
+        }
 
         App app = new App();
         app.StartupUri = new System.Uri("csharp_crashy_window.xaml", System.UriKind.Relative);
