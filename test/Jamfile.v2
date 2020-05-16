@@ -54,7 +54,7 @@ local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <
 local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
 local LINKSHARED_NOOP         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop          $(NOOP_DEPS) ;
 local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic         $(BASIC_DEPS) $(FORCE_SYMBOL_EXPORT) ;
-local LINKSTATIC_STACKTRACE   = <link>static <define>BOOST_STACKTRACE          <library>/boost/stacktrace//boost_stacktrace               $(STACKTRACE_DEPS) ;
+local LINKSTATIC_STACKTRACE   = $(STACKTRACE_DEPS) <link>static <define>BOOST_STACKTRACE <library>/boost/stacktrace//boost_stacktrace ;
 
 # Libs with debug symbols
 lib test_impl_lib_backtrace         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_BT) ;
