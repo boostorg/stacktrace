@@ -7,15 +7,46 @@ cmake_minimum_required(VERSION 3.15)
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(boost_helpers)
 
+set(libs boost_stacktrace boost_stacktrace_windbg)
 
-# Does not have it's own name in Jamfile.v2
-add_executable(test_stacktrace test.cpp test_impl.cpp Jamfile.v2)
+set(boost_stacktrace_DEFINES BOOST_STACKTRACE)
+set(boost_stacktrace_windbg_DEFINES BOOST_STACKTRACE_DYN_LINK)
 
-target_include_directories(test_stacktrace PRIVATE ../../..)
-target_compile_definitions(test_stacktrace PRIVATE BOOST_STACKTRACE_DYN_LINK)
-set_target_properties(test_stacktrace PROPERTIES FOLDER stacktrace/tests)
+file(GLOB examples ../example/*.cpp)
+foreach(p ${examples})
+    get_filename_component(target_name ${p} NAME_WE)
+    foreach(l ${libs})
+        set(project example_${target_name}_${l})
 
-target_link_libraries(test_stacktrace PRIVATE boost_stacktrace_windbg)
+        if(${target_name} STREQUAL cpp_crashy_app)
+            continue()
+        endif()
 
-boost_project(test_stacktrace)
+        add_executable(${project} ${p})
+        target_include_directories(${project} PRIVATE ../../..)
+        target_compile_definitions(${project} PRIVATE ${${l}_DEFINES})
+        set_target_properties(${project} PROPERTIES FOLDER stacktrace/tests/example)
+        target_link_libraries(${project} PRIVATE ${l})
+        boost_project(${project})
+    endforeach()
+endforeach()
+
+
+foreach(l ${libs})
+    set(project test_${l})
+    add_executable(${project} test.cpp test_impl.cpp)
+    target_include_directories(${project} PRIVATE ../../..)
+    target_compile_definitions(${project} PRIVATE ${${l}_DEFINES})
+    set_target_properties(${project} PROPERTIES FOLDER stacktrace/tests/test)
+    target_link_libraries(${project} PRIVATE ${l})
+    boost_project(${project})
+
+    set(project torture_${l})
+    add_executable(${project} torture.cpp test_impl.cpp)
+    target_include_directories(${project} PRIVATE ../../..)
+    target_compile_definitions(${project} PRIVATE ${${l}_DEFINES})
+    set_target_properties(${project} PROPERTIES FOLDER stacktrace/tests/torture)
+    target_link_libraries(${project} PRIVATE ${l})
+    boost_project(${project})
+endforeach()
 
