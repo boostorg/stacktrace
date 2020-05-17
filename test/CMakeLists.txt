@@ -32,7 +32,7 @@ endforeach()
 ]]#
 
 function (add_test_project project projectFolder)
-    cmake_parse_arguments(PROJ "" "" "SRCS;DEFINES;LINKS;DEPENDS" ${ARGN} )
+    cmake_parse_arguments(PROJ "" "" "SRCS;DEFINES;LINKS;DEPENDS;LINK_FLAGS" ${ARGN} )
     add_executable(${project} ${PROJ_SRCS})
     target_include_directories(${project} PRIVATE ../../..)
     target_compile_definitions(${project} PRIVATE ${PROJ_DEFINES})
@@ -53,9 +53,21 @@ function (add_test_project project projectFolder)
         endif()
     endforeach()
 
-    organizeFiles(${PROJ_SRCS})
 
+    organizeFiles(${PROJ_SRCS})
+    message("PROJ_LINK_FLAGS: ${PROJ_LINK_FLAGS}")
+    if(NOT ${PROJ_LINK_FLAGS} STREQUAL "")
+        set_target_properties(${project} PROPERTIES LINK_FLAGS ${PROJ_LINK_FLAGS})
+        message("Using ${PROJ_LINK_FLAGS}")
+    endif()
 endfunction()
+
+set(VAR_LIST 32;64)
+set(VAR_32_LINK_FLAGS /MACHINE:X86)
+set(VAR_64_LINK_FLAGS /MACHINE:X64)
+#foreach(p ${VAR_LIST})
+#    message("${p} ${VAR_${p}_LINK_FLAGS}")
+#endforeach()
 
 file(GLOB examples RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../example/*.cpp)
 foreach(p ${examples})
@@ -67,13 +79,34 @@ foreach(p ${examples})
             set(proj_depends boost_filesystem boost_date_time)
         endif()
 
-        add_test_project(example_${target_name}_${l} stacktrace/tests/example SRCS ${p} DEFINES ${${l}_DEFINES} LINKS ${l} DEPENDS ${proj_depends})
+        foreach(v ${VAR_LIST})
+            add_test_project(example_${v}_${target_name}_${l} stacktrace/tests/example 
+                SRCS ${p} 
+                DEFINES ${${l}_DEFINES} 
+                LINKS ${l} DEPENDS ${proj_depends}
+                LINK_FLAGS ${VAR_${v}_LINK_FLAGS}
+            )
+        endforeach()
     endforeach()
 endforeach()
 
+foreach(v ${VAR_LIST})
+    foreach(l ${libs})
 
-foreach(l ${libs})
-    add_test_project(test_${l} stacktrace/tests/test SRCS test.cpp test_impl.cpp DEFINES ${${l}_DEFINES} LINKS ${l})
-    add_test_project(torture_${l} stacktrace/tests/torture SRCS torture.cpp test_impl.cpp DEFINES ${${l}_DEFINES} LINKS ${l})
+        add_test_project(test_${v}_${l} stacktrace/tests/test 
+            SRCS test.cpp test_impl.cpp 
+            DEFINES ${${l}_DEFINES} 
+            LINKS ${l}
+            LINK_FLAGS ${VAR_${v}_LINK_FLAGS}
+        )
+
+        add_test_project(torture_${v}_${l} stacktrace/tests/torture 
+            SRCS torture.cpp test_impl.cpp 
+            DEFINES ${${l}_DEFINES} 
+            LINKS ${l}
+            LINK_FLAGS ${VAR_${v}_LINK_FLAGS}
+        )
+
+    endforeach()
 endforeach()
 
