@@ -31,9 +31,52 @@ foreach(p ${cs_projects})
 endforeach()
 ]]#
 
+macro(querySubstring keyvar var)
+    set(is_${keyvar} False)
+    string(FIND "${var}" ${keyvar} pos)
+    if(NOT ${pos} EQUAL -1)
+        set(is_${keyvar} True)
+    endif()
+endmacro()
+
 function (add_test_project project projectFolder)
     cmake_parse_arguments(PROJ "" "" "SRCS;DEFINES;LINKS;DEPENDS;LINK_FLAGS" ${ARGN} )
-    add_executable(${project} ${PROJ_SRCS})
+
+    querySubstring(managed ${PROJ_SRCS} )
+    querySubstring(dll ${PROJ_SRCS} )
+
+    if(${is_dll})
+        add_library(${project} SHARED ${PROJ_SRCS})
+    else()
+        add_executable(${project} ${PROJ_SRCS})
+    endif()
+
+    if(${is_managed})
+        # Managed C++ code
+        set_target_properties(${project} PROPERTIES VS_GLOBAL_CLRSupport "true")
+        set_property(TARGET ${project} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2")
+
+        # Being able to debug dll
+        target_link_options(${project} PRIVATE "$<$<CONFIG:Debug>:/ASSEMBLYDEBUG>")
+        
+        # Disable incremental linking
+        target_link_options(${project} PRIVATE "$<$<CONFIG:Debug>:/INCREMENTAL:NO>")
+
+        # "Enable C++ Exceptions" - "Yes with SEH Exceptions (/EHa)"
+        set(compile_flags /EHa)
+    else()
+        # Native C++ code
+        # "Basic Run-time checks" - "Both (/RTC1, equiv. to /RTCsu) (/RTC1)" => "Default"
+        target_compile_options(${project} PRIVATE "$<$<CONFIG:Debug>:/RTC1>")
+
+        # Enable incremental linking
+        target_link_options(${project} PRIVATE "$<$<CONFIG:Debug>:/INCREMENTAL>")
+
+        # "Enable C++ Exceptions" - "Yes (/EHsc)"
+        set(compile_flags /EHsc)
+    endif()
+    set_target_properties(${project} PROPERTIES COMPILE_FLAGS ${compile_flags})
+
     target_include_directories(${project} PRIVATE ../../..)
     target_compile_definitions(${project} PRIVATE ${PROJ_DEFINES})
     set_target_properties(${project} PROPERTIES FOLDER ${projectFolder})
@@ -55,10 +98,8 @@ function (add_test_project project projectFolder)
 
 
     organizeFiles(${PROJ_SRCS})
-    message("PROJ_LINK_FLAGS: ${PROJ_LINK_FLAGS}")
     if(NOT ${PROJ_LINK_FLAGS} STREQUAL "")
         set_target_properties(${project} PROPERTIES LINK_FLAGS ${PROJ_LINK_FLAGS})
-        message("Using ${PROJ_LINK_FLAGS}")
     endif()
 endfunction()
 
@@ -69,7 +110,7 @@ set(VAR_64_LINK_FLAGS /MACHINE:X64)
 #    message("${p} ${VAR_${p}_LINK_FLAGS}")
 #endforeach()
 
-file(GLOB examples RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../example/*.cpp)
+file(GLOB_RECURSE examples RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../example/*.cpp)
 foreach(p ${examples})
     get_filename_component(target_name ${p} NAME_WE)
     foreach(l ${libs})
@@ -109,4 +150,10 @@ foreach(v ${VAR_LIST})
 
     endforeach()
 endforeach()
+
+
+# Disable global flag, configure on per project basis, using target_compile_options, target_link_options
+string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+string(REPLACE "/INCREMENTAL" "" CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+#string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 

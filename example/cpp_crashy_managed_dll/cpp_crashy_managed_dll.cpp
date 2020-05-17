@@ -92,11 +92,12 @@ public:
     }
 };
 
-
+#ifdef BOOST_STACKTRACE
 void throwDotNetException(boost::stacktrace::low_level_exception_info& ex_info)
 {
     throw gcnew NativeException(ex_info.name, getCallStack());
 }
+#endif
 
 void throwManagedException(const std::string& msg)
 {
@@ -105,12 +106,16 @@ void throwManagedException(const std::string& msg)
 
 
 void enableCppUnhandledExceptionDispatcher(bool b) {
+#ifndef BOOST_STACKTRACE
+    b;
+#else
     static boost::stacktrace::exception_handler handler(throwDotNetException);
 
     if (!b)
     {
         handler.deinit();
     }
+#endif
 }
 
 
