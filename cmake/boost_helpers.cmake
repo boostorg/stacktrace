@@ -34,3 +34,19 @@ macro(boost_project project)
     target_include_directories(${project} PRIVATE ${srcRoot}/include)
 endmacro()
 
+# Gets current platform in short form - "x64" => "64", "Win32" => "32"
+macro(get_current_platform)
+    set(current_platform ${CMAKE_GENERATOR_PLATFORM})
+    if(NOT DEFINED current_platform)
+        set(current_platform x64)
+    endif()
+
+    if(current_platform STREQUAL "x64")
+        set(current_platform 64)
+    else()
+        if(current_platform STREQUAL "Win32")
+            set(current_platform 32)
+        endif()
+    endif()
+endmacro()
+

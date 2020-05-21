@@ -7,6 +7,16 @@ cmake_minimum_required(VERSION 3.15)
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(boost_helpers)
 
+get_current_platform()
+
+if(${current_platform} STREQUAL "64")
+    set(opposite_platform "Win32")
+    set(opposite_platform_short "32")
+else()
+    set(opposite_platform "x64")
+    set(opposite_platform_short "64")
+endif()
+
 set(stacktraceIncludeDir ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 # Just in case if we have stripped repository, boost/include is official place for boost includes
@@ -24,12 +34,17 @@ set(sources windbg.cpp ${headers} ../Build/Jamfile.v2)
 
 organizeFiles(${sources})
 
-add_library(boost_stacktrace_windbg SHARED ${sources})
-target_include_directories(boost_stacktrace_windbg PRIVATE ../../..)
-target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
-#target_compile_definitions(boost_stacktrace_windbg PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
-set_target_properties(boost_stacktrace_windbg PROPERTIES FOLDER stacktrace/src)
+add_library(boost_stacktrace_windbg_${current_platform} SHARED ${sources})
+target_include_directories(boost_stacktrace_windbg_${current_platform} PRIVATE ../../..)
+target_compile_definitions(boost_stacktrace_windbg_${current_platform} PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
+#target_compile_definitions(boost_stacktrace_windbg_${current_platform} PRIVATE BOOST_STACKTRACE_DYN_LINK=1)
+set_target_properties(boost_stacktrace_windbg_${current_platform} PROPERTIES FOLDER stacktrace/src)
 
+set(project boost_stacktrace_windbg_${opposite_platform_short})
+set(file ${CMAKE_CURRENT_BINARY_DIR}/${project}.vcxproj)
+string(REPLACE "/${current_platform}/" "/${opposite_platform_short}/" file ${file})
+include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
+set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
 
 set(sources 
     ${headers}
@@ -54,11 +69,18 @@ set(sources
 
 organizeFiles(${sources})
 
-add_library(boost_stacktrace STATIC ${sources})
-target_include_directories(boost_stacktrace PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(boost_stacktrace PRIVATE ../../..)
-target_compile_definitions(boost_stacktrace PRIVATE BOOST_STACKTRACE=1)
-set_target_properties(boost_stacktrace PROPERTIES FOLDER stacktrace/src)
+add_library(boost_stacktrace_${current_platform} STATIC ${sources})
+target_include_directories(boost_stacktrace_${current_platform} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(boost_stacktrace_${current_platform} PRIVATE ../../..)
+target_compile_definitions(boost_stacktrace_${current_platform} PRIVATE BOOST_STACKTRACE=1)
+set_target_properties(boost_stacktrace_${current_platform} PROPERTIES FOLDER stacktrace/src)
 
-boost_project(boost_stacktrace)
+boost_project(boost_stacktrace_${current_platform})
+
+set(project boost_stacktrace_${opposite_platform_short})
+set(file ${CMAKE_CURRENT_BINARY_DIR}/${project}.vcxproj)
+string(REPLACE "/${current_platform}/" "/${opposite_platform_short}/" file ${file})
+include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
+set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
+
 
