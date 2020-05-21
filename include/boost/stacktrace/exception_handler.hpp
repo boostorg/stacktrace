@@ -52,9 +52,16 @@ namespace boost {
             static exception_function_handler handler_;
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+            #ifdef _WIN64
             using __C_specific_handler_pfunc = LONG(WINAPI*)(struct _EXCEPTION_RECORD*, void*, struct _CONTEXT*, struct _DISPATCHER_CONTEXT*);
-            static __C_specific_handler_pfunc __C_specific_handler_Original;
+            static __C_specific_handler_pfunc detourOriginalFunc;
             static LONG WINAPI __C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch);
+            #else
+            // 32-bit works only with RelWithDebInfo or Release configurations, not with Debug.
+            using __CxxFrameHandler3_pfunc = EXCEPTION_DISPOSITION(__cdecl*)(EXCEPTION_RECORD*, void*, CONTEXT*, void*);
+            static __CxxFrameHandler3_pfunc detourOriginalFunc;
+            static EXCEPTION_DISPOSITION __cdecl __CxxFrameHandler3_Detour(EXCEPTION_RECORD*, void*, CONTEXT*, void*);
+            #endif
 
             using UnhandledExceptionFilter_pfunc = LONG(WINAPI*)(_EXCEPTION_POINTERS* ExceptionInfo);
             static UnhandledExceptionFilter_pfunc UnhandledExceptionFilter_Original;

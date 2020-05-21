@@ -66,22 +66,31 @@ namespace boost {
         };
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-        exception_handler::__C_specific_handler_pfunc exception_handler::__C_specific_handler_Original = nullptr;
+        #ifdef _WIN64
+        exception_handler::__C_specific_handler_pfunc exception_handler::detourOriginalFunc = nullptr;
+        #else
+        exception_handler::__CxxFrameHandler3_pfunc exception_handler::detourOriginalFunc = nullptr;
+        #endif
+
         exception_handler::UnhandledExceptionFilter_pfunc exception_handler::UnhandledExceptionFilter_Original = nullptr;
 #endif
         exception_handler::exception_function_handler exception_handler::handler_ = nullptr;
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
+        #ifdef _WIN64
         LONG WINAPI exception_handler::__C_specific_handler_Detour(struct _EXCEPTION_RECORD* rec, void* frame, struct _CONTEXT* context, struct _DISPATCHER_CONTEXT* dispatch) {
+        #else
+        EXCEPTION_DISPOSITION exception_handler::__CxxFrameHandler3_Detour(EXCEPTION_RECORD* rec, void* frame, CONTEXT* context, void* dispatch) {
+        #endif
             unsigned int code = rec->ExceptionCode;
 
             if (
                 // .net exceptions - don't care, let .net handle them. (We also can trigger them)
-                code == 0xe0434352 || code == 0xe0564552 ||
+                code == 0xe0434352 || code == 0xe0564552 || code == 0x80000003 ||
                 // STATUS_UNWIND_CONSOLIDATE (occurs when called via Invoke, may be related to unwind of stack frame) - we don't care about it anyway.
                 code == 0x80000029)
             {
-                return __C_specific_handler_Original(rec, frame, context, dispatch);
+                return detourOriginalFunc(rec, frame, context, dispatch);
             }
 #else
         void exception_handler::posixSignalHandler(int signum) BOOST_NOEXCEPT {
@@ -102,7 +111,7 @@ namespace boost {
             }
 
 #if defined(WINDOWS_STYLE_EXCEPTION_HANDLING)
-            return __C_specific_handler_Original(rec, frame, context, dispatch);
+            return detourOriginalFunc(rec, frame, context, dispatch);
 #else
             // Default signal handler for that signal
             ::signal(signum, SIG_DFL);
@@ -174,11 +183,21 @@ namespace boost {
             HMODULE h = GetModuleHandleW(dll2Hook);
             if (h) {
                 // C++ code running under managed host application (C#)
+                #ifdef _WIN64
                 oldHookProc = (void*)GetProcAddress(h, "__C_specific_handler");
+                #else
+                oldHookProc = (void*)GetProcAddress(h, "__CxxFrameHandler3");
+                #endif
                 MH_STATUS r = MH_Initialize();
 
                 if ((r == MH_OK || r == MH_ERROR_ALREADY_INITIALIZED) &&
-                    MH_CreateHookApi(dll2Hook, "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&__C_specific_handler_Original) == MH_OK &&
+                    #ifdef _WIN64
+                    MH_CreateHookApi(dll2Hook, "__C_specific_handler", &__C_specific_handler_Detour, (LPVOID*)&detourOriginalFunc) == MH_OK &&
+                    #else
+                    // What I have tested - native exception works, but not managed. Need to filter out somehow whether exception is native or managed.
+                    //MH_CreateHookApi(dll2Hook, "__CxxFrameHandler3", &__CxxFrameHandler3_Detour, (LPVOID*)&detourOriginalFunc) == MH_OK &&
+                    false && 
+                    #endif
                     MH_EnableHook(oldHookProc) == MH_OK ) {
                         return true;
                 }
@@ -222,7 +241,7 @@ namespace boost {
                 MH_STATUS r = MH_RemoveHook(oldHookProc);
                 r = MH_Uninitialize();
                 oldHookProc = nullptr;
-                __C_specific_handler_Original = nullptr;
+                detourOriginalFunc = nullptr;
             }
             #endif
 
