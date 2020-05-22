@@ -1,3 +1,8 @@
+# Our own configuration set
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo;Release;RelDebug" CACHE STRING "" FORCE)
+endif()
+
 
 # first argument if any - path to root folder
 macro(init)
@@ -22,6 +27,19 @@ macro(init)
     # #define STRX(x)  STRX_(x)
     # #pragma message(STRX(__cplusplus))
 
+    # Typically there is no need to optimize all code parts, but low level stuff like vector, ... makes sense to optimize.
+    # It's recommended that developers manually identifies what needs to be optimized and optimizes by himself, 
+    # as it eats developers time to build optimized code.
+    set(RELDEBUG_OPT_LEVEL "/Od")
+    set(MAXIMIZE_SPEED_COMPILE_FLAGS "/O2 /Ob2 /Zo /GS-")
+    set(CMAKE_CXX_FLAGS_RELDEBUG "${_MD} /Zi ${RELDEBUG_OPT_LEVEL} /DNDEBUG")
+    set(CMAKE_C_FLAGS_RELDEBUG   "${_MD} /Zi ${RELDEBUG_OPT_LEVEL} /DNDEBUG")
+
+    foreach(t EXE SHARED MODULE)
+        #https://devblogs.microsoft.com/cppblog/faster-c-build-cycle-in-vs-15-with-debugfastlink/
+        #fastlink links 2-5 times faster than debug:full, but some of profilers might want to have /debug:full option enabled instead
+        set(CMAKE_${t}_LINKER_FLAGS_RELDEBUG "/debug:fastlink /INCREMENTAL")
+    endforeach()
 endmacro()
 
 # After include we set srcRoot to be default one

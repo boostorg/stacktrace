@@ -65,6 +65,7 @@ set(sources
     minhook/src/hde/table64.h
     minhook/src/trampoline.h
     minhook/LICENSE.txt
+    ../cmake/boost_helpers.cmake
 )
 
 organizeFiles(${sources})
