@@ -157,6 +157,10 @@ endif()
 option(TEST_STACKTRACE "Enable all tests for stacktrace" ${TESTS})
 option(TEST_STACKTRACE_MANAGED "Enable managed tests for stacktrace" ${TESTS})
 
+#message("BUILD_TESTING: ${BUILD_TESTING}")
+#message("TESTS: ${TESTS}")
+#message("TEST_STACKTRACE: ${TEST_STACKTRACE}")
+#message("TEST_STACKTRACE_MANAGED: ${TEST_STACKTRACE_MANAGED}")
 
 file(GLOB_RECURSE examples RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ../example/*.cpp)
 foreach(p ${examples})
@@ -168,13 +172,17 @@ foreach(p ${examples})
             set(proj_depends boost_filesystem boost_date_time)
         endif()
 
-        #message(${target_name})
-
         if(NOT ${TEST_STACKTRACE})
-            if(${TEST_STACKTRACE_MANAGED} AND NOT (${target_name} STREQUAL cpp_crashy_managed_dll ))
+            if(${TEST_STACKTRACE_MANAGED})
+                if(NOT (${target_name} STREQUAL cpp_crashy_managed_dll ))
+                    continue()
+                endif()
+            else()
                 continue()
             endif()
         endif()
+        
+        #message("-->${TEST_STACKTRACE} - ${target_name}")
 
         foreach(v ${VAR_LIST})
 
@@ -210,6 +218,12 @@ foreach(p ${cs_examples})
 endforeach()
 
 foreach(p ${cs_projects})
+
+    if(NOT ${TEST_STACKTRACE})
+        if(NOT ${TEST_STACKTRACE_MANAGED})
+            continue()
+        endif()
+    endif()
 
     foreach(v ${VAR_LIST})
 
@@ -264,3 +278,5 @@ string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 string(REPLACE "/INCREMENTAL" "" CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 #string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
+unset(TEST_STACKTRACE CACHE)
+unset(TEST_STACKTRACE_MANAGED CACHE)
