@@ -46,6 +46,7 @@ local WIND_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build/
 local WICA_DEPS = <library>Dbgeng <library>ole32 [ check-target-builds ../build//WinDbgCached : : <build>no ] ;
 local NOOP_DEPS = ;
 local BASIC_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
+local STACKTRACE_DEPS = <target-os>linux:<linkflags>"-ldl" ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
@@ -53,6 +54,7 @@ local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <
 local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
 local LINKSHARED_NOOP         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_noop          $(NOOP_DEPS) ;
 local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_basic         $(BASIC_DEPS) $(FORCE_SYMBOL_EXPORT) ;
+local LINKSTATIC_STACKTRACE   = $(STACKTRACE_DEPS) <link>static <define>BOOST_STACKTRACE <library>/boost/stacktrace//boost_stacktrace ;
 
 # Libs with debug symbols
 lib test_impl_lib_backtrace         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_BT) ;
@@ -196,7 +198,7 @@ for local p in [ glob ../example/*.cpp ]
 {
     local target_name = $(p[1]:B) ;
     local additional_dependency = ;
-    if $(target_name) = "terminate_handler"
+    if $(target_name) = "cpp_crashy_app"
     {
         additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }
@@ -212,6 +214,7 @@ for local p in [ glob ../example/*.cpp ]
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_WIND_CACHED)  $(additional_dependency)    : windbg_cached_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_NOOP)         $(additional_dependency)    : noop_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BASIC)        $(additional_dependency)    : basic_$(p[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSTATIC_STACKTRACE)   $(additional_dependency)    : stacktrace_$(p[1]:B) ] ;
 
 
     ##### Tests with disabled debug symbols #####
@@ -222,6 +225,7 @@ for local p in [ glob ../example/*.cpp ]
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_WIND_CACHED) $(additional_dependency)    : windbg_cached_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_NOOP)        $(additional_dependency)    : noop_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_BASIC)       $(additional_dependency)    : basic_$(p[1]:B)_no_dbg ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSTATIC_STACKTRACE)  $(additional_dependency)    : stacktrace_$(p[1]:B)_no_dbg ] ;
 
 }
 

@@ -59,6 +59,10 @@ BOOST_NOINLINE void foo(int i) {
 }
 
 #include <iostream>
+#ifdef _MSC_VER
+    #pragma warning(disable : 4702)     //unreachable code
+#endif
+
 int main() {
 
     //[getting_started_catching_trace

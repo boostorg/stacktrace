@@ -5,6 +5,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/array.hpp>
+#include <signal.h>     // ::signal, ::raise
+
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
@@ -13,7 +15,8 @@ BOOST_NOINLINE void bar(int i) {
     if (i >= 0) {
         foo(a[i]);
     } else {
-        std::terminate();
+        int* pb = 0;
+        *pb = 0;
     }
 }
 
@@ -22,25 +25,33 @@ BOOST_NOINLINE void foo(int i) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if defined(BOOST_STACKTRACE) && ((defined(_MSVC_LANG) && _MSVC_LANG >= 201103L) || __cplusplus >= 201103L)
+    #define EXCEPTION_HANDLER_ENABLED
+#endif
 
+
+#if defined(EXCEPTION_HANDLER_ENABLED)
 //[getting_started_terminate_handlers
-
-#include <signal.h>     // ::signal, ::raise
+#include <boost/stacktrace/exception_handler.hpp>
 #include <boost/stacktrace.hpp>
+#include <iostream>     //std::cout
 
-void my_signal_handler(int signum) {
-    ::signal(signum, SIG_DFL);
-    boost::stacktrace::safe_dump_to("./backtrace.dump");
-    ::raise(SIGABRT);
+void my_signal_handler(boost::stacktrace::low_level_exception_info& ex_info) {
+    std::cout << "my_signal_handler called, exception: " << ex_info.name << " (" << std::hex << ex_info.code << ")" << std::endl;
+    std::cout << boost::stacktrace::stacktrace();
 }
 //]
 
 void setup_handlers() {
 //[getting_started_setup_handlers
-    ::signal(SIGSEGV, &my_signal_handler);
-    ::signal(SIGABRT, &my_signal_handler);
+    static boost::stacktrace::exception_handler ex_handler(&my_signal_handler);
 //]
 }
+#else
+void setup_handlers()
+{
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,6 +108,54 @@ int run_1(const char* /*argv*/[]) {
     foo(5);
     return 11;
 }
+
+#if defined(EXCEPTION_HANDLER_ENABLED)
+// Just try out that we don't interfere with standard exceptions.
+int run_5(const char*[]) {
+    setup_handlers();
+
+    try {
+        throw std::exception("test exception");
+    
+    }
+    catch (std::exception ex)
+    {
+        std::cout << " std::exception thrown: " << ex.what() << std::endl;
+    }
+
+    return 11;
+}
+
+// Example of translating low level exception to standard exceptions.
+// Same thing can be done also using catch(...), faulty function will be preserved in call stack 
+// if you capture it in catch. With this approach however you can get exception code and name.
+void translate_exception(boost::stacktrace::low_level_exception_info& ex_info) {
+    std::string s;
+
+    s = ex_info.name;
+    s += "\n";
+    s += boost::stacktrace::to_string(boost::stacktrace::stacktrace());
+    
+    throw std::exception(s.c_str());
+}
+
+int run_6(const char* []) {
+    static boost::stacktrace::exception_handler ex_handler(&translate_exception);
+
+    try {
+        int* p = nullptr;
+        *p = 0;
+    }
+    catch (std::exception ex)
+    {
+        std::cout << " std::exception thrown: " << ex.what() << std::endl;
+    }
+
+    std::cout << "Application running after low level exception" << std::endl;
+    return 0;
+}
+#endif //EXCEPTION_HANDLER_ENABLED
+
 
 int run_2(const char* argv[]) {
     if (!boost::filesystem::exists("./backtrace.dump")) {
@@ -318,6 +377,10 @@ int main(int argc, const char* argv[]) {
     case '2': return run_2(argv);
     case '3': return run_3(argv);
     case '4': return run_4(argv);
+#ifdef EXCEPTION_HANDLER_ENABLED
+    case '5': return run_5(argv);
+    case '6': return run_6(argv);
+#endif
     }
 
     return 404;

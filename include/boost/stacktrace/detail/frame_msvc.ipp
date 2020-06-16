@@ -158,6 +158,10 @@ class debugging_symbols: boost::noncopyable {
         iclient->QueryInterface(__uuidof(IDebugSymbols), idebug.to_void_ptr_ptr());
     }
 
+#if !defined(BOOST_STACKTRACE_USE_WINDBG_CACHED) && !defined(BOOST_NO_CXX11_THREAD_LOCAL)
+    #define BOOST_STACKTRACE_USE_WINDBG_CACHED
+#endif
+
 #ifndef BOOST_STACKTRACE_USE_WINDBG_CACHED
 
     boost::stacktrace::detail::com_global_initer com_;

@@ -5,6 +5,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 // No include guards! Intentionally.
+#if defined(BOOST_STACKTRACE)
+    // Including boost/stacktrace library's API, static linking
+    #define BOOST_STACKTRACE_LINK
+#endif
 
 // Link or header only
 #if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK)
