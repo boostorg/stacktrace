@@ -87,6 +87,15 @@ namespace boost {
             if (
                 // .net exceptions - don't care, let .net handle them. (We also can trigger them)
                 code == 0xe0434352 || code == 0xe0564552 || code == 0x80000003 ||
+
+                // VC++ C++ exceptions use code 0xe06d7363 ('Emsc')
+                // http://support.microsoft.com/kb/185294
+                // http://blogs.msdn.com/b/oldnewthing/archive/2010/07/30/10044061.aspx
+                code == 0xe06d7363 ||
+                
+                // clrjit exception code
+                code == 0x2345678 ||
+                
                 // STATUS_UNWIND_CONSOLIDATE (occurs when called via Invoke, may be related to unwind of stack frame) - we don't care about it anyway.
                 code == 0x80000029)
             {
