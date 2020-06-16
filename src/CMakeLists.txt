@@ -43,8 +43,11 @@ set_target_properties(boost_stacktrace_windbg_${current_platform} PROPERTIES FOL
 set(project boost_stacktrace_windbg_${opposite_platform_short})
 set(file ${CMAKE_CURRENT_BINARY_DIR}/${project}.vcxproj)
 string(REPLACE "/${current_platform}/" "/${opposite_platform_short}/" file ${file})
-include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
-set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
+
+if(EXISTS ${file})
+    include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
+    set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
+endif()
 
 set(sources 
     ${headers}
@@ -81,7 +84,11 @@ boost_project(boost_stacktrace_${current_platform})
 set(project boost_stacktrace_${opposite_platform_short})
 set(file ${CMAKE_CURRENT_BINARY_DIR}/${project}.vcxproj)
 string(REPLACE "/${current_platform}/" "/${opposite_platform_short}/" file ${file})
-include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
-set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
+
+if(EXISTS ${file})
+    include_external_msproject(${project} ${file} PLATFORM ${opposite_platform})
+    set_target_properties(${project} PROPERTIES FOLDER stacktrace/src )
+endif()
+
 
 
