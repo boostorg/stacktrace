@@ -388,6 +388,28 @@ bool operator!=(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
     return !(lhs == rhs);
 }
 
+/// Freestanding version of boost::stacktrace::stacktrace::from_dump(). Constructs stacktrace from
+/// basic_istreamable that references the dumped stacktrace. Terminating zero frame is discarded.
+///
+/// @b Complexity: O(N)
+template <class Char, class Trait, class Allocator>
+inline basic_stacktrace<Allocator> from_dump(std::basic_istream<Char, Trait>& in, const typename basic_stacktrace<Allocator>::allocator_type& a = typename basic_stacktrace<Allocator>::allocator_type::allocator_type()) {
+    return boost::stacktrace::basic_stacktrace<Allocator>::from_dump(in, a);
+}
+
+/// Freestanding version of boost::stacktrace::stacktrace::from_dump(). Constructs stacktrace from
+/// raw memory dump. Terminating zero frame is discarded.
+///
+/// @param begin Begining of the memory where the stacktrace was saved using the boost::stacktrace::safe_dump_to
+///
+/// @param buffer_size_in_bytes Size of the memory. Usually the same value that was passed to the boost::stacktrace::safe_dump_to
+///
+/// @b Complexity: O(size) in worst case
+template <class Allocator>
+inline basic_stacktrace<Allocator> from_dump(const void* begin, std::size_t buffer_size_in_bytes, const typename basic_stacktrace<Allocator>::allocator_type& a = typename basic_stacktrace<Allocator>::allocator_type::allocator_type()) {
+    return boost::stacktrace::basic_stacktrace<Allocator>::from_dump(begin, buffer_size_in_bytes, a);
+}
+
 /// Fast hashing support, O(st.size()) complexity; Async-Handler-Safe.
 template <class Allocator>
 std::size_t hash_value(const basic_stacktrace<Allocator>& st) BOOST_NOEXCEPT {
