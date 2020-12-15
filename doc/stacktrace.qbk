@@ -122,7 +122,9 @@ Previous run crashed:
 
 [warning There's a temptation to write a signal handler that prints the stacktrace on `SIGSEGV` or abort. Unfortunately, there's no cross platform way to do that without a risk of deadlocking. Not all the platforms provide means for even getting stacktrace in async signal safe way.
 
-Generic recommendation is to *avoid signal handlers, use* platform specific ways to store and decode *core files*.
+Signal handler is often invoked on a separate stack and trash is returned on attempt to get a trace!
+
+Generic recommendation is to *avoid signal handlers! Use* platform specific ways to store and decode *core files*.
 ]
 
 
