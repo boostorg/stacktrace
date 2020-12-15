@@ -59,53 +59,6 @@ Code from above will output something like this:
 
 [endsect]
 
-[section Handle terminates, aborts and Segmentation Faults]
-
-Segmentation Faults and `std::terminate` calls sometimes happen in programs. Programmers usually wish to get as much information as possible on such incidents, so having a stacktrace will significantly improve debugging and fixing.
-
-`std::terminate` calls `std::abort`, so we need to capture stack traces on Segmentation Faults and Abort signals.
-
-[warning Writing a signal handler requires high attention! Only a few system calls allowed in signal handlers, so there's no cross platform way to print a stacktrace without a risk of deadlocking. The only way to deal with the problem - [*dump raw stacktrace into file/socket and parse it on program restart].]
-
-[warning Not all the platforms provide means for even getting stacktrace in async signal safe way. No stack trace will be saved on such platforms. ]
-
-Let's write a handler to safely dump stacktrace:
-
-[getting_started_terminate_handlers]
-
-Registering our handler:
-
-[getting_started_setup_handlers]
-
-At program start we check for a file with stacktrace and if it exist - we're writing it in human readable format:
-
-[getting_started_on_program_restart]
-
-Now we'll get the following output on `std::terminate` call after the program restarts:
-
-```
-Previous run crashed:
- 0# 0x00007F2EC0A6A8EF
- 1# my_signal_handler(int) at ../example/terminate_handler.cpp:37
- 2# 0x00007F2EBFD84CB0
- 3# 0x00007F2EBFD84C37
- 4# 0x00007F2EBFD88028
- 5# 0x00007F2EC0395BBD
- 6# 0x00007F2EC0393B96
- 7# 0x00007F2EC0393BE1
- 8# bar(int) at ../example/terminate_handler.cpp:18
- 9# foo(int) at ../example/terminate_handler.cpp:22
-10# bar(int) at ../example/terminate_handler.cpp:14
-11# foo(int) at ../example/terminate_handler.cpp:22
-12# main at ../example/terminate_handler.cpp:84
-13# 0x00007F2EBFD6FF45
-14# 0x0000000000402209
-```
-
-[note Function names from shared libraries may not be decoded due to address space layout randomization. Still better than nothing.]
-
-[endsect]
-
 [section Better asserts]
 
 Pretty often assertions provide not enough information to locate the problem. For example you can see the following message on out-of-range access:
@@ -136,6 +89,42 @@ Backtrace:
 ```
 
 Now we do know the steps that led to the assertion and can find the error without debugger.
+
+[endsect]
+
+[section Handle terminates]
+
+`std::terminate` calls sometimes happen in programs. Programmers usually wish to get as much information as possible on such incidents, so having a stacktrace significantly improves debugging and fixing.
+
+Here's how to write a terminate handler that dumps stacktrace:
+
+[getting_started_terminate_handlers]
+
+Here's how to register it:
+
+[getting_started_setup_terminate_handlers]
+
+Now we'll get the following output on `std::terminate` call:
+
+```
+Previous run crashed:
+ 0# my_terminate_handler(int) at ../example/terminate_handler.cpp:37
+ 1# __cxxabiv1::__terminate(void (*)()) at ../../../../src/libstdc++-v3/libsupc++/eh_terminate.cc:48
+ 2# 0x00007F3CE65E5901 in /usr/lib/x86_64-linux-gnu/libstdc++.so.6
+ 3# bar(int) at ../example/terminate_handler.cpp:18
+ 4# foo(int) at ../example/terminate_handler.cpp:22
+ 5# bar(int) at ../example/terminate_handler.cpp:14
+ 6# foo(int) at ../example/terminate_handler.cpp:22
+ 7# main at ../example/terminate_handler.cpp:84
+ 8# __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6
+ 9# 0x0000000000402209
+```
+
+[warning There's a temptation to write a signal handler that prints the stacktrace on `SIGSEGV` or abort. Unfortunately, there's no cross platform way to do that without a risk of deadlocking. Not all the platforms provide means for even getting stacktrace in async signal safe way.
+
+Generic recommendation is to *avoid signal handlers, use* platform specific ways to store and decode *core files*.
+]
+
 
 [endsect]
 

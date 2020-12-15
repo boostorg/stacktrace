@@ -23,24 +23,41 @@ BOOST_NOINLINE void foo(int i) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//[getting_started_terminate_handlers
+//[getting_started_signal_handlers
 
 #include <signal.h>     // ::signal, ::raise
 #include <boost/stacktrace.hpp>
 
 void my_signal_handler(int signum) {
     ::signal(signum, SIG_DFL);
+
+    // Outputs nothing or trash on majority of platforms
     boost::stacktrace::safe_dump_to("./backtrace.dump");
+
     ::raise(SIGABRT);
 }
 //]
 
 void setup_handlers() {
-//[getting_started_setup_handlers
+//[getting_started_setup_signel_handlers
     ::signal(SIGSEGV, &my_signal_handler);
     ::signal(SIGABRT, &my_signal_handler);
 //]
 }
+
+
+//[getting_started_terminate_handlers
+#include <cstdlib>       // std::abort
+#include <exception>     // std::set_terminate
+#include <iostream>      // std::cerr
+
+#include <boost/stacktrace.hpp>
+
+void my_terminate_handler() {
+    std::cerr << boost::stacktrace::stacktrace();
+    std::abort();
+}
+//]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,6 +108,15 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
         std::exit(ret);
     }
 }
+
+int run_0(const char* /*argv*/[]) {
+//[getting_started_setup_terminate_handlers
+    std::set_terminate(&my_terminate_handler);
+//]
+    foo(5);
+    return 1;
+}
+
 
 int run_1(const char* /*argv*/[]) {
     setup_handlers();
@@ -300,6 +326,7 @@ int test_inplace() {
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
+        copy_and_run(argv[0], '0', true);
 #ifndef BOOST_WINDOWS
         // We are copying files to make sure that stacktrace printing works independently from executable name
         copy_and_run(argv[0], '1', true);
@@ -314,6 +341,7 @@ int main(int argc, const char* argv[]) {
     }
 
     switch (argv[1][0]) {
+    case '0': return run_0(argv);
     case '1': return run_1(argv);
     case '2': return run_2(argv);
     case '3': return run_3(argv);
