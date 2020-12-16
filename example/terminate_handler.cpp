@@ -54,7 +54,9 @@ void setup_handlers() {
 #include <boost/stacktrace.hpp>
 
 void my_terminate_handler() {
-    std::cerr << boost::stacktrace::stacktrace();
+    try {
+        std::cerr << boost::stacktrace::stacktrace();
+    } catch (...) {}
     std::abort();
 }
 //]
