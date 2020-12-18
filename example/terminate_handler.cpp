@@ -328,8 +328,10 @@ int test_inplace() {
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
-        copy_and_run(argv[0], '0', true);
+        // On Windows the debugger could be active. In that case tests hang and the CI run fails.
 #ifndef BOOST_WINDOWS
+        copy_and_run(argv[0], '0', true);
+
         // We are copying files to make sure that stacktrace printing works independently from executable name
         copy_and_run(argv[0], '1', true);
         copy_and_run(argv[0], '2', false);
