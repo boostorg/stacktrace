@@ -94,7 +94,7 @@ BOOST_SYMBOL_VISIBLE inline ::backtrace_state* construct_state(const program_loc
 
 #   ifndef BOOST_NO_CXX11_THREAD_LOCAL
     thread_local
-#   elif defined(__GNUC__)
+#   elif defined(__GNUC__) && !defined(__clang__)
     static __thread
 #   else
     /* just a local variable */
