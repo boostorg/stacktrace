@@ -131,6 +131,8 @@ script:
 
 
 after_success:
+  - exit 0  # We run coverage repoprts from GithubActions
+
   # Copying Coveralls data to a separate folder
   - mkdir -p $TRAVIS_BUILD_DIR/coverals
   - wget https://github.com/linux-test-project/lcov/archive/v1.15.zip
@@ -141,7 +143,7 @@ after_success:
   - chmod 755 ~/.local/bin/gcov_for_clang.sh
 
   # Preparing Coveralls data by changind data format to a readable one
-  - echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
+  - echo "$LCOV --directory $BOOST/bin.v2/libs/$BOOST_LIBS_FOLDER --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
   - $LCOV --directory $BOOST/bin.v2/libs/$BOOST_LIBS_FOLDER --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info
 
   # ... erasing /test/ /example/ folder data
