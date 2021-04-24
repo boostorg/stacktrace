@@ -28,6 +28,7 @@ jobs:
             os: ubuntu-18.04
             cxxflags: "cxxflags=--coverage -fsanitize=address,leak,undefined -fno-sanitize-recover=undefined"
             linkflags: "linkflags=--coverage -lasan -lubsan"
+            launcher: "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6"
             gcov_tool: "gcov-10"
           - toolset: clang
             compiler: clang++-3.7
@@ -45,11 +46,12 @@ jobs:
             compiler: clang++-10
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-20.04
-          - toolset: clang
-            cxxstd: "03,11,14,17,2a"
-            os: macos-10.15
-            cxxflags: "cxxflags=-fsanitize=address,undefined -fno-sanitize-recover=undefined -D_GNU_SOURCE=1"
-            linkflags: "linkflags=-fsanitize=address,undefined"
+          # TODO: fix and uncomment
+          #- toolset: clang
+          #  cxxstd: "03,11,14,17,2a"
+          #  os: macos-10.15
+          #  cxxflags: "cxxflags=-fsanitize=address,undefined -fno-sanitize-recover=undefined -D_GNU_SOURCE=1"
+          #  linkflags: "linkflags=-fsanitize=address,undefined"
 
     runs-on: ${{matrix.os}}
 
@@ -107,7 +109,7 @@ jobs:
           unzip v1.15.zip
           LCOV="`pwd`/lcov-1.15/bin/lcov --gcov-tool $GITHUB_WORKSPACE/coveralls/gcov_wrapper.sh"
 
-          echo "$LCOV --directory $GITHUB_WORKSPACE/coveralls --base-directory `pwd`/libs/$LIBRARY/test --capture --output-file $GITHUB_WORKSPACE/coveralls/coverage.info"
+          echo "$LCOV --directory ../boost-root/bin.v2/libs/$LIBRARY/ --base-directory `pwd`/libs/$LIBRARY/test --capture --output-file $GITHUB_WORKSPACE/coveralls/coverage.info"
           $LCOV --directory ../boost-root/bin.v2/libs/$LIBRARY/ --base-directory ../boost-root/ --capture --output-file $GITHUB_WORKSPACE/coveralls/coverage.info
           $LCOV --remove $GITHUB_WORKSPACE/coveralls/coverage.info "/usr*" "*/$LIBRARY/test/*" ${{matrix.ignore_coverage}} "*/$LIBRARY/tests/*" "*/$LIBRARY/examples/*" "*/$LIBRARY/example/*" -o $GITHUB_WORKSPACE/coveralls/coverage.info
 
