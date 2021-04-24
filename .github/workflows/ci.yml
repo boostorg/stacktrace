@@ -17,10 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - toolset: gcc-4.8
-            cxxstd: "03,11"
-            os: ubuntu-16.04
-            install: g++-4.8
           - toolset: gcc-7
             cxxstd: "03,11,14,17"
             os: ubuntu-18.04
@@ -52,7 +48,7 @@ jobs:
           - toolset: clang
             cxxstd: "03,11,14,17,2a"
             os: macos-10.15
-            cxxflags: "cxxflags=-fsanitize=address,undefined -fno-sanitize-recover=undefined"
+            cxxflags: "cxxflags=-fsanitize=address,undefined -fno-sanitize-recover=undefined -D_GNU_SOURCE=1"
             linkflags: "linkflags=-fsanitize=address,undefined"
 
     runs-on: ${{matrix.os}}
@@ -98,7 +94,7 @@ jobs:
         run: |
           cd ../boost-root
           ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} variant=debug,release "${{matrix.cxxflags}}" "${{matrix.linkflags}}" "${{matrix.launcher}}"
-          dist/bin/inspect libs/$LIBRARY/test
+          dist/bin/inspect libs/$LIBRARY
 
       - name: Prepare coverage data
         if: matrix.gcov_tool
@@ -135,16 +131,16 @@ jobs:
         include:
           - toolset: msvc-14.1
             cxxstd: "14,17,latest"
-            addrmd: 32,64
+            addrmd: 64
             os: windows-2016
           - toolset: msvc-14.2
             cxxstd: "14,17,latest"
-            addrmd: 32,64
-            os: windows-2019
-          - toolset: gcc
-            cxxstd: "03,11,14,17,2a"
             addrmd: 64
             os: windows-2019
+          #- toolset: gcc
+          #  cxxstd: "03,11,14,17,2a"
+          #  addrmd: 64
+          #  os: windows-2019
 
     runs-on: ${{matrix.os}}
 
