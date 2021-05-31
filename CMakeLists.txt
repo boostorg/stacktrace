@@ -101,6 +101,7 @@ if(BOOST_STACKTRACE_ENABLE_BACKTRACE)
   find_package(Backtrace REQUIRED)
   target_include_directories(boost_stacktrace_backtrace PRIVATE ${Backtrace_INCLUDE_DIRS})
   target_link_libraries(boost_stacktrace_backtrace PRIVATE ${Backtrace_LIBRARIES})
+  target_compile_definitions(boost_stacktrace_backtrace PRIVATE "BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE=<${Backtrace_HEADER}>")
 endif()
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
