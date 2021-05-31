@@ -52,34 +52,48 @@ endfunction()
 
 include(CheckCXXSourceCompiles)
 
-function(stacktrace_check source var)
+function(stacktrace_check var source incs libs defs)
 
-  set(CMAKE_REQUIRED_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/../config/include") # has_windbg_cached.cpp includes boost/config.hpp
-  check_cxx_source_compiles("#include <${CMAKE_CURRENT_SOURCE_DIR}/build/${source}.cpp>" ${var})
+  set(CMAKE_REQUIRED_INCLUDES "${incs}")
+  set(CMAKE_REQUIRED_LIBRARIES "${libs}")
+  set(CMAKE_REQUIRED_DEFINITIONS "${defs}")
+  check_cxx_source_compiles("#include <${CMAKE_CURRENT_SOURCE_DIR}/${source}>" ${var})
   set(${var} ${${var}} PARENT_SCOPE)
 
 endfunction()
 
 find_package(Backtrace QUIET)
 
+if(NOT Backtrace_FOUND)
+  set(BOOST_STACKTRACE_HAS_BACKTRACE OFF)
+  set(BOOST_STACKTRACE_HAS_BACKTRACE_WITH_HEADER OFF)
+else()
+  stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE build/has_backtrace.cpp "${Backtrace_INCLUDE_DIRS}" "${Backtrace_LIBRARIES}" "")
+  stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE_WITH_HEADER build/has_backtrace.cpp "${Backtrace_INCLUDE_DIRS}" "${Backtrace_LIBRARIES}" "-DBOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE=<${Backtrace_HEADER}>")
+endif()
+
+set(_default_backtrace OFF)
+if(BOOST_STACKTRACE_HAS_BACKTRACE OR BOOST_STACKTRACE_HAS_BACKTRACE_WITH_HEADER)
+  set(_default_backtrace ON)
+endif()
+
 set(_default_addr2line ON)
 if(WIN32 AND NOT CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
   set(_default_addr2line OFF)
 endif()
 
-stacktrace_check(has_windbg BOOST_STACKTRACE_HAS_WINDBG)
-stacktrace_check(has_windbg_cached BOOST_STACKTRACE_HAS_WINDBG_CACHED)
+stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG build/has_windbg.cpp "" "" "")
+stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG_CACHED build/has_windbg_cached.cpp "${CMAKE_CURRENT_SOURCE_DIR}/../config/include" "" "")
 
 option(BOOST_STACKTRACE_ENABLE_NOOP "Boost.Stacktrace: build boost_stacktrace_noop" ON)
-option(BOOST_STACKTRACE_ENABLE_BACKTRACE "Boost.Stacktrace: build boost_stacktrace_backtrace" ${Backtrace_FOUND})
+option(BOOST_STACKTRACE_ENABLE_BACKTRACE "Boost.Stacktrace: build boost_stacktrace_backtrace" ${_default_backtrace})
 option(BOOST_STACKTRACE_ENABLE_ADDR2LINE "Boost.Stacktrace: build boost_stacktrace_addr2line" ${_default_addr2line})
 option(BOOST_STACKTRACE_ENABLE_BASIC "Boost.Stacktrace: build boost_stacktrace_basic" ON)
 option(BOOST_STACKTRACE_ENABLE_WINDBG "Boost.Stacktrace: build boost_stacktrace_windbg" ${BOOST_STACKTRACE_HAS_WINDBG})
 option(BOOST_STACKTRACE_ENABLE_WINDBG_CACHED "Boost.Stacktrace: build boost_stacktrace_windbg_cached" ${BOOST_STACKTRACE_HAS_WINDBG_CACHED})
 
+unset(_default_backtrace)
 unset(_default_addr2line)
-unset(BOOST_STACKTRACE_HAS_WINDBG)
-unset(BOOST_STACKTRACE_HAS_WINDBG_CACHED)
 
 message(STATUS "Boost.Stacktrace: "
   "noop ${BOOST_STACKTRACE_ENABLE_NOOP}, "
@@ -101,7 +115,9 @@ if(BOOST_STACKTRACE_ENABLE_BACKTRACE)
   find_package(Backtrace REQUIRED)
   target_include_directories(boost_stacktrace_backtrace PRIVATE ${Backtrace_INCLUDE_DIRS})
   target_link_libraries(boost_stacktrace_backtrace PRIVATE ${Backtrace_LIBRARIES})
-  target_compile_definitions(boost_stacktrace_backtrace PRIVATE "BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE=<${Backtrace_HEADER}>")
+  if(NOT BOOST_STACKTRACE_HAS_BACKTRACE)
+    target_compile_definitions(boost_stacktrace_backtrace PRIVATE "BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE=<${Backtrace_HEADER}>")
+  endif()
 endif()
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
