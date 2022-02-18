@@ -44,37 +44,12 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-class com_global_initer: boost::noncopyable {
-    bool ok_;
-
-public:
-    com_global_initer() BOOST_NOEXCEPT
-        : ok_(false)
-    {
-        // COINIT_MULTITHREADED means that we must serialize access to the objects manually.
-        // This is the fastest way to work. If user calls CoInitializeEx before us - we 
-        // can end up with other mode (which is OK for us).
-        //
-        // If we call CoInitializeEx befire user - user may end up with different mode, which is a problem.
-        // So we need to call that initialization function as late as possible.
-        const DWORD res = ::CoInitializeEx(0, COINIT_MULTITHREADED);
-        ok_ = (res == S_OK || res == S_FALSE);
-    }
-
-    ~com_global_initer() BOOST_NOEXCEPT {
-        if (ok_) {
-            ::CoUninitialize();
-        }
-    }
-};
-
-
 template <class T>
 class com_holder: boost::noncopyable {
     T* holder_;
 
 public:
-    com_holder(const com_global_initer&) BOOST_NOEXCEPT
+    com_holder() BOOST_NOEXCEPT
         : holder_(0)
     {}
 
@@ -126,13 +101,13 @@ inline void trim_right_zeroes(std::string& s) {
 }
 
 class debugging_symbols: boost::noncopyable {
-    static void try_init_com(com_holder< ::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
-        com_holder< ::IDebugClient> iclient(com);
+    static void try_init_com(com_holder< ::IDebugSymbols>& idebug) BOOST_NOEXCEPT {
+        com_holder< ::IDebugClient> iclient;
         if (S_OK != ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr())) {
             return;
         }
 
-        com_holder< ::IDebugControl> icontrol(com);
+        com_holder< ::IDebugControl> icontrol;
         const bool res0 = (S_OK == iclient->QueryInterface(
             __uuidof(IDebugControl),
             icontrol.to_void_ptr_ptr()
@@ -160,14 +135,11 @@ class debugging_symbols: boost::noncopyable {
 
 #ifndef BOOST_STACKTRACE_USE_WINDBG_CACHED
 
-    boost::stacktrace::detail::com_global_initer com_;
     com_holder< ::IDebugSymbols> idebug_;
 public:
     debugging_symbols() BOOST_NOEXCEPT
-        : com_()
-        , idebug_(com_)
     {
-        try_init_com(idebug_, com_);
+        try_init_com(idebug_);
     }
 
 #else
