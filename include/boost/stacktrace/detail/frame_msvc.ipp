@@ -126,8 +126,8 @@ inline void trim_right_zeroes(std::string& s) {
 }
 
 class debugging_symbols: boost::noncopyable {
-    static void try_init_com(com_holder< ::IDebugSymbols>& idebug, const com_global_initer& com) BOOST_NOEXCEPT {
-        com_holder< ::IDebugClient> iclient(com);
+    static void try_init_com(com_holder< ::IDebugClient>& iclient, com_holder< ::IDebugSymbols>& idebug,
+                             const com_global_initer& com) BOOST_NOEXCEPT {
         if (S_OK != ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr())) {
             return;
         }
@@ -162,12 +162,19 @@ class debugging_symbols: boost::noncopyable {
 
     boost::stacktrace::detail::com_global_initer com_;
     com_holder< ::IDebugSymbols> idebug_;
+    com_holder< ::IDebugClient> iclient_;
 public:
     debugging_symbols() BOOST_NOEXCEPT
         : com_()
         , idebug_(com_)
+        , iclient_(com_)
     {
-        try_init_com(idebug_, com_);
+        try_init_com(iclient_, idebug_, com_);
+    }
+
+    ~debugging_symbols() BOOST_NOEXCEPT
+    {
+        iclient_->EndSession(DEBUG_END_PASSIVE);
     }
 
 #else
@@ -181,9 +188,10 @@ public:
         // or not the member function is inline.
         static thread_local boost::stacktrace::detail::com_global_initer com;
         static thread_local com_holder< ::IDebugSymbols> idebug(com);
+        static thread_local com_holder< ::IDebugClient> iclient(com);
 
         if (!idebug.is_inited()) {
-            try_init_com(idebug, com);
+            try_init_com(iclient, idebug, com);
         }
 
         return idebug;
