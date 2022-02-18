@@ -174,7 +174,9 @@ public:
 
     ~debugging_symbols() BOOST_NOEXCEPT
     {
-        iclient_->EndSession(DEBUG_END_PASSIVE);
+        if (iclient_.is_inited()) {
+            iclient_->EndSession(DEBUG_END_PASSIVE);
+        }
     }
 
 #else
