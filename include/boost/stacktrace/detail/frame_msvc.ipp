@@ -199,9 +199,12 @@ public:
                 &size,
                 0
             ));
-            trim_right_zeroes(result);
+
+            // According to https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/dbgeng/nf-dbgeng-idebugsymbols-getnamebyoffset
+            // "This size includes the space for the '\0' terminating character."
+            result.resize(size - 1);
         } else if (res) {
-            result = name;
+            result.assign(name, size - 1);
         }
 
         if (!res) {
