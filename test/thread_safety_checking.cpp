@@ -41,18 +41,7 @@ void main_test_loop() {
     }
 }
 
-#if defined(BOOST_STACKTRACE_TEST_COM_PREINIT_MT) || defined(BOOST_STACKTRACE_TEST_COM_PREINIT_ST)
-#   include <windows.h>
-#   include "dbgeng.h"
-#endif
-
 int main() {
-#if defined(BOOST_STACKTRACE_TEST_COM_PREINIT_MT)
-    ::CoInitializeEx(0, COINIT_MULTITHREADED);
-#elif defined(BOOST_STACKTRACE_TEST_COM_PREINIT_ST)
-    ::CoInitializeEx(0, COINIT_APARTMENTTHREADED);
-#endif
-
     boost::timer::auto_cpu_timer t;
 
     boost::thread t1(main_test_loop);
@@ -63,10 +52,6 @@ int main() {
     t1.join();
     t2.join();
     t3.join();
-
-#if defined(BOOST_STACKTRACE_TEST_COM_PREINIT_MT) || defined(BOOST_STACKTRACE_TEST_COM_PREINIT_ST)
-    ::CoUninitialize();
-#endif
 
     return boost::report_errors();
 }
