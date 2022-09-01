@@ -110,15 +110,6 @@ test-suite stacktrace_tests
         : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)
         : basic_lib_threaded ]
 
-    [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg
-            $(LINKSHARED_WIND) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_MT
-        : windbg_lib_threaded_com_mt ]
-    [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached
-            $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
-        : windbg_cached_lib_threaded_com_st ]
-
     ##### Tests with disabled debug symbols #####
 
     # Header only tests without debug symbols
@@ -169,23 +160,6 @@ test-suite stacktrace_tests
             <library>.//test_impl_lib_basic_no_dbg
             $(LINKSHARED_BASIC)
         : basic_lib_no_dbg_threaded ]
-
-    [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
-            <library>/boost/timer//boost_timer
-            <library>.//test_impl_lib_windbg
-            $(LINKSHARED_WIND)
-            <define>BOOST_STACKTRACE_TEST_COM_PREINIT_MT
-        : windbg_lib_threaded_com_mt ]
-    [ run thread_safety_checking.cpp
-        : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
-            <library>/boost/timer//boost_timer
-            <library>.//test_impl_lib_windbg_cached
-            $(LINKSHARED_WIND_CACHED)
-            <define>BOOST_STACKTRACE_TEST_COM_PREINIT_ST
-        : windbg_cached_lib_threaded_com_st ]
 
     [ run test_void_ptr_cast.cpp ]
     [ run test_num_conv.cpp ]
