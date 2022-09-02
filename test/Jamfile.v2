@@ -88,6 +88,15 @@ test-suite stacktrace_tests
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on                        $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) : basic_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL $(BASIC_DEPS) : basic_ho_empty ]
 
+    # Header only trivial
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE        $(BT_DEPS)    : trivial_backtrace_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE        $(AD2L_DEPS)  : trivial_addr2line_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_NOOP             $(NOOP_DEPS)  : trivial_noop_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on                                               $(WIND_DEPS)  : trivial_windbg_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_WINDBG_CACHED    $(WICA_DEPS)  : trivial_windbg_cached_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on                        $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) : trivial_basic_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL $(BASIC_DEPS) : trivial_basic_ho_empty ]
+
     # Test with shared linked implementations with debug symbols
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)            : backtrace_lib ]
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_addr2line     $(LINKSHARED_AD2L)          : addr2line_lib ]
@@ -95,6 +104,14 @@ test-suite stacktrace_tests
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED)   : windbg_cached_lib ]
     [ run test_noop.cpp : : : <debug-symbols>on <library>.//test_impl_lib_noop          $(LINKSHARED_NOOP)          : noop_lib ]
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_basic         $(LINKSHARED_BASIC)         : basic_lib ]
+
+    # Trivial test with shared linked implementations with debug symbols
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)            : trivial_backtrace_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_addr2line     $(LINKSHARED_AD2L)          : trivial_addr2line_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg        $(LINKSHARED_WIND)          : trivial_windbg_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED)   : trivial_windbg_cached_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_noop          $(LINKSHARED_NOOP)          : trivial_noop_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_basic         $(LINKSHARED_BASIC)         : trivial_basic_lib ]
 
     # Thread safety with debug symbols
     [ run thread_safety_checking.cpp

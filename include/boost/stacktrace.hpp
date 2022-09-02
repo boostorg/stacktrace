@@ -13,7 +13,7 @@
 #endif
 
 #include <boost/stacktrace/frame.hpp>
-#include <boost/stacktrace/stacktrace.hpp>
+#include <boost/stacktrace/stacktrace.hpp>  // Actually already includes all the headers
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 #endif // BOOST_STACKTRACE_HPP
