@@ -81,6 +81,7 @@ test-suite stacktrace_tests
 
     # Header only tests with debug symbols
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE        $(BT_DEPS)    : backtrace_ho ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC $(BT_DEPS) : backtrace_ho_static ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE        $(AD2L_DEPS)  : addr2line_ho ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_NOOP             $(NOOP_DEPS)  : noop_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on                                               $(WIND_DEPS)  : windbg_ho ]
@@ -117,6 +118,10 @@ test-suite stacktrace_tests
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
         : backtrace_lib_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
+              <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC
+        : backtrace_lib_threaded_ststic ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
         : windbg_lib_threaded ]
