@@ -1,4 +1,4 @@
-#  Copyright (C) 2016-2019, Antony Polukhin.
+#  Copyright (C) 2016-2022, Antony Polukhin.
 #
 # Use, modification and distribution is subject to the Boost Software License,
 # Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -51,8 +51,6 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
-local libraries ;
-
 lib boost_stacktrace_noop
   : # sources
     ../src/noop.cpp
@@ -63,8 +61,6 @@ lib boost_stacktrace_noop
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
-
-libraries += boost_stacktrace_noop ;
 
 lib boost_stacktrace_backtrace
   : # sources
@@ -80,8 +76,6 @@ lib boost_stacktrace_backtrace
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-libraries += boost_stacktrace_backtrace ;
-
 lib boost_stacktrace_addr2line
   : # sources
     ../src/addr2line.cpp
@@ -94,8 +88,6 @@ lib boost_stacktrace_addr2line
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
-
-libraries += boost_stacktrace_addr2line ;
 
 lib boost_stacktrace_basic
   : # sources
@@ -110,8 +102,6 @@ lib boost_stacktrace_basic
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-libraries += boost_stacktrace_basic ;
-
 lib boost_stacktrace_windbg
   : # sources
     ../src/windbg.cpp
@@ -124,8 +114,6 @@ lib boost_stacktrace_windbg
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
-
-libraries += boost_stacktrace_windbg ;
 
 lib boost_stacktrace_windbg_cached
   : # sources
@@ -140,6 +128,4 @@ lib boost_stacktrace_windbg_cached
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
-libraries += boost_stacktrace_windbg_cached ;
-
-boost-install $(libraries) ;
+boost-install boost_stacktrace_noop boost_stacktrace_backtrace boost_stacktrace_addr2line boost_stacktrace_basic boost_stacktrace_windbg boost_stacktrace_windbg_cached ;
