@@ -101,8 +101,7 @@ inline void trim_right_zeroes(std::string& s) {
 }
 
 class debugging_symbols: boost::noncopyable {
-    static void try_init_com(com_holder< ::IDebugSymbols>& idebug) BOOST_NOEXCEPT {
-        com_holder< ::IDebugClient> iclient;
+    static void try_init_com(com_holder< ::IDebugClient>& iclient, com_holder< ::IDebugSymbols>& idebug) BOOST_NOEXCEPT {
         if (S_OK != ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr())) {
             return;
         }
@@ -136,10 +135,18 @@ class debugging_symbols: boost::noncopyable {
 #ifndef BOOST_STACKTRACE_USE_WINDBG_CACHED
 
     com_holder< ::IDebugSymbols> idebug_;
+    com_holder< ::IDebugClient> iclient_;
 public:
     debugging_symbols() BOOST_NOEXCEPT
     {
-        try_init_com(idebug_);
+        try_init_com(iclient_, idebug_);
+    }
+
+    ~debugging_symbols() BOOST_NOEXCEPT
+    {
+        if (iclient_.is_inited()) {
+            iclient_->EndSession(DEBUG_END_PASSIVE);
+        }
     }
 
 #else
@@ -152,9 +159,10 @@ public:
         // [class.mfct]: A static local variable or local type in a member function always refers to the same entity, whether
         // or not the member function is inline.
         static thread_local com_holder< ::IDebugSymbols> idebug;
+        static thread_local com_holder< ::IDebugClient> iclient;
 
         if (!idebug.is_inited()) {
-            try_init_com(idebug);
+            try_init_com(iclient, idebug);
         }
 
         return idebug;
