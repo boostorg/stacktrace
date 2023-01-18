@@ -121,7 +121,7 @@ test-suite stacktrace_tests
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
               <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC
-        : backtrace_lib_threaded_ststic ]
+        : backtrace_lib_threaded_static ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
         : windbg_lib_threaded ]
