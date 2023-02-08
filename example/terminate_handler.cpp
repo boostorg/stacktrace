@@ -77,7 +77,7 @@ boost::interprocess::mapped_region g_region;     // inited at program start
 void my_signal_handler2(int signum) {
     ::signal(signum, SIG_DFL);
     void** f = static_cast<void**>(g_region.get_address());
-    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now constains stacktrace.
+    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now contains stacktrace.
     boost::stacktrace::safe_dump_to(f + 1, g_region.get_size() - sizeof(void*));
 
     ::raise(SIGABRT);
@@ -196,8 +196,8 @@ int run_4(const char* argv[]) {
 
 //[getting_started_on_program_restart_shmem
     void** f = static_cast<void**>(g_region.get_address());
-    if (*f) {                                                 // Checking if memory constains stacktrace.
-        boost::stacktrace::stacktrace st 
+    if (*f) {                                                 // Checking if memory contains stacktrace.
+        boost::stacktrace::stacktrace st
             = boost::stacktrace::stacktrace::from_dump(f + 1, g_region.get_size() - sizeof(bool));
 
         std::cout << "Previous run crashed and left trace in shared memory:\n" << st << std::endl;
