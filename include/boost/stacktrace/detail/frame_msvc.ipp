@@ -129,7 +129,7 @@ class debugging_symbols: boost::noncopyable {
             return;
         }
 
-        // No cheking: QueryInterface sets the output parameter to NULL in case of error.
+        // No checking: QueryInterface sets the output parameter to NULL in case of error.
         iclient->QueryInterface(__uuidof(IDebugSymbols), idebug.to_void_ptr_ptr());
     }
 
