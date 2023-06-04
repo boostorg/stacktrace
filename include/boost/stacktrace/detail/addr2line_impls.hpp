@@ -12,6 +12,7 @@
 #   pragma once
 #endif
 
+#include <boost/stacktrace/detail/addr_base.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/try_dec_convert.hpp>
@@ -165,6 +166,16 @@ struct to_string_using_addr2line {
     bool prepare_source_location(const void* addr) {
         //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
         std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", addr);
+        if (!source_line.empty() && source_line[0] != '?') {
+            res += " at ";
+            res += source_line;
+            return true;
+        }
+        // just addr2line(address) didn't work, it might be that it's a position independant binary
+        // and only offset from base has to be passed to addr2line
+        const uintptr_t addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+        const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+        source_line = boost::stacktrace::detail::addr2line("-Cpe", reinterpret_cast<const void*>(offset));
         if (!source_line.empty() && source_line[0] != '?') {
             res += " at ";
             res += source_line;
