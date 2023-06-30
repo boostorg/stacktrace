@@ -21,7 +21,6 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 struct mapping_entry_t {
-    // TODO uintptr_t are not in C++03?
     uintptr_t start;
     uintptr_t end;
     uintptr_t offset_from_base;
@@ -55,13 +54,13 @@ inline boost::optional<mapping_entry_t> parse_proc_maps_line(const std::string& 
     if(!std::getline(line_stream, mapping_range_str, ' ') ||
         !std::getline(line_stream, permissions_str, ' ') ||
         !std::getline(line_stream, offset_from_base_str, ' ')) {
-        return {};
+        return boost::optional<mapping_entry_t>();
     }
     std::string mapping_start_str, mapping_end_str;
     std::istringstream mapping_range_stream(mapping_range_str);
     if(!std::getline(mapping_range_stream, mapping_start_str, '-') ||
         !std::getline(mapping_range_stream, mapping_end_str)) {
-        return {};
+        return boost::optional<mapping_entry_t>();
     }
     mapping_entry_t mapping;
     try {
@@ -70,7 +69,7 @@ inline boost::optional<mapping_entry_t> parse_proc_maps_line(const std::string& 
         mapping.offset_from_base = hex_str_to_int(offset_from_base_str);
         return mapping;
     } catch(std::invalid_argument& e) {
-        return {};
+        return boost::optional<mapping_entry_t>();
     }
 }
 
