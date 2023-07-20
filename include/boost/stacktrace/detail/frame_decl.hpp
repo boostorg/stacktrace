@@ -47,7 +47,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR frame() noexcept
+    constexpr frame() noexcept
         : addr_(0)
     {}
 
@@ -75,7 +75,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR explicit frame(native_frame_ptr_t addr) noexcept
+    constexpr explicit frame(native_frame_ptr_t addr) noexcept
         : addr_(addr)
     {}
 
@@ -104,7 +104,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR native_frame_ptr_t address() const noexcept {
+    constexpr native_frame_ptr_t address() const noexcept {
         return addr_;
     }
 
@@ -139,10 +139,10 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_CONSTEXPR bool empty() const noexcept { return !address(); }
+    constexpr bool empty() const noexcept { return !address(); }
     
     /// @cond
-    BOOST_CONSTEXPR bool operator!() const noexcept { return !address(); }
+    constexpr bool operator!() const noexcept { return !address(); }
     /// @endcond
 };
 

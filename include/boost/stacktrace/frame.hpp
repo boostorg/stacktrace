@@ -42,12 +42,12 @@
 namespace boost { namespace stacktrace {
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
-BOOST_CONSTEXPR inline bool operator< (const frame& lhs, const frame& rhs) noexcept { return lhs.address() < rhs.address(); }
-BOOST_CONSTEXPR inline bool operator> (const frame& lhs, const frame& rhs) noexcept { return rhs < lhs; }
-BOOST_CONSTEXPR inline bool operator<=(const frame& lhs, const frame& rhs) noexcept { return !(lhs > rhs); }
-BOOST_CONSTEXPR inline bool operator>=(const frame& lhs, const frame& rhs) noexcept { return !(lhs < rhs); }
-BOOST_CONSTEXPR inline bool operator==(const frame& lhs, const frame& rhs) noexcept { return lhs.address() == rhs.address(); }
-BOOST_CONSTEXPR inline bool operator!=(const frame& lhs, const frame& rhs) noexcept { return !(lhs == rhs); }
+constexpr inline bool operator< (const frame& lhs, const frame& rhs) noexcept { return lhs.address() < rhs.address(); }
+constexpr inline bool operator> (const frame& lhs, const frame& rhs) noexcept { return rhs < lhs; }
+constexpr inline bool operator<=(const frame& lhs, const frame& rhs) noexcept { return !(lhs > rhs); }
+constexpr inline bool operator>=(const frame& lhs, const frame& rhs) noexcept { return !(lhs < rhs); }
+constexpr inline bool operator==(const frame& lhs, const frame& rhs) noexcept { return lhs.address() == rhs.address(); }
+constexpr inline bool operator!=(const frame& lhs, const frame& rhs) noexcept { return !(lhs == rhs); }
 
 /// Fast hashing support, O(1) complexity; Async-Handler-Safe.
 inline std::size_t hash_value(const frame& f) noexcept {
