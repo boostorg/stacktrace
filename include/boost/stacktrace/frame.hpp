@@ -32,8 +32,6 @@
 #include <iosfwd>
 #include <string>
 
-#include <boost/core/explicit_operator_bool.hpp>
-
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 
 #include <boost/stacktrace/detail/frame_decl.hpp>

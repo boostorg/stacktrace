@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
@@ -269,7 +268,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()
+    constexpr explicit operator bool () const noexcept { return !this->operator!(); }
 
     /// @brief Allows to check that stack trace failed.
     /// @returns `true` if `this->size() == 0`

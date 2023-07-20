@@ -15,8 +15,6 @@
 #include <iosfwd>
 #include <string>
 
-#include <boost/core/explicit_operator_bool.hpp>
-
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
@@ -131,7 +129,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_EXPLICIT_OPERATOR_BOOL()
+    constexpr explicit operator bool () const noexcept { return !this->operator!(); }
 
     /// @brief Checks that frame references NULL address.
     /// @returns `true` if `this->address() == 0`
