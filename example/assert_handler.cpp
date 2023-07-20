@@ -6,13 +6,13 @@
 
 #define BOOST_ENABLE_ASSERT_HANDLER
 
+#include <array>   // std::array
 #include <cstdlib> // std::exit
-#include <boost/array.hpp>
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
 BOOST_NOINLINE void bar(int i) {
-    boost::array<int, 5> a = {{101, 100, 123, 23, 32}};
+    std::array<int, 5> a = {{101, 100, 123, 23, 32}};
     if (i >= 0) {
         foo(a[i]);
     } else {

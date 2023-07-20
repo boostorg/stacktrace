@@ -4,12 +4,12 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/array.hpp>
+#include <array>
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
 BOOST_NOINLINE void bar(int i) {
-    boost::array<int, 5> a = {{-1, -231, -123, -23, -32}};
+    std::array<int, 5> a = {{-1, -231, -123, -23, -32}};
     if (i >= 0) {
         foo(a[i]);
     } else {
