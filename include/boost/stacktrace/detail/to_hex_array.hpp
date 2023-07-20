@@ -22,7 +22,7 @@ namespace boost { namespace stacktrace { namespace detail {
 BOOST_STATIC_CONSTEXPR char to_hex_array_bytes[] = "0123456789ABCDEF";
 
 template <class T>
-inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) BOOST_NOEXCEPT {
+inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) noexcept {
     boost::array<char, 2 + sizeof(void*) * 2 + 1> ret = {"0x"};
     ret.back() = '\0';
     BOOST_STATIC_ASSERT_MSG(!boost::is_pointer<T>::value, "");
@@ -43,7 +43,7 @@ inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(T addr) BOOST_
     return ret;
 }
 
-inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* addr) BOOST_NOEXCEPT {
+inline boost::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* addr) noexcept {
     return to_hex_array(
         reinterpret_cast< boost::make_unsigned<std::ptrdiff_t>::type >(addr)
     );

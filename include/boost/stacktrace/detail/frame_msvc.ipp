@@ -49,23 +49,23 @@ class com_holder: boost::noncopyable {
     T* holder_;
 
 public:
-    com_holder() BOOST_NOEXCEPT
+    com_holder() noexcept
         : holder_(0)
     {}
 
-    T* operator->() const BOOST_NOEXCEPT {
+    T* operator->() const noexcept {
         return holder_;
     }
 
-    void** to_void_ptr_ptr() BOOST_NOEXCEPT {
+    void** to_void_ptr_ptr() noexcept {
         return reinterpret_cast<void**>(&holder_);
     }
 
-    bool is_inited() const BOOST_NOEXCEPT {
+    bool is_inited() const noexcept {
         return !!holder_;
     }
 
-    ~com_holder() BOOST_NOEXCEPT {
+    ~com_holder() noexcept {
         if (holder_) {
             holder_->Release();
         }
@@ -101,7 +101,7 @@ inline void trim_right_zeroes(std::string& s) {
 }
 
 class debugging_symbols: boost::noncopyable {
-    static void try_init_com(com_holder< ::IDebugSymbols>& idebug) BOOST_NOEXCEPT {
+    static void try_init_com(com_holder< ::IDebugSymbols>& idebug) noexcept {
         com_holder< ::IDebugClient> iclient;
         if (S_OK != ::DebugCreate(__uuidof(IDebugClient), iclient.to_void_ptr_ptr())) {
             return;
@@ -137,7 +137,7 @@ class debugging_symbols: boost::noncopyable {
 
     com_holder< ::IDebugSymbols> idebug_;
 public:
-    debugging_symbols() BOOST_NOEXCEPT
+    debugging_symbols() noexcept
     {
         try_init_com(idebug_);
     }
@@ -148,7 +148,7 @@ public:
 #   error Your compiler does not support C++11 thread_local storage. It`s impossible to build with BOOST_STACKTRACE_USE_WINDBG_CACHED.
 #endif
 
-    static com_holder< ::IDebugSymbols>& get_thread_local_debug_inst() BOOST_NOEXCEPT {
+    static com_holder< ::IDebugSymbols>& get_thread_local_debug_inst() noexcept {
         // [class.mfct]: A static local variable or local type in a member function always refers to the same entity, whether
         // or not the member function is inline.
         static thread_local com_holder< ::IDebugSymbols> idebug;
@@ -162,13 +162,13 @@ public:
 
     com_holder< ::IDebugSymbols>& idebug_;
 public:
-    debugging_symbols() BOOST_NOEXCEPT
+    debugging_symbols() noexcept
         : idebug_( get_thread_local_debug_inst() )
     {}
 
 #endif // #ifndef BOOST_STACKTRACE_USE_WINDBG_CACHED
 
-    bool is_inited() const BOOST_NOEXCEPT {
+    bool is_inited() const noexcept {
         return idebug_.is_inited();
     }
 
@@ -230,7 +230,7 @@ public:
         return result;
     }
 
-    std::size_t get_line_impl(const void* addr) const BOOST_NOEXCEPT {
+    std::size_t get_line_impl(const void* addr) const noexcept {
         ULONG result = 0;
         if (!is_inited()) {
             return result;

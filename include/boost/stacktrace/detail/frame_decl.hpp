@@ -47,7 +47,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR frame() BOOST_NOEXCEPT
+    BOOST_CONSTEXPR frame() noexcept
         : addr_(0)
     {}
 
@@ -75,7 +75,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR explicit frame(native_frame_ptr_t addr) BOOST_NOEXCEPT
+    BOOST_CONSTEXPR explicit frame(native_frame_ptr_t addr) noexcept
         : addr_(addr)
     {}
 
@@ -86,7 +86,7 @@ public:
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
     template <class T>
-    explicit frame(T* function_addr) BOOST_NOEXCEPT
+    explicit frame(T* function_addr) noexcept
         : addr_(boost::stacktrace::detail::void_ptr_cast<native_frame_ptr_t>(function_addr))
     {}
 
@@ -104,7 +104,7 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     /// @throws Nothing.
-    BOOST_CONSTEXPR native_frame_ptr_t address() const BOOST_NOEXCEPT {
+    BOOST_CONSTEXPR native_frame_ptr_t address() const noexcept {
         return addr_;
     }
 
@@ -139,10 +139,10 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    BOOST_CONSTEXPR bool empty() const BOOST_NOEXCEPT { return !address(); }
+    BOOST_CONSTEXPR bool empty() const noexcept { return !address(); }
     
     /// @cond
-    BOOST_CONSTEXPR bool operator!() const BOOST_NOEXCEPT { return !address(); }
+    BOOST_CONSTEXPR bool operator!() const noexcept { return !address(); }
     /// @endcond
 };
 

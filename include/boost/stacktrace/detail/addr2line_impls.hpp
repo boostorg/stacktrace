@@ -28,7 +28,7 @@ namespace boost { namespace stacktrace { namespace detail {
 
 #if defined(BOOST_STACKTRACE_ADDR2LINE_LOCATION) && !defined(BOOST_NO_CXX11_CONSTEXPR)
 
-constexpr bool is_abs_path(const char* path) BOOST_NOEXCEPT {
+constexpr bool is_abs_path(const char* path) noexcept {
     return *path != '\0' && (
         *path == ':' || *path == '/' || is_abs_path(path + 1)
     );
@@ -41,7 +41,7 @@ class addr2line_pipe {
     ::pid_t pid;
 
 public:
-    explicit addr2line_pipe(const char *flag, const char* exec_path, const char* addr) BOOST_NOEXCEPT
+    explicit addr2line_pipe(const char *flag, const char* exec_path, const char* addr) noexcept
         : p(0)
         , pid(0)
     {
@@ -97,11 +97,11 @@ public:
         ::close(pdes[1]);
     }
 
-    operator ::FILE*() const BOOST_NOEXCEPT {
+    operator ::FILE*() const noexcept {
         return p;
     }
 
-    ~addr2line_pipe() BOOST_NOEXCEPT {
+    ~addr2line_pipe() noexcept {
         if (p) {
             ::fclose(p);
             int pstat = 0;
