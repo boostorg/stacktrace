@@ -5,6 +5,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <array>
+
+#include <boost/config.hpp>  // BOOST_NOINLINE
+
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  

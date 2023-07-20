@@ -8,6 +8,9 @@
 
 #include <array>   // std::array
 #include <cstdlib> // std::exit
+
+#include <boost/config.hpp>  // BOOST_NOINLINE
+
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
