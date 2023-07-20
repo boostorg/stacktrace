@@ -116,20 +116,20 @@ test-suite stacktrace_tests
 
     # Thread safety with debug symbols
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
+        : : : <debug-symbols>on <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
         : backtrace_lib_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
+        : : : <debug-symbols>on <library>/boost/timer//boost_timer <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
               <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC
         : backtrace_lib_threaded_static ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
+        : : : <debug-symbols>on <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
         : windbg_lib_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)
+        : : : <debug-symbols>on <library>/boost/timer//boost_timer <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)
         : windbg_cached_lib_threaded ]
     [ run thread_safety_checking.cpp
-        : : : <debug-symbols>on <library>/boost/thread//boost_thread <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)
+        : : : <debug-symbols>on <library>/boost/timer//boost_timer <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)
         : basic_lib_threaded ]
 
     ##### Tests with disabled debug symbols #####
@@ -156,28 +156,24 @@ test-suite stacktrace_tests
     # Thread safety without debug symbols
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
             <library>/boost/timer//boost_timer
             <library>.//test_impl_lib_backtrace_no_dbg
             $(LINKSHARED_BT)
         : backtrace_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
             <library>/boost/timer//boost_timer
             <library>.//test_impl_lib_windbg_no_dbg
             $(LINKSHARED_WIND)
         : windbg_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
             <library>/boost/timer//boost_timer
             <library>.//test_impl_lib_windbg_cached_no_dbg
             $(LINKSHARED_WIND_CACHED)
         : windbg_cached_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
-            <library>/boost/thread//boost_thread
             <library>/boost/timer//boost_timer
             <library>.//test_impl_lib_basic_no_dbg
             $(LINKSHARED_BASIC)
