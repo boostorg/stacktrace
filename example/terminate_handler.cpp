@@ -7,6 +7,7 @@
 #include <array>
 
 #include <boost/config.hpp>  // BOOST_NOINLINE
+#include <exception>         // std::terminate
 
 BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
