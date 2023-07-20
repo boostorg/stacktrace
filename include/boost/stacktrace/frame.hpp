@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/config/pragma_message.hpp>
 #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || \
     defined(BOOST_NO_CXX11_AUTO_DECLARATIONS) || \
     defined(BOOST_NO_CXX11_CONSTEXPR) || \
@@ -26,7 +25,7 @@
     defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST) || \
     defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
 
-BOOST_PRAGMA_MESSAGE("C++03 support is deprecated in Boost.Stacktrace 1.82 and will be removed in Boost.Stacktrace 1.84.")
+#error "C++03 support is dropped in Boost.Stacktrace 1.84"
 
 #endif
 
