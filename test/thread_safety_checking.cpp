@@ -8,9 +8,9 @@
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
 #include <sstream>
-#include <thread>
 
 #include <boost/stacktrace.hpp>
+#include <boost/thread.hpp>
 #include <boost/optional.hpp>
 #include <boost/core/lightweight_test.hpp>
 
@@ -44,9 +44,9 @@ void main_test_loop() {
 int main() {
     boost::timer::auto_cpu_timer t;
 
-    std::thread t1(main_test_loop);
-    std::thread t2(main_test_loop);
-    std::thread t3(main_test_loop);
+    boost::thread t1(main_test_loop);
+    boost::thread t2(main_test_loop);
+    boost::thread t3(main_test_loop);
     main_test_loop();
 
     t1.join();
