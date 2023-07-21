@@ -41,9 +41,9 @@ BOOST_NOINLINE void oops(int i) {
     std::exit(1);
 }
 
-#include <array>
+#include <boost/array.hpp>
 BOOST_NOINLINE void bar(int i) {
-    std::array<int, 5> a = {{0, 0, 0, 0, 0}};
+    boost::array<int, 5> a = {{0, 0, 0, 0, 0}};
     if (i < 5) {
         if (i >= 0) {
             foo(a[i]);

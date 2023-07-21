@@ -6,7 +6,7 @@
 
 #define BOOST_USER_CONFIG <libs/stacktrace/example/user_config.hpp>
 
-#include <array>
+#include <boost/array.hpp>
 #include <exception>    // std::set_terminate, std::abort
 #include <boost/stacktrace.hpp>
 #include <iostream>     // std::cerr
@@ -14,7 +14,7 @@ BOOST_NOINLINE void foo(int i);
 BOOST_NOINLINE void bar(int i);
  
 BOOST_NOINLINE void bar(int i) {
-    std::array<int, 5> a = {{-1, -231, -123, -23, -32}};
+    boost::array<int, 5> a = {{-1, -231, -123, -23, -32}};
     if (i >= 0) {
         foo(a[i]);
     } else {
