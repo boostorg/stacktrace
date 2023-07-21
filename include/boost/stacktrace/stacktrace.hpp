@@ -268,7 +268,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    constexpr explicit operator bool () const noexcept { return !this->operator!(); }
+    constexpr explicit operator bool () const noexcept { return !empty()); }
 
     /// @brief Allows to check that stack trace failed.
     /// @returns `true` if `this->size() == 0`
@@ -277,10 +277,6 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     bool empty() const noexcept { return !size(); }
-
-    /// @cond
-    bool operator!() const noexcept { return !size(); }
-    /// @endcond
 
     const std::vector<boost::stacktrace::frame, Allocator>& as_vector() const noexcept {
         return impl_;

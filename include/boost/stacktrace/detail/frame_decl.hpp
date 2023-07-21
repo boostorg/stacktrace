@@ -129,7 +129,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    constexpr explicit operator bool () const noexcept { return !this->operator!(); }
+    constexpr explicit operator bool () const noexcept { return !empty(); }
 
     /// @brief Checks that frame references NULL address.
     /// @returns `true` if `this->address() == 0`
@@ -138,10 +138,6 @@ public:
     ///
     /// @b Async-Handler-Safety: Safe.
     constexpr bool empty() const noexcept { return !address(); }
-    
-    /// @cond
-    constexpr bool operator!() const noexcept { return !address(); }
-    /// @endcond
 };
 
 
