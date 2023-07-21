@@ -268,7 +268,7 @@ public:
     /// @b Complexity: O(1)
     ///
     /// @b Async-Handler-Safety: Safe.
-    constexpr explicit operator bool () const noexcept { return !empty()); }
+    constexpr explicit operator bool () const noexcept { return !empty(); }
 
     /// @brief Allows to check that stack trace failed.
     /// @returns `true` if `this->size() == 0`
