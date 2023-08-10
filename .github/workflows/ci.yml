@@ -18,18 +18,18 @@ jobs:
       matrix:
         include:
           - toolset: gcc-12
-            cxxstd: "11,14,17,2a"
+            cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
             cxxflags: "cxxflags=--coverage -fsanitize=address,leak,undefined -fno-sanitize-recover=undefined"
             linkflags: "linkflags=--coverage -lasan -lubsan"
             gcov_tool: "gcov-12"
             launcher: "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.8"
           - toolset: gcc-9
-            cxxstd: "11,14,17,2a"
+            cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
           - toolset: clang
             compiler: clang++-14
-            cxxstd: "11,14,17,2a"
+            cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
           # TODO: fix and uncomment
           #- toolset: clang
