@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <boost/config/pragma_message.hpp>
 #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || \
     defined(BOOST_NO_CXX11_AUTO_DECLARATIONS) || \
     defined(BOOST_NO_CXX11_CONSTEXPR) || \
@@ -26,14 +25,12 @@
     defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST) || \
     defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
 
-BOOST_PRAGMA_MESSAGE("C++03 support is deprecated in Boost.Stacktrace 1.82 and will be removed in Boost.Stacktrace 1.84.")
+#error "C++03 support is dropped in Boost.Stacktrace 1.84"
 
 #endif
 
 #include <iosfwd>
 #include <string>
-
-#include <boost/core/explicit_operator_bool.hpp>
 
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 
@@ -43,15 +40,15 @@ BOOST_PRAGMA_MESSAGE("C++03 support is deprecated in Boost.Stacktrace 1.82 and w
 namespace boost { namespace stacktrace {
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
-BOOST_CONSTEXPR inline bool operator< (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() < rhs.address(); }
-BOOST_CONSTEXPR inline bool operator> (const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return rhs < lhs; }
-BOOST_CONSTEXPR inline bool operator<=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs > rhs); }
-BOOST_CONSTEXPR inline bool operator>=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs < rhs); }
-BOOST_CONSTEXPR inline bool operator==(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return lhs.address() == rhs.address(); }
-BOOST_CONSTEXPR inline bool operator!=(const frame& lhs, const frame& rhs) BOOST_NOEXCEPT { return !(lhs == rhs); }
+constexpr inline bool operator< (const frame& lhs, const frame& rhs) noexcept { return lhs.address() < rhs.address(); }
+constexpr inline bool operator> (const frame& lhs, const frame& rhs) noexcept { return rhs < lhs; }
+constexpr inline bool operator<=(const frame& lhs, const frame& rhs) noexcept { return !(lhs > rhs); }
+constexpr inline bool operator>=(const frame& lhs, const frame& rhs) noexcept { return !(lhs < rhs); }
+constexpr inline bool operator==(const frame& lhs, const frame& rhs) noexcept { return lhs.address() == rhs.address(); }
+constexpr inline bool operator!=(const frame& lhs, const frame& rhs) noexcept { return !(lhs == rhs); }
 
 /// Fast hashing support, O(1) complexity; Async-Handler-Safe.
-inline std::size_t hash_value(const frame& f) BOOST_NOEXCEPT {
+inline std::size_t hash_value(const frame& f) noexcept {
     return reinterpret_cast<std::size_t>(f.address());
 }
 

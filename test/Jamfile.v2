@@ -1,4 +1,4 @@
-#  Copyright (C) 2016-2021, Antony Polukhin.
+#  Copyright (C) 2016-2023, Antony Polukhin.
 #
 # Use, modification and distribution is subject to the Boost Software License,
 # Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -24,6 +24,7 @@ lib backtrace
 
 project
   : requirements
+    [ requires cxx11 ]
     <toolset>msvc:<asynch-exceptions>on
     <toolset>intel:<cxxflags>-wd2196
     <target-os>linux:<linkflags>-lpthread
