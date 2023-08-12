@@ -156,6 +156,19 @@ inline std::string addr2line(const char* flag, const void* addr) {
     return res;
 }
 
+std::string source_location(const void* addr, bool position_independent) {
+    uintptr_t addr_base = 0;
+    if (position_independent) {
+        addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+    }
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", reinterpret_cast<const void*>(offset));
+    if (source_line.empty() || source_line[0] == '?') {
+        return "";
+    }
+
+    return source_line;
+}
 
 struct to_string_using_addr2line {
     std::string res;
@@ -164,19 +177,20 @@ struct to_string_using_addr2line {
     }
 
     bool prepare_source_location(const void* addr) {
-        //return addr2line("-Cfipe", addr); // Does not seem to work in all cases
-        std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", addr);
-        if (!source_line.empty() && source_line[0] != '?') {
-            res += " at ";
-            res += source_line;
-            return true;
+        // general idea in all addr2line uses:
+        // in each case:
+        //  - try to resolve whole address as if it was a non-pie binary
+        //  - if that didn't work, try to resolve just an offset from binary base address
+        // this is needed because:
+        //  - in pie binaries just passing an address to addr2line won't work (it needs an offset in this case)
+        //  - in non-pie binaries whole address is needed (offset won't work)
+        //  - there is no easy way to test if binary is position independent (that I know of)
+        std::string source_line = boost::stacktrace::detail::source_location(addr, false);
+        if(source_line.empty()) {
+            source_line = boost::stacktrace::detail::source_location(addr, true);
         }
-        // just addr2line(address) didn't work, it might be that it's a position independant binary
-        // and only offset from base has to be passed to addr2line
-        const uintptr_t addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
-        const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
-        source_line = boost::stacktrace::detail::addr2line("-Cpe", reinterpret_cast<const void*>(offset));
-        if (!source_line.empty() && source_line[0] != '?') {
+
+        if (!source_line.empty()) {
             res += " at ";
             res += source_line;
             return true;
@@ -189,8 +203,13 @@ struct to_string_using_addr2line {
 template <class Base> class to_string_impl_base;
 typedef to_string_impl_base<to_string_using_addr2line> to_string_impl;
 
-inline std::string name_impl(const void* addr) {
-    std::string res = boost::stacktrace::detail::addr2line("-fe", addr);
+inline std::string name(const void* addr, bool position_independent) {
+    uintptr_t addr_base = 0;
+    if(position_independent){
+        addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+    }
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    std::string res = boost::stacktrace::detail::addr2line("-fe", offset);
     res = res.substr(0, res.find_last_of('\n'));
     res = boost::core::demangle(res.c_str());
 
@@ -201,11 +220,23 @@ inline std::string name_impl(const void* addr) {
     return res;
 }
 
-} // namespace detail
+inline std::string name_impl(const void* addr) {
+    std::string res = boost::stacktrace::detail::name(addr, false);
+    if (res.empty()) {
+        res = boost::stacktrace::detail::name(addr, true);
+    }
 
-std::string frame::source_file() const {
+    return res;
+}
+
+inline std::string source_file(const void* addr, bool position_independent) {
     std::string res;
-    res = boost::stacktrace::detail::addr2line("-e", addr_);
+    uintptr_t addr_base = 0;
+    if(position_independent){
+        addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+    }
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    res = boost::stacktrace::detail::addr2line("-e", offset);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
         res.clear();
@@ -214,10 +245,14 @@ std::string frame::source_file() const {
     return res;
 }
 
-
-std::size_t frame::source_line() const {
+inline std::size_t source_line(const void* addr, bool position_independent) {
     std::size_t line_num = 0;
-    std::string res = boost::stacktrace::detail::addr2line("-e", addr_);
+    uintptr_t addr_base = 0;
+    if(position_independent){
+        addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+    }
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    std::string res = boost::stacktrace::detail::addr2line("-e", offset);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
         return 0;
@@ -226,6 +261,27 @@ std::size_t frame::source_line() const {
 
     if (!boost::stacktrace::detail::try_dec_convert(res.c_str(), line_num)) {
         return 0;
+    }
+
+    return line_num;
+}
+
+} // namespace detail
+
+
+std::string frame::source_file() const {
+    std::string res = boost::stacktrace::detail::source_file(addr_, false);
+    if (res.empty()) {
+        res = boost::stacktrace::detail::source_file(addr_, true);
+    }
+
+    return res;
+}
+
+std::size_t frame::source_line() const {
+    std::size_t line_num = boost::stacktrace::detail::source_line(addr_, false);
+    if (line_num == 0) {
+        line_num = boost::stacktrace::detail::source_line(addr_, true);
     }
 
     return line_num;
