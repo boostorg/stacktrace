@@ -67,7 +67,7 @@ inline mapping_entry_t parse_proc_maps_line(const std::string& line) {
         mapping.offset_from_base = hex_str_to_int(offset_from_base_str);
         return mapping;
     } catch(std::invalid_argument& e) {
-        return boost::optional<mapping_entry_t>();
+        return mapping_entry_t{};
     }
 }
 
