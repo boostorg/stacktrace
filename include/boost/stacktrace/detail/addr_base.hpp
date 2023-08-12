@@ -22,7 +22,8 @@ struct mapping_entry_t {
     uintptr_t start = 0;
     uintptr_t end = 0;
     uintptr_t offset_from_base = 0;
-    inline bool contains_addr(const void* addr) {
+
+    inline bool contains_addr(const void* addr) const {
         uintptr_t addr_uint = reinterpret_cast<uintptr_t>(addr);
         return addr_uint >= start && addr_uint < end;
     }
@@ -74,9 +75,9 @@ inline mapping_entry_t parse_proc_maps_line(const std::string& line) {
 inline uintptr_t get_own_proc_addr_base(const void* addr) {
     std::ifstream maps_file("/proc/self/maps");
     for (std::string line; std::getline(maps_file, line); ) {
-        mapping_entry_t mapping = parse_proc_maps_line(line);
-        if (mapping->contains_addr(addr)) {
-            return mapping->start - mapping->offset_from_base;
+        const mapping_entry_t mapping = parse_proc_maps_line(line);
+        if (mapping.contains_addr(addr)) {
+            return mapping.start - mapping.offset_from_base;
         }
     }
     return 0;
