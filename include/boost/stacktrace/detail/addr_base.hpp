@@ -16,14 +16,12 @@
 #include <sstream>
 #include <cstdlib>
 
-#include <boost/optional.hpp>
-
 namespace boost { namespace stacktrace { namespace detail {
 
 struct mapping_entry_t {
-    uintptr_t start;
-    uintptr_t end;
-    uintptr_t offset_from_base;
+    uintptr_t start = 0;
+    uintptr_t end = 0;
+    uintptr_t offset_from_base = 0;
     inline bool contains_addr(const void* addr) {
         uintptr_t addr_uint = reinterpret_cast<uintptr_t>(addr);
         return addr_uint >= start && addr_uint < end;
@@ -48,21 +46,21 @@ inline uintptr_t hex_str_to_int(const std::string& str) {
 // only parts 0 and 2 are interesting, these are:
 //  0. mapping address range
 //  2. mapping offset from base
-inline boost::optional<mapping_entry_t> parse_proc_maps_line(const std::string& line) {
+inline mapping_entry_t parse_proc_maps_line(const std::string& line) {
     std::string mapping_range_str, permissions_str, offset_from_base_str;
     std::istringstream line_stream(line);
     if(!std::getline(line_stream, mapping_range_str, ' ') ||
         !std::getline(line_stream, permissions_str, ' ') ||
         !std::getline(line_stream, offset_from_base_str, ' ')) {
-        return boost::optional<mapping_entry_t>();
+        return mapping_entry_t{};
     }
     std::string mapping_start_str, mapping_end_str;
     std::istringstream mapping_range_stream(mapping_range_str);
     if(!std::getline(mapping_range_stream, mapping_start_str, '-') ||
         !std::getline(mapping_range_stream, mapping_end_str)) {
-        return boost::optional<mapping_entry_t>();
+        return mapping_entry_t{};
     }
-    mapping_entry_t mapping;
+    mapping_entry_t mapping{};
     try {
         mapping.start = hex_str_to_int(mapping_start_str);
         mapping.end = hex_str_to_int(mapping_end_str);
@@ -76,8 +74,8 @@ inline boost::optional<mapping_entry_t> parse_proc_maps_line(const std::string& 
 inline uintptr_t get_own_proc_addr_base(const void* addr) {
     std::ifstream maps_file("/proc/self/maps");
     for (std::string line; std::getline(maps_file, line); ) {
-        boost::optional<mapping_entry_t> mapping = parse_proc_maps_line(line);
-        if (mapping && mapping->contains_addr(addr)) {
+        mapping_entry_t mapping = parse_proc_maps_line(line);
+        if (mapping->contains_addr(addr)) {
             return mapping->start - mapping->offset_from_base;
         }
     }
