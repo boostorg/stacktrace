@@ -156,7 +156,7 @@ inline std::string addr2line(const char* flag, const void* addr) {
     return res;
 }
 
-std::string source_location(const void* addr, bool position_independent) {
+inline std::string source_location(const void* addr, bool position_independent) {
     uintptr_t addr_base = 0;
     if (position_independent) {
         addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
