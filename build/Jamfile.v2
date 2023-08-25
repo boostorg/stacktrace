@@ -10,7 +10,7 @@ import ../../config/checks/config : requires ;
 project
   : source-location .
   : requirements
-    [ requires cxx11 ]
+    [ requires cxx11_rvalue_references ]
     <visibility>hidden
   ;
 
