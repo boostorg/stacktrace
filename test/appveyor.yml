@@ -32,9 +32,6 @@ skip_tags: true
 
 environment:
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      TOOLSET: msvc-9.0,msvc-10.0,msvc-11.0,msvc-12.0
-      ADDRMD: 32
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       TOOLSET: msvc-14.1,clang-win
       CXXSTD: 14,17
