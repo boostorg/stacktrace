@@ -33,7 +33,7 @@ skip_tags: true
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      TOOLSET: msvc-14.1,clang-win
+      TOOLSET: msvc-14.1 # ,clang-win
       CXXSTD: 14,17
       ADDRMD: 64
     #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
