@@ -65,7 +65,7 @@ class basic_stacktrace {
     }
 
     BOOST_NOINLINE void init(std::size_t frames_to_skip, std::size_t max_depth) {
-        BOOST_CONSTEXPR_OR_CONST std::size_t buffer_size = 128;
+        constexpr std::size_t buffer_size = 128;
         if (!max_depth) {
             return;
         }
