@@ -5,8 +5,6 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
-build-project from_exception ;
-
 import ../../config/checks/config : requires ;
 
 lib dl : : <link>shared ;
