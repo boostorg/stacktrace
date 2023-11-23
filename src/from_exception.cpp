@@ -9,7 +9,8 @@
 
 #define BOOST_STACKTRACE_DYN_LINK
 #define BOOST_STACKTRACE_LINK
-#include <boost/stacktrace.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
+#include <boost/stacktrace/stacktrace.hpp>
 
 #include <boost/assert.hpp>
 
@@ -128,7 +129,7 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
 
 }  // namespace __cxxabiv1
 
-namespace boost { namespace stacktrace {
+namespace boost { namespace stacktrace { namespace impl {
 
 namespace {
 
@@ -140,7 +141,7 @@ inline void* get_current_exception_raw_ptr() noexcept {
 
 }  // namespace
 
-BOOST_SYMBOL_EXPORT stacktrace current_exception_stacktrace() {
+BOOST_SYMBOL_EXPORT stacktrace current_exception_stacktrace() noexcept {
   void* exc_raw_ptr = get_current_exception_raw_ptr();
   if (!exc_raw_ptr) {
     return stacktrace{0, 0};
@@ -176,5 +177,5 @@ BOOST_SYMBOL_EXPORT std::vector<stacktrace> pending_traces() {
   return result;
 }
 
-}}  // namespace boost::stacktrace
+}}}  // namespace boost::stacktrace::impl
 

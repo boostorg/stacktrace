@@ -10,17 +10,16 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-namespace boost { namespace stacktrace {
-  stacktrace current_exception_stacktrace();
+namespace boost { namespace stacktrace { namespace impl {
   std::vector<stacktrace> pending_traces();
-}}
+}}}
 
 using boost::stacktrace::current_exception_stacktrace;
 using boost::stacktrace::stacktrace;
 
 struct test_no_pending_on_finish {
   ~test_no_pending_on_finish() {
-    const auto pending = boost::stacktrace::pending_traces();
+    const auto pending = boost::stacktrace::impl::pending_traces();
     for (const auto& trace: pending) {
       std::cerr << "!!!! Pending trace :\n" << trace << '\n';
     }
