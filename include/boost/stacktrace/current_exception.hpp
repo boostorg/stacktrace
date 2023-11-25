@@ -21,7 +21,7 @@ namespace impl {
 #if defined(__GNUC__) && defined(__ELF__)
 
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
-stacktrace current_exception_stacktrace() noexcept;
+const char* current_exception_stacktrace() noexcept;
 
 #endif
 
@@ -29,11 +29,19 @@ stacktrace current_exception_stacktrace() noexcept;
 
 
 inline stacktrace current_exception_stacktrace() noexcept {
+    // Matches the constant from implementation
+    constexpr std::size_t kStacktraceDumpSize = 4096;
+
+    const char* trace = nullptr;
 #if defined(__GNUC__) && defined(__ELF__)
     if (impl::current_exception_stacktrace) {
-        return impl::current_exception_stacktrace();
+        trace = impl::current_exception_stacktrace();
     }
 #endif
+
+    if (trace) {
+       return stacktrace::from_dump(trace, kStacktraceDumpSize);
+    }
     return stacktrace{0, 0};
 }
 

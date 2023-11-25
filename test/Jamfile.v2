@@ -195,9 +195,8 @@ test-suite stacktrace_tests
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                               : from_exception_basic ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                                  : from_exception_bt ]
 
-    # Link errors, no `collect`:
-    #[ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on              : from_exception_basic_ho ]
-    #[ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on : from_exception_bt_ho ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on              : from_exception_basic_ho ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on : from_exception_bt_ho ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite.

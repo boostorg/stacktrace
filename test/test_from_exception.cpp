@@ -6,12 +6,13 @@
 
 #include <boost/stacktrace.hpp>
 
+#include <iostream>
 #include <thread>
 
 #include <boost/core/lightweight_test.hpp>
 
 namespace boost { namespace stacktrace { namespace impl {
-  std::vector<stacktrace> pending_traces();
+  void assert_no_pending_traces() noexcept;
 }}}
 
 using boost::stacktrace::current_exception_stacktrace;
@@ -19,11 +20,7 @@ using boost::stacktrace::stacktrace;
 
 struct test_no_pending_on_finish {
   ~test_no_pending_on_finish() {
-    const auto pending = boost::stacktrace::impl::pending_traces();
-    for (const auto& trace: pending) {
-      std::cerr << "!!!! Pending trace :\n" << trace << '\n';
-    }
-    BOOST_TEST(pending.empty());
+    boost::stacktrace::impl::assert_no_pending_traces();
   }
 };
 

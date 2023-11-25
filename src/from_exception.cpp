@@ -1,16 +1,10 @@
 // Copyright Antony Polukhin, 2023-2024.
-// Copyright Andrei Nekrashevich, 2021.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// Inspired by the coursework by Andrei Nekrashevich in the `libsfe`
-
-#define BOOST_STACKTRACE_DYN_LINK
-#define BOOST_STACKTRACE_LINK
 #include <boost/stacktrace/safe_dump_to.hpp>
-#include <boost/stacktrace/stacktrace.hpp>
 
 #include <boost/assert.hpp>
 
@@ -18,7 +12,6 @@
 #include <exception>
 #include <mutex>
 #include <unordered_map>
-#include <vector>
 #include <utility>
 
 #include <dlfcn.h>
@@ -27,8 +20,19 @@ namespace {
 
 constexpr std::size_t kStacktraceDumpSize = 4096;
 
+inline void* get_current_exception_raw_ptr() noexcept {
+  // https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/libsupc%2B%2B/eh_ptr.cc#L147
+  auto exc_ptr = std::current_exception();
+  return *static_cast<void**>(static_cast<void*>(&exc_ptr));
+}
+
+}  // namespace
+
+// Inspired by the coursework by Andrei Nekrashevich in the `libsfe`
+namespace {
+
 std::mutex mutex;
-std::unordered_map<void*, const char*> exception_to_dump;
+std::unordered_map<void*, const char*> exception_to_dump_mapping;
 
 struct decrement_on_destroy {
   std::size_t& to_decrement;
@@ -66,7 +70,7 @@ void* __cxa_allocate_exception(size_t thrown_size) throw() {
 
   {
     const std::lock_guard<std::mutex> guard{mutex};
-    exception_to_dump[ptr] = dump_ptr;
+    exception_to_dump_mapping[ptr] = dump_ptr;
   }
 
   return ptr;
@@ -91,7 +95,7 @@ void __cxa_free_exception(void* thrown_object) throw() {
 
   {
     const std::lock_guard<std::mutex> guard{mutex};
-    exception_to_dump.erase(thrown_object);
+    exception_to_dump_mapping.erase(thrown_object);
   }
 
   orig_free_exception(thrown_object);
@@ -121,7 +125,7 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
   );
   if (exception_header->referenceCount == 1) {
     const std::lock_guard<std::mutex> guard{mutex};
-    exception_to_dump.erase(thrown_object);
+    exception_to_dump_mapping.erase(thrown_object);
   }
 
   orig_decrement_refcount(thrown_object);
@@ -131,50 +135,24 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
 
 namespace boost { namespace stacktrace { namespace impl {
 
-namespace {
-
-inline void* get_current_exception_raw_ptr() noexcept {
-  // https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/libsupc%2B%2B/eh_ptr.cc#L147
-  auto exc_ptr = std::current_exception();
-  return *static_cast<void**>(static_cast<void*>(&exc_ptr));
-}
-
-}  // namespace
-
-BOOST_SYMBOL_EXPORT stacktrace current_exception_stacktrace() noexcept {
-  void* exc_raw_ptr = get_current_exception_raw_ptr();
+BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
+  void* const exc_raw_ptr = get_current_exception_raw_ptr();
   if (!exc_raw_ptr) {
-    return stacktrace{0, 0};
+    return nullptr;
   }
-
-  const char* stacktrace_dump_ptr = nullptr;
-  {
-    const std::lock_guard<std::mutex> guard{mutex};
-    auto it = exception_to_dump.find(exc_raw_ptr);
-    if (it != exception_to_dump.end()) {
-      stacktrace_dump_ptr = it->second;
-    }
-  }
-
-  if (!stacktrace_dump_ptr) {
-    return stacktrace{0, 0};
-  }
-
-  return stacktrace::from_dump(stacktrace_dump_ptr, kStacktraceDumpSize);
-}
-
-BOOST_SYMBOL_EXPORT std::vector<stacktrace> pending_traces() {
-  std::vector<stacktrace> result;
 
   const std::lock_guard<std::mutex> guard{mutex};
-  result.reserve(exception_to_dump.size());
-  for (const auto& pair : exception_to_dump) {
-    result.push_back(
-        stacktrace::from_dump(pair.second, kStacktraceDumpSize)
-    );
+  const auto it = exception_to_dump_mapping.find(exc_raw_ptr);
+  if (it != exception_to_dump_mapping.end()) {
+    return it->second;
   }
 
-  return result;
+  return nullptr;
+}
+
+BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
+  const std::lock_guard<std::mutex> guard{mutex};
+  BOOST_ASSERT(exception_to_dump_mapping.empty());
 }
 
 }}}  // namespace boost::stacktrace::impl
