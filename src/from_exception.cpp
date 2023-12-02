@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <dlfcn.h>
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined(__MINGW32__)
 #define BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING 1
 #else
 #define BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING 0
@@ -27,7 +27,7 @@ namespace {
 constexpr std::size_t kStacktraceDumpSize = 4096;
 
 // Developer note: helper to experiment with layouts of different
-// exception headers https://godbolt.org/z/z7jdd7Tfx
+// exception headers https://godbolt.org/z/rrcdPbh1P
 
 inline void* get_current_exception_raw_ptr() noexcept {
   // https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/libsupc%2B%2B/eh_ptr.cc#L147
@@ -73,8 +73,8 @@ struct decrement_on_destroy {
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
 // Inspired by the coursework by Andrei Nekrashevich in the `libsfe`
-std::mutex mutex;
-std::unordered_map<void*, const char*> exception_to_dump_mapping;
+/*constinit*/ std::mutex g_mapping_mutex;
+std::unordered_map<void*, const char*> g_exception_to_dump_mapping;
 #endif
 
 }  // namespace
@@ -88,7 +88,7 @@ extern "C" BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 void __cxa_increment_exception_refcount(void *primary_exception) throw();
 
 static bool is_libcpp_runtime() noexcept {
-    return __cxa_increment_exception_refcount;
+  return __cxa_increment_exception_refcount;
 }
 
 #else
@@ -137,8 +137,8 @@ void* __cxa_allocate_exception(size_t thrown_size) throw() {
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
   if (is_libcpp_runtime()) {
-    const std::lock_guard<std::mutex> guard{mutex};
-    exception_to_dump_mapping[ptr] = dump_ptr;
+    const std::lock_guard<std::mutex> guard{g_mapping_mutex};
+    g_exception_to_dump_mapping[ptr] = dump_ptr;
   } else
 #endif
   {
@@ -176,8 +176,8 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
   // negatives. In first case we remove the trace earlier, in the second case
   // we get a memory leak.
   if (exception_header->referenceCount == 1) {
-    const std::lock_guard<std::mutex> guard{mutex};
-    exception_to_dump_mapping.erase(thrown_object);
+    const std::lock_guard<std::mutex> guard{g_mapping_mutex};
+    g_exception_to_dump_mapping.erase(thrown_object);
   }
 
   orig_decrement_refcount(thrown_object);
@@ -197,9 +197,9 @@ BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
   if (__cxxabiv1::is_libcpp_runtime()) {
-    const std::lock_guard<std::mutex> guard{mutex};
-    const auto it = exception_to_dump_mapping.find(exc_raw_ptr);
-    if (it != exception_to_dump_mapping.end()) {
+    const std::lock_guard<std::mutex> guard{g_mapping_mutex};
+    const auto it = g_exception_to_dump_mapping.find(exc_raw_ptr);
+    if (it != g_exception_to_dump_mapping.end()) {
       return it->second;
     } else {
       return nullptr;
@@ -214,8 +214,8 @@ BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
 BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
   if (__cxxabiv1::is_libcpp_runtime()) {
-    const std::lock_guard<std::mutex> guard{mutex};
-    BOOST_ASSERT(exception_to_dump_mapping.empty());
+    const std::lock_guard<std::mutex> guard{g_mapping_mutex};
+    BOOST_ASSERT(g_exception_to_dump_mapping.empty());
   }
 #endif
 }
