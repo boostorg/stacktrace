@@ -109,6 +109,9 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_rethrow_nested() {
 }
 
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_from_other_thread() {
+
+// MinGW error: 'thread' is not a member of 'std'
+#ifndef __MINGW32__
   std::exception_ptr ptr;
 
   std::thread t([&ptr]{
@@ -133,6 +136,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_from_other_thread() {
     BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
     BOOST_TEST(to_string(trace).find("in_test_throw_2") != std::string::npos);
   }
+#endif
 }
 
 int main() {

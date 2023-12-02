@@ -15,6 +15,9 @@ namespace {
 
 constexpr std::size_t kStacktraceDumpSize = 4096;
 
+// Developer note: helper to experiment with layouts of different
+// exception headers https://godbolt.org/z/z7jdd7Tfx
+
 inline void* get_current_exception_raw_ptr() noexcept {
   // https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/libsupc%2B%2B/eh_ptr.cc#L147
   auto exc_ptr = std::current_exception();
@@ -28,7 +31,9 @@ struct cxa_exception_begin_llvm {
 };
 
 cxa_exception_begin_llvm* exception_begin_llvm_ptr(void* ptr) noexcept {
-  constexpr std::size_t kExceptionBeginOffset = 128;
+  constexpr std::size_t kExceptionBeginOffset = (
+    sizeof(void*) == 8 ? 128 : 80
+  );
   return reinterpret_cast<cxa_exception_begin_llvm*>(
     static_cast<char*>(ptr) - kExceptionBeginOffset
   );
@@ -41,7 +46,9 @@ struct cxa_exception_begin_gcc {
 };
 
 cxa_exception_begin_gcc* exception_begin_gcc_ptr(void* ptr) noexcept {
-  constexpr std::size_t kExceptionBeginOffset = 128;
+  constexpr std::size_t kExceptionBeginOffset = (
+    sizeof(void*) == 8 ? 128 : 96
+  );
   return reinterpret_cast<cxa_exception_begin_gcc*>(
     static_cast<char*>(ptr) - kExceptionBeginOffset
   );
@@ -71,6 +78,8 @@ static const char*& reference_to_empty_padding(void* ptr) noexcept {
 #if defined(__GNUC__) && defined(__ELF__)
   if (__cxa_decrement_exception_refcount) {
       // libc++-runtime
+      BOOST_ASSERT_MSG(sizeof(void*) == 4,
+                       "32bit platforms are unsupported with libc++ runtime");
       return exception_begin_llvm_ptr(ptr)->reserve;
   }
 #endif
