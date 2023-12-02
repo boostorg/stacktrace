@@ -192,10 +192,10 @@ test-suite stacktrace_tests
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_BT) <debug-symbols>on                                     : from_exception_none_bt ]
     [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on    : from_exception_none_bt_ho ]
 
-    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                              : from_exception_basic ]
+    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                                  : from_exception_basic ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                                  : from_exception_bt ]
 
-    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on             : from_exception_basic_ho ]
+    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_basic_ho ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on : from_exception_bt_ho ]
   ;
 
