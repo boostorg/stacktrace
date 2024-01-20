@@ -11,6 +11,7 @@ project
   : source-location .
   : requirements
     [ requires cxx11_rvalue_references ]
+  : default-build
     <visibility>hidden
   ;
 
