@@ -94,7 +94,7 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     std::cout << "Running with param " << param << std::endl;
     boost::filesystem::path command = exec_name;
     command = command.parent_path() / (command.stem().string() + param + command.extension().string());
-    boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_option::overwrite_if_exists);
+    boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_options::overwrite_existing);
 
     boost::filesystem::path command_args = command;
     command_args += ' ';
