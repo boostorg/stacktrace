@@ -141,6 +141,8 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_from_other_thread() {
 int main() {
   const test_no_pending_on_finish guard{};
 
+  BOOST_TEST(boost::stacktrace::this_thread::get_capture_stacktraces_at_throw());
+
   test_no_exception();
   test_trace_from_exception();
   test_after_other_exception();

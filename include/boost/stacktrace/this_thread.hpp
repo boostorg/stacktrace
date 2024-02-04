@@ -36,6 +36,9 @@ inline void set_capture_stacktraces_at_throw(bool enable = true) noexcept {
 /// boost::stacktrace::basic_stacktrace::from_current_exception may return a
 /// non empty stacktrace.
 ///
+/// Returns true if set_capture_stacktraces_at_throw(false) was not called
+/// and the `boost_stacktrace_from_exception` is linked to the current binary.
+///
 /// Implements https://wg21.link/p2370r1
 inline bool get_capture_stacktraces_at_throw() noexcept {
 #if defined(__GNUC__) && defined(__ELF__)

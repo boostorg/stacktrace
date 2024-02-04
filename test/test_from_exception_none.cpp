@@ -26,7 +26,9 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_no_trace_from_exception() {
 }
 
 int main() {
-  test_no_trace_from_exception(); 
+  boost::stacktrace::this_thread::set_capture_stacktraces_at_throw(false);
+  BOOST_TEST(!boost::stacktrace::this_thread::get_capture_stacktraces_at_throw());
+  test_no_trace_from_exception();
 
   return boost::report_errors();
 }
