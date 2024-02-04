@@ -400,6 +400,8 @@ In order of helping and advising:
 * Great thanks to Nat Goodspeed for requesting [classref boost::stacktrace::frame] like class.
 * Great thanks to Niall Douglas for making an initial review, helping with some platforms and giving great hints on library design.
 * Great thanks to all the library reviewers.
+* Great thanks to Andrei Nekrashevich for prototyping the idea of stacktraces
+  from arbitrary exception in `libsfe`.
 
 [endsect]
 
