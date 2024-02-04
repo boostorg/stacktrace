@@ -35,6 +35,20 @@
 
 namespace boost { namespace stacktrace {
 
+namespace impl {
+
+#if defined(__GNUC__) && defined(__ELF__)
+
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+const char* current_exception_stacktrace() noexcept;
+
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+bool& ref_capture_stacktraces_at_throw() noexcept;
+
+#endif
+
+} // namespace impl
+
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
 /// @tparam Allocator Allocator to use during stack capture.
 template <class Allocator>
@@ -339,6 +353,44 @@ public:
         }
 
         return ret;
+    }
+
+    /// Returns a basic_stacktrace object containing a stacktrace captured at
+    /// the point where the currently handled exception was thrown by its
+    /// initial throw-expression (i.e. not a rethrow), or an empty
+    /// basic_stacktrace object if:
+    ///
+    /// - the `boost_stacktrace_from_exception` library is not linked to the
+    ///   current binary, or
+    /// - the initialization of stacktrace failed, or
+    /// - stacktrace captures are not enabled for the throwing thread, or
+    /// - no exception is being handled, or
+    /// - due to implementation-defined reasons.
+    ///
+    /// `alloc` is passed to the constructor of the stacktrace object.
+    /// Rethrowing an exception using a throw-expression with no operand does
+    /// not alter the captured stacktrace.
+    ///
+    /// Implements https://wg21.link/p2370r1
+    static basic_stacktrace<Allocator> from_current_exception(const allocator_type& alloc = allocator_type()) noexcept {
+        // Matches the constant from implementation
+        constexpr std::size_t kStacktraceDumpSize = 4096;
+
+        const char* trace = nullptr;
+#if defined(__GNUC__) && defined(__ELF__)
+        if (impl::current_exception_stacktrace) {
+            trace = impl::current_exception_stacktrace();
+        }
+#endif
+
+        if (trace) {
+            try {
+                return basic_stacktrace<Allocator>::from_dump(trace, kStacktraceDumpSize, alloc);
+            } catch (const std::exception&) {
+                // ignore
+            }
+        }
+        return basic_stacktrace<Allocator>{0, 0, alloc};
     }
 };
 

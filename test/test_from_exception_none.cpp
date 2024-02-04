@@ -8,7 +8,6 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-using boost::stacktrace::current_exception_stacktrace;
 using boost::stacktrace::stacktrace;
 
 
@@ -21,7 +20,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_no_trace_from_exception() {
   try {
     in_test_throw_1("testing basic");
   } catch (const std::exception&) {
-    auto trace = current_exception_stacktrace();
+    auto trace = stacktrace::from_current_exception();
     BOOST_TEST(!trace);
   }
 }

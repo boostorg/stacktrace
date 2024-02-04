@@ -4,18 +4,13 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace/safe_dump_to.hpp>
+#include "exception_headers.h"
 
 #include <boost/assert.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 #include <cstddef>
 #include <dlfcn.h>
-
-#if defined(__x86_64__) || defined(_M_X64) || defined(__MINGW32__)
-#define BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING 1
-#else
-#define BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING 0
-#endif
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
 #include <mutex>
@@ -25,45 +20,6 @@
 namespace {
 
 constexpr std::size_t kStacktraceDumpSize = 4096;
-
-// Developer note: helper to experiment with layouts of different
-// exception headers https://godbolt.org/z/rrcdPbh1P
-
-inline void* get_current_exception_raw_ptr() noexcept {
-  // https://github.com/gcc-mirror/gcc/blob/16e2427f50c208dfe07d07f18009969502c25dc8/libstdc%2B%2B-v3/libsupc%2B%2B/eh_ptr.cc#L147
-  auto exc_ptr = std::current_exception();
-  return *static_cast<void**>(static_cast<void*>(&exc_ptr));
-}
-
-// https://github.com/llvm/llvm-project/blob/b3dd14ce07f2750ae1068fe62abbf2f3bd2cade8/libcxxabi/src/cxa_exception.h
-struct cxa_exception_begin_llvm {
-    const char* reserve;
-    size_t referenceCount;
-};
-
-cxa_exception_begin_llvm* exception_begin_llvm_ptr(void* ptr) noexcept {
-  constexpr std::size_t kExceptionBeginOffset = (
-    sizeof(void*) == 8 ? 128 : 80
-  );
-  return reinterpret_cast<cxa_exception_begin_llvm*>(
-    static_cast<char*>(ptr) - kExceptionBeginOffset
-  );
-}
-
-// https://github.com/gcc-mirror/gcc/blob/5d2a360f0a541646abb11efdbabc33c6a04de7ee/libstdc%2B%2B-v3/libsupc%2B%2B/unwind-cxx.h#L100
-struct cxa_exception_begin_gcc {
-    size_t referenceCount;
-    const char* reserve;
-};
-
-cxa_exception_begin_gcc* exception_begin_gcc_ptr(void* ptr) noexcept {
-  constexpr std::size_t kExceptionBeginOffset = (
-    sizeof(void*) == 8 ? 128 : 96
-  );
-  return reinterpret_cast<cxa_exception_begin_gcc*>(
-    static_cast<char*>(ptr) - kExceptionBeginOffset
-  );
-}
 
 struct decrement_on_destroy {
   std::size_t& to_decrement;
@@ -78,6 +34,15 @@ std::unordered_map<void*, const char*> g_exception_to_dump_mapping;
 #endif
 
 }  // namespace
+
+namespace boost { namespace stacktrace { namespace impl {
+
+BOOST_SYMBOL_EXPORT bool& ref_capture_stacktraces_at_throw() noexcept {
+  /*constinit*/ thread_local bool g_capture_stacktraces_at_throw{true};
+  return g_capture_stacktraces_at_throw;
+}
+
+}}}  // namespace boost::stacktrace::impl
 
 namespace __cxxabiv1 {
 
@@ -118,6 +83,10 @@ void* __cxa_allocate_exception(size_t thrown_size) throw() {
     BOOST_ASSERT_MSG(ptr, "Failed to find '__cxa_allocate_exception'");
     return reinterpret_cast<void*(*)(size_t)>(ptr);
   }();
+
+  if (!boost::stacktrace::impl::ref_capture_stacktraces_at_throw()) {
+    return orig_allocate_exception(thrown_size);
+  }
 
 #ifndef NDEBUG
   static thread_local std::size_t in_allocate_exception = 0;
@@ -190,7 +159,12 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
 namespace boost { namespace stacktrace { namespace impl {
 
 BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
-  void* const exc_raw_ptr = get_current_exception_raw_ptr();
+  if (!ref_capture_stacktraces_at_throw()) {
+    return nullptr;
+  }
+
+  auto exc_ptr = std::current_exception();
+  void* const exc_raw_ptr = get_current_exception_raw_ptr(&exc_ptr);
   if (!exc_raw_ptr) {
     return nullptr;
   }

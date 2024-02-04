@@ -15,7 +15,6 @@ namespace boost { namespace stacktrace { namespace impl {
   void assert_no_pending_traces() noexcept;
 }}}
 
-using boost::stacktrace::current_exception_stacktrace;
 using boost::stacktrace::stacktrace;
 
 struct test_no_pending_on_finish {
@@ -36,7 +35,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void in_test_throw_2(const char* msg) {
 }
 
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_no_exception() {
-  auto trace = current_exception_stacktrace();
+  auto trace = stacktrace::from_current_exception();
   BOOST_TEST(!trace);
 }
 
@@ -45,7 +44,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_trace_from_exception() {
   try {
     in_test_throw_1("testing basic");
   } catch (const std::exception&) {
-    auto trace = current_exception_stacktrace();
+    auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
     std::cout << "Tarce in test_trace_from_exception(): " << trace << '\n';
     BOOST_TEST(to_string(trace).find("in_test_throw_1") != std::string::npos);
@@ -60,7 +59,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_after_other_exception() {
       in_test_throw_2("test_other_exception_active 2");
     } catch (const std::exception&) {}
 
-    auto trace = current_exception_stacktrace();
+    auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
     std::cout << "Tarce in test_after_other_exception(): " << trace;
     BOOST_TEST(to_string(trace).find("in_test_throw_1") != std::string::npos);
@@ -75,7 +74,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_nested() {
     try {
       in_test_throw_2("test_other_exception_active 2");
     } catch (const std::exception&) {
-      auto trace = current_exception_stacktrace();
+      auto trace = stacktrace::from_current_exception();
       BOOST_TEST(trace);
       std::cout << "Tarce in test_nested(): " << trace << '\n';
       BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
@@ -100,7 +99,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_rethrow_nested() {
   try {
     std::rethrow_exception(ptr);
   } catch (...) {
-    auto trace = current_exception_stacktrace();
+    auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
     std::cout << "Tarce in test_rethrow_nested(): " << trace << '\n';
     BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
@@ -130,7 +129,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_from_other_thread() {
   try {
     std::rethrow_exception(ptr);
   } catch (...) {
-    auto trace = current_exception_stacktrace();
+    auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
     std::cout << "Tarce in test_rethrow_nested(): " << trace << '\n';
     BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
