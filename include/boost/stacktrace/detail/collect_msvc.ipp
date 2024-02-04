@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2022.
+// Copyright Antony Polukhin, 2016-2024.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -18,7 +18,7 @@
 
 namespace boost { namespace stacktrace { namespace detail {
 
-std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
+std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) noexcept {
     return boost::winapi::RtlCaptureStackBackTrace(
         static_cast<boost::winapi::ULONG_>(skip),
         static_cast<boost::winapi::ULONG_>(max_frames_count),

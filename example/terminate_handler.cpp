@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2022.
+// Copyright Antony Polukhin, 2016-2024.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -77,7 +77,7 @@ boost::interprocess::mapped_region g_region;     // inited at program start
 void my_signal_handler2(int signum) {
     ::signal(signum, SIG_DFL);
     void** f = static_cast<void**>(g_region.get_address());
-    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now constains stacktrace.
+    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now contains stacktrace.
     boost::stacktrace::safe_dump_to(f + 1, g_region.get_size() - sizeof(void*));
 
     ::raise(SIGABRT);
@@ -94,7 +94,7 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     std::cout << "Running with param " << param << std::endl;
     boost::filesystem::path command = exec_name;
     command = command.parent_path() / (command.stem().string() + param + command.extension().string());
-    boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_option::overwrite_if_exists);
+    boost::filesystem::copy_file(exec_name, command, boost::filesystem::copy_options::overwrite_existing);
 
     boost::filesystem::path command_args = command;
     command_args += ' ';
@@ -196,8 +196,8 @@ int run_4(const char* argv[]) {
 
 //[getting_started_on_program_restart_shmem
     void** f = static_cast<void**>(g_region.get_address());
-    if (*f) {                                                 // Checking if memory constains stacktrace.
-        boost::stacktrace::stacktrace st 
+    if (*f) {                                                 // Checking if memory contains stacktrace.
+        boost::stacktrace::stacktrace st
             = boost::stacktrace::stacktrace::from_dump(f + 1, g_region.get_size() - sizeof(bool));
 
         std::cout << "Previous run crashed and left trace in shared memory:\n" << st << std::endl;

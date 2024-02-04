@@ -17,23 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - toolset: gcc-7
-            cxxstd: "03,11,14,17"
-            os: ubuntu-18.04
-          - toolset: gcc-9
+          - toolset: gcc-12
             cxxstd: "03,11,14,17,2a"
-            os: ubuntu-18.04
-          - toolset: gcc-10
-            cxxstd: "03,11,14,17,2a"
-            os: ubuntu-18.04
+            os: ubuntu-22.04
             cxxflags: "cxxflags=--coverage -fsanitize=address,leak,undefined -fno-sanitize-recover=undefined"
             linkflags: "linkflags=--coverage -lasan -lubsan"
-            launcher: "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6"
-            gcov_tool: "gcov-10"
-          - toolset: clang
-            compiler: clang++-10
+            gcov_tool: "gcov-12"
+            launcher: "testing.launcher=LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.8"
+          - toolset: gcc-9
             cxxstd: "03,11,14,17,2a"
-            os: ubuntu-20.04
+            os: ubuntu-22.04
+          - toolset: clang
+            compiler: clang++-14
+            cxxstd: "03,11,14,17,2a"
+            os: ubuntu-22.04
           # TODO: fix and uncomment
           #- toolset: clang
           #  cxxstd: "03,11,14,17,2a"
@@ -88,9 +85,9 @@ jobs:
 
           echo -e "#!/bin/bash\nexec ${{matrix.gcov_tool}} \"\$@\"" > $GITHUB_WORKSPACE/coveralls/gcov_wrapper.sh
           chmod +x $GITHUB_WORKSPACE/coveralls/gcov_wrapper.sh
-          wget https://github.com/linux-test-project/lcov/archive/v1.15.zip
-          unzip v1.15.zip
-          LCOV="`pwd`/lcov-1.15/bin/lcov --gcov-tool $GITHUB_WORKSPACE/coveralls/gcov_wrapper.sh"
+          wget https://github.com/linux-test-project/lcov/archive/v1.16.zip
+          unzip v1.16.zip
+          LCOV="`pwd`/lcov-1.16/bin/lcov --gcov-tool $GITHUB_WORKSPACE/coveralls/gcov_wrapper.sh"
 
           echo "$LCOV --directory ../boost-root/bin.v2/libs/$LIBRARY/ --base-directory `pwd`/libs/$LIBRARY/test --capture --output-file $GITHUB_WORKSPACE/coveralls/coverage.info"
           $LCOV --directory ../boost-root/bin.v2/libs/$LIBRARY/ --base-directory ../boost-root/ --capture --output-file $GITHUB_WORKSPACE/coveralls/coverage.info

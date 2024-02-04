@@ -2,23 +2,26 @@
 # subject to the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
-# Copyright Antony Polukhin, 2016-2022.
+# Copyright Antony Polukhin, 2016-2024.
 
 #
 # See https://svn.boost.org/trac/boost/wiki/TravisCoverals for description of this file
 # and how it can be used with Boost libraries.
 #
-# File revision #5
+# File revision #6
 
 init:
-    - set BRANCH_TO_TEST=%APPVEYOR_REPO_BRANCH%  # Change to branch you wish to test. Use %APPVEYOR_REPO_BRANCH% for current branch.
-    - set BOOST_REMOVE=stacktrace                # Remove this folder from lib from full clone of Boost. If you are testing `any` repo, write here `any`.
+    # boost-local/libs/ folder to put this library into. This may be useful, if you're for example running Travis
+    # from `Boost.DLL` repo while Boost already has `dll` and with to replace `dll` with content of`Boost.DLL`.
+    #
+    # Otherwise just leave the default value - set BOOST_LIBS_FOLDER=%APPVEYOR_PROJECT_NAME%
+    - set BOOST_LIBS_FOLDER=%APPVEYOR_PROJECT_NAME%
 
 ###############################################################################################################
 # From this point and below code is same for all the Boost libs
 ###############################################################################################################
 
-version: 1.64.{build}-{branch}
+version: 1.84.{build}-{branch}
  
 # branches to build
 branches:
@@ -27,32 +30,56 @@ branches:
 
 skip_tags: true
 
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      TOOLSET: msvc-14.1 # ,clang-win
+      CXXSTD: 14,17
+      ADDRMD: 64
+    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #  ADDPATH: C:\cygwin\bin;
+    #  TOOLSET: gcc
+    #  CXXSTD: 03,11,14,1z
+    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #  ADDPATH: C:\cygwin64\bin;
+    #  TOOLSET: gcc
+    #  CXXSTD: 03,11,14,1z
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ADDPATH: C:\mingw\bin;
+      TOOLSET: gcc
+      CXXSTD: 03,11,14,1z
+    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #  ADDPATH: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;
+    #  TOOLSET: gcc
+    #  CXXSTD: 03,11,14,1z
+
 before_build:
-    - set PATH=%PATH%;C:\\MinGW\\bin
+    - set BOOST_BRANCH=develop
+    - if "%APPVEYOR_REPO_BRANCH%" == "master" set BOOST_BRANCH=master
     - echo "Testing %APPVEYOR_PROJECT_NAME%"
     # Cloning Boost libraries (fast nondeep cloning)
     - set BOOST=C:/boost-local
-    - git init %BOOST%
+    - git clone -b %BOOST_BRANCH% --depth 10 https://github.com/boostorg/boost.git %BOOST%
     - cd %BOOST%
-    - git remote add --no-tags -t %BRANCH_TO_TEST% origin https://github.com/boostorg/boost.git
-    - git fetch --depth=1
-    - git checkout %BRANCH_TO_TEST%
-    - git submodule update --init --merge --jobs 16
-    - git remote set-branches --add origin %BRANCH_TO_TEST%
-    #- git pull --recurse-submodules        # Updaes submodules to most recent version. Not required
-    - rm -rf %BOOST%/libs/%BOOST_REMOVE%
-    - mv %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%APPVEYOR_PROJECT_NAME%
+    - git submodule update --init --depth 10 tools/build tools/boostdep libs/filesystem libs/interprocess
+
+    - rm -rf %BOOST%/libs/%BOOST_LIBS_FOLDER%
+    - mv -f %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%BOOST_LIBS_FOLDER%
+    - python tools/boostdep/depinst/depinst.py --git_args "--depth 10 --jobs 2" %BOOST_LIBS_FOLDER%
 
 build_script:
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64
-    - bootstrap.bat
+    - cmd /c bootstrap
     - b2.exe headers
-    - cd %BOOST%/libs/%APPVEYOR_PROJECT_NAME%/test
+    - cd %BOOST%/libs/%BOOST_LIBS_FOLDER%/test
 
 after_build:
 before_test:
 test_script:
-    - ..\..\..\b2.exe address-model=32 architecture=x86 toolset=msvc,gcc cxxflags="-DBOOST_TRAVISCI_BUILD" -sBOOST_BUILD_PATH=.
+  - PATH=%ADDPATH%%PATH%
+  - if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%
+  - if not "%ADDRMD%" == "" set ADDRMD=address-model=%ADDRMD%
+  - echo "Running command ..\..\..\b2 -j3 toolset=%TOOLSET% %CXXSTD% %ADDRMD% variant=debug,release"
+  - ..\..\..\b2.exe -j3 toolset=%TOOLSET% %CXXSTD% %ADDRMD% variant=debug,release cxxflags="-DBOOST_TRAVISCI_BUILD"
 
 after_test:
 on_success:

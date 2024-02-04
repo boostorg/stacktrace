@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2022.
+// Copyright Antony Polukhin, 2016-2024.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -23,7 +23,7 @@ struct to_string_using_nothing {
         res = boost::stacktrace::frame(addr).name();
     }
 
-    bool prepare_source_location(const void* /*addr*/) const BOOST_NOEXCEPT {
+    bool prepare_source_location(const void* /*addr*/) const noexcept {
         return false;
     }
 };
