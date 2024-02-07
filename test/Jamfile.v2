@@ -186,6 +186,22 @@ test-suite stacktrace_tests
 
     [ run test_void_ptr_cast.cpp ]
     [ run test_num_conv.cpp ]
+
+    [ run test_from_exception_none.cpp : : : $(LINKSHARED_BASIC) <debug-symbols>on                                  : from_exception_none_basic ]
+    [ run test_from_exception_none.cpp : : : $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_none_basic_ho ]
+    [ run test_from_exception_none.cpp : : : $(LINKSHARED_BT) <debug-symbols>on                                     : from_exception_none_bt ]
+    [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on    : from_exception_none_bt_ho ]
+
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                       : from_exception_disabled_basic ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on      : from_exception_disabled_basic_ho ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                          : from_exception_disabled_bt ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS)           : from_exception_disabled_bt_ho ]
+
+    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                                  : from_exception_basic ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                                  : from_exception_bt ]
+
+    [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_basic_ho ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on : from_exception_bt_ho ]
   ;
 
 # Assuring that examples compile and run. Adding sources from `examples` directory to the `type_index` test suite.

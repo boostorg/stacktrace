@@ -130,6 +130,64 @@ Generic recommendation is to *avoid signal handlers! Use* platform specific ways
 
 [endsect]
 
+[section Stacktrace from arbitrary exception]
+
+[warning At the moment the functionality is only available for some of the
+         popular cxx run-times for POSIX systems. Make sure that your platform
+         is supported by running some tests.
+]
+
+The library provides a way to get stacktrace from an exception as if the
+stacktrace was captured at the point the exception was thrown. Works even if
+the exception was thrown from a third party binary library.
+
+Link with
+`boost_stacktrace_from_exception` library (or just `LD_PRELOAD` it!) and call
+boost::stacktrace::stacktrace::from_current_exception() to get the trace:
+
+```
+#include <iostream>
+#include <stdexcept>
+#include <string_view>
+#include <boost/stacktrace.hpp>
+
+void foo(std::string_view key);
+void bar(std::string_view key);
+
+int main() {
+  try {
+    foo("test1");
+    bar("test2");
+  } catch (const std::exception& exc) {
+    boost::stacktrace::stacktrace trace = std::stacktrace::from_current_exception();  // <---
+    std::cerr << "Caught exception: " << exc.what() << ", trace:\n" << trace;
+  }
+}
+```
+
+The output of the above sample may be the following:
+
+```
+Caught exception: std::map::at, trace:
+ 0# get_data_from_config(std::string_view) at /home/axolm/basic.cpp:600
+ 1# bar(std::string_view) at /home/axolm/basic.cpp:6
+ 2# main at /home/axolm/basic.cpp:17
+```
+
+With the above technique a developer can locate the source file and the function
+that has thrown the exception without a debugger help. it is especially useful
+for testing in containers (github CI, other CIs), where the developer has no
+direct access to the testing environment and reproducing the issue is
+complicated.
+
+Note that linking with `boost_stacktrace_from_exception` may increase memory
+consumption of the application, as the exceptions now additionally store traces.
+
+At runtime switch boost::stacktrace::this_thread::set_capture_stacktraces_at_throw()
+allows to disable/enable capturing and storing traces in exceptions.
+
+[endsect]
+
 
 [section Exceptions with stacktrace]
 
@@ -342,6 +400,8 @@ In order of helping and advising:
 * Great thanks to Nat Goodspeed for requesting [classref boost::stacktrace::frame] like class.
 * Great thanks to Niall Douglas for making an initial review, helping with some platforms and giving great hints on library design.
 * Great thanks to all the library reviewers.
+* Great thanks to Andrei Nekrashevich for prototyping the idea of stacktraces
+  from arbitrary exception in `libsfe`.
 
 [endsect]
 
