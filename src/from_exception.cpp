@@ -24,7 +24,7 @@
         exceptions is enabled and exceptions are thrown concurrently \
         and libc++ runtime is used. \
         \
-        Define `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK=2` to \
+        Define `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK` to \
         suppress this error if the library would not be used with libc++ \
         runtime (for example, would be used with GCC's runtime).
 
