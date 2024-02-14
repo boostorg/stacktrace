@@ -138,6 +138,10 @@ lib boost_stacktrace_from_exception
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <target-os>windows:<build>no  # not supported at the moment
+
+    # Require usable libbacktrace on other platforms
+    [ check-target-builds ../build//libbacktrace : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1

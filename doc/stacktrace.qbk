@@ -133,8 +133,8 @@ Generic recommendation is to *avoid signal handlers! Use* platform specific ways
 [section Stacktrace from arbitrary exception]
 
 [warning At the moment the functionality is only available for some of the
-         popular cxx run-times for POSIX systems. Make sure that your platform
-         is supported by running some tests.
+         popular C++ runtimes for POSIX systems and requires *libbacktrace*.
+         Make sure that your platform is supported by running some tests.
 ]
 
 The library provides a way to get stacktrace from an exception as if the
