@@ -6,6 +6,12 @@
 
 #include "exception_headers.h"
 
+// At the moment the file is used only on POSIX. _Unwind_Backtrace may be
+// available on some platforms only if _GNU_SOURCE is defined.
+#ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#endif
+
 #include <boost/assert.hpp>
 #include <boost/stacktrace/safe_dump_to.hpp>
 
