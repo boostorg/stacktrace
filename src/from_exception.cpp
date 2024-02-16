@@ -21,6 +21,23 @@
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
 #include <mutex>
 #include <unordered_map>
+
+#ifndef BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK
+
+#ifdef BOOST_HAS_THREADS
+
+#error On this platform memory leaks are possible if capturing stacktrace from \
+        exceptions is enabled and exceptions are thrown concurrently \
+        and libc++ runtime is used. \
+        \
+        Define `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK` to \
+        suppress this error if the library would not be used with libc++ \
+        runtime (for example, would be used with GCC's runtime).
+
+#endif
+
+#endif
+
 #endif
 
 namespace {
