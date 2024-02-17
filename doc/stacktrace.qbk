@@ -295,43 +295,6 @@ Terminate called:
 
 [endsect]
 
-[/
-[section Store stacktraces into shared memory]
-
-There's a way to serialize stacktrace in async safe manner and share that serialized representation with another process. Here's another example with signal handlers.
-
-This example is very close to the [link stacktrace.getting_started.handle_terminates_aborts_and_seg "Handle terminates, aborts and Segmentation Faults"], but this time we are dumping stacktrace into shared memory:
-
-[getting_started_terminate_handlers_shmem]
-
-After registering signal handlers and catching a signal, we may print stacktrace dumps on program restart:
-
-[getting_started_on_program_restart_shmem]
-
-The program output will be the following:
-
-```
-Previous run crashed and left trace in shared memory:
- 0# 0x00007FD51C7218EF
- 1# my_signal_handler2(int) at ../example/terminate_handler.cpp:68
- 2# 0x00007FD51B833CB0
- 3# 0x00007FD51B833C37
- 4# 0x00007FD51B837028
- 5# 0x00007FD51BE44BBD
- 6# 0x00007FD51BE42B96
- 7# 0x00007FD51BE42BE1
- 8# bar(int) at ../example/terminate_handler.cpp:18
- 9# foo(int) at ../example/terminate_handler.cpp:22
-10# bar(int) at ../example/terminate_handler.cpp:14
-11# foo(int) at ../example/terminate_handler.cpp:22
-12# run_3(char const**) at ../example/terminate_handler.cpp:152
-13# main at ../example/terminate_handler.cpp:207
-14# 0x00007FD51B81EF45
-15# 0x0000000000402999
-```
-
-[endsect] 
-]
 
 [endsect]
 

@@ -63,27 +63,7 @@ void my_terminate_handler() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOST_CONSTEXPR_OR_CONST std::size_t shared_memory_size = 4096 * 8;
-
-//[getting_started_terminate_handlers_shmem
-#include <boost/stacktrace.hpp>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/mapped_region.hpp>
-
-boost::interprocess::shared_memory_object g_shm; // inited at program start
-boost::interprocess::mapped_region g_region;     // inited at program start
-
-
-void my_signal_handler2(int signum) {
-    ::signal(signum, SIG_DFL);
-    void** f = static_cast<void**>(g_region.get_address());
-    *f = reinterpret_cast<void*>(1);                      // Setting flag that shared memory now contains stacktrace.
-    boost::stacktrace::safe_dump_to(f + 1, g_region.get_size() - sizeof(void*));
-
-    ::raise(SIGABRT);
-}
-//]
-
+#ifndef BOOST_WINDOWS
 #include <iostream>     // std::cerr
 #include <fstream>     // std::ifstream
 #include <boost/filesystem/path.hpp>
@@ -110,6 +90,7 @@ inline void copy_and_run(const char* exec_name, char param, bool not_null) {
         std::exit(ret);
     }
 }
+#endif
 
 int run_0(const char* /*argv*/[]) {
 //[getting_started_setup_terminate_handlers
@@ -156,67 +137,6 @@ int run_2(const char* argv[]) {
         boost::filesystem::remove("./backtrace.dump");
     }
 //]
-
-    return 0;
-}
-
-
-int run_3(const char* /*argv*/[]) {
-    using namespace boost::interprocess;
-    {
-        shared_memory_object shm_obj(open_or_create, "shared_memory", read_write);
-        shm_obj.swap(g_shm);
-    }
-    g_shm.truncate(shared_memory_size);
-
-    {
-        mapped_region m(g_shm, read_write, 0, shared_memory_size);
-        m.swap(g_region);
-    }
-    void** f = static_cast<void**>(g_region.get_address());
-    *f = 0;
-
-    ::signal(SIGSEGV, &my_signal_handler2);
-    ::signal(SIGABRT, &my_signal_handler2);
-    foo(5);
-    return 31;
-}
-
-int run_4(const char* argv[]) {
-    using namespace boost::interprocess;
-    {
-        shared_memory_object shm_obj(open_only, "shared_memory", read_write);
-        shm_obj.swap(g_shm);
-    }
-
-    {
-        mapped_region m(g_shm, read_write, 0, shared_memory_size);
-        m.swap(g_region);
-    }
-
-//[getting_started_on_program_restart_shmem
-    void** f = static_cast<void**>(g_region.get_address());
-    if (*f) {                                                 // Checking if memory contains stacktrace.
-        boost::stacktrace::stacktrace st
-            = boost::stacktrace::stacktrace::from_dump(f + 1, g_region.get_size() - sizeof(bool));
-
-        std::cout << "Previous run crashed and left trace in shared memory:\n" << st << std::endl;
-        *f = 0; /*<-*/
-        shared_memory_object::remove("shared_memory");
-        if (std::string(argv[0]).find("noop") == std::string::npos) {
-            if (!st) {
-                return 43;
-            }
-        } else {
-           if (st) {
-                return 44;
-            }
-        }
-    } else {
-        return 42; /*->*/
-    }
-//]
-
 
     return 0;
 }
@@ -335,10 +255,6 @@ int main(int argc, const char* argv[]) {
         // We are copying files to make sure that stacktrace printing works independently from executable name
         copy_and_run(argv[0], '1', true);
         copy_and_run(argv[0], '2', false);
-
-        // There are some issues with async-safety of shared memory writes on Windows.
-        copy_and_run(argv[0], '3', true);
-        copy_and_run(argv[0], '4', false);
 #endif
 
         return test_inplace();
@@ -347,9 +263,6 @@ int main(int argc, const char* argv[]) {
     switch (argv[1][0]) {
     case '0': return run_0(argv);
     case '1': return run_1(argv);
-    case '2': return run_2(argv);
-    case '3': return run_3(argv);
-    case '4': return run_4(argv);
     }
 
     return 404;
