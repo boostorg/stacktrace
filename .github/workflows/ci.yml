@@ -28,7 +28,7 @@ jobs:
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
           - toolset: clang
-            compiler: clang++-14
+            compiler: clang++-15
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
           # TODO: fix and uncomment
