@@ -63,13 +63,12 @@ void my_terminate_handler() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef BOOST_WINDOWS
 #include <iostream>     // std::cerr
 #include <fstream>     // std::ifstream
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-
+#ifndef BOOST_WINDOWS
 inline void copy_and_run(const char* exec_name, char param, bool not_null) {
     std::cout << "Running with param " << param << std::endl;
     boost::filesystem::path command = exec_name;
