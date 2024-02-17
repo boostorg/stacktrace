@@ -186,6 +186,10 @@ consumption of the application, as the exceptions now additionally store traces.
 At runtime switch boost::stacktrace::this_thread::set_capture_stacktraces_at_throw()
 allows to disable/enable capturing and storing traces in exceptions.
 
+To disable the `boost_stacktrace_from_exception` library builds the
+`boost.stacktrace.from_exception=off` option, for example
+`./b2 boost.stacktrace.from_exception=off`.
+
 [endsect]
 
 

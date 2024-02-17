@@ -32,7 +32,10 @@
         \
         Define `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK` to \
         suppress this error if the library would not be used with libc++ \
-        runtime (for example, would be used with GCC's runtime).
+        runtime (for example, it would be only used with GCC runtime). \
+        \
+        Otherwise, disable the boost_stacktrace_from_exception library build \
+        (for example by `./b2 boost.stacktrace.from_exception=off` option).
 
 #endif
 

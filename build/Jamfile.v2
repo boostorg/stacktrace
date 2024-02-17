@@ -5,6 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
+import feature ;
 import ../../config/checks/config : requires ;
 
 project
@@ -20,6 +21,7 @@ lib gcc_s ;
 lib Dbgeng ;
 lib ole32 ;
 
+feature.feature boost.stacktrace.from_exception : on off : optional propagated ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
@@ -139,6 +141,9 @@ lib boost_stacktrace_from_exception
     <warnings>all
     <target-os>linux:<library>dl
     <target-os>windows:<build>no  # not supported at the moment
+
+    # Command line option to disable build
+    <boost.stacktrace.from_exception>off:<build>no
 
     # Require usable libbacktrace on other platforms
     [ check-target-builds ../build//libbacktrace : : <build>no ]
