@@ -7,14 +7,13 @@
 #include "test_impl.hpp"
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
+#include <chrono> 
 #include <sstream>
+#include <thread>
 
 #include <boost/stacktrace.hpp>
-#include <boost/thread.hpp>
 #include <boost/optional.hpp>
 #include <boost/core/lightweight_test.hpp>
-
-#include <boost/timer/timer.hpp>
 
 using boost::stacktrace::stacktrace;
 
@@ -42,16 +41,20 @@ void main_test_loop() {
 }
 
 int main() {
-    boost::timer::auto_cpu_timer t;
+    const auto t = std::chrono::steady_clock::now();
 
-    boost::thread t1(main_test_loop);
-    boost::thread t2(main_test_loop);
-    boost::thread t3(main_test_loop);
+    std::thread t1(main_test_loop);
+    std::thread t2(main_test_loop);
+    std::thread t3(main_test_loop);
     main_test_loop();
 
     t1.join();
     t2.join();
     t3.join();
 
+    const auto elapsed = t - std::chrono::steady_clock::now();
+    std::cout << "Elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        elapsed
+    ). count() << "ms";
     return boost::report_errors();
 }

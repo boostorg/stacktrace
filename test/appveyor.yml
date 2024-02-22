@@ -33,7 +33,7 @@ skip_tags: true
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      TOOLSET: msvc-14.1 # ,clang-win
+      TOOLSET: msvc-14.1 #,clang-win
       CXXSTD: 14,17
       ADDRMD: 64
     #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -44,10 +44,11 @@ environment:
     #  ADDPATH: C:\cygwin64\bin;
     #  TOOLSET: gcc
     #  CXXSTD: 03,11,14,1z
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      ADDPATH: C:\mingw\bin;
-      TOOLSET: gcc
-      CXXSTD: 03,11,14,1z
+    # Waiting for https://github.com/boostorg/system/issues/116
+    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #  ADDPATH: C:\mingw\bin;
+    #  TOOLSET: gcc
+    #  CXXSTD: 03,11,14,1z
     #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #  ADDPATH: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;
     #  TOOLSET: gcc
@@ -61,7 +62,10 @@ before_build:
     - set BOOST=C:/boost-local
     - git clone -b %BOOST_BRANCH% --depth 10 https://github.com/boostorg/boost.git %BOOST%
     - cd %BOOST%
-    - git submodule update --init --depth 10 tools/build tools/boostdep libs/filesystem libs/interprocess
+    - git submodule update --init --depth 10 tools/build tools/boostdep
+        libs/filesystem libs/atomic libs/system libs/interprocess libs/array
+        libs/iterator libs/detail libs/exception libs/smart_ptr libs/mpl
+        libs/align libs/container libs/tuple libs/intrusive libs/scope
 
     - rm -rf %BOOST%/libs/%BOOST_LIBS_FOLDER%
     - mv -f %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%BOOST_LIBS_FOLDER%
