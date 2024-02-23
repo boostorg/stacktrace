@@ -158,7 +158,7 @@ class debugging_symbols: boost::noncopyable {
     }
 
     std::lock_guard<std::mutex> guard_;
-    com_holder< ::IDebugSymbols> idebug_;
+    com_holder< ::IDebugSymbols>& idebug_;
 public:
     debugging_symbols() noexcept
         : guard_( get_mutex_inst() )
