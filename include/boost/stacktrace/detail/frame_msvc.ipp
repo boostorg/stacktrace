@@ -149,7 +149,7 @@ public:
     ~debugging_symbols() BOOST_NOEXCEPT
     {
         if (iclient_.is_inited()) {
-            iclient_->EndSession(DEBUG_END_PASSIVE);
+            iclient_->DetachProcesses();
         }
     }
 
@@ -163,9 +163,9 @@ public:
         // [class.mfct]: A static local variable or local type in a member function always refers to the same entity, whether
         // or not the member function is inline.
         static thread_local com_holder< ::IDebugSymbols> idebug;
-        static thread_local com_holder< ::IDebugClient> iclient;
 
         if (!idebug.is_inited()) {
+            com_holder< ::IDebugClient> iclient;
             try_init_com(iclient, idebug);
         }
 
