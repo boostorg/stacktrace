@@ -42,9 +42,9 @@ boostbook standalone
     :
         stacktrace
     :
-        <xsl:param>boost.root=http://www.boost.org/doc/libs/1_84_0
+        <xsl:param>boost.root=http\://www.boost.org/doc/libs/1_84_0
 #        <xsl:param>boost.root=../../../..
-        <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/doc/html
+        <format>pdf:<xsl:param>boost.url.prefix=http\://www.boost.org/doc/libs/release/doc/html
     ;
 
 ###############################################################################
