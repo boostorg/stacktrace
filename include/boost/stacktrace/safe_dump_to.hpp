@@ -25,8 +25,10 @@
 #   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
 #endif
 
-/// @file safe_dump_to.hpp This header contains low-level async-signal-safe functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
-/// so you could read them by using 'od -tx8 -An stacktrace_dump_failename' Linux command or using boost::stacktrace::stacktrace::from_dump functions.
+/// @file safe_dump_to.hpp \asyncsafe low-level
+/// functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
+/// so you could read them by using 'od -tx8 -An stacktrace_dump_failename'
+/// Linux command or using boost::stacktrace::stacktrace::from_dump functions.
 
 namespace boost { namespace stacktrace {
 
@@ -84,7 +86,7 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame. To get the actually consumed bytes multiply this value by the sizeof(boost::stacktrace::frame::native_frame_ptr_t)
 ///
@@ -99,7 +101,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(void* memory, std::size_t size) noexc
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame.  To get the actually consumed bytes multiply this value by the sizeof(boost::stacktrace::frame::native_frame_ptr_t)
 ///
@@ -117,7 +119,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, void* memory, std::
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame.
 ///
@@ -130,7 +132,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(const char* file) noexcept {
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame.
 ///
@@ -149,7 +151,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame.
 ///
@@ -160,7 +162,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(platform_specific_descriptor fd) noex
 ///
 /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 ///
 /// @returns Stored call sequence depth including terminating zero frame.
 ///

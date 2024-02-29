@@ -22,6 +22,9 @@ doxygen autodoc
         <doxygen:param>SEARCH_INCLUDES=YES
         <doxygen:param>SHORT_NAMES=NO
         <doxygen:param>INCLUDE_PATH=../../../
+        <doxygen:param>"ALIASES= \\
+            \"asyncsafe=\\xmlonly<link linkend='stacktrace.theoretical_async_signal_safety'>\\endxmlonly Theoretically async signal safe \\xmlonly</link>\\endxmlonly\" \\
+        "
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
                                    \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\
                                    \"BOOST_CONSTEXPR_EXPLICIT_OPERATOR_BOOL()=explicit constexpr operator bool() const noexcept;\" \\
@@ -39,9 +42,9 @@ boostbook standalone
     :
         stacktrace
     :
-        <xsl:param>boost.root=http://www.boost.org/doc/libs/1_63_0
+        <xsl:param>boost.root=http\://www.boost.org/doc/libs/1_84_0
 #        <xsl:param>boost.root=../../../..
-        <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/doc/html
+        <format>pdf:<xsl:param>boost.url.prefix=http\://www.boost.org/doc/libs/release/doc/html
     ;
 
 ###############################################################################
