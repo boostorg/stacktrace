@@ -135,7 +135,7 @@ public:
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     BOOST_FORCEINLINE basic_stacktrace() noexcept
         : impl_()
     {
@@ -146,7 +146,7 @@ public:
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     ///
     /// @param a Allocator that would be passed to underlying storage.
     BOOST_FORCEINLINE explicit basic_stacktrace(const allocator_type& a) noexcept
@@ -159,7 +159,7 @@ public:
     ///
     /// @b Complexity: O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     ///
     /// @param skip How many top calls to skip and do not store in *this.
     ///
@@ -177,14 +177,14 @@ public:
 
     /// @b Complexity: O(st.size())
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     basic_stacktrace(const basic_stacktrace& st)
         : impl_(st.impl_)
     {}
 
     /// @b Complexity: O(st.size())
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.
     basic_stacktrace& operator=(const basic_stacktrace& st) {
         impl_ = st.impl_;
         return *this;
@@ -193,21 +193,21 @@ public:
 #ifdef BOOST_STACKTRACE_DOXYGEN_INVOKED
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator::deallocate is async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator::deallocate is async signal safe.
     ~basic_stacktrace() noexcept = default;
 #endif
 
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction and copying are async signal safe.
     basic_stacktrace(basic_stacktrace&& st) noexcept
         : impl_(std::move(st.impl_))
     {}
 
     /// @b Complexity: O(st.size())
     ///
-    /// @b Async-Handler-Safety: Safe if Allocator construction and copying are async signal safe.
+    /// @b Async-Handler-Safety: \asyncsafe if Allocator construction and copying are async signal safe.
     basic_stacktrace& operator=(basic_stacktrace&& st)
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
         noexcept(( std::is_nothrow_move_assignable< std::vector<boost::stacktrace::frame, Allocator> >::value ))
@@ -224,7 +224,7 @@ public:
     ///
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     size_type size() const noexcept {
         return impl_.size();
     }
@@ -236,43 +236,43 @@ public:
     ///
     /// @b Complexity: O(1).
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_reference operator[](std::size_t frame_no) const noexcept {
         return impl_[frame_no];
     }
 
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_iterator begin() const noexcept { return impl_.begin(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_iterator cbegin() const noexcept { return impl_.begin(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_iterator end() const noexcept { return impl_.end(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_iterator cend() const noexcept { return impl_.end(); }
 
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_reverse_iterator rbegin() const noexcept { return impl_.rbegin(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_reverse_iterator crbegin() const noexcept { return impl_.rbegin(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_reverse_iterator rend() const noexcept { return impl_.rend(); }
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     const_reverse_iterator crend() const noexcept { return impl_.rend(); }
 
 
@@ -281,7 +281,7 @@ public:
     ///
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     constexpr explicit operator bool () const noexcept { return !empty(); }
 
     /// @brief Allows to check that stack trace failed.
@@ -289,7 +289,7 @@ public:
     ///
     /// @b Complexity: O(1)
     ///
-    /// @b Async-Handler-Safety: Safe.
+    /// @b Async-Handler-Safety: \asyncsafe.
     bool empty() const noexcept { return !size(); }
 
     const std::vector<boost::stacktrace::frame, Allocator>& as_vector() const noexcept {
@@ -398,7 +398,7 @@ public:
 ///
 /// @b Complexity: Amortized O(1); worst case O(size())
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 template <class Allocator1, class Allocator2>
 bool operator< (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) noexcept {
     return lhs.size() < rhs.size() || (lhs.size() == rhs.size() && lhs.as_vector() < rhs.as_vector());
@@ -408,7 +408,7 @@ bool operator< (const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<
 ///
 /// @b Complexity: Amortized O(1); worst case O(size())
 ///
-/// @b Async-Handler-Safety: Safe.
+/// @b Async-Handler-Safety: \asyncsafe.
 template <class Allocator1, class Allocator2>
 bool operator==(const basic_stacktrace<Allocator1>& lhs, const basic_stacktrace<Allocator2>& rhs) noexcept {
     return lhs.as_vector() == rhs.as_vector();
