@@ -23,7 +23,7 @@ doxygen autodoc
         <doxygen:param>SHORT_NAMES=NO
         <doxygen:param>INCLUDE_PATH=../../../
         <doxygen:param>"ALIASES= \\
-            \"asyncsafe=\\xmlonly<link linkend='stacktrace.theoretical_async_signal_safety'>\\endxmlonly Theoretically safe \\xmlonly</link>\\endxmlonly\" \\
+            \"asyncsafe=\\xmlonly<link linkend='stacktrace.theoretical_async_signal_safety'>\\endxmlonly Theoretically async signal safe \\xmlonly</link>\\endxmlonly\" \\
         "
         <doxygen:param>"PREDEFINED=\"stl_type_info=std::type_info\" \\
                                    \"BOOST_EXPLICIT_OPERATOR_BOOL_NOEXCEPT()=explicit operator bool() const noexcept;\" \\

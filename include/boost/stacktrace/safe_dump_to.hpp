@@ -25,7 +25,7 @@
 #   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
 #endif
 
-/// @file safe_dump_to.hpp This header contains low-level async-signal-safe
+/// @file safe_dump_to.hpp \asyncsafe low-level
 /// functions for dumping call stacks. Dumps are binary serialized arrays of `void*`,
 /// so you could read them by using 'od -tx8 -An stacktrace_dump_failename'
 /// Linux command or using boost::stacktrace::stacktrace::from_dump functions.
