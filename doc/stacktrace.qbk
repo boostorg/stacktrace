@@ -365,7 +365,7 @@ There are multiple ways to deal with that issue if you distribute PDB files alon
 
 [section Theoretical async signal safety]
 
-In theory, walking the stack without decoding should be async signal safe.
+In theory, walking the stack without decoding and demangling should be async signal safe.
 
 In practice, it is not:
 
@@ -377,7 +377,9 @@ In practice, it is not:
   Theoretically this could be worked around by bypassing the mutex locking
   in C++-runtime at exception throw
   ([@https://github.com/userver-framework/userver/blob/4246909c99506d3ab34bd130a5154b4acc8e87de/core/src/engine/task/exception_hacks.cpp#L241-L244 sample implementation]
-  in the 🐙 userver framework).
+  in the 🐙 userver framework), or by using a very modern runtime
+  (glibc-2.35+ with [@https://gcc.gnu.org/bugzilla/show_bug.cgi?id=71744#c32 modern]
+  libgvc or [@https://reviews.llvm.org/D130668 modern] LLVM's libunwind.
 * `-fomit-frame-pointer` like flags add additional complexity to the stack
   walking implementation, which may also negatively affect the signal safety.
 
