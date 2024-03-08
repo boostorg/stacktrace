@@ -18,6 +18,81 @@
 #   include <boost/winapi/dll.hpp>
 #endif
 
+#ifdef _AIX
+/* AIX doesn't provide dladdr syscall.
+   This provides a minimal implementation of dladdr which retrieves
+   only files information.
+   TODO: Implement the symbol name.  */
+
+#include <sys/ldr.h>
+#include <sys/debug.h>
+#include <cstring>
+
+#define DL_BUFF_SIZE 0x1000
+
+extern "C" {
+  typedef struct
+  {
+    const char *dli_fname;
+    void *dli_fbase;
+    const char *dli_sname;
+    void *dli_saddr;
+  } Dl_info;
+
+  int dladdr(void* address, Dl_info* info) {
+    void *buff = malloc (DL_BUFF_SIZE);
+
+    info->dli_fname = NULL;
+    info->dli_fbase = NULL;
+    info->dli_sname = NULL;
+    info->dli_saddr = NULL;
+
+    if (loadquery (L_GETINFO, buff, DL_BUFF_SIZE) != -1 ) {
+      struct ld_info *pld_info = (struct ld_info*) buff;
+
+      while (1) {
+	if (((char*) address >= (char*) pld_info->ldinfo_dataorg &&
+	     (char*) address < (char*) pld_info->ldinfo_dataorg + pld_info-> ldinfo_datasize )
+	    || (( char*) address >= (char*) pld_info->ldinfo_textorg &&
+		(char*) address < (char*) pld_info->ldinfo_textorg +  pld_info-> ldinfo_textsize )){
+
+
+	  /* ldinfo_filename is the null-terminated path name followed
+	     by null-terminated member name.
+	     If the file is not an archive, then member name is null. */
+	  uint size_filename = strlen (pld_info->ldinfo_filename);
+	  uint size_member = strlen (pld_info->ldinfo_filename + size_filename + 1);
+
+	  /* If member is not null, '(' and ')' must be added to create a
+	     fname looking like "filename(membername)".  */
+	  char *fname = (char*) malloc (size_filename + (size_member ? size_member  + 3 : 1));
+	  strcpy (fname, pld_info->ldinfo_filename);
+	  if (size_member) {
+	    strcat (fname, "(");
+	    strcat (fname, pld_info->ldinfo_filename + size_filename + 1);
+	    strcat (fname, ")");
+	  }
+
+	  info->dli_fname = fname;
+	  info->dli_fbase = pld_info->ldinfo_textorg;
+
+	  free (buff);
+	  return 1;
+	}
+
+	if (!pld_info->ldinfo_next) {
+	  free (buff);
+	  return 0;
+	}
+	pld_info = (struct ld_info *) ((char*) pld_info + pld_info->ldinfo_next);
+      }
+    }
+    return 0;
+  }
+}
+
+#endif
+
 namespace boost { namespace stacktrace { namespace detail {
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
