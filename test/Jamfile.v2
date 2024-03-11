@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
-import ../../config/checks/config : requires ;
+import config : requires ;
 
 lib dl : : <link>shared ;
 lib gcc_s ;
@@ -31,6 +31,7 @@ project
     <warnings>all
     <test-info>always_show_run_output
     <visibility>hidden
+    <include>..
   ;
 
 local FORCE_SYMBOL_EXPORT = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
@@ -203,12 +204,12 @@ for local p in [ glob ../example/*.cpp ]
     local additional_dependency = ;
     if $(target_name) = "terminate_handler"
     {
-        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
+        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt <library>/boost/interprocess//boost_interprocess ;
     }
 
     if $(target_name) = "throwing_st"
     {
-        additional_dependency = [ requires rtti ] ;
+        additional_dependency = [ requires rtti ] <library>/boost/exception//boost_exception ;
     }
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BT)           $(additional_dependency)    : backtrace_$(p2[1]:B) ] ;
