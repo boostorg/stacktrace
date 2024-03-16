@@ -42,6 +42,18 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void in_test_rethrow_1(const char* msg) {
   }
 }
 
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void in_test_rethrow_2(const char* msg) {
+  try {
+    in_test_throw_2(msg);
+  } catch (const std::exception&) {
+    try {
+      in_test_throw_1(msg);
+    } catch (const std::exception&) {}
+
+    throw;
+  }
+}
+
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_no_exception() {
   auto trace = stacktrace::from_current_exception();
   BOOST_TEST(!trace);
@@ -70,13 +82,8 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_after_other_exception() {
     auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
     std::cout << "Tarce in test_after_other_exception(): " << trace;
-#if defined(BOOST_MSVC)
-    BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
-    BOOST_TEST(to_string(trace).find("in_test_throw_2") != std::string::npos);
-#else
     BOOST_TEST(to_string(trace).find("in_test_throw_1") != std::string::npos);
     BOOST_TEST(to_string(trace).find("in_test_throw_2") == std::string::npos);
-#endif
   }
 }
 
@@ -89,6 +96,19 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_rethrow() {
     std::cout << "Tarce in test_rethrow(): " << trace << '\n';
     BOOST_TEST(to_string(trace).find("in_test_throw_1")   != std::string::npos);
     BOOST_TEST(to_string(trace).find("in_test_rethrow_1") != std::string::npos);
+  }
+}
+
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_rethrow_after_other_exception() {
+  try {
+    in_test_rethrow_2("test_rethrow_after_other_exception");
+  } catch (const std::exception&) {
+    auto trace = stacktrace::from_current_exception();
+    BOOST_TEST(trace);
+    std::cout << "Tarce in test_rethrow_after_other_exception(): " << trace << '\n';
+    BOOST_TEST(to_string(trace).find("in_test_throw_1")   == std::string::npos);
+    BOOST_TEST(to_string(trace).find("in_test_throw_2")   != std::string::npos);
+    BOOST_TEST(to_string(trace).find("in_test_rethrow_2") != std::string::npos);
   }
 }
 
@@ -180,6 +200,7 @@ int main() {
   test_trace_from_exception();
   test_after_other_exception();
   test_rethrow();
+  test_rethrow_after_other_exception();
   test_nested();
   test_rethrow_nested();
   test_from_other_thread();
