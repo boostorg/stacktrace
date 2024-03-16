@@ -9,15 +9,30 @@
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <windows.h>
 
+extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
+#define _pCurrentException static_cast<PEXCEPTION_RECORD>(*__current_exception())
+
 namespace {
 
 constexpr std::size_t kStacktraceDumpSize = 4096;
 
+struct thrown_info {
+  ULONG_PTR object;
+  char* dump;
+};
+
 struct exception_data {
-  char dump_buffer[kStacktraceDumpSize];
-  ULONG_PTR thrown_object = 0;
-  bool rethrow = false;
   bool capture_stacktraces_at_throw = true;
+  unsigned count = 0;
+  thrown_info* info = nullptr;
+
+  ~exception_data() noexcept {
+    HANDLE hHeap = GetProcessHeap();
+    for (unsigned i = 0; i < count; ++i) {
+      HeapFree(hHeap, 0, info[i].dump);
+    }
+    HeapFree(hHeap, 0, info);
+  }
 };
 
 thread_local exception_data data;
@@ -35,18 +50,66 @@ inline ULONG_PTR PER_PEXCEPTOBJ(PEXCEPTION_RECORD p) noexcept {
   return p->ExceptionInformation[1];
 }
 
-LONG NTAPI veh(PEXCEPTION_POINTERS p) {
-  if (data.capture_stacktraces_at_throw && PER_IS_MSVC_EH(p->ExceptionRecord)) {
-    if (PER_PEXCEPTOBJ(p->ExceptionRecord) == 0) {
-      data.rethrow = true;
-    } else if (data.rethrow && PER_PEXCEPTOBJ(p->ExceptionRecord) == data.thrown_object) {
-      data.rethrow = false;
-    } else {
-      data.rethrow = false;
-      data.thrown_object = PER_PEXCEPTOBJ(p->ExceptionRecord);
+unsigned current_cxx_exception_index() noexcept {
+  if (PEXCEPTION_RECORD current_cxx_exception = _pCurrentException) {
+    for (unsigned i = data.count; i > 0;) {
+      --i;
+      if (data.info[i].object == PER_PEXCEPTOBJ(current_cxx_exception)) {
+        return i;
+      }
+    }
+  }
+  return data.count;
+}
 
-      const std::size_t kSkip = 4;
-      boost::stacktrace::safe_dump_to(kSkip, data.dump_buffer, kStacktraceDumpSize);
+bool is_processing_rethrow(PEXCEPTION_RECORD p) noexcept {
+  // Processing flow:
+  // 0. throw;
+  // 1. _CxxThrowException(pExceptionObject = nullptr)
+  // 2. VEH & SEH (may throw new c++ exceptions!)
+  // 3. __RethrowException(_pCurrentException)
+  // 4. VEH
+  if (PER_PEXCEPTOBJ(p) == 0) return true;
+  PEXCEPTION_RECORD current_cxx_exception = _pCurrentException;
+  if (current_cxx_exception == nullptr) return false;
+  return PER_PEXCEPTOBJ(p) == PER_PEXCEPTOBJ(current_cxx_exception);
+}
+
+LONG NTAPI veh(PEXCEPTION_POINTERS p) {
+  if (data.capture_stacktraces_at_throw &&
+      PER_IS_MSVC_EH(p->ExceptionRecord) &&
+      !is_processing_rethrow(p->ExceptionRecord)) {
+    HANDLE hHeap = GetProcessHeap();
+    unsigned index = current_cxx_exception_index();
+    unsigned new_count = 1 + (index < data.count ? index + 1 : 0);
+
+    for (unsigned i = new_count; i < data.count; ++i) {
+      HeapFree(hHeap, 0, data.info[i].dump);
+      data.info[i].dump = nullptr;
+    }
+
+    void* new_info;
+    if (data.info) {
+      new_info = HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, data.info, sizeof(thrown_info) * new_count);
+    } else {
+      new_info = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, sizeof(thrown_info) * new_count);
+    }
+    if (new_info) {
+      data.count = new_count;
+      data.info = static_cast<thrown_info*>(new_info);
+      data.info[data.count - 1].object = PER_PEXCEPTOBJ(p->ExceptionRecord);
+      char*& dump_ptr = data.info[data.count - 1].dump;
+      if (dump_ptr == nullptr) {
+        dump_ptr = static_cast<char*>(HeapAlloc(hHeap, 0, kStacktraceDumpSize));
+      }
+      if (dump_ptr != nullptr) {
+        const std::size_t kSkip = 4;
+        boost::stacktrace::safe_dump_to(kSkip, dump_ptr, kStacktraceDumpSize);
+      }
+    } else if (new_count <= data.count) {
+      data.count = new_count - 1;
+      HeapFree(hHeap, 0, data.info[data.count - 1].dump);
+      data.info[data.count - 1].dump = nullptr;
     }
   }
   return EXCEPTION_CONTINUE_SEARCH;
@@ -63,7 +126,8 @@ struct veh_installer {
 extern "C" {
 
 BOOST_SYMBOL_EXPORT const char* boost_stacktrace_impl_current_exception_stacktrace() {
-  return data.capture_stacktraces_at_throw ? data.dump_buffer : nullptr;
+  unsigned index = current_cxx_exception_index();
+  return index < data.count ? data.info[index].dump : nullptr;
 }
 
 BOOST_SYMBOL_EXPORT bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw() {

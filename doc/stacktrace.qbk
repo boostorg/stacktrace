@@ -137,7 +137,7 @@ See [link stacktrace.theoretical_async_signal_safety "Theoretical async signal s
 [section Stacktrace from arbitrary exception]
 
 [warning At the moment the functionality is only available for some of the
-         popular C++ runtimes for POSIX systems and requires *libbacktrace*.
+         popular C++ runtimes for POSIX systems with *libbacktrace* and for Windows.
          Make sure that your platform is supported by running some tests.
 ]
 
