@@ -4,6 +4,83 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(_MSC_VER)
+
+#include <boost/stacktrace/safe_dump_to.hpp>
+#include <windows.h>
+
+namespace {
+
+constexpr std::size_t kStacktraceDumpSize = 4096;
+
+struct exception_data {
+  char dump_buffer[kStacktraceDumpSize];
+  ULONG_PTR thrown_object = 0;
+  bool rethrow = false;
+  bool capture_stacktraces_at_throw = true;
+};
+
+thread_local exception_data data;
+
+inline bool PER_IS_MSVC_EH(PEXCEPTION_RECORD p) noexcept {
+  const DWORD EH_EXCEPTION_NUMBER = 0xE06D7363;
+  const ULONG_PTR EH_MAGIC_NUMBER1 = 0x19930520;
+
+  return p->ExceptionCode == EH_EXCEPTION_NUMBER &&
+    (p->NumberParameters == 3 || p->NumberParameters == 4) &&
+    p->ExceptionInformation[0] == EH_MAGIC_NUMBER1;
+}
+
+inline ULONG_PTR PER_PEXCEPTOBJ(PEXCEPTION_RECORD p) noexcept {
+  return p->ExceptionInformation[1];
+}
+
+LONG NTAPI veh(PEXCEPTION_POINTERS p) {
+  if (data.capture_stacktraces_at_throw && PER_IS_MSVC_EH(p->ExceptionRecord)) {
+    if (PER_PEXCEPTOBJ(p->ExceptionRecord) == 0) {
+      data.rethrow = true;
+    } else if (data.rethrow && PER_PEXCEPTOBJ(p->ExceptionRecord) == data.thrown_object) {
+      data.rethrow = false;
+    } else {
+      data.rethrow = false;
+      data.thrown_object = PER_PEXCEPTOBJ(p->ExceptionRecord);
+
+      const std::size_t kSkip = 4;
+      boost::stacktrace::safe_dump_to(kSkip, data.dump_buffer, kStacktraceDumpSize);
+    }
+  }
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+
+struct veh_installer {
+  PVOID h;
+  veh_installer() noexcept : h(AddVectoredExceptionHandler(1, veh)) {}
+  ~veh_installer() noexcept { RemoveVectoredExceptionHandler(h); }
+} installer;
+
+}
+
+extern "C" {
+
+BOOST_SYMBOL_EXPORT const char* boost_stacktrace_impl_current_exception_stacktrace() {
+  return data.capture_stacktraces_at_throw ? data.dump_buffer : nullptr;
+}
+
+BOOST_SYMBOL_EXPORT bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw() {
+  return &data.capture_stacktraces_at_throw;
+}
+
+}
+
+namespace boost { namespace stacktrace { namespace impl {
+
+BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
+}
+
+}}}  // namespace boost::stacktrace::impl
+
+#else
+
 #include "exception_headers.h"
 
 // At the moment the file is used only on POSIX. _Unwind_Backtrace may be
@@ -222,3 +299,4 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 }}}  // namespace boost::stacktrace::impl
 
+#endif
