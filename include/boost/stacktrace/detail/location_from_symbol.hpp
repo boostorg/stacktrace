@@ -28,9 +28,15 @@ public:
     explicit location_from_symbol(const void* addr) noexcept
         : dli_()
     {
+	#if !defined(BOOST_STACKTRACE_USE_ADDR2LINE) 
         if (!::dladdr(const_cast<void*>(addr), &dli_)) { // `dladdr` on Solaris accepts nonconst addresses
             dli_.dli_fname = 0;
         }
+	#else 
+        
+	dli_.dli_fname = 0;
+	
+	#endif
     }
 
     bool empty() const noexcept {
