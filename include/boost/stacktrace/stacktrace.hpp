@@ -33,6 +33,26 @@
 #   pragma warning(disable:2196) // warning #2196: routine is both "inline" and "noinline"
 #endif
 
+#if defined(BOOST_MSVC)
+
+extern "C" {
+
+BOOST_SYMBOL_EXPORT inline void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
+const char* boost_stacktrace_impl_current_exception_stacktrace();
+bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw();
+
+}
+
+#ifdef _M_IX86
+#   pragma comment(linker, "/ALTERNATENAME:_boost_stacktrace_impl_current_exception_stacktrace=_boost_stacktrace_impl_return_nullptr")
+#   pragma comment(linker, "/ALTERNATENAME:_boost_stacktrace_impl_ref_capture_stacktraces_at_throw=_boost_stacktrace_impl_return_nullptr")
+#else
+#   pragma comment(linker, "/ALTERNATENAME:boost_stacktrace_impl_current_exception_stacktrace=boost_stacktrace_impl_return_nullptr")
+#   pragma comment(linker, "/ALTERNATENAME:boost_stacktrace_impl_ref_capture_stacktraces_at_throw=boost_stacktrace_impl_return_nullptr")
+#endif
+
+#endif
+
 namespace boost { namespace stacktrace {
 
 namespace impl {
@@ -381,6 +401,8 @@ public:
         if (impl::current_exception_stacktrace) {
             trace = impl::current_exception_stacktrace();
         }
+#elif defined(BOOST_MSVC)
+        trace = boost_stacktrace_impl_current_exception_stacktrace();
 #endif
 
         if (trace) {

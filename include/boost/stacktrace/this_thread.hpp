@@ -27,6 +27,10 @@ inline void set_capture_stacktraces_at_throw(bool enable = true) noexcept {
     if (impl::ref_capture_stacktraces_at_throw) {
         impl::ref_capture_stacktraces_at_throw() = enable;
     }
+#elif defined(BOOST_MSVC)
+    if (bool* p = boost_stacktrace_impl_ref_capture_stacktraces_at_throw()) {
+        *p = enable;
+    }
 #endif
     (void)enable;
 }
@@ -44,6 +48,10 @@ inline bool get_capture_stacktraces_at_throw() noexcept {
 #if defined(__GNUC__) && defined(__ELF__)
     if (impl::ref_capture_stacktraces_at_throw) {
         return impl::ref_capture_stacktraces_at_throw();
+    }
+#elif defined(BOOST_MSVC)
+    if (bool* p = boost_stacktrace_impl_ref_capture_stacktraces_at_throw()) {
+        return *p;
     }
 #endif
     return false;
