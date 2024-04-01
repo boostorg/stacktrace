@@ -163,7 +163,7 @@ int main() {
     foo("test1");
     bar("test2");
   } catch (const std::exception& exc) {
-    boost::stacktrace::stacktrace trace = std::stacktrace::from_current_exception();  // <---
+    boost::stacktrace::stacktrace trace = boost::stacktrace::from_current_exception();  // <---
     std::cerr << "Caught exception: " << exc.what() << ", trace:\n" << trace;
   }
 }
