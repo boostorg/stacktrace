@@ -19,18 +19,20 @@ project /boost/stacktrace
     ;
 
 explicit
-    [ alias boost_stacktrace_noop : build//boost_stacktrace_noop ]
-    [ alias boost_stacktrace_backtrace : build//boost_stacktrace_backtrace ]
     [ alias boost_stacktrace_addr2line : build//boost_stacktrace_addr2line ]
+    [ alias boost_stacktrace_backtrace : build//boost_stacktrace_backtrace ]
     [ alias boost_stacktrace_basic : build//boost_stacktrace_basic ]
+    [ alias boost_stacktrace_from_exception : build//boost_stacktrace_from_exception ]
+    [ alias boost_stacktrace_noop : build//boost_stacktrace_noop ]
     [ alias boost_stacktrace_windbg : build//boost_stacktrace_windbg ]
     [ alias boost_stacktrace_windbg_cached : build//boost_stacktrace_windbg_cached ]
     [ alias boost_stacktrace : boost_stacktrace_noop ]
     [ alias all :
-        boost_stacktrace_noop
-        boost_stacktrace_backtrace
         boost_stacktrace_addr2line
+        boost_stacktrace_backtrace
         boost_stacktrace_basic
+        boost_stacktrace_from_exception
+        boost_stacktrace_noop
         boost_stacktrace_windbg
         boost_stacktrace_windbg_cached
         test
