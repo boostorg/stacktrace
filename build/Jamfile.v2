@@ -26,10 +26,10 @@ feature.feature boost.stacktrace.from_exception : on off : optional propagated ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
-  : 
+  :
   : <search>$(LIBBACKTRACE_PATH)/lib <link>static
   :
-  : <include>$(LIBBACKTRACE_PATH)/include 
+  : <include>$(LIBBACKTRACE_PATH)/include
   ;
 
 actions mp_simple_run_action
@@ -141,13 +141,12 @@ lib boost_stacktrace_from_exception
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
-    <target-os>windows:<build>no  # not supported at the moment
 
     # Command line option to disable build
     <boost.stacktrace.from_exception>off:<build>no
 
     # Require usable libbacktrace on other platforms
-    [ check-target-builds libbacktrace : : <build>no ]
+    # [ check-target-builds libbacktrace : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1

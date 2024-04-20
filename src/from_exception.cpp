@@ -4,6 +4,147 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(_MSC_VER)
+
+#include <boost/stacktrace/safe_dump_to.hpp>
+#include <windows.h>
+
+extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
+#define _pCurrentException static_cast<PEXCEPTION_RECORD>(*__current_exception())
+
+namespace {
+
+constexpr std::size_t kStacktraceDumpSize = 4096;
+
+struct thrown_info {
+  ULONG_PTR object;
+  char* dump;
+};
+
+struct exception_data {
+  bool capture_stacktraces_at_throw = true;
+  unsigned count = 0;
+  thrown_info* info = nullptr;
+
+  ~exception_data() noexcept {
+    HANDLE hHeap = GetProcessHeap();
+    for (unsigned i = 0; i < count; ++i) {
+      HeapFree(hHeap, 0, info[i].dump);
+    }
+    HeapFree(hHeap, 0, info);
+  }
+};
+
+thread_local exception_data data;
+
+inline bool PER_IS_MSVC_EH(PEXCEPTION_RECORD p) noexcept {
+  const DWORD EH_EXCEPTION_NUMBER = 0xE06D7363;
+  const ULONG_PTR EH_MAGIC_NUMBER1 = 0x19930520;
+
+  return p->ExceptionCode == EH_EXCEPTION_NUMBER &&
+    (p->NumberParameters == 3 || p->NumberParameters == 4) &&
+    p->ExceptionInformation[0] == EH_MAGIC_NUMBER1;
+}
+
+inline ULONG_PTR PER_PEXCEPTOBJ(PEXCEPTION_RECORD p) noexcept {
+  return p->ExceptionInformation[1];
+}
+
+unsigned current_cxx_exception_index() noexcept {
+  if (PEXCEPTION_RECORD current_cxx_exception = _pCurrentException) {
+    for (unsigned i = data.count; i > 0;) {
+      --i;
+      if (data.info[i].object == PER_PEXCEPTOBJ(current_cxx_exception)) {
+        return i;
+      }
+    }
+  }
+  return data.count;
+}
+
+bool is_processing_rethrow(PEXCEPTION_RECORD p) noexcept {
+  // Processing flow:
+  // 0. throw;
+  // 1. _CxxThrowException(pExceptionObject = nullptr)
+  // 2. VEH & SEH (may throw new c++ exceptions!)
+  // 3. __RethrowException(_pCurrentException)
+  // 4. VEH
+  if (PER_PEXCEPTOBJ(p) == 0) return true;
+  PEXCEPTION_RECORD current_cxx_exception = _pCurrentException;
+  if (current_cxx_exception == nullptr) return false;
+  return PER_PEXCEPTOBJ(p) == PER_PEXCEPTOBJ(current_cxx_exception);
+}
+
+LONG NTAPI veh(PEXCEPTION_POINTERS p) {
+  if (data.capture_stacktraces_at_throw &&
+      PER_IS_MSVC_EH(p->ExceptionRecord) &&
+      !is_processing_rethrow(p->ExceptionRecord)) {
+    HANDLE hHeap = GetProcessHeap();
+    unsigned index = current_cxx_exception_index();
+    unsigned new_count = 1 + (index < data.count ? index + 1 : 0);
+
+    for (unsigned i = new_count; i < data.count; ++i) {
+      HeapFree(hHeap, 0, data.info[i].dump);
+      data.info[i].dump = nullptr;
+    }
+
+    void* new_info;
+    if (data.info) {
+      new_info = HeapReAlloc(hHeap, HEAP_ZERO_MEMORY, data.info, sizeof(thrown_info) * new_count);
+    } else {
+      new_info = HeapAlloc(hHeap, HEAP_ZERO_MEMORY, sizeof(thrown_info) * new_count);
+    }
+    if (new_info) {
+      data.count = new_count;
+      data.info = static_cast<thrown_info*>(new_info);
+      data.info[data.count - 1].object = PER_PEXCEPTOBJ(p->ExceptionRecord);
+      char*& dump_ptr = data.info[data.count - 1].dump;
+      if (dump_ptr == nullptr) {
+        dump_ptr = static_cast<char*>(HeapAlloc(hHeap, 0, kStacktraceDumpSize));
+      }
+      if (dump_ptr != nullptr) {
+        const std::size_t kSkip = 4;
+        boost::stacktrace::safe_dump_to(kSkip, dump_ptr, kStacktraceDumpSize);
+      }
+    } else if (new_count <= data.count) {
+      data.count = new_count - 1;
+      HeapFree(hHeap, 0, data.info[data.count - 1].dump);
+      data.info[data.count - 1].dump = nullptr;
+    }
+  }
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+
+struct veh_installer {
+  PVOID h;
+  veh_installer() noexcept : h(AddVectoredExceptionHandler(1, veh)) {}
+  ~veh_installer() noexcept { RemoveVectoredExceptionHandler(h); }
+} installer;
+
+}
+
+extern "C" {
+
+BOOST_SYMBOL_EXPORT const char* boost_stacktrace_impl_current_exception_stacktrace() {
+  unsigned index = current_cxx_exception_index();
+  return index < data.count ? data.info[index].dump : nullptr;
+}
+
+BOOST_SYMBOL_EXPORT bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw() {
+  return &data.capture_stacktraces_at_throw;
+}
+
+}
+
+namespace boost { namespace stacktrace { namespace impl {
+
+BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
+}
+
+}}}  // namespace boost::stacktrace::impl
+
+#else
+
 #include "exception_headers.h"
 
 // At the moment the file is used only on POSIX. _Unwind_Backtrace may be
@@ -222,3 +363,4 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 }}}  // namespace boost::stacktrace::impl
 
+#endif
