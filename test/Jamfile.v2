@@ -6,6 +6,7 @@
 #
 
 import config : requires ;
+import testing ;
 
 lib dl : : <link>shared ;
 lib gcc_s ;
