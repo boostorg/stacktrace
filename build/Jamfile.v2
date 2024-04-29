@@ -67,6 +67,7 @@ lib boost_stacktrace_noop
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_backtrace
@@ -81,6 +82,7 @@ lib boost_stacktrace_backtrace
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_addr2line
@@ -94,6 +96,7 @@ lib boost_stacktrace_addr2line
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_basic
@@ -107,6 +110,7 @@ lib boost_stacktrace_basic
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_windbg
@@ -120,6 +124,7 @@ lib boost_stacktrace_windbg
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_windbg_cached
@@ -133,6 +138,7 @@ lib boost_stacktrace_windbg_cached
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_from_exception
@@ -150,4 +156,5 @@ lib boost_stacktrace_from_exception
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
