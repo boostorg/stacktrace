@@ -30,6 +30,15 @@ jobs:
           - toolset: clang-15
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
+          - toolset: clang
+            cxxstd: "03,11,14,17,20,2b"
+            os: macos-12
+          - toolset: clang
+            cxxstd: "03,11,14,17,20,2b"
+            os: macos-13
+          - toolset: clang
+            cxxstd: "03,11,14,17,20,2b"
+            os: macos-14
           # TODO: fix and uncomment
           #- toolset: clang
           #  cxxstd: "03,11,14,17,2a"
@@ -118,10 +127,10 @@ jobs:
             cxxstd: "14,17,latest"
             addrmd: 64
             os: windows-2019
-          #- toolset: gcc
-          #  cxxstd: "03,11,14,17,2a"
-          #  addrmd: 64
-          #  os: windows-2019
+          - toolset: gcc
+            cxxstd: "03,11,14,17,2a"
+            addrmd: 64
+            os: windows-2019
 
     runs-on: ${{matrix.os}}
 
