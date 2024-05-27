@@ -6,6 +6,7 @@
 #
 
 import feature ;
+import property ;
 import ../../config/checks/config : requires ;
 
 project
@@ -134,6 +135,22 @@ lib boost_stacktrace_windbg_cached
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
   ;
 
+rule build-stacktrace-from-exception ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.from_exception> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    local arch = [ property.select <architecture> : $(props) ] ;
+    if $(arch) && ( $(arch:G=) != x86 )
+    {
+        return <build>no ;
+    }
+}
+
 lib boost_stacktrace_from_exception
   : # sources
     ../src/from_exception.cpp
@@ -141,8 +158,8 @@ lib boost_stacktrace_from_exception
     <warnings>all
     <target-os>linux:<library>dl
 
-    # Command line option to disable build
-    <boost.stacktrace.from_exception>off:<build>no
+    # Enable build when explicitly requested, or by default, when on x86
+    <conditional>@build-stacktrace-from-exception
 
     # Require usable libbacktrace on other platforms
     #[ check-target-builds ../build//libbacktrace : : <build>no ]
