@@ -27,69 +27,87 @@
 #include <sys/ldr.h>
 #include <sys/debug.h>
 #include <cstring>
+#include <string>
+#include <vector>
 
-#define DL_BUFF_SIZE 0x1000
+namespace boost { namespace stacktrace { namespace detail {
 
-extern "C" {
-  typedef struct
-  {
-    const char *dli_fname;
-    void *dli_fbase;
-    const char *dli_sname;
-    void *dli_saddr;
-  } Dl_info;
+struct Dl_info {
+  std::string fname_storage{};
+  const char *dli_fname = nullptr;
+  const char *dli_sname = nullptr;
+};
 
-  int dladdr(void* address, Dl_info* info) {
-    void *buff = malloc (DL_BUFF_SIZE);
+int dladdr(const void* address_raw, Dl_info* info) noexcept {
+  static constexpr std::size_t dl_buff_size = 0x1000;
 
-    info->dli_fname = NULL;
-    info->dli_fbase = NULL;
-    info->dli_sname = NULL;
-    info->dli_saddr = NULL;
+  try {
+    std::vector<struct ld_info> pld_info_storage;
+    pld_info_storage.resize(
+        (dl_buff_size + sizeof(struct ld_info) - 1) / sizeof(struct ld_info)
+    );
 
-    if (loadquery (L_GETINFO, buff, DL_BUFF_SIZE) != -1 ) {
-      struct ld_info *pld_info = (struct ld_info*) buff;
-
-      while (1) {
-	if (((char*) address >= (char*) pld_info->ldinfo_dataorg &&
-	     (char*) address < (char*) pld_info->ldinfo_dataorg + pld_info-> ldinfo_datasize )
-	    || (( char*) address >= (char*) pld_info->ldinfo_textorg &&
-		(char*) address < (char*) pld_info->ldinfo_textorg +  pld_info-> ldinfo_textsize )){
-
-
-	  /* ldinfo_filename is the null-terminated path name followed
-	     by null-terminated member name.
-	     If the file is not an archive, then member name is null. */
-	  uint size_filename = strlen (pld_info->ldinfo_filename);
-	  uint size_member = strlen (pld_info->ldinfo_filename + size_filename + 1);
-
-	  /* If member is not null, '(' and ')' must be added to create a
-	     fname looking like "filename(membername)".  */
-	  char *fname = (char*) malloc (size_filename + (size_member ? size_member  + 3 : 1));
-	  strcpy (fname, pld_info->ldinfo_filename);
-	  if (size_member) {
-	    strcat (fname, "(");
-	    strcat (fname, pld_info->ldinfo_filename + size_filename + 1);
-	    strcat (fname, ")");
-	  }
-
-	  info->dli_fname = fname;
-	  info->dli_fbase = pld_info->ldinfo_textorg;
-
-	  free (buff);
-	  return 1;
-	}
-
-	if (!pld_info->ldinfo_next) {
-	  free (buff);
-	  return 0;
-	}
-	pld_info = (struct ld_info *) ((char*) pld_info + pld_info->ldinfo_next);
-      }
+    if (loadquery(L_GETINFO, pld_info_storage.data(), dl_buff_size) == -1) {
+      return 0;
     }
-    return 0;
+
+    const auto* pld_info = pld_info_storage.data();
+    const char* const address = static_cast<const char*>(address_raw);
+    while (true) {
+      const auto* const dataorg = static_cast<char*>(pld_info->ldinfo_dataorg);
+      const auto* const textorg = static_cast<char*>(pld_info->ldinfo_textorg);
+      if ((address >= dataorg && address < dataorg + pld_info->ldinfo_datasize )
+          || (address >= textorg && address < textorg + pld_info->ldinfo_textsize )) {
+
+        /* ldinfo_filename is the null-terminated path name followed
+           by null-terminated member name.
+           If the file is not an archive, then member name is null. */
+        const auto size_filename = std::strlen(pld_info->ldinfo_filename);
+        const auto size_member = std::strlen(pld_info->ldinfo_filename + size_filename + 1);
+
+        /* If member is not null, '(' and ')' must be added to create a
+           fname looking like "filename(membername)".  */
+        info->fname_storage.reserve(size_filename + (size_member ? size_member  + 3 : 1));
+        info->fname_storage = pld_info->ldinfo_filename;
+        if (size_member) {
+          info->fname_storage += "(";
+          info->fname_storage += pld_info->ldinfo_filename + size_filename + 1;
+          info->fname_storage += ")";
+        }
+
+        info->dli_fname = info->fname_storage.c_str();
+        return 1;
+      }
+
+      if (!pld_info->ldinfo_next) {
+        break;
+      }
+
+      pld_info = reinterpret_cast<const struct ld_info *>(
+        reinterpret_cast<const char*>(pld_info) + pld_info->ldinfo_next
+      );
+    };
+  } catch (...) {
+    // ignore
   }
+
+  return 0;
 }
+
+}}} // namespace boost::stacktrace::detail
+
+#elif !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+
+namespace boost { namespace stacktrace { namespace detail {
+
+using Dl_info = ::Dl_info;
+
+inline int dladdr(const void* addr, Dl_info& dli) noexcept {
+  // `dladdr` on Solaris accepts nonconst addresses
+  return ::dladdr(const_cast<void*>(addr), &dli);
+}
+
+}}} // namespace boost::stacktrace::detail
 
 #endif
 
@@ -97,13 +115,13 @@ namespace boost { namespace stacktrace { namespace detail {
 
 #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 class location_from_symbol {
-    ::Dl_info dli_;
+    boost::stacktrace::detail::Dl_info dli_;
 
 public:
     explicit location_from_symbol(const void* addr) BOOST_NOEXCEPT
         : dli_()
     {
-        if (!::dladdr(const_cast<void*>(addr), &dli_)) { // `dladdr` on Solaris accepts nonconst addresses
+        if (!boost::stacktrace::detail::dladdr(addr, dli_)) {
             dli_.dli_fname = 0;
         }
     }
