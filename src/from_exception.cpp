@@ -233,7 +233,7 @@ static const char*& reference_to_empty_padding(void* ptr) noexcept {
   if (is_libcpp_runtime()) {
     // libc++-runtime
     BOOST_ASSERT_MSG(
-      sizeof(void*) == 4,
+      sizeof(void*) != 4,
       "32bit platforms are unsupported with libc++ runtime padding reusage. "
       "Please report this issue to the library maintainters."
     );
