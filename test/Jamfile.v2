@@ -24,7 +24,7 @@ lib backtrace
 
 project
   : requirements
-    [ requires cxx11_rvalue_references ]
+    [ requires cxx11_rvalue_references cxx11_template_aliases cxx11_noexcept ]
     <toolset>msvc:<asynch-exceptions>on
     <toolset>intel:<cxxflags>-wd2196
     <target-os>linux:<linkflags>-lpthread
