@@ -96,6 +96,20 @@ stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
 stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
 
+
+# Alias target for platform defaults (only if they enabled).
+if(WIN32)
+  if(BOOST_STACKTRACE_ENABLE_WINDBG)
+    add_library(Boost::stacktrace ALIAS Boost::stacktrace_windbg)
+  endif()
+else()
+  if(BOOST_STACKTRACE_ENABLE_BACKTRACE)
+    add_library(Boost::stacktrace ALIAS Boost::stacktrace_backtrace)
+  elseif(BOOST_STACKTRACE_ENABLE_BASIC)
+    add_library(Boost::stacktrace ALIAS Boost::stacktrace_basic)
+  endif()
+endif()
+
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
 
   add_subdirectory(test)
