@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.5...3.20)
 
 project(cmake_install_test LANGUAGES CXX)
 
-find_package(boost_stacktrace REQUIRED)
+find_package(boost_stacktrace_basic REQUIRED)
 
 add_executable(main main.cpp)
 target_link_libraries(main Boost::stacktrace_basic)
