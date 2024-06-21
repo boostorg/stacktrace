@@ -90,9 +90,9 @@ message(STATUS "Boost.Stacktrace: "
 )
 
 stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
-stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace" "")
-stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "" "")
-stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "" "")
+stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
 stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
 
