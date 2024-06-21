@@ -11,6 +11,10 @@
 #   define BOOST_STACKTRACE_LINK
 #endif
 
+#if !defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_STATIC_LINK)
+#   define BOOST_STACKTRACE_LINK
+#endif
+
 #if defined(BOOST_STACKTRACE_LINK) && !defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_ALL_DYN_LINK)
 #   define BOOST_STACKTRACE_DYN_LINK
 #endif
