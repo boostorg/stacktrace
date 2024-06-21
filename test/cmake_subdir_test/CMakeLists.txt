@@ -40,7 +40,7 @@ foreach(dep IN LISTS deps)
 endforeach()
 
 add_executable(main main.cpp)
-target_link_libraries(main Boost::stacktrace_basic)
+target_link_libraries(main Boost::stacktrace)
 
 enable_testing()
 add_test(main main)
