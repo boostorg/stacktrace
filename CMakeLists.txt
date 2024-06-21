@@ -100,13 +100,13 @@ stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "d
 # Alias target for platform defaults (only if they enabled).
 if(WIN32)
   if(BOOST_STACKTRACE_ENABLE_WINDBG)
-    add_library(Boost::stacktrace ALIAS Boost::stacktrace_windbg)
+    add_library(Boost::stacktrace ALIAS boost_stacktrace_windbg)
   endif()
 else()
   if(BOOST_STACKTRACE_ENABLE_BACKTRACE)
-    add_library(Boost::stacktrace ALIAS Boost::stacktrace_backtrace)
+    add_library(Boost::stacktrace ALIAS boost_stacktrace_backtrace)
   elseif(BOOST_STACKTRACE_ENABLE_BASIC)
-    add_library(Boost::stacktrace ALIAS Boost::stacktrace_basic)
+    add_library(Boost::stacktrace ALIAS boost_stacktrace_basic)
   endif()
 endif()
 
