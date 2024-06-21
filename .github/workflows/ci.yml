@@ -363,12 +363,12 @@ jobs:
           cmake --build . --config Debug
           ctest --output-on-failure --no-tests=error -C Debug
 
-      - name: Use library with add_subdirectory (Release)
+      - name: Use library with add_subdirectory (RelWithDebInfo)
         shell: cmd
         run: |
           cd ../boost-root/libs/%LIBRARY%/test/cmake_subdir_test/__build__
-          cmake --build . --config Release
-          ctest --output-on-failure --no-tests=error -C Release
+          cmake --build . --config RelWithDebInfo
+          ctest --output-on-failure --no-tests=error -C RelWithDebInfo
 
   windows-cmake-install:
     strategy:
@@ -415,11 +415,11 @@ jobs:
           cd ../boost-root/__build__
           cmake --build . --target install --config Debug
 
-      - name: Install (Release)
+      - name: Install (RelWithDebInfo)
         shell: cmd
         run: |
           cd ../boost-root/__build__
-          cmake --build . --target install --config Release
+          cmake --build . --target install --config RelWithDebInfo
 
       - name: Use the installed library (Debug)
         shell: cmd
@@ -430,13 +430,13 @@ jobs:
           PATH C:\cmake-prefix\bin;%PATH%
           ctest --output-on-failure --no-tests=error -C Debug
 
-      - name: Use the installed library (Release)
+      - name: Use the installed library (RelWithDebInfo)
         shell: cmd
         run: |
           cd ../boost-root/libs/%LIBRARY%/test/cmake_install_test/__build__
-          cmake --build . --config Release
+          cmake --build . --config RelWithDebInfo
           PATH C:\cmake-prefix\bin;%PATH%
-          ctest --output-on-failure --no-tests=error -C Release
+          ctest --output-on-failure --no-tests=error -C RelWithDebInfo
 
   windows-cmake-test:
     strategy:
@@ -489,14 +489,14 @@ jobs:
           cd ../boost-root/__build__
           ctest --output-on-failure --no-tests=error -C Debug
 
-      - name: Build tests (Release)
+      - name: Build tests (RelWithDebInfo)
         shell: cmd
         run: |
           cd ../boost-root/__build__
-          cmake --build . --target tests --config Release
+          cmake --build . --target tests --config RelWithDebInfo
 
-      - name: Run tests (Release)
+      - name: Run tests (RelWithDebInfo)
         shell: cmd
         run: |
           cd ../boost-root/__build__
-          ctest --output-on-failure --no-tests=error -C Release
+          ctest --output-on-failure --no-tests=error -C RelWithDebInfo
