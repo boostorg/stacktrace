@@ -306,20 +306,36 @@ jobs:
           git submodule update --init tools/boostdep
           python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
 
-      - name: Configure
+      - name: Configure (Debug)
         run: |
           cd ../boost-root
-          mkdir __build__ && cd __build__
-          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=${{matrix.shared}} ..
+          mkdir __build_debug__ && cd __build_debug__
+          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=${{matrix.shared}} -DCMAKE_BUILD_TYPE=Debug ..
 
-      - name: Build tests
+      - name: Build tests (Debug)
         run: |
-          cd ../boost-root/__build__
+          cd ../boost-root/__build_debug__
           cmake --build . --target tests
 
-      - name: Run tests
+      - name: Run tests (Debug)
         run: |
-          cd ../boost-root/__build__
+          cd ../boost-root/__build_debug__
+          ctest --output-on-failure --no-tests=error
+
+      - name: Configure (RelWithDebInfo)
+        run: |
+          cd ../boost-root
+          mkdir __build_relwithdebinfo__ && cd __build_relwithdebinfo__
+          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=${{matrix.shared}} -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+
+      - name: Build tests (RelWithDebInfo)
+        run: |
+          cd ../boost-root/__build_relwithdebinfo__
+          cmake --build . --target tests
+
+      - name: Run tests (RelWithDebInfo)
+        run: |
+          cd ../boost-root/__build_relwithdebinfo__
           ctest --output-on-failure --no-tests=error
 
   windows-cmake-subdir:
