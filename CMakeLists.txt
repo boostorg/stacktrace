@@ -90,11 +90,42 @@ message(STATUS "Boost.Stacktrace: "
 )
 
 stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
-stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace" "")
-stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "" "")
-stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "" "")
+stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
 stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
+
+# boost_stacktrace, default library
+
+add_library(boost_stacktrace INTERFACE)
+add_library(Boost::stacktrace ALIAS boost_stacktrace)
+
+target_include_directories(boost_stacktrace INTERFACE include)
+
+if(BOOST_STACKTRACE_ENABLE_WINDBG)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+
+elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
+
+elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_addr2line)
+
+elseif(BOOST_STACKTRACE_ENABLE_BASIC)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_basic)
+
+elseif(BOOST_STACKTRACE_ENABLE_NOOP)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
+
+endif()
+
+#
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
 

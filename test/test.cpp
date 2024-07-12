@@ -257,6 +257,12 @@ void test_empty_basic_stacktrace() {
     BOOST_TEST(!(st > st_t(0, 0)));
 }
 
+void test_stacktrace_limits()
+{
+    BOOST_TEST_EQ(boost::stacktrace::stacktrace(0, 1).size(), 1);
+    BOOST_TEST_EQ(boost::stacktrace::stacktrace(1, 1).size(), 1);
+}
+
 int main() {
     test_deeply_nested_namespaces();
     test_frames_string_data_validity();
@@ -275,8 +281,8 @@ int main() {
     test_comparisons_base(make_some_stacktrace1(), make_some_stacktrace2());
 
     test_nested<260>(false);
-    BOOST_TEST(boost::stacktrace::stacktrace(0, 1).size() == 1);
-    BOOST_TEST(boost::stacktrace::stacktrace(1, 1).size() == 1);
+
+    test_stacktrace_limits();
 
     return boost::report_errors();
 }

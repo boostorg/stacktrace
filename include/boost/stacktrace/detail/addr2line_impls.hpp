@@ -18,6 +18,7 @@
 #include <boost/stacktrace/detail/try_dec_convert.hpp>
 #include <boost/core/demangle.hpp>
 #include <cstdio>
+#include <cstring>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -116,7 +117,9 @@ inline std::string addr2line(const char* flag, const void* addr) {
     std::string res;
 
     boost::stacktrace::detail::location_from_symbol loc(addr);
-    if (!loc.empty()) {
+    // For programs started through $PATH loc.name() is not absolute and
+    // addr2line will fail.
+    if (!loc.empty() && std::strchr(loc.name(), '/') != nullptr) {
         res = loc.name();
     } else {
         res.resize(16);
