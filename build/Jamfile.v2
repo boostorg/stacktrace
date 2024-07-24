@@ -12,6 +12,7 @@ import feature ;
 import property ;
 
 project
+  : common-requirements <library>$(boost_dependencies)
   : requirements
     [ requires cxx11_rvalue_references ]
   : default-build

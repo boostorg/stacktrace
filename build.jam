@@ -5,14 +5,16 @@
 
 require-b2 5.2 ;
 
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/container_hash//boost_container_hash
+    /boost/core//boost_core
+    /boost/predef//boost_predef
+    /boost/winapi//boost_winapi ;
+
 project /boost/stacktrace
     : common-requirements
-        <library>/boost/assert//boost_assert
-        <library>/boost/config//boost_config
-        <library>/boost/container_hash//boost_container_hash
-        <library>/boost/core//boost_core
-        <library>/boost/predef//boost_predef
-        <library>/boost/winapi//boost_winapi
         <include>include
     ;
 
@@ -47,3 +49,4 @@ call-if : boost-library stacktrace
         boost_stacktrace_windbg
         boost_stacktrace_windbg_cached
     ;
+
