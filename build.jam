@@ -6,7 +6,6 @@
 require-b2 5.2 ;
 
 constant boost_dependencies :
-    /boost/assert//boost_assert
     /boost/config//boost_config
     /boost/container_hash//boost_container_hash
     /boost/core//boost_core
