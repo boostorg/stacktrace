@@ -88,7 +88,7 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
 #else
     boost::stacktrace::detail::unwind_state state = { skip, out_frames, out_frames + max_frames_count };
     ::_Unwind_Backtrace(&boost::stacktrace::detail::unwind_callback, &state);
-    frames_count = state.current - out_frames;
+    frames_count = static_cast<std::size_t>(state.current - out_frames);
 #endif //defined(BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION)
 
     if (frames_count && out_frames[frames_count - 1] == 0) {
