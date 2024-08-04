@@ -52,7 +52,7 @@ inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *
     if (d.function && function) {
         *d.function = function;
     }
-    d.line = lineno;
+    d.line = static_cast<std::size_t>(lineno);
     return 0;
 }
 

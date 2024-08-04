@@ -123,8 +123,8 @@ inline std::string addr2line(const char* flag, const void* addr) {
         res = loc.name();
     } else {
         res.resize(16);
-        int rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);
-        while (rlin_size == static_cast<int>(res.size() - 1)) {
+        ssize_t rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);
+        while (rlin_size == static_cast<ssize_t>(res.size() - 1)) {
             res.resize(res.size() * 4);
             rlin_size = ::readlink("/proc/self/exe", &res[0], res.size() - 1);
         }
@@ -132,7 +132,7 @@ inline std::string addr2line(const char* flag, const void* addr) {
             res.clear();
             return res;
         }
-        res.resize(rlin_size);
+        res.resize(static_cast<std::size_t>(rlin_size));
     }
 
     addr2line_pipe p(flag, res.c_str(), to_hex_array(addr).data());
