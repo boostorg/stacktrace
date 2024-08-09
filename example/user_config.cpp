@@ -4,7 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#define BOOST_USER_CONFIG <libs/stacktrace/example/user_config.hpp>
+#define BOOST_USER_CONFIG <example/user_config.hpp>
 
 #include <boost/array.hpp>
 #include <exception>    // std::set_terminate, std::abort
