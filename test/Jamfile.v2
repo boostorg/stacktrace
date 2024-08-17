@@ -225,7 +225,7 @@ for local p in [ glob ../example/*.cpp ]
     local additional_dependency = <library>/boost/array//boost_array ;
     if $(target_name) = "terminate_handler"
     {
-        additional_dependency += <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt <library>/boost/interprocess//boost_interprocess ;
+        additional_dependency += <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }
 
     if $(target_name) = "throwing_st"
