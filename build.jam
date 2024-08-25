@@ -48,4 +48,3 @@ call-if : boost-library stacktrace
         boost_stacktrace_windbg
         boost_stacktrace_windbg_cached
     ;
-
