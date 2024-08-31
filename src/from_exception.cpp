@@ -4,7 +4,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <windows.h>
