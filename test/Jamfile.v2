@@ -5,7 +5,9 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 #
 
-import ../../config/checks/config : requires ;
+import-search /boost/config/checks ;
+import config : requires ;
+import testing ;
 
 lib dl : : <link>shared ;
 lib gcc_s ;
@@ -31,6 +33,8 @@ project
     <warnings>all
     <test-info>always_show_run_output
     <visibility>hidden
+    <include>..
+    <library>/boost/optional//boost_optional
   ;
 
 local FORCE_SYMBOL_EXPORT = <target-os>freebsd:<linkflags>"-rdynamic" <target-os>solaris:<linkflags>"-Bdynamic" <target-os>aix:<linkflags>"-rdynamic"
@@ -122,15 +126,19 @@ test-suite stacktrace_tests
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>.//test_impl_lib_backtrace       $(LINKSHARED_BT)
               <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC
+            <library>/boost/optional//boost_optional
         : backtrace_lib_threaded_static ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
+            <library>/boost/optional//boost_optional
         : windbg_lib_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached   $(LINKSHARED_WIND_CACHED)
+            <library>/boost/optional//boost_optional
         : windbg_cached_lib_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>.//test_impl_lib_basic           $(LINKSHARED_BASIC)
+            <library>/boost/optional//boost_optional
         : basic_lib_threaded ]
 
     ##### Tests with disabled debug symbols #####
@@ -158,6 +166,7 @@ test-suite stacktrace_tests
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
             <library>.//test_impl_lib_backtrace_no_dbg
+            <library>/boost/optional//boost_optional
             $(LINKSHARED_BT)
         : backtrace_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
@@ -212,15 +221,15 @@ test-suite stacktrace_tests
 for local p in [ glob ../example/*.cpp ]
 {
     local target_name = $(p[1]:B) ;
-    local additional_dependency = ;
+    local additional_dependency = <library>/boost/array//boost_array ;
     if $(target_name) = "terminate_handler"
     {
-        additional_dependency = <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
+        additional_dependency += <library>/boost/filesystem//boost_filesystem <library>/boost/system//boost_system <target-os>linux:<library>rt ;
     }
 
     if $(target_name) = "throwing_st"
     {
-        additional_dependency = [ requires rtti ] ;
+        additional_dependency += [ requires rtti ] <library>/boost/exception//boost_exception ;
     }
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BT)           $(additional_dependency)    : backtrace_$(p2[1]:B) ] ;
