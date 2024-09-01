@@ -26,7 +26,6 @@ lib backtrace
 
 project
   : requirements
-    <library>/boost/stacktrace//boost_stacktrace
     [ requires cxx11_rvalue_references cxx11_template_aliases cxx11_noexcept ]
     <toolset>msvc:<asynch-exceptions>on
     <toolset>intel:<cxxflags>-wd2196

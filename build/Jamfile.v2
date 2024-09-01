@@ -12,14 +12,14 @@ import feature ;
 import property ;
 
 constant boost_dependencies_private :
-    /boost/assert//boost_assert
+    <library>/boost/assert//boost_assert
     ;
 
 project
-  : common-requirements <library>$(boost_dependencies)
+  : common-requirements $(boost_dependencies)
   : requirements
     [ requires cxx11_rvalue_references ]
-    <library>$(boost_dependencies_private)
+    $(boost_dependencies_private)
   : default-build
     <visibility>hidden
   ;
