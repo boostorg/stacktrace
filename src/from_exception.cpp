@@ -157,6 +157,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 #include <cstddef>
+#include <exception>
 #include <dlfcn.h>
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
