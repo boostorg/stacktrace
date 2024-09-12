@@ -37,10 +37,11 @@
 
 extern "C" {
 
-#if defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK) && !defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
+#if defined(BOOST_STACKTRACE_LINK) && defined(BOOST_STACKTRACE_DYN_LINK) && defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
 BOOST_SYMBOL_EXPORT
 #endif
 inline void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
+
 const char* boost_stacktrace_impl_current_exception_stacktrace();
 bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw();
 
