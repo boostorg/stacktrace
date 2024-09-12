@@ -66,7 +66,7 @@ before_build:
         libs/filesystem libs/atomic libs/system libs/interprocess libs/array
         libs/iterator libs/detail libs/exception libs/smart_ptr libs/mpl
         libs/align libs/container libs/tuple libs/intrusive libs/scope
-        libs/variant2 libs/preprocessor
+        libs/variant2 libs/preprocessor libs/io
 
     - rm -rf %BOOST%/libs/%BOOST_LIBS_FOLDER%
     - mv -f %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%BOOST_LIBS_FOLDER%
