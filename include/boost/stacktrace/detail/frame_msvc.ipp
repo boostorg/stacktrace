@@ -33,7 +33,7 @@
 
 #include <mutex>
 
-#ifdef BOOST_MSVC
+#if defined(__clang__) || defined(BOOST_MSVC)
 #   pragma comment(lib, "ole32.lib")
 #   pragma comment(lib, "Dbgeng.lib")
 #endif
