@@ -4,6 +4,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(__CYGWIN__) && !defined(_GNU_SOURCE)
+#   define _GNU_SOURCE
+#endif
+
 #define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
 #define BOOST_STACKTRACE_LINK
 #include <boost/stacktrace/detail/frame_msvc.ipp>
