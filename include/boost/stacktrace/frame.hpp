@@ -20,6 +20,20 @@
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.h>
 
+#if defined(BOOST_MSVC) && (defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS) || !defined(BOOST_STACKTRACE_LINK))
+extern "C" {
+
+#if defined(BOOST_STACKTRACE_DYN_LINK)
+BOOST_SYMBOL_EXPORT
+#elif defined(BOOST_STACKTRACE_LINK)
+#else
+BOOST_SYMBOL_EXPORT inline
+#endif
+void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
+
+}
+#endif
+
 namespace boost { namespace stacktrace {
 
 /// Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe.
