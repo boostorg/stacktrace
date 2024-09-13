@@ -37,14 +37,16 @@
 
 extern "C" {
 
-#if defined(BOOST_STACKTRACE_DYN_LINK) && !defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
-BOOST_SYMBOL_EXPORT
-#endif
-inline void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
-
 const char* boost_stacktrace_impl_current_exception_stacktrace();
 bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw();
 
+}
+
+#ifndef BOOST_STACKTRACE_LINKED_WITH_FROM_EXCEPTION
+
+extern "C" {
+BOOST_SYMBOL_EXPORT
+inline void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
 }
 
 #ifdef _M_IX86
@@ -54,6 +56,8 @@ bool* boost_stacktrace_impl_ref_capture_stacktraces_at_throw();
 #   pragma comment(linker, "/ALTERNATENAME:boost_stacktrace_impl_current_exception_stacktrace=boost_stacktrace_impl_return_nullptr")
 #   pragma comment(linker, "/ALTERNATENAME:boost_stacktrace_impl_ref_capture_stacktraces_at_throw=boost_stacktrace_impl_return_nullptr")
 #endif
+
+#endif  // #ifndef BOOST_STACKTRACE_LINKED_WITH_FROM_EXCEPTION
 
 #endif
 

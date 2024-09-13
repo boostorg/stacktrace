@@ -180,4 +180,5 @@ lib boost_stacktrace_from_exception
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <define>BOOST_STACKTRACE_LINKED_WITH_FROM_EXCEPTION=1
   ;
