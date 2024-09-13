@@ -188,6 +188,8 @@ test-suite stacktrace_tests
     [ run test_void_ptr_cast.cpp ]
     [ run test_num_conv.cpp ]
 
+    [ run test_from_exception_none.cpp : : : $(LINKSHARED_NOOP) <debug-symbols>on                                   : from_exception_none_noop ]
+    [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_NOOP $(NOOP_DEPS) <debug-symbols>on       : from_exception_none_noop_ho ]
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_BASIC) <debug-symbols>on                                  : from_exception_none_basic ]
     [ run test_from_exception_none.cpp : : : $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_none_basic_ho ]
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_BT) <debug-symbols>on                                     : from_exception_none_bt ]
@@ -197,6 +199,8 @@ test-suite stacktrace_tests
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_WIND_CACHED) <debug-symbols>on                               : from_exception_none_windbg_cached ]
     [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_WINDBG_CACHED $(WICA_DEPS) <debug-symbols>on : from_exception_none_windbg_cached_ho ]
 
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_NOOP) <debug-symbols>on                        : from_exception_disabled_none ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_NOOP $(NOOP_DEPS)              : from_exception_disabled_none_ho ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                       : from_exception_disabled_basic ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on      : from_exception_disabled_basic_ho ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                          : from_exception_disabled_bt ]
