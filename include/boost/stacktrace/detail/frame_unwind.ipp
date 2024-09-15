@@ -17,6 +17,7 @@
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
 #include <boost/stacktrace/detail/to_dec_array.hpp>
+#include <boost/stacktrace/detail/addr_base.hpp>
 #include <boost/core/demangle.hpp>
 
 #include <cstdio>
@@ -40,7 +41,8 @@ public:
         if (!Base::res.empty()) {
             Base::res = boost::core::demangle(Base::res.c_str());
         } else {
-            Base::res = to_hex_array(addr).data();
+            auto addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
+            Base::res = to_hex_array(reinterpret_cast<uintptr_t>(addr) - addr_base).data();
         }
 
         if (Base::prepare_source_location(addr)) {
