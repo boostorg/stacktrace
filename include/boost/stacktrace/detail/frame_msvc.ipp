@@ -22,6 +22,10 @@
 //Testing
 #define BOOST_STACKTRACE_OFFSET_ADDR_BASE
 
+#ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
+#include <boost/stacktrace/detail/addr_base_msvc.hpp>
+#endif
+
 #ifdef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #   ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
@@ -390,36 +394,6 @@ public:
         return result;
     }
 
-#ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
-    const uintptr_t get_module_base_impl(const void* addr) const {
-        HANDLE processHandle = GetCurrentProcess();
-        HMODULE modules[1024];
-        
-        DWORD needed;
-
-        if (EnumProcessModulesEx(processHandle, modules, sizeof(modules), &needed, LIST_MODULES_ALL)) {
-            int moduleCount = needed / sizeof(HMODULE);
-
-            for (int i = 0; i < moduleCount; ++i) {
-                MODULEINFO moduleInfo;
-                TCHAR moduleName[MAX_PATH];
-
-                // Get the module name
-                if (GetModuleBaseName(processHandle, modules[i], moduleName, sizeof(moduleName) / sizeof(TCHAR))) {
-                    // Get module information
-                    if (GetModuleInformation(processHandle, modules[i], &moduleInfo, sizeof(moduleInfo))) {
-                        if (moduleInfo.lpBaseOfDll <= addr && addr < LPBYTE(moduleInfo.lpBaseOfDll) + moduleInfo.SizeOfImage) {
-                            // Module contains the address
-                            return reinterpret_cast<uintptr_t>(moduleInfo.lpBaseOfDll);
-                        }
-                    }
-                }
-            }
-        }
-
-        return 0;
-    }
-#endif
     void to_string_impl(const void* addr, std::string& res) const {
         if (!is_inited()) {
             return;
@@ -429,20 +403,11 @@ public:
         std::string name = this->get_name_impl(addr, &module_name);
         if (!name.empty()) {
             res += name;
-            // const uintptr_t base_addr = get_module_base_impl(addr);
-            // res  += '(';
-            // res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
-            // res += '-';
-            // res += to_hex_array(base_addr).data();
-            // res += ')';
         } else {
 #ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
             // Get own base address
-            const uintptr_t base_addr = get_module_base_impl(addr);
+            const uintptr_t base_addr = get_own_proc_addr_base(addr);
             res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
-            // res += '+';
-            // res += to_hex_array(base_addr).data();
-            // res += ')';
 #else
             res += to_hex_array(addr).data();
 #endif
