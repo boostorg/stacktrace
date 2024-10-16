@@ -132,7 +132,9 @@ elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
 
-elseif(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
+endif()
+
+if(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_from_exception)
 
