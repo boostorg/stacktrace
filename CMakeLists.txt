@@ -112,31 +112,34 @@ add_library(Boost::stacktrace ALIAS boost_stacktrace)
 
 target_include_directories(boost_stacktrace INTERFACE include)
 
+function(stacktrace_link_with_impl libs)
+  if(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
+    target_link_libraries(Boost::stacktrace_from_exception PUBLIC ${libs})
+    target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_from_exception)
+  else()
+    target_link_libraries(boost_stacktrace INTERFACE ${libs})
+  endif()
+endfunction()
+
 if(BOOST_STACKTRACE_ENABLE_WINDBG)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+  stacktrace_link_with_impl(Boost::stacktrace_windbg)
 
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
+  stacktrace_link_with_impl(Boost::stacktrace_backtrace)
 
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_addr2line)
+  stacktrace_link_with_impl(Boost::stacktrace_addr2line)
 
 elseif(BOOST_STACKTRACE_ENABLE_BASIC)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_basic)
+  stacktrace_link_with_impl(Boost::stacktrace_basic)
 
 elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
-
-endif()
-
-if(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
-
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_from_exception)
+  stacktrace_link_with_impl(Boost::stacktrace_noop)
 
 endif()
 
