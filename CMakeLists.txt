@@ -114,27 +114,27 @@ target_include_directories(boost_stacktrace INTERFACE include)
 if(BOOST_STACKTRACE_ENABLE_WINDBG)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} Boost::stacktrace_windbg" "")
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};Boost::stacktrace_windbg" "")
 
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} Boost::stacktrace_backtrace" "")
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};Boost::stacktrace_backtrace" "")
 
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_addr2line)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} Boost::stacktrace_addr2line" "")
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};Boost::stacktrace_addr2line" "")
 
 elseif(BOOST_STACKTRACE_ENABLE_BASIC)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_basic)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} Boost::stacktrace_basic" "")
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};Boost::stacktrace_basic" "")
 
 elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} Boost::stacktrace_noop" "")
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};Boost::stacktrace_noop" "")
 
 endif()
 
