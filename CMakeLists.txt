@@ -103,7 +103,7 @@ stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_D
 stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
 stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS}" "BOOST_STACKTRACE_LINK=1")
+stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS}" "")
 
 # boost_stacktrace, default library
 
@@ -141,6 +141,10 @@ elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 
   stacktrace_link_with_impl(Boost::stacktrace_noop)
 
+endif()
+
+if(BOOST_SUPERPROJECT_VERSION AND NOT CMAKE_VERSION VERSION_LESS 3.13)
+boost_install(TARGETS boost_stacktrace VERSION ${BOOST_SUPERPROJECT_VERSION} HEADER_DIRECTORY include)
 endif()
 
 #
