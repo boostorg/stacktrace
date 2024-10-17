@@ -103,6 +103,7 @@ stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_D
 stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
 stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
+stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS}" "")
 
 # boost_stacktrace, default library
 
@@ -112,23 +113,25 @@ add_library(Boost::stacktrace ALIAS boost_stacktrace)
 target_include_directories(boost_stacktrace INTERFACE include)
 
 if(BOOST_STACKTRACE_ENABLE_WINDBG)
-  set(BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION Boost::stacktrace_windbg)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
-  set(BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION Boost::stacktrace_backtrace)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
+
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
-  set(BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION Boost::stacktrace_addr2line)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_addr2line)
+
 elseif(BOOST_STACKTRACE_ENABLE_BASIC)
-  set(BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION Boost::stacktrace_basic)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_basic)
+
 elseif(BOOST_STACKTRACE_ENABLE_NOOP)
-  set(BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION Boost::stacktrace_noop)
-endif()
 
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS} ${BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION}" "")
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
 
-if(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_from_exception)
-else()
-  target_link_libraries(boost_stacktrace INTERFACE ${BOOST_STACKTRACE_IMPL_DEFAULT_IMPLEMENTATION})
 endif()
 
 #
