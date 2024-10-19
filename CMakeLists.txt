@@ -134,7 +134,7 @@ elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 endif()
 
 # Boost::stacktrace_from_exception is never the default
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};boost_stacktrace" "")
+stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS}" "")
 
 #
 
