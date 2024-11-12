@@ -5,6 +5,8 @@
 
 require-b2 5.2 ;
 
+import boost-stacktrace-features ;
+
 constant boost_dependencies :
     <library>/boost/config//boost_config
     <library>/boost/container_hash//boost_container_hash

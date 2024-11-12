@@ -7,8 +7,8 @@
 
 require-b2 5.0.1 ;
 import-search /boost/config/checks ;
+import boost-stacktrace-features ;
 import config : requires ;
-import feature ;
 import property ;
 
 constant boost_dependencies_private :
@@ -28,8 +28,6 @@ lib dl ;
 lib gcc_s ;
 lib Dbgeng ;
 lib ole32 ;
-
-feature.feature boost.stacktrace.from_exception : on off : optional propagated ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
