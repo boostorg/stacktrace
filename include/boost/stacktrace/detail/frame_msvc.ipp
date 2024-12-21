@@ -247,6 +247,57 @@ public:
         const std::size_t delimiter = result.find_first_of('!');
         if (module_name) {
             *module_name = result.substr(0, delimiter);
+            if (!module_name->empty()) {
+                ULONG64 base = 0;
+                res = (S_OK == idebug_->GetModuleByOffset(
+                    offset,
+                    0,
+                    nullptr,
+                    &base
+                ));
+                
+                if (res) {
+                    name[0] = '\0';
+                    size = 0;
+                    res = (S_OK == idebug_->GetModuleNames(
+                        DEBUG_ANY_ID,
+                        base,
+                        name,
+                        sizeof(name),
+                        &size,
+                        nullptr,
+                        0,
+                        nullptr,
+                        nullptr,
+                        0,
+                        nullptr
+                    ));
+                }
+
+                if (!res && size != 0)
+                {
+                    std::string module_path(size, char());
+                    res = (S_OK == idebug_->GetModuleNames(
+                        DEBUG_ANY_ID,
+                        base,
+                        &module_path[0],
+                        static_cast<ULONG>(module_path.size()),
+                        &size,
+                        nullptr,
+                        0,
+                        nullptr,
+                        nullptr,
+                        0,
+                        nullptr
+                    ));
+                    if (res && size > 1) {
+                        module_name->assign(module_path, size - 1);
+                    }
+                }
+                else if (res && size > 1) {
+                    module_name->assign(name, size - 1);
+                }                
+            }
         }
 
         if (delimiter == std::string::npos) {
