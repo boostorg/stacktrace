@@ -67,7 +67,7 @@ before_build:
         libs/iterator libs/detail libs/exception libs/smart_ptr libs/mpl
         libs/align libs/container libs/tuple libs/intrusive libs/scope
         libs/variant2 libs/preprocessor libs/io libs/concept_check
-        libs/function_types libs/utility
+        libs/function_types libs/utility libs/fusion
 
     - rm -rf %BOOST%/libs/%BOOST_LIBS_FOLDER%
     - mv -f %APPVEYOR_BUILD_FOLDER% %BOOST%/libs/%BOOST_LIBS_FOLDER%
