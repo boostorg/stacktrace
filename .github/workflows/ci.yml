@@ -214,7 +214,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, macos-12, macos-13, macos-14 ]
+        os: [ ubuntu-20.04, ubuntu-22.04, macos-13, macos-14 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
@@ -274,7 +274,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, macos-12, macos-13, macos-14 ]
+        os: [ ubuntu-20.04, ubuntu-22.04, macos-13, macos-14 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
