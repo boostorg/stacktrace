@@ -12,3 +12,7 @@ boost_test(TYPE run SOURCES test.cpp test_impl.cpp LINK_LIBRARIES Boost::stacktr
 boost_test(TYPE run SOURCES test_noop.cpp test_impl.cpp LINK_LIBRARIES Boost::stacktrace_noop Boost::core)
 
 boost_test(TYPE run SOURCES test_trivial.cpp LINK_LIBRARIES Boost::stacktrace Boost::core)
+
+if(BOOST_STACKTRACE_ENABLE_DWFL)
+  boost_test(TYPE run NAME test_dwfl SOURCES test.cpp test_impl.cpp COMPILE_DEFINITIONS BOOST_STACKTRACE_USE_DWFL LINK_LIBRARIES Boost::stacktrace_dwfl Boost::core)
+endif()
