@@ -30,9 +30,6 @@
 #   include <boost/stacktrace/detail/unwind_base_impls.hpp>
 #endif
 
-//Testing
-#define BOOST_STACKTRACE_OFFSET_ADDR_BASE
-
 namespace boost { namespace stacktrace { namespace detail {
 
 template <class Base>
@@ -44,11 +41,11 @@ public:
         if (!Base::res.empty()) {
             Base::res = boost::core::demangle(Base::res.c_str());
         } else {
-#ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
+#ifdef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
+            Base::res = to_hex_array(addr).data();
+#else
             const auto addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
             Base::res = to_hex_array(reinterpret_cast<uintptr_t>(addr) - addr_base).data();
-#else
-            Base::res = to_hex_array(addr).data();
 #endif
         }
 

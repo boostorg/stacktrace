@@ -19,26 +19,17 @@
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 
-//Testing
-#define BOOST_STACKTRACE_OFFSET_ADDR_BASE
-
-#ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
+#ifndef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
 #include <boost/stacktrace/detail/addr_base_msvc.hpp>
 #endif
 
 #ifdef WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#   ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
-#include <psapi.h>
-#   endif
 #else
 // Prevent inclusion of extra Windows SDK headers which can cause conflict
 // with other code using Windows SDK
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#   ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
-#include <psapi.h>
-#   endif
 #undef WIN32_LEAN_AND_MEAN
 #endif
 
@@ -404,12 +395,12 @@ public:
         if (!name.empty()) {
             res += name;
         } else {
-#ifdef BOOST_STACKTRACE_OFFSET_ADDR_BASE
+#ifdef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
+            res += to_hex_array(addr).data();
+#else
             // Get own base address
             const uintptr_t base_addr = get_own_proc_addr_base(addr);
             res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
-#else
-            res += to_hex_array(addr).data();
 #endif
         }
 

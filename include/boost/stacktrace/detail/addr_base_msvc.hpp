@@ -1,5 +1,3 @@
-// Copyright Antony Polukhin, 2016-2024.
-//
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -26,32 +24,47 @@
 
 namespace boost { namespace stacktrace { namespace detail {
   inline  uintptr_t get_own_proc_addr_base(const void* addr) {
-        HANDLE processHandle = GetCurrentProcess();
-        HMODULE modules[1024];
-        
-        DWORD needed;
+        // Try to avoid allocating memory for the modules array if possible.
+        // The stack buffer should be large enough for most processes.
+        HMODULE modules_stack[1024];
+        HMODULE* modules_allocated = nullptr;
+        HMODULE* modules = modules_stack;
 
-        if (EnumProcessModulesEx(processHandle, modules, sizeof(modules), &needed, LIST_MODULES_ALL)) {
-            int moduleCount = needed / sizeof(HMODULE);
+        DWORD needed_bytes = 0;
+        uintptr_t addr_base = 0;
 
-            for (int i = 0; i < moduleCount; ++i) {
-                MODULEINFO moduleInfo;
-                TCHAR moduleName[MAX_PATH];
+        HANDLE process_handle = GetCurrentProcess();
+        bool enum_process_result = EnumProcessModules(process_handle, modules, sizeof(modules), &needed_bytes);
+
+        // Check if the error is because the buffer is too small.
+        if (!enum_process_result && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+            modules_allocated = new HMODULE[needed_bytes / sizeof(HMODULE)];
+            enum_process_result = EnumProcessModules(process_handle, modules, sizeof(modules), &needed_bytes);
+            modules = modules_allocated;
+        }
+
+        if (enum_process_result) {
+            for (int i = 0; i < (needed_bytes / sizeof(HMODULE)); ++i) {
+                MODULEINFO module_info;
+                TCHAR module_name[MAX_PATH];
 
                 // Get the module name
-                if (GetModuleBaseName(processHandle, modules[i], moduleName, sizeof(moduleName) / sizeof(TCHAR))) {
-                    // Get module information
-                    if (GetModuleInformation(processHandle, modules[i], &moduleInfo, sizeof(moduleInfo))) {
-                        if (moduleInfo.lpBaseOfDll <= addr && addr < LPBYTE(moduleInfo.lpBaseOfDll) + moduleInfo.SizeOfImage) {
-                            // Module contains the address
-                            return reinterpret_cast<uintptr_t>(moduleInfo.lpBaseOfDll);
-                        }
-                    }
+                if (GetModuleBaseName(process_handle, modules[i], module_name, sizeof(module_name) / sizeof(TCHAR)) 
+                    && GetModuleInformation(process_handle, modules[i], &module_info, sizeof(module_info))
+                    && module_info.lpBaseOfDll <= addr && addr < LPBYTE(module_info.lpBaseOfDll) + module_info.SizeOfImage) {
+                    // Module contains the address
+                addr_base = reinterpret_cast<uintptr_t>(module_info.lpBaseOfDll);
+                    break;
                 }
             }
         }
 
-        return 0;
+        CloseHandle(process_handle);
+        if (modules_allocated) {
+            delete[] modules_allocated;
+        }
+
+        return addr_base;
     }
 
 }}} // namespace boost::stacktrace::detail
