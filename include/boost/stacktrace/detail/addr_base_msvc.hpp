@@ -12,6 +12,9 @@
 #   pragma once
 #endif
 
+#include <cstdio>
+#include <memory>
+
 #ifdef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <psapi.h>
@@ -25,11 +28,11 @@
 #endif
 
 namespace boost { namespace stacktrace { namespace detail {
-  inline  uintptr_t get_own_proc_addr_base(const void* addr) {
+  inline std::uintptr_t get_own_proc_addr_base(const void* addr) {
         // Try to avoid allocating memory for the modules array if possible.
         // The stack buffer should be large enough for most processes.
         HMODULE modules_stack[1024];
-        HMODULE* modules_allocated = nullptr;
+        std::unique_ptr<HMODULE[]> modules_allocated;
         HMODULE* modules = modules_stack;
 
         DWORD needed_bytes = 0;
@@ -40,31 +43,26 @@ namespace boost { namespace stacktrace { namespace detail {
 
         // Check if the error is because the buffer is too small.
         if (!enum_process_result && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-            modules_allocated = new HMODULE[needed_bytes / sizeof(HMODULE)];
-            enum_process_result = EnumProcessModules(process_handle, modules, sizeof(modules), &needed_bytes);
-            modules = modules_allocated;
+            modules_allocated.reset(new HMODULE[needed_bytes / sizeof(HMODULE)]);
+            modules = modules_allocated.get();
+            enum_process_result = EnumProcessModules(process_handle, modules, needed_bytes, &needed_bytes);
         }
 
         if (enum_process_result) {
-            for (int i = 0; i < (needed_bytes / sizeof(HMODULE)); ++i) {
+            for (std::size_t i = 0; i < (needed_bytes / sizeof(HMODULE)); ++i) {
                 MODULEINFO module_info;
-                TCHAR module_name[MAX_PATH];
 
                 // Get the module name
-                if (GetModuleBaseName(process_handle, modules[i], module_name, sizeof(module_name) / sizeof(TCHAR)) 
-                    && GetModuleInformation(process_handle, modules[i], &module_info, sizeof(module_info))
+                if (GetModuleInformation(process_handle, modules[i], &module_info, sizeof(module_info))
                     && module_info.lpBaseOfDll <= addr && addr < LPBYTE(module_info.lpBaseOfDll) + module_info.SizeOfImage) {
                     // Module contains the address
-                addr_base = reinterpret_cast<uintptr_t>(module_info.lpBaseOfDll);
+                addr_base = reinterpret_cast<std::uintptr_t>(module_info.lpBaseOfDll);
                     break;
                 }
             }
         }
 
         CloseHandle(process_handle);
-        if (modules_allocated) {
-            delete[] modules_allocated;
-        }
 
         return addr_base;
     }
