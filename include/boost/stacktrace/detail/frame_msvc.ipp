@@ -19,6 +19,10 @@
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 
+#ifndef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
+#include <boost/stacktrace/detail/addr_base_msvc.hpp>
+#endif
+
 #ifdef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
@@ -391,7 +395,13 @@ public:
         if (!name.empty()) {
             res += name;
         } else {
+#ifdef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
             res += to_hex_array(addr).data();
+#else
+            // Get own base address
+            const uintptr_t base_addr = get_own_proc_addr_base(addr);
+            res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
+#endif
         }
 
         std::pair<std::string, std::size_t> source_line = this->get_source_file_line_impl(addr);

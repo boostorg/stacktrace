@@ -8,6 +8,7 @@
 
 #include <boost/stacktrace.hpp>
 #include <stdexcept>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <cctype>
@@ -263,7 +264,51 @@ void test_stacktrace_limits()
     BOOST_TEST_EQ(boost::stacktrace::stacktrace(1, 1).size(), 1);
 }
 
-int main() {
+std::size_t get_file_size(const char* file_name) {
+    std::ifstream file(file_name, std::ios::binary | std::ios::ate);
+    const auto file_size = file.tellg();
+    BOOST_TEST(file_size > 0);
+    return static_cast<std::size_t>(file_size);
+}
+
+uintptr_t get_address_from_frame(const std::string& frame) {
+    std::size_t address = 0;
+    std::string hex_address;
+    std::size_t pos = frame.find("0x");
+
+    if (pos != std::string::npos) {
+        // Extract the hex address substring
+        hex_address = frame.substr(pos + 2); // Skip "0x"
+        
+        // Convert hex string to std::size_t
+        std::stringstream ss;
+        ss << std::hex << hex_address;
+        ss >> address;
+    }
+
+    return address;
+}
+
+void test_relative_virtual_address(const char* file_path)
+{   
+    const auto frame = to_string(boost::stacktrace::stacktrace(0, 1).as_vector().front());
+
+    // Skip the test if the frame does not contain an address
+    if (frame.find("0x") == std::string::npos) {
+        return;
+    }
+
+    const auto file_size = get_file_size(file_path);
+    BOOST_TEST(file_size > 0);
+
+    const auto address = get_address_from_frame(frame);
+    BOOST_TEST(address > 0);
+
+    // Verify that the address is within the binary
+    BOOST_TEST(address <= file_size);
+}
+
+int main(const int, const char* argv[]) {
     test_deeply_nested_namespaces();
     test_frames_string_data_validity();
     test_nested<15>();
@@ -283,6 +328,7 @@ int main() {
     test_nested<260>(false);
 
     test_stacktrace_limits();
+    test_relative_virtual_address(argv[0]);
 
     return boost::report_errors();
 }
