@@ -62,6 +62,7 @@ function(stacktrace_check var source incs libs defs)
 endfunction()
 
 stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace" "")
+stacktrace_check(BOOST_STACKTRACE_HAS_DWFL has_dwfl.cpp "" "dw" "")
 
 set(_default_addr2line ON)
 if(WIN32 AND NOT CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
@@ -78,6 +79,7 @@ endif()
 
 option(BOOST_STACKTRACE_ENABLE_NOOP "Boost.Stacktrace: build boost_stacktrace_noop" ON)
 option(BOOST_STACKTRACE_ENABLE_BACKTRACE "Boost.Stacktrace: build boost_stacktrace_backtrace" ${BOOST_STACKTRACE_HAS_BACKTRACE})
+option(BOOST_STACKTRACE_ENABLE_DWFL "Boost.Stacktrace: build boost_stacktrace_dwfl" ${BOOST_STACKTRACE_HAS_DWFL})
 option(BOOST_STACKTRACE_ENABLE_ADDR2LINE "Boost.Stacktrace: build boost_stacktrace_addr2line" ${_default_addr2line})
 option(BOOST_STACKTRACE_ENABLE_BASIC "Boost.Stacktrace: build boost_stacktrace_basic" ON)
 option(BOOST_STACKTRACE_ENABLE_WINDBG "Boost.Stacktrace: build boost_stacktrace_windbg" ${BOOST_STACKTRACE_HAS_WINDBG})
@@ -90,6 +92,7 @@ unset(_default_from_exception)
 message(STATUS "Boost.Stacktrace: "
   "noop ${BOOST_STACKTRACE_ENABLE_NOOP}, "
   "backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE}, "
+  "dwfl ${BOOST_STACKTRACE_ENABLE_DWFL}, "
   "addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE}, "
   "basic ${BOOST_STACKTRACE_ENABLE_BASIC}, "
   "windbg ${BOOST_STACKTRACE_ENABLE_WINDBG}, "
@@ -99,6 +102,7 @@ message(STATUS "Boost.Stacktrace: "
 
 stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
 stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(dwfl ${BOOST_STACKTRACE_ENABLE_DWFL} "dw;${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
@@ -118,6 +122,10 @@ if(BOOST_STACKTRACE_ENABLE_WINDBG)
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
+
+elseif(BOOST_STACKTRACE_ENABLE_DWFL)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_dwfl)
 
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
 

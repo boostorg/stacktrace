@@ -24,6 +24,8 @@
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>
+#elif defined(BOOST_STACKTRACE_USE_DWFL)
+#   include <boost/stacktrace/detail/libdwfl_impls.hpp>
 #elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
 #   include <boost/stacktrace/detail/addr2line_impls.hpp>
 #else

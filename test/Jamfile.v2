@@ -14,6 +14,7 @@ lib gcc_s ;
 lib rt ;
 lib Dbgeng ;
 lib ole32 ;
+lib dw ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
@@ -44,6 +45,7 @@ local FORCE_SYMBOL_EXPORT = <target-os>freebsd:<linkflags>"-rdynamic" <target-os
     <define>BOOST_STACKTRACE_TEST_EXPORTS_TABLE_USAGE ;
 
 local BT_DEPS   = <target-os>linux:<library>dl <library>backtrace [ check-target-builds ../build//libbacktrace : : <build>no ] ;
+local DWFL_DEPS = <target-os>linux:<library>dl <library>dw [ check-target-builds ../build//libdw : : <build>no ] ;
 local AD2L_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//addr2line : : <build>no ]
      <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  # Some old versions of addr2line may not produce readable names for a modern compilers
      ;
@@ -53,6 +55,7 @@ local NOOP_DEPS = ;
 local BASIC_DEPS = <target-os>linux:<library>dl [ check-target-builds ../build//WinDbg : <build>no ] ;
 
 local LINKSHARED_BT           = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_backtrace     $(BT_DEPS)   ;
+local LINKSHARED_DWFL         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_dwfl          $(DWFL_DEPS) ;
 local LINKSHARED_AD2L         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_addr2line     $(AD2L_DEPS) ;
 local LINKSHARED_WIND         = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg        $(WIND_DEPS) ;
 local LINKSHARED_WIND_CACHED  = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <library>/boost/stacktrace//boost_stacktrace_windbg_cached $(WICA_DEPS) ;
@@ -61,6 +64,7 @@ local LINKSHARED_BASIC        = <link>shared <define>BOOST_STACKTRACE_DYN_LINK <
 
 # Libs with debug symbols
 lib test_impl_lib_backtrace         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_BT) ;
+lib test_impl_lib_dwfl              : test_impl.cpp : <debug-symbols>on $(LINKSHARED_DWFL) ;
 lib test_impl_lib_addr2line         : test_impl.cpp : <debug-symbols>on $(LINKSHARED_AD2L) ;
 lib test_impl_lib_windbg            : test_impl.cpp : <debug-symbols>on $(LINKSHARED_WIND) ;
 lib test_impl_lib_windbg_cached     : test_impl.cpp : <debug-symbols>on $(LINKSHARED_WIND_CACHED) ;
@@ -72,6 +76,7 @@ lib test_impl_lib_basic  : test_impl_nohide-obj : <debug-symbols>on $(LINKSHARED
 
 # Libs without debug symbols
 lib test_impl_lib_backtrace_no_dbg      : test_impl.cpp : <debug-symbols>off $(LINKSHARED_BT) ;
+lib test_impl_lib_dwfl_no_dbg           : test_impl.cpp : <debug-symbols>off $(LINKSHARED_DWFL) ;
 lib test_impl_lib_addr2line_no_dbg      : test_impl.cpp : <debug-symbols>off $(LINKSHARED_AD2L) ;
 lib test_impl_lib_windbg_no_dbg         : test_impl.cpp : <debug-symbols>off $(LINKSHARED_WIND) ;
 lib test_impl_lib_windbg_cached_no_dbg  : test_impl.cpp : <debug-symbols>off $(LINKSHARED_WIND_CACHED) ;
@@ -87,6 +92,7 @@ test-suite stacktrace_tests
     # Header only tests with debug symbols
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE        $(BT_DEPS)    : backtrace_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC $(BT_DEPS) : backtrace_ho_static ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_DWFL             $(DWFL_DEPS)  : dwfl_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE        $(AD2L_DEPS)  : addr2line_ho ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_NOOP             $(NOOP_DEPS)  : noop_ho ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>on                                               $(WIND_DEPS)  : windbg_ho ]
@@ -96,6 +102,7 @@ test-suite stacktrace_tests
 
     # Header only trivial
     [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE        $(BT_DEPS)    : trivial_backtrace_ho ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_DWFL             $(DWFL_DEPS)  : trivial_dwfl_ho ]
     [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE        $(AD2L_DEPS)  : trivial_addr2line_ho ]
     [ run test_trivial.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_NOOP             $(NOOP_DEPS)  : trivial_noop_ho ]
     [ run test_trivial.cpp : : : <debug-symbols>on                                               $(WIND_DEPS)  : trivial_windbg_ho ]
@@ -105,6 +112,7 @@ test-suite stacktrace_tests
 
     # Test with shared linked implementations with debug symbols
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)            : backtrace_lib ]
+    [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_dwfl          $(LINKSHARED_DWFL)          : dwfl_lib ]
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_addr2line     $(LINKSHARED_AD2L)          : addr2line_lib ]
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_windbg        $(LINKSHARED_WIND)          : windbg_lib ]
     [ run test.cpp      : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED)   : windbg_cached_lib ]
@@ -113,6 +121,7 @@ test-suite stacktrace_tests
 
     # Trivial test with shared linked implementations with debug symbols
     [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)            : trivial_backtrace_lib ]
+    [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_dwfl          $(LINKSHARED_DWFL)          : trivial_dwfl_lib ]
     [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_addr2line     $(LINKSHARED_AD2L)          : trivial_addr2line_lib ]
     [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg        $(LINKSHARED_WIND)          : trivial_windbg_lib ]
     [ run test_trivial.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED)   : trivial_windbg_cached_lib ]
@@ -128,6 +137,9 @@ test-suite stacktrace_tests
               <define>BOOST_STACKTRACE_BACKTRACE_FORCE_STATIC
             <library>/boost/optional//boost_optional
         : backtrace_lib_threaded_static ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>on <library>.//test_impl_lib_dwfl            $(LINKSHARED_DWFL)
+        : dwfl_lib_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>on <library>.//test_impl_lib_windbg          $(LINKSHARED_WIND)
             <library>/boost/optional//boost_optional
@@ -145,6 +157,7 @@ test-suite stacktrace_tests
 
     # Header only tests without debug symbols
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_BACKTRACE                            $(FORCE_SYMBOL_EXPORT)  $(BT_DEPS)       : backtrace_ho_no_dbg ]
+    [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_DWFL                                 $(FORCE_SYMBOL_EXPORT)  $(DWFL_DEPS)     : dwfl_ho_no_dbg ]
     [ run test_noop.cpp test_impl.cpp   : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_NOOP                                                         $(NOOP_DEPS)     : noop_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off                                            <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WIND_DEPS)     : windbg_ho_no_dbg ]
     [ run test.cpp test_impl.cpp        : : : <debug-symbols>off <define>BOOST_STACKTRACE_USE_WINDBG_CACHED <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL  $(WICA_DEPS)     : windbg_cached_ho_no_dbg ]
@@ -156,6 +169,7 @@ test-suite stacktrace_tests
 
     # Test with shared linked implementations without debug symbols
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_backtrace_no_dbg     $(LINKSHARED_BT)                             $(FORCE_SYMBOL_EXPORT)     : backtrace_lib_no_dbg ]
+    [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_dwfl_no_dbg          $(LINKSHARED_DWFL)                           $(FORCE_SYMBOL_EXPORT)     : dwfl_lib_no_dbg ]
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_addr2line_no_dbg     $(LINKSHARED_AD2L)                                                      : addr2line_lib_no_dbg ]
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_no_dbg        $(LINKSHARED_WIND)        <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL : windbg_lib_no_dbg ]
     [ run test.cpp      : : : <debug-symbols>off <library>.//test_impl_lib_windbg_cached_no_dbg $(LINKSHARED_WIND_CACHED) <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL : windbg_cached_lib_no_dbg ]
@@ -169,6 +183,12 @@ test-suite stacktrace_tests
             <library>/boost/optional//boost_optional
             $(LINKSHARED_BT)
         : backtrace_lib_no_dbg_threaded ]
+    [ run thread_safety_checking.cpp
+        : : : <debug-symbols>off
+            <library>.//test_impl_lib_dwfl_no_dbg
+            <library>/boost/optional//boost_optional
+            $(LINKSHARED_DWFL)
+        : dwfl_lib_no_dbg_threaded ]
     [ run thread_safety_checking.cpp
         : : : <debug-symbols>off
             <library>.//test_impl_lib_windbg_no_dbg
@@ -194,6 +214,8 @@ test-suite stacktrace_tests
     [ run test_from_exception_none.cpp : : : $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_none_basic_ho ]
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_BT) <debug-symbols>on                                     : from_exception_none_bt ]
     [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on    : from_exception_none_bt_ho ]
+    [ run test_from_exception_none.cpp : : : $(LINKSHARED_DWFL) <debug-symbols>on                                   : from_exception_none_dwfl ]
+    [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_DWFL $(DWFL_DEPS) <debug-symbols>on       : from_exception_none_dwfl_ho ]
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_WIND) <debug-symbols>on                                      : from_exception_none_windbg ]
     [ run test_from_exception_none.cpp : : : <define>BOOST_STACKTRACE_USE_WINDBG $(WIND_DEPS) <debug-symbols>on        : from_exception_none_windbg_ho ]
     [ run test_from_exception_none.cpp : : : $(LINKSHARED_WIND_CACHED) <debug-symbols>on                               : from_exception_none_windbg_cached ]
@@ -205,6 +227,8 @@ test-suite stacktrace_tests
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on      : from_exception_disabled_basic_ho ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                          : from_exception_disabled_bt ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS)           : from_exception_disabled_bt_ho ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_DWFL) <debug-symbols>on                        : from_exception_disabled_dwfl ]
+    [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_DWFL $(DWFL_DEPS)              : from_exception_disabled_dwfl_ho ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_WIND) <debug-symbols>on                                      : from_exception_disabled_windbg ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_WINDBG $(WIND_DEPS) <debug-symbols>on        : from_exception_disabled_windbg_ho ]
     [ run test_from_exception_none.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_WIND_CACHED) <debug-symbols>on                               : from_exception_disabled_windbg_cached ]
@@ -212,11 +236,13 @@ test-suite stacktrace_tests
 
     [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BASIC) <debug-symbols>on                                  : from_exception_basic ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_BT) <debug-symbols>on                                  : from_exception_bt ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_DWFL) <debug-symbols>on                                : from_exception_dwfl ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_WIND) <debug-symbols>on                                : from_exception_windbg ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception $(LINKSHARED_WIND_CACHED) <debug-symbols>on                         : from_exception_windbg_cached ]
 
     [ link test_from_exception.cpp : <library>/boost/stacktrace//boost_stacktrace_from_exception $(FORCE_SYMBOL_EXPORT) $(BASIC_DEPS) <debug-symbols>on                 : from_exception_basic_ho ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_BACKTRACE $(BT_DEPS) <debug-symbols>on : from_exception_bt_ho ]
+    [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_DWFL $(DWFL_DEPS) <debug-symbols>on    : from_exception_dwfl_ho ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_WINDBG $(WIND_DEPS) <debug-symbols>on        : from_exception_windbg_ho ]
     [ run test_from_exception.cpp : : : <library>/boost/stacktrace//boost_stacktrace_from_exception <define>BOOST_STACKTRACE_USE_WINDBG_CACHED $(WICA_DEPS) <debug-symbols>on : from_exception_windbg_cached_ho ]
   ;
@@ -237,6 +263,7 @@ for local p in [ glob ../example/*.cpp ]
     }
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_BT)           $(additional_dependency)    : backtrace_$(p2[1]:B) ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_DWFL)         $(additional_dependency)    : dwfl_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_AD2L)         $(additional_dependency)    : addr2line_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_WIND)         $(additional_dependency)    : windbg_$(p[1]:B) ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>on $(LINKSHARED_WIND_CACHED)  $(additional_dependency)    : windbg_cached_$(p[1]:B) ] ;
@@ -247,6 +274,7 @@ for local p in [ glob ../example/*.cpp ]
     ##### Tests with disabled debug symbols #####
 
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_BT)          $(additional_dependency)    : backtrace_$(p[1]:B)_no_dbg ] ;
+    stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_DWFL)        $(additional_dependency)    : dwfl_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_AD2L)        $(additional_dependency)    : addr2line_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_WIND)        $(additional_dependency)    : windbg_$(p[1]:B)_no_dbg ] ;
     stacktrace_tests += [ run $(p) : : : <debug-symbols>off $(LINKSHARED_WIND_CACHED) $(additional_dependency)    : windbg_cached_$(p[1]:B)_no_dbg ] ;
@@ -259,6 +287,7 @@ for local p in [ glob ../example/*.cpp ]
 test-suite stacktrace_torture
   :
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_BACKTRACE        $(BT_DEPS)    : torture_backtrace_ho ]
+    [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_DWFL             $(DWFL_DEPS)  : torture_dwfl_ho ]
     #[ run torture.cpp test_impl.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_ADDR2LINE        $(AD2L_DEPS)  : torture_addr2line_ho ]
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on                                               $(WIND_DEPS)  : torture_windbg_ho ]
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_USE_WINDBG_CACHED    $(WICA_DEPS)  : torture_windbg_cached_ho ]
@@ -266,6 +295,7 @@ test-suite stacktrace_torture
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <define>BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL $(BASIC_DEPS) : torture_basic_ho_empty ]
 
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <library>.//test_impl_lib_backtrace     $(LINKSHARED_BT)            : torture_backtrace_lib ]
+    [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <library>.//test_impl_lib_dwfl          $(LINKSHARED_DWFL)          : torture_dwfl_lib ]
     #[ run torture.cpp test_impl.cpp : : : <debug-symbols>on <library>.//test_impl_lib_addr2line     $(LINKSHARED_AD2L)          : torture_addr2line_lib ]
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg        $(LINKSHARED_WIND)          : torture_windbg_lib ]
     [ run torture.cpp test_impl.cpp : : : <debug-symbols>on <library>.//test_impl_lib_windbg_cached $(LINKSHARED_WIND_CACHED)   : torture_windbg_cached_lib ]

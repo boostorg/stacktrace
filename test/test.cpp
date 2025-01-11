@@ -23,8 +23,8 @@ using boost::stacktrace::stacktrace;
 using boost::stacktrace::frame;
 
 
-#if (defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE)) \
-    || defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL)
+#if (defined(BOOST_GCC) && defined(BOOST_WINDOWS) && !defined(BOOST_STACKTRACE_USE_BACKTRACE) && !defined(BOOST_STACKTRACE_USE_ADDR2LINE) \
+    && !defined(BOOST_STACKTRACE_USE_DWFL)) || defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL)
 
 #   define BOOST_STACKTRACE_TEST_SHOULD_OUTPUT_READABLE_NAMES 0
 #else
