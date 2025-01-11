@@ -36,19 +36,19 @@ namespace boost { namespace stacktrace { namespace detail {
         HMODULE* modules = modules_stack;
 
         DWORD needed_bytes = 0;
-        uintptr_t addr_base = 0;
+        std::uintptr_t addr_base = 0;
 
         HANDLE process_handle = GetCurrentProcess();
-        bool enum_process_result = EnumProcessModules(process_handle, modules, sizeof(modules), &needed_bytes);
+        auto enum_process_is_ok = EnumProcessModules(process_handle, modules, sizeof(modules), &needed_bytes);
 
         // Check if the error is because the buffer is too small.
-        if (!enum_process_result && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+        if (!enum_process_is_ok && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
             modules_allocated.reset(new HMODULE[needed_bytes / sizeof(HMODULE)]);
             modules = modules_allocated.get();
-            enum_process_result = EnumProcessModules(process_handle, modules, needed_bytes, &needed_bytes);
+            enum_process_is_ok = EnumProcessModules(process_handle, modules, needed_bytes, &needed_bytes);
         }
 
-        if (enum_process_result) {
+        if (enum_process_is_ok) {
             for (std::size_t i = 0; i < (needed_bytes / sizeof(HMODULE)); ++i) {
                 MODULEINFO module_info;
 
@@ -56,7 +56,7 @@ namespace boost { namespace stacktrace { namespace detail {
                 if (GetModuleInformation(process_handle, modules[i], &module_info, sizeof(module_info))
                     && module_info.lpBaseOfDll <= addr && addr < LPBYTE(module_info.lpBaseOfDll) + module_info.SizeOfImage) {
                     // Module contains the address
-                addr_base = reinterpret_cast<std::uintptr_t>(module_info.lpBaseOfDll);
+                    addr_base = reinterpret_cast<std::uintptr_t>(module_info.lpBaseOfDll);
                     break;
                 }
             }
