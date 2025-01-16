@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2024.
+// Copyright Antony Polukhin, 2016-2025.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -18,6 +18,10 @@
 #include <boost/core/noncopyable.hpp>
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
+
+#ifndef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
+#include <boost/stacktrace/detail/addr_base_msvc.hpp>
+#endif
 
 #ifdef WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -247,6 +251,57 @@ public:
         const std::size_t delimiter = result.find_first_of('!');
         if (module_name) {
             *module_name = result.substr(0, delimiter);
+            if (!module_name->empty()) {
+                ULONG64 base = 0;
+                res = (S_OK == idebug_->GetModuleByOffset(
+                    offset,
+                    0,
+                    nullptr,
+                    &base
+                ));
+                
+                if (res) {
+                    name[0] = '\0';
+                    size = 0;
+                    res = (S_OK == idebug_->GetModuleNames(
+                        DEBUG_ANY_ID,
+                        base,
+                        name,
+                        sizeof(name),
+                        &size,
+                        nullptr,
+                        0,
+                        nullptr,
+                        nullptr,
+                        0,
+                        nullptr
+                    ));
+                }
+
+                if (!res && size != 0)
+                {
+                    std::string module_path(size, char());
+                    res = (S_OK == idebug_->GetModuleNames(
+                        DEBUG_ANY_ID,
+                        base,
+                        &module_path[0],
+                        static_cast<ULONG>(module_path.size()),
+                        &size,
+                        nullptr,
+                        0,
+                        nullptr,
+                        nullptr,
+                        0,
+                        nullptr
+                    ));
+                    if (res && size > 1) {
+                        module_name->assign(module_path, size - 1);
+                    }
+                }
+                else if (res && size > 1) {
+                    module_name->assign(name, size - 1);
+                }                
+            }
         }
 
         if (delimiter == std::string::npos) {
@@ -340,7 +395,13 @@ public:
         if (!name.empty()) {
             res += name;
         } else {
+#ifdef BOOST_STACKTRACE_DISABLE_OFFSET_ADDR_BASE
             res += to_hex_array(addr).data();
+#else
+            // Get own base address
+            const uintptr_t base_addr = get_own_proc_addr_base(addr);
+            res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
+#endif
         }
 
         std::pair<std::string, std::size_t> source_line = this->get_source_file_line_impl(addr);
