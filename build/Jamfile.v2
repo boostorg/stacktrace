@@ -91,8 +91,7 @@ lib boost_stacktrace_backtrace
   : # sources
     ../src/backtrace.cpp
   : # requirements
-  <warnings>all
-    $(stacktrace_common_requirements)
+    <warnings>all
     <target-os>linux:<library>dl
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -158,7 +157,7 @@ lib boost_stacktrace_windbg
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbg : : <build>no ]
-    [ build-stacktrace-feature windbg ]
+    <conditional>@$(build-stacktrace-feature windbg)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -173,7 +172,7 @@ lib boost_stacktrace_windbg_cached
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbgCached : : <build>no ]
-    [ build-stacktrace-feature windbg-cached ]
+    <conditional>@$(build-stacktrace-feature windbg-cached)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
