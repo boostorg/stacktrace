@@ -11,6 +11,12 @@ import boost-stacktrace-features ;
 import config : requires ;
 import property ;
 
+constant stacktrace_common_requirements :
+    <warnings>all
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    <define>BOOST_STACKTRACE_NO_LIB=1
+    ;
+
 constant boost_dependencies_private :
     <library>/boost/assert//boost_assert
     ;
@@ -63,87 +69,108 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
+rule build-stacktrace-feature ( name : props * )
+{
+    local enabled = [ property.select <boost.stacktrace.$(name)> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+}
+
 lib boost_stacktrace_noop
   : # sources
     ../src/noop.cpp
   : # requirements
-    <warnings>all
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    $(stacktrace_common_requirements)
+    # Enable build when explicitly requested
+    <conditional>@$(build-stacktrace-feature noop)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_backtrace
   : # sources
     ../src/backtrace.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <target-os>linux:<library>dl
     <library>backtrace
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds libbacktrace : : <build>no ]
+    <conditional>@$(build-stacktrace-feature backtrace)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-addr2line ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.addr2line> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    # Disable by default on Windows when not using Cygwin
+    if <target-os>windows in $(props) && ! ( <target-os>cygwin in $(props) )
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_addr2line
   : # sources
     ../src/addr2line.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <target-os>linux:<library>dl
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds addr2line : : <build>no ]
+    <conditional>@build-stacktrace-addr2line
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_basic
   : # sources
     ../src/basic.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <target-os>linux:<library>dl
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbg : <build>no ]
+    <conditional>@$(build-stacktrace-feature basic)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_windbg
   : # sources
     ../src/windbg.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <library>Dbgeng <library>ole32
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbg : : <build>no ]
+    <conditional>@$(build-stacktrace-feature windbg)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 lib boost_stacktrace_windbg_cached
   : # sources
     ../src/windbg_cached.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <library>Dbgeng <library>ole32
-    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbgCached : : <build>no ]
+    <conditional>@$(build-stacktrace-feature windbg-cached)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;
 
 rule build-stacktrace-from-exception ( props * )
@@ -166,7 +193,7 @@ lib boost_stacktrace_from_exception
   : # sources
     ../src/from_exception.cpp
   : # requirements
-    <warnings>all
+    $(stacktrace_common_requirements)
     <target-os>linux:<library>dl
 
     # Enable build when explicitly requested, or by default, when on x86
@@ -177,5 +204,4 @@ lib boost_stacktrace_from_exception
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    <define>BOOST_STACKTRACE_NO_LIB=1
   ;

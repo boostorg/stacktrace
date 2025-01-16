@@ -6,4 +6,10 @@
 #
 import feature ;
 
+feature.feature boost.stacktrace.noop : on off : optional propagated ;
+feature.feature boost.stacktrace.backtrace : on off : optional propagated ;
+feature.feature boost.stacktrace.addr2line : on off : optional propagated ;
+feature.feature boost.stacktrace.basic : on off : optional propagated ;
+feature.feature boost.stacktrace.windbg : on off : optional propagated ;
+feature.feature boost.stacktrace.windbg_cached : on off : optional propagated ;
 feature.feature boost.stacktrace.from_exception : on off : optional propagated ;
