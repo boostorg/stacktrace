@@ -63,12 +63,24 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
+rule build-stacktrace-feature ( name : props * )
+{
+    local enabled = [ property.select <boost.stacktrace.$(name)> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+}
+
 lib boost_stacktrace_noop
   : # sources
     ../src/noop.cpp
   : # requirements
     <warnings>all
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+    # Enable build when explicitly requested
+    <conditional>@$(build-stacktrace-feature noop)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -84,11 +96,28 @@ lib boost_stacktrace_backtrace
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds libbacktrace : : <build>no ]
+    <conditional>@$(build-stacktrace-feature backtrace)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-addr2line ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.addr2line> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    # Disable by default on Windows when not using Cygwin
+    if <target-os>windows in $(props) && ! ( <target-os>cygwin in $(props) )
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_addr2line
   : # sources
@@ -98,6 +127,7 @@ lib boost_stacktrace_addr2line
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds addr2line : : <build>no ]
+    <conditional>@build-stacktrace-addr2line
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -112,6 +142,7 @@ lib boost_stacktrace_basic
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbg : <build>no ]
+    <conditional>@$(build-stacktrace-feature basic)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -126,6 +157,7 @@ lib boost_stacktrace_windbg
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbg : : <build>no ]
+    <conditional>@$(build-stacktrace-feature windbg)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -140,6 +172,7 @@ lib boost_stacktrace_windbg_cached
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     [ check-target-builds WinDbgCached : : <build>no ]
+    <conditional>@$(build-stacktrace-feature windbg-cached)
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
