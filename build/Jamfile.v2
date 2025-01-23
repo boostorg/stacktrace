@@ -92,7 +92,6 @@ rule build-stacktrace-backtrace ( props * )
     {
         return <build>no ;
     }
-    return [ check-target-builds libbacktrace : : <build>no ] ;
 }
 
 lib boost_stacktrace_backtrace
@@ -104,6 +103,7 @@ lib boost_stacktrace_backtrace
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-backtrace
+    [ check-target-builds libbacktrace : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -123,7 +123,6 @@ rule build-stacktrace-addr2line ( props * )
     {
         return <build>no ;
     }
-    return [ check-target-builds addr2line : : <build>no ] ;
 }
 
 lib boost_stacktrace_addr2line
@@ -134,6 +133,7 @@ lib boost_stacktrace_addr2line
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-addr2line
+    [ check-target-builds addr2line : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -147,7 +147,6 @@ rule build-stacktrace-basic ( props * )
     {
         return <build>no ;
     }
-    return [ check-target-builds WinDbg : <build>no ] ;
 }
 
 lib boost_stacktrace_basic
@@ -158,6 +157,7 @@ lib boost_stacktrace_basic
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-basic
+    [ check-target-builds WinDbg : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -171,7 +171,6 @@ rule build-stacktrace-windbg ( props * )
     {
         return <build>no ;
     }
-    return [ check-target-builds WinDbg : : <build>no ] ;
 }
 
 lib boost_stacktrace_windbg
@@ -182,6 +181,7 @@ lib boost_stacktrace_windbg
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg
+    [ check-target-builds WinDbg : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -195,7 +195,6 @@ rule build-stacktrace-windbg-cached ( props * )
     {
         return <build>no ;
     }
-    return [ check-target-builds WinDbgCached : : <build>no ] ;
 }
 
 lib boost_stacktrace_windbg_cached
@@ -206,6 +205,7 @@ lib boost_stacktrace_windbg_cached
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg-cached
+    [ check-target-builds WinDbgCached : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
