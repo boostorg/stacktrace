@@ -66,10 +66,9 @@ explicit WinDbgCached ;
 rule build-stacktrace-noop ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.noop> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
 }
 
@@ -79,7 +78,6 @@ lib boost_stacktrace_noop
   : # requirements
     <warnings>all
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    # Enable build when explicitly requested
     <conditional>@build-stacktrace-noop
   : # default build
   : # usage-requirements
@@ -90,11 +88,11 @@ lib boost_stacktrace_noop
 rule build-stacktrace-backtrace ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.backtrace> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
+    return [ check-target-builds libbacktrace : : <build>no ] ;
 }
 
 lib boost_stacktrace_backtrace
@@ -105,7 +103,6 @@ lib boost_stacktrace_backtrace
     <target-os>linux:<library>dl
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds libbacktrace : : <build>no ]
     <conditional>@build-stacktrace-backtrace
   : # default build
   : # usage-requirements
@@ -116,10 +113,9 @@ lib boost_stacktrace_backtrace
 rule build-stacktrace-addr2line ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.addr2line> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
 
     # Disable by default on Windows when not using Cygwin
@@ -127,6 +123,7 @@ rule build-stacktrace-addr2line ( props * )
     {
         return <build>no ;
     }
+    return [ check-target-builds addr2line : : <build>no ] ;
 }
 
 lib boost_stacktrace_addr2line
@@ -136,7 +133,6 @@ lib boost_stacktrace_addr2line
     <warnings>all
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds addr2line : : <build>no ]
     <conditional>@build-stacktrace-addr2line
   : # default build
   : # usage-requirements
@@ -147,11 +143,11 @@ lib boost_stacktrace_addr2line
 rule build-stacktrace-basic ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.basic> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
+    return [ check-target-builds WinDbg : <build>no ] ;
 }
 
 lib boost_stacktrace_basic
@@ -161,7 +157,6 @@ lib boost_stacktrace_basic
     <warnings>all
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbg : <build>no ]
     <conditional>@build-stacktrace-basic
   : # default build
   : # usage-requirements
@@ -172,11 +167,11 @@ lib boost_stacktrace_basic
 rule build-stacktrace-windbg ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.windbg> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
+    return [ check-target-builds WinDbg : : <build>no ] ;
 }
 
 lib boost_stacktrace_windbg
@@ -186,7 +181,6 @@ lib boost_stacktrace_windbg
     <warnings>all
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbg : : <build>no ]
     <conditional>@build-stacktrace-windbg
   : # default build
   : # usage-requirements
@@ -197,11 +191,11 @@ lib boost_stacktrace_windbg
 rule build-stacktrace-windbg-cached ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.windbg_cached> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
+    return [ check-target-builds WinDbgCached : : <build>no ] ;
 }
 
 lib boost_stacktrace_windbg_cached
@@ -211,7 +205,6 @@ lib boost_stacktrace_windbg_cached
     <warnings>all
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbgCached : : <build>no ]
     <conditional>@build-stacktrace-windbg-cached
   : # default build
   : # usage-requirements
@@ -222,10 +215,9 @@ lib boost_stacktrace_windbg_cached
 rule build-stacktrace-from-exception ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.from_exception> : $(props) ] ;
-    switch $(enabled:G=)
+    if $(enabled:G=) = "off"
     {
-        case  "on" :  return ;
-        case "off" :  return <build>no ;
+        return <build>no ;
     }
 
     local arch = [ property.select <architecture> : $(props) ] ;
@@ -244,9 +236,6 @@ lib boost_stacktrace_from_exception
 
     # Enable build when explicitly requested, or by default, when on x86
     <conditional>@build-stacktrace-from-exception
-
-    # Require usable libbacktrace on other platforms
-    # [ check-target-builds libbacktrace : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
