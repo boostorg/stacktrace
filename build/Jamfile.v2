@@ -196,7 +196,7 @@ lib boost_stacktrace_windbg
 
 rule build-stacktrace-windbg-cached ( props * )
 {
-    local enabled = [ property.select <boost.stacktrace.windbg-cached> : $(props) ] ;
+    local enabled = [ property.select <boost.stacktrace.windbg_cached> : $(props) ] ;
     switch $(enabled:G=)
     {
         case  "on" :  return ;
