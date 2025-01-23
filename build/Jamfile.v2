@@ -9,6 +9,7 @@ require-b2 5.0.1 ;
 import-search /boost/config/checks ;
 import boost-stacktrace-features ;
 import config : requires ;
+import configure ;
 import property ;
 
 constant boost_dependencies_private :
@@ -63,9 +64,9 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
-rule build-stacktrace-feature ( name : props * )
+rule build-stacktrace-noop ( props * )
 {
-    local enabled = [ property.select <boost.stacktrace.$(name)> : $(props) ] ;
+    local enabled = [ property.select <boost.stacktrace.noop> : $(props) ] ;
     switch $(enabled:G=)
     {
         case  "on" :  return ;
@@ -79,13 +80,27 @@ lib boost_stacktrace_noop
   : # requirements
     <warnings>all
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    # Enable build when explicitly requested
-    <conditional>@$(build-stacktrace-feature noop)
+    <conditional>@build-stacktrace-noop
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-backtrace ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.backtrace> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    if ! [ configure.builds libbacktrace : $(props) : "boost.stacktrace.backtrace" ]
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_backtrace
   : # sources
@@ -95,8 +110,7 @@ lib boost_stacktrace_backtrace
     <target-os>linux:<library>dl
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds libbacktrace : : <build>no ]
-    <conditional>@$(build-stacktrace-feature backtrace)
+    <conditional>@build-stacktrace-backtrace
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -115,6 +129,12 @@ rule build-stacktrace-addr2line ( props * )
     # Disable by default on Windows when not using Cygwin
     if <target-os>windows in $(props) && ! ( <target-os>cygwin in $(props) )
     {
+        configure.log-library-search-result "boost.stacktrace.addr2line" : "no" ;
+        return <build>no ;
+    }
+
+    if ! [ configure.builds addr2line : $(props) : "boost.stacktrace.addr2line" ]
+    {
         return <build>no ;
     }
 }
@@ -126,13 +146,27 @@ lib boost_stacktrace_addr2line
     <warnings>all
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds addr2line : : <build>no ]
     <conditional>@build-stacktrace-addr2line
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-basic ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.basic> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    if [ configure.builds WinDbg : $(props) : "boost.stacktrace.basic" ]
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_basic
   : # sources
@@ -141,13 +175,27 @@ lib boost_stacktrace_basic
     <warnings>all
     <target-os>linux:<library>dl
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbg : <build>no ]
-    <conditional>@$(build-stacktrace-feature basic)
+    <conditional>@build-stacktrace-basic
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-windbg ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.windbg> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    if ! [ configure.builds WinDbg : $(props) : "boost.stacktrace.windbg" ]
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_windbg
   : # sources
@@ -156,13 +204,27 @@ lib boost_stacktrace_windbg
     <warnings>all
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbg : : <build>no ]
-    <conditional>@$(build-stacktrace-feature windbg)
+    <conditional>@build-stacktrace-windbg
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
   ;
+
+rule build-stacktrace-windbg-cached ( props * )
+{
+    local enabled = [ property.select <boost.stacktrace.windbg_cached> : $(props) ] ;
+    switch $(enabled:G=)
+    {
+        case  "on" :  return ;
+        case "off" :  return <build>no ;
+    }
+
+    if ! [ configure.builds WinDbgCached : $(props) : "boost.stacktrace.windbg_cached" ]
+    {
+        return <build>no ;
+    }
+}
 
 lib boost_stacktrace_windbg_cached
   : # sources
@@ -171,8 +233,7 @@ lib boost_stacktrace_windbg_cached
     <warnings>all
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
-    [ check-target-builds WinDbgCached : : <build>no ]
-    <conditional>@$(build-stacktrace-feature windbg-cached)
+    <conditional>@build-stacktrace-windbg-cached
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
@@ -191,8 +252,10 @@ rule build-stacktrace-from-exception ( props * )
     local arch = [ property.select <architecture> : $(props) ] ;
     if $(arch) && ( $(arch:G=) != x86 )
     {
+        configure.log-library-search-result "boost.stacktrace.from_exception" : "no" ;
         return <build>no ;
     }
+    configure.log-library-search-result "boost.stacktrace.from_exception" : "yes" ;
 }
 
 lib boost_stacktrace_from_exception
@@ -204,9 +267,6 @@ lib boost_stacktrace_from_exception
 
     # Enable build when explicitly requested, or by default, when on x86
     <conditional>@build-stacktrace-from-exception
-
-    # Require usable libbacktrace on other platforms
-    # [ check-target-builds libbacktrace : : <build>no ]
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
