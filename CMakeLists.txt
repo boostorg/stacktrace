@@ -115,6 +115,10 @@ if(BOOST_STACKTRACE_ENABLE_WINDBG)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
 
+elseif(BOOST_STACKTRACE_ENABLE_WINDBG_CACHED)
+
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
   target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
