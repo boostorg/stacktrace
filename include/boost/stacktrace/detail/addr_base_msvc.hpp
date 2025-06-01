@@ -13,6 +13,7 @@
 #endif
 
 #include <cstdio>
+#include <cstdint>
 #include <memory>
 
 #ifdef WIN32_LEAN_AND_MEAN
