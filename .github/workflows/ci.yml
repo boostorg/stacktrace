@@ -114,10 +114,10 @@ jobs:
             cxxstd: "14,17,latest"
             addrmd: 64
             os: windows-2022
-          - toolset: msvc-14.2
-            cxxstd: "14,17,latest"
+          - toolset: msvc
+            cxxstd: "14,17,20,latest"
             addrmd: 64
-            os: windows-2019
+            os: windows-2025
           #- toolset: gcc
           #  cxxstd: "03,11,14,17,2a"
           #  addrmd: 64
@@ -214,7 +214,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, macos-13, macos-14 ]
+        os: [ ubuntu-24.04, ubuntu-22.04, macos-latest, macos-14 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
@@ -274,7 +274,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, macos-13, macos-14 ]
+        os: [ ubuntu-24.04, ubuntu-22.04, macos-latest, macos-14 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
@@ -374,7 +374,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2019, windows-2022 ]
+        os: [ windows-2025, windows-2022 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
@@ -442,7 +442,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2019, windows-2022 ]
+        os: [ windows-2025, windows-2022 ]
         shared: [ OFF, ON ]
 
     runs-on: ${{matrix.os}}
