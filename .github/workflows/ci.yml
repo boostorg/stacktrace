@@ -10,6 +10,7 @@ on:
 
 env:
   UBSAN_OPTIONS: print_stacktrace=1
+  BOOST_SUPERPROJECT_VERSION: 1.88  # minimal Boost version for the CMake install tests
 
 jobs:
   posix:
@@ -265,10 +266,15 @@ jobs:
       - name: Use the installed library
         run: |
           cd ../boost-root/libs/$LIBRARY/test/cmake_install_test && mkdir __build__ && cd __build__
-          cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
-          cmake --build .
-          export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
-          ctest --output-on-failure --no-tests=error
+
+          set -e
+          for BACKEND in stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace; do
+              rm -rf *
+              cmake -DCMAKE_INSTALL_PREFIX=~/.local -DBOOST_STACKTRACE_IMPL_BACKEND=${BACKEND} ..
+              cmake --build .
+              export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
+              ctest --output-on-failure --no-tests=error -V
+          done
 
   posix-cmake-test:
     strategy:
@@ -425,10 +431,20 @@ jobs:
         shell: cmd
         run: |
           cd ../boost-root/libs/%LIBRARY%/test/cmake_install_test && mkdir __build__ && cd __build__
-          cmake -DCMAKE_INSTALL_PREFIX=C:/cmake-prefix ..
+          cmake -DCMAKE_INSTALL_PREFIX=C:/cmake-prefix -DBOOST_STACKTRACE_IMPL_BACKEND=stacktrace ..
           cmake --build . --config Debug
           PATH C:\cmake-prefix\bin;%PATH%
-          ctest --output-on-failure --no-tests=error -C Debug
+          ctest --output-on-failure --no-tests=error -C Debug -V
+
+          cmake -DCMAKE_INSTALL_PREFIX=C:/cmake-prefix -DBOOST_STACKTRACE_IMPL_BACKEND=stacktrace_windbg ..
+          cmake --build . --config Debug
+          PATH C:\cmake-prefix\bin;%PATH%
+          ctest --output-on-failure --no-tests=error -C Debug -V
+
+          cmake -DCMAKE_INSTALL_PREFIX=C:/cmake-prefix -DBOOST_STACKTRACE_IMPL_BACKEND=stacktrace_windbg_cached  ..
+          cmake --build . --config Debug
+          PATH C:\cmake-prefix\bin;%PATH%
+          ctest --output-on-failure --no-tests=error -C Debug -V
 
       - name: Use the installed library (RelWithDebInfo)
         shell: cmd
