@@ -83,7 +83,7 @@ BOOST_SYMBOL_VISIBLE inline ::backtrace_state* construct_state(const program_loc
     //
     // Unfortunately, that solution segfaults when `construct_state()` function is in .so file
     // and multiple threads concurrently work with state. I failed to localize the root cause:
-    // https://gcc.gnu.org/bugzilla//show_bug.cgi?id=87653
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87653
 
 #define BOOST_STACKTRACE_DETAIL_IS_MT 1
 
