@@ -334,6 +334,17 @@ target_link_libraries(${PROJECT}  # your project
 )
 ```
 
+If Boost is installed into the system the best way to get it for your project
+is via `find_package`:
+
+```
+find_package(
+    Boost 1.88  # Boost minimal version
+    REQUIRED stacktrace stacktrace_from_exception
+    CONFIG
+)
+```
+
 [endsect]
 
 [section CMake build notes]
