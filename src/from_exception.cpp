@@ -164,6 +164,12 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #include <mutex>
 #include <unordered_map>
 
+// If we use libstdc++, we know the current implementation works and doesn't leak.
+// It's not the case of libc++ where we know there might be leaks and thus we try
+// to ensure the user is aware about it and only build this when
+// BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK is defined.
+#ifndef __GLIBCXX__
+
 #ifndef BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK
 
 #ifdef BOOST_HAS_THREADS
@@ -178,6 +184,8 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
         \
         Otherwise, disable the boost_stacktrace_from_exception library build \
         (for example by `./b2 boost.stacktrace.from_exception=off` option).
+
+#endif
 
 #endif
 

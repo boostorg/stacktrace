@@ -64,6 +64,9 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
+mp-run-simple uses_libstdc++.cpp : : : : UsesLibStdCpp ;
+explicit UsesLibStdCpp ;
+
 rule build-stacktrace-noop ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.noop> : $(props) ] ;
@@ -252,8 +255,11 @@ rule build-stacktrace-from-exception ( props * )
     local arch = [ property.select <architecture> : $(props) ] ;
     if $(arch) && ( $(arch:G=) != x86 )
     {
-        configure.log-library-search-result "boost.stacktrace.from_exception" : "no" ;
-        return <build>no ;
+        if ! [ configure.builds UsesLibStdCpp : $(props) : "boost.stacktrace.from_exception" ]
+        {
+            configure.log-library-search-result "boost.stacktrace.from_exception" : "no" ;
+            return <build>no ;
+        }
     }
     configure.log-library-search-result "boost.stacktrace.from_exception" : "yes" ;
 }
