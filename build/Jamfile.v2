@@ -250,7 +250,7 @@ rule build-stacktrace-from-exception ( props * )
     }
 
     local arch = [ property.select <architecture> : $(props) ] ;
-    if $(arch) && ( $(arch:G=) != x86 )
+    if ( $(arch) && ( $(arch:G=) != x86 ) ) || ( <target-os>cygwin in $(props) )
     {
         configure.log-library-search-result "boost.stacktrace.from_exception" : "no" ;
         return <build>no ;
