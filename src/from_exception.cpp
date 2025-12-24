@@ -163,6 +163,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
 #include <cstdlib>
+#include <cstring>
 #include <mutex>
 #include <unordered_map>
 
@@ -302,7 +303,7 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
             "\n"
             "=======================================================================================\n"
         ;
-        write(STDERR_FILENO, warning, strlen(warning));
+        write(STDERR_FILENO, warning, std::strlen(warning));
         std::abort();
   }
 #endif
