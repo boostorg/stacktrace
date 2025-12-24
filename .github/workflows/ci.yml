@@ -270,7 +270,12 @@ jobs:
           export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
 
           set -e
-          for BACKEND in stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace; do
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+              BACKENDS_ARRAY=(stacktrace stacktrace_noop stacktrace_basic)
+          else
+              BACKENDS_ARRAY=(stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace)
+          fi
+          for BACKEND in ${BACKENDS_ARRAY[@]}; do
               rm -rf *
               cmake -DCMAKE_INSTALL_PREFIX=~/.local -DBOOST_STACKTRACE_IMPL_BACKEND=${BACKEND} ..
               cmake --build .
