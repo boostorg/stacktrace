@@ -9,4 +9,9 @@
 int main()
 {
     std::cout << boost::stacktrace::stacktrace() << std::endl;
+    try {
+        throw 42;
+    } catch (...) {
+        std::cout << "From current excption:\n" << boost::stacktrace::stacktrace::from_current_exception() << std::endl;
+    }
 }
