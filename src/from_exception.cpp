@@ -160,29 +160,14 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #include <exception>
 #include <dlfcn.h>
 
+
 #if !BOOST_STACKTRACE_ALWAYS_STORE_IN_PADDING
+#include <cstdlib>
+#include <cstring>
 #include <mutex>
 #include <unordered_map>
 
-#ifndef BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK
-
-#ifdef BOOST_HAS_THREADS
-
-#error On this platform memory leaks are possible if capturing stacktrace from \
-        exceptions is enabled and exceptions are thrown concurrently \
-        and libc++ runtime is used. \
-        \
-        Define `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK` to \
-        suppress this error if the library would not be used with libc++ \
-        runtime (for example, it would be only used with GCC runtime). \
-        \
-        Otherwise, disable the boost_stacktrace_from_exception library build \
-        (for example by `./b2 boost.stacktrace.from_exception=off` option).
-
-#endif
-
-#endif
-
+#include <unistd.h>
 #endif
 
 namespace {
@@ -297,6 +282,32 @@ void* __cxa_allocate_exception(size_t thrown_size) throw() {
 extern "C" BOOST_SYMBOL_EXPORT
 void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
   BOOST_ASSERT(is_libcpp_runtime());
+
+#if !defined(BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK) && defined(BOOST_HAS_THREADS)
+  static const char* leaks_are_fine = std::getenv("BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK");
+  if (!leaks_are_fine || leaks_are_fine[0] != '1') {
+        const char* const warning =
+            "\n\n"
+            "=======================================================================================\n"
+            "\n"
+            "On this platform, memory leaks may occur if capturing stacktrace from exceptions is\n"
+            "enabled and exceptions are thrown concurrently by libc++ runtime (libc++abi).\n"
+            "\n"
+            "A proper workaround is to use libstdc++ runtime (libgcc_s) instead.\n"
+            "\n"
+            "Alternatively, if you are willing to accept potential MEMORY LEAKS, set the environment\n"
+            "variable `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK=1` to proceed. You can\n"
+            "also define the `BOOST_STACKTRACE_LIBCXX_RUNTIME_MAY_CAUSE_MEMORY_LEAK` macro when\n"
+            "building the `boost_stacktrace_from_exception` library to disable this warning and to\n"
+            "get the MEMORY LEAKS silently on libc++ runtime.\n"
+            "\n"
+            "=======================================================================================\n"
+        ;
+        write(STDERR_FILENO, warning, std::strlen(warning));
+        std::abort();
+  }
+#endif
+
   if (!thrown_object) {
     return;
   }

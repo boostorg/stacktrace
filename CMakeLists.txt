@@ -72,7 +72,7 @@ stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG has_windbg.cpp "" "dbgeng;ole32" ""
 stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG_CACHED has_windbg_cached.cpp "${CMAKE_CURRENT_SOURCE_DIR}/../config/include" "dbgeng;ole32" "")
 
 set(_default_from_exception ON)
-if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|amd64|i386|i686|x86" OR CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
+if (CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
   set(_default_from_exception OFF)
 endif()
 
