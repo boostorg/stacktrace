@@ -10,7 +10,7 @@ on:
 
 env:
   UBSAN_OPTIONS: print_stacktrace=1
-  BOOST_SUPERPROJECT_VERSION: (wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p')
+  BOOST_SUPERPROJECT_VERSION: "`wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'`"
 
 jobs:
   posix:
