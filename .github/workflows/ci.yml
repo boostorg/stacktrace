@@ -270,9 +270,9 @@ jobs:
 
           set -e
           for BACKEND in stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace; do
-              rm -rf *
+              rm -rf * ~/.local
               cmake -DCMAKE_INSTALL_PREFIX=~/.local -DBOOST_STACKTRACE_IMPL_BACKEND=${BACKEND} ..
-              cmake --build .
+              cmake --build . --target install
               export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
               ctest --output-on-failure --no-tests=error -V
           done
