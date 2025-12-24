@@ -267,14 +267,16 @@ jobs:
         run: |
           cd ../boost-root/libs/$LIBRARY/test/cmake_install_test && mkdir __build__ && cd __build__
 
+          export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
+          wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'
+          export BOOST_SUPERPROJECT_VERSION=`wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'`
+          echo "Version is ${BOOST_SUPERPROJECT_VERSION}"
+
           set -e
           for BACKEND in stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace; do
-              rm -rf * ~/.local
+              rm -rf *
               cmake -DCMAKE_INSTALL_PREFIX=~/.local -DBOOST_STACKTRACE_IMPL_BACKEND=${BACKEND} ..
               cmake --build .
-              export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
-              export BOOST_SUPERPROJECT_VERSION=`wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'`
-              echo "Version is $BOOST_SUPERPROJECT_VERSION"
               ctest --output-on-failure --no-tests=error -V
           done
 
