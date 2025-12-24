@@ -8,7 +8,7 @@ project(cmake_install_test LANGUAGES CXX)
 
 find_package(
     Boost "$ENV{BOOST_SUPERPROJECT_VERSION}"
-    REQUIRED ${BOOST_STACKTRACE_IMPL_BACKEND} stacktrace_from_exception
+    REQUIRED stacktrace ${BOOST_STACKTRACE_IMPL_BACKEND} stacktrace_from_exception
     CONFIG
 )
 add_executable(main main.cpp)
