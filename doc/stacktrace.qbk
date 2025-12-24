@@ -339,7 +339,7 @@ is via `find_package`:
 
 ```
 find_package(
-    Boost 1.88  # Boost minimal version
+    Boost
     REQUIRED stacktrace stacktrace_from_exception
     CONFIG
 )

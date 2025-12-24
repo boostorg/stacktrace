@@ -268,8 +268,6 @@ jobs:
           cd ../boost-root/libs/$LIBRARY/test/cmake_install_test && mkdir __build__ && cd __build__
 
           export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
-          export BOOST_SUPERPROJECT_VERSION=`wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'`
-          echo "Version is ${BOOST_SUPERPROJECT_VERSION}"
 
           set -e
           for BACKEND in stacktrace stacktrace_noop stacktrace_basic stacktrace_backtrace; do
@@ -433,8 +431,6 @@ jobs:
       - name: Use the installed library (Debug)
         shell: cmd
         run: |
-          set BOOST_SUPERPROJECT_VERSION=`wget -q -O - https://raw.githubusercontent.com/boostorg/boost/refs/heads/master/CMakeLists.txt | sed -n 's/project.*Boost .*VERSION .*\.\(.*\)\..*/1.\1/p'`
-          echo %BOOST_SUPERPROJECT_VERSION%
           cd ../boost-root/libs/%LIBRARY%/test/cmake_install_test && mkdir __build__ && cd __build__
           cmake -DCMAKE_INSTALL_PREFIX=C:/cmake-prefix -DBOOST_STACKTRACE_IMPL_BACKEND=stacktrace ..
           cmake --build . --config Debug
