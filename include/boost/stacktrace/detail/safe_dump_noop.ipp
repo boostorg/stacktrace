@@ -7,7 +7,10 @@
 #ifndef BOOST_STACKTRACE_DETAIL_SAFE_DUMP_NOOP_IPP
 #define BOOST_STACKTRACE_DETAIL_SAFE_DUMP_NOOP_IPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -33,5 +36,7 @@ std::size_t dump(const char* /*file*/, const native_frame_ptr_t* /*frames*/, std
 }
 
 }}} // namespace boost::stacktrace::detail
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_SAFE_DUMP_NOOP_IPP

@@ -7,13 +7,15 @@
 #ifndef BOOST_STACKTRACE_DETAIL_TO_DEC_ARRAY_HPP
 #define BOOST_STACKTRACE_DETAIL_TO_DEC_ARRAY_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <array>
-#include <cstddef>  // std::size_t
+// #include <array>
+// #include <cstddef>  // std::size_t
 
 namespace boost { namespace stacktrace { namespace detail {
 
@@ -43,5 +45,7 @@ inline std::array<char, 40> to_dec_array(std::size_t value) noexcept {
 
 
 }}} // namespace boost::stacktrace::detail
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_TO_DEC_ARRAY_HPP

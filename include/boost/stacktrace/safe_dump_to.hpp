@@ -7,12 +7,15 @@
 #ifndef BOOST_STACKTRACE_SAFE_DUMP_TO_HPP
 #define BOOST_STACKTRACE_SAFE_DUMP_TO_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <cstddef>
+// #include <cstddef>
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>
@@ -81,6 +84,8 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
 
 } // namespace detail
 /// @endcond
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 /// @brief Stores current function call sequence into the memory.
 ///
@@ -199,13 +204,15 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 
 }} // namespace boost::stacktrace
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 #ifdef BOOST_INTEL
 #   pragma warning(pop)
 #endif
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-#if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS)
+#if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #   if defined(BOOST_STACKTRACE_USE_NOOP)
 #       include <boost/stacktrace/detail/safe_dump_noop.ipp>
 #       include <boost/stacktrace/detail/collect_noop.ipp>
@@ -222,5 +229,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 #       endif
 #   endif
 #endif
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_SAFE_DUMP_TO_HPP

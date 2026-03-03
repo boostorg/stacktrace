@@ -4,9 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace.hpp>
-
 #include <boost/core/lightweight_test.hpp>
+
+#include <boost/stacktrace.hpp>
 
 using boost::stacktrace::stacktrace;
 

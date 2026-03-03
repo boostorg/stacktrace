@@ -7,7 +7,9 @@
 #ifndef BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP
 #define BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -22,7 +24,7 @@
 
 #include <cstdio>
 
-#ifdef BOOST_STACKTRACE_USE_BACKTRACE
+#if  defined(BOOST_STACKTRACE_USE_BACKTRACE) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>
 #elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
 #   include <boost/stacktrace/detail/addr2line_impls.hpp>
@@ -116,5 +118,7 @@ std::string to_string(const frame& f) {
 
 
 }} // namespace boost::stacktrace
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP

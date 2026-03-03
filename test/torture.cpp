@@ -11,8 +11,8 @@
 // test and `top` does.
 
 
-#include <boost/stacktrace.hpp>
 #include <iostream>
+#include <boost/stacktrace.hpp>
 
 #include "test_impl.hpp"
 

@@ -1,0 +1,23 @@
+#ifndef BOOST_STACKTRACE_DETAIL_CONFIG_HPP
+#define BOOST_STACKTRACE_DETAIL_CONFIG_HPP
+
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+# include <boost/config.hpp>
+# ifdef BOOST_HAS_PRAGMA_ONCE
+#  pragma once
+# endif
+#endif
+
+#ifdef BOOST_STACKTRACE_INTERFACE_UNIT
+# define BOOST_STACKTRACE_BEGIN_MODULE_EXPORT export {
+# define BOOST_STACKTRACE_END_MODULE_EXPORT }
+#else
+# define BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
+# define BOOST_STACKTRACE_END_MODULE_EXPORT
+#endif
+
+#if defined(BOOST_USE_MODULES) && !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+import boost.stacktrace;
+#endif
+
+#endif

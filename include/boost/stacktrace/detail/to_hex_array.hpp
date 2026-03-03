@@ -7,13 +7,15 @@
 #ifndef BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
 #define BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <array>
-#include <type_traits>
+// #include <array>
+// #include <type_traits>
 
 namespace boost { namespace stacktrace { namespace detail {
 
@@ -48,5 +50,7 @@ inline std::array<char, 2 + sizeof(void*) * 2 + 1> to_hex_array(const void* addr
 }
 
 }}} // namespace boost::stacktrace::detail
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP

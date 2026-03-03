@@ -7,7 +7,10 @@
 #ifndef BOOST_STACKTRACE_STACKTRACE_HPP
 #define BOOST_STACKTRACE_STACKTRACE_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -15,9 +18,9 @@
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
-#include <iosfwd>
-#include <string>
-#include <vector>
+// #include <iosfwd>
+// #include <string>
+// #include <vector>
 
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #   include <type_traits>
@@ -67,6 +70,8 @@ bool& ref_capture_stacktraces_at_throw() noexcept;
 #endif
 
 } // namespace impl
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
 /// @tparam Allocator Allocator to use during stack capture.
@@ -482,10 +487,14 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 /// This is the typedef to use unless you'd like to provide a specific allocator to boost::stacktrace::basic_stacktrace.
 typedef basic_stacktrace<> stacktrace;
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 }} // namespace boost::stacktrace
 
 #ifdef BOOST_INTEL
 #   pragma warning(pop)
 #endif
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_STACKTRACE_HPP

@@ -7,12 +7,18 @@
 #ifndef BOOST_STACKTRACE_STACKTRACE_FWD_HPP
 #define BOOST_STACKTRACE_STACKTRACE_FWD_HPP
 
-#include <cstddef>
-#include <memory>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
+// #include <cstddef>
+// #include <memory>
 
 /// @file stacktrace_fwd.hpp This header contains only forward declarations of
 /// boost::stacktrace::frame, boost::stacktrace::basic_stacktrace, boost::stacktrace::stacktrace
 /// and does not include any other Boost headers.
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 /// @cond
 namespace boost { namespace stacktrace {
@@ -24,5 +30,8 @@ typedef basic_stacktrace<> stacktrace;
 }} // namespace boost::stacktrace
 /// @endcond
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_STACKTRACE_FWD_HPP

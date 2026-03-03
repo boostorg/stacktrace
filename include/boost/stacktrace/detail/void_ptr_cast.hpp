@@ -8,12 +8,14 @@
 #ifndef BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 #define BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <type_traits>
+// #include <type_traits>
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ * 100 + __GNUC_MINOR__ > 301)
 #   pragma GCC system_header
@@ -40,6 +42,8 @@ To void_ptr_cast(From* v) noexcept {
 
 
 }}} // boost::stacktrace::detail
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 

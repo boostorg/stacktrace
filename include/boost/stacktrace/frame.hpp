@@ -7,13 +7,16 @@
 #ifndef BOOST_STACKTRACE_FRAME_HPP
 #define BOOST_STACKTRACE_FRAME_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <iosfwd>
-#include <string>
+// #include <iosfwd>
+// #include <string>
 
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 
@@ -33,6 +36,8 @@ void* boost_stacktrace_impl_return_nullptr() { return nullptr; }
 
 }
 #endif
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 namespace boost { namespace stacktrace {
 
@@ -60,11 +65,13 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 }} // namespace boost::stacktrace
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 /// @cond
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-#ifndef BOOST_STACKTRACE_LINK
+#if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #   if defined(BOOST_STACKTRACE_USE_NOOP)
 #       include <boost/stacktrace/detail/frame_noop.ipp>
 #   elif defined(BOOST_MSVC) || defined(BOOST_STACKTRACE_USE_WINDBG) || defined(BOOST_STACKTRACE_USE_WINDBG_CACHED)
@@ -75,5 +82,6 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 #endif
 /// @endcond
 
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_FRAME_HPP

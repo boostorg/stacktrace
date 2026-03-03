@@ -7,7 +7,9 @@
 #ifndef BOOST_STACKTRACE_DETAIL_LIBBACKTRACE_IMPLS_HPP
 #define BOOST_STACKTRACE_DETAIL_LIBBACKTRACE_IMPLS_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -244,5 +246,7 @@ std::size_t frame::source_line() const {
 
 
 }} // namespace boost::stacktrace
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_LIBBACKTRACE_IMPLS_HPP

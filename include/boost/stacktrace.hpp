@@ -7,14 +7,19 @@
 #ifndef BOOST_STACKTRACE_HPP
 #define BOOST_STACKTRACE_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
-#   pragma once
+# pragma once
 #endif
 
 #include <boost/stacktrace/frame.hpp>
 #include <boost/stacktrace/stacktrace.hpp>
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/this_thread.hpp>
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_HPP

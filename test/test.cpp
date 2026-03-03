@@ -16,6 +16,7 @@
 #include <boost/core/lightweight_test.hpp>
 
 #include <boost/functional/hash.hpp>
+#include <boost/stacktrace/detail/frame_unwind.ipp>
 
 #include "test_impl.hpp"
 

@@ -12,7 +12,9 @@ function(stacktrace_add_library suffix opt libs defs)
     return()
   endif()
 
-  add_library(boost_stacktrace_${suffix}
+  add_library(boost_stacktrace_${suffix})
+  target_sources(boost_stacktrace_${suffix}
+    PRIVATE
     src/${suffix}.cpp
   )
 
@@ -97,43 +99,83 @@ message(STATUS "Boost.Stacktrace: "
   "from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION}"
 )
 
-stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
-stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
-stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
+# stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
+# stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "")
+# stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "")
+# stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "")
+# stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
+# stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
 
 # boost_stacktrace, default library
 
-add_library(boost_stacktrace INTERFACE)
-add_library(Boost::stacktrace ALIAS boost_stacktrace)
+if(BOOST_USE_MODULES)
+  add_library(boost_stacktrace)
+  target_sources(boost_stacktrace
+    PUBLIC
+      FILE_SET modules_public
+      TYPE CXX_MODULES
+      BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
+      FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace.cppm
+    PRIVATE
+      ${CMAKE_CURRENT_LIST_DIR}/src/backtrace.cpp
+  )
+  target_link_libraries(boost_stacktrace PRIVATE backtrace ${CMAKE_DL_LIBS})
+  
+  target_compile_features(boost_stacktrace PUBLIC cxx_std_20)
+  target_compile_definitions(boost_stacktrace PUBLIC BOOST_USE_MODULES)
+  target_compile_definitions(boost_stacktrace PUBLIC BOOST_STACKTRACE_STATIC_LINK BOOST_STACKTRACE_NO_LIB)
+  target_link_libraries(boost_stacktrace
+    PUBLIC
+      Boost::config
+      Boost::container_hash
+      Boost::core
+      Boost::predef
+      Boost::winapi
+  )
 
-target_include_directories(boost_stacktrace INTERFACE include)
+  message(STATUS "Using modules!")
+
+  set(__scope PUBLIC)
+else()
+  add_library(boost_stacktrace INTERFACE)
+  set(__scope INTERFACE)
+
+  message(STATUS "Not using modules :(: ${__scope}!")
+endif()
+
+target_include_directories(boost_stacktrace ${__scope} include)
+
+add_library(Boost::stacktrace ALIAS boost_stacktrace)
 
 if(BOOST_STACKTRACE_ENABLE_WINDBG)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+  message(STATUS "Stacktrace backend: WINDBG")
+  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_windbg)
 
 elseif(BOOST_STACKTRACE_ENABLE_WINDBG_CACHED)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+  message(STATUS "Stacktrace backend: WINDBG_CACHED")
+  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_windbg)
 
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_backtrace)
+  message(STATUS "Stacktrace backend: BACKTRACE")
+  # target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_backtrace)
 
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_addr2line)
+  message(STATUS "Stacktrace backend: ADDR2LINE")
+  # target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_addr2line)
 
 elseif(BOOST_STACKTRACE_ENABLE_BASIC)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_basic)
+  message(STATUS "Stacktrace backend: BASIC")
+  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_basic)
 
 elseif(BOOST_STACKTRACE_ENABLE_NOOP)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_noop)
+  message(STATUS "Stacktrace backend: NOOP")
+  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_noop)
 
 endif()
 

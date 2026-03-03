@@ -7,13 +7,16 @@
 #ifndef BOOST_STACKTRACE_DETAIL_FRAME_DECL_HPP
 #define BOOST_STACKTRACE_DETAIL_FRAME_DECL_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
-#include <iosfwd>
-#include <string>
+// #include <iosfwd>
+// #include <string>
 
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
@@ -22,6 +25,8 @@
 
 /// @file boost/stacktrace/detail/frame_decl.hpp
 /// Use <boost/stacktrace/frame.hpp> header instead of this one!
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 namespace boost { namespace stacktrace {
 
@@ -147,7 +152,10 @@ namespace detail {
 
 }} // namespace boost::stacktrace
 
-
 #include <boost/stacktrace/detail/pop_options.h>
+
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_FRAME_DECL_HPP
