@@ -14,8 +14,8 @@
 #   pragma once
 #endif
 
-// #include <array>
-// #include <cstddef>  // std::size_t
+#include <array>
+#include <cstddef>  // std::size_t
 
 namespace boost { namespace stacktrace { namespace detail {
 

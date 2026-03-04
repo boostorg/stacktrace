@@ -2,7 +2,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...3.20)
+cmake_minimum_required(VERSION 3.5...4.20)
 
 project(cmake_subdir_test LANGUAGES CXX)
 
@@ -43,13 +43,15 @@ add_subdirectory(../.. boostorg/stacktrace)
 
 add_executable(main main.cpp)
 target_link_libraries(main Boost::stacktrace)
-set_property(TARGET main PROPERTY CXX_SCAN_FOR_MODULES ON)
 
 add_test(main main)
 
+    add_executable(boost_stacktrace_from_exception_module_usage ../../modules/usage_sample_from_exception.cpp)
+    target_link_libraries(boost_stacktrace_from_exception_module_usage PRIVATE Boost::stacktrace_from_exception)
+    add_test(NAME boost_stacktrace_from_exception_module_usage COMMAND boost_stacktrace_from_exception_module_usage)
+
 if (BOOST_USE_MODULES)
     add_executable(boost_stacktrace_module_usage ../../modules/usage_sample.cpp)
-    set_property(TARGET boost_stacktrace_module_usage PROPERTY CXX_SCAN_FOR_MODULES ON)
     target_link_libraries(boost_stacktrace_module_usage PRIVATE Boost::stacktrace)
     add_test(NAME boost_stacktrace_module_usage COMMAND boost_stacktrace_module_usage)
 endif()

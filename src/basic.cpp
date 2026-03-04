@@ -4,6 +4,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+module;
+#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
 #define BOOST_STACKTRACE_LINK
 
@@ -13,3 +17,7 @@
 
 #include <boost/stacktrace/detail/frame_unwind.ipp>
 #include <boost/stacktrace/safe_dump_to.hpp>
+
+#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+module boost.stacktrace.basic;
+#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)

@@ -20,5 +20,5 @@ module;
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 #if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-module boost.stacktrace;
+module boost.stacktrace.addr2line;
 #endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)

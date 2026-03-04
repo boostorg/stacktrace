@@ -17,7 +17,11 @@
 #endif
 
 #if defined(BOOST_USE_MODULES) && !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-import boost.stacktrace;
+#ifdef BACKTRACE_DEFAULT_IMPL_MODULE
+import boost.BACKTRACE_DEFAULT_IMPL_MODULE;
+#else
+import boost.BACKTRACE_IMPL_MODULE;
+#endif
 #endif
 
 #endif

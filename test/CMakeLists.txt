@@ -24,11 +24,11 @@ target_link_libraries(stacktrace_test_trivial Boost::stacktrace Boost::core)
 add_test(NAME stacktrace_test_trivial COMMAND stacktrace_test_trivial)
 add_dependencies(tests stacktrace_test_trivial)
 
-# add_executable(stacktrace_test_noop
-#   test_noop.cpp test_impl.cpp)
-# target_link_libraries(stacktrace_test_noop Boost::stacktrace_noop Boost::core)
-# add_test(NAME stacktrace_test_noop COMMAND stacktrace_test_noop)
-# add_dependencies(tests stacktrace_test_noop)
+add_executable(stacktrace_test_noop
+  test_noop.cpp test_impl.cpp)
+target_link_libraries(stacktrace_test_noop Boost::stacktrace_noop Boost::core)
+add_test(NAME stacktrace_test_noop COMMAND stacktrace_test_noop)
+add_dependencies(tests stacktrace_test_noop)
 
 add_executable(stacktrace_test
   test.cpp test_impl.cpp)
@@ -36,17 +36,17 @@ target_link_libraries(stacktrace_test PRIVATE Boost::stacktrace Boost::core)
 add_test(NAME stacktrace_test COMMAND stacktrace_test)
 add_dependencies(tests stacktrace_test)
 
-# add_executable(stacktrace_test_from_exception
-#   test_from_exception.cpp)
-# target_link_libraries(stacktrace_test_from_exception Boost::stacktrace_from_exception Boost::core)
-# add_test(NAME stacktrace_test_from_exception COMMAND stacktrace_test_from_exception)
-# add_dependencies(tests stacktrace_test_from_exception)
+add_executable(stacktrace_test_from_exception
+  test_from_exception.cpp)
+target_link_libraries(stacktrace_test_from_exception Boost::stacktrace_from_exception Boost::core)
+add_test(NAME stacktrace_test_from_exception COMMAND stacktrace_test_from_exception)
+add_dependencies(tests stacktrace_test_from_exception)
 
-# add_executable(stacktrace_test_from_exception_none
-#   test_from_exception_none.cpp)
-# target_link_libraries(stacktrace_test_from_exception_none Boost::stacktrace Boost::core)
-# add_test(NAME stacktrace_test_from_exception_none COMMAND stacktrace_test_from_exception_none)
-# add_dependencies(tests stacktrace_test_from_exception_none)
+add_executable(stacktrace_test_from_exception_none
+  test_from_exception_none.cpp)
+target_link_libraries(stacktrace_test_from_exception_none Boost::stacktrace Boost::core)
+add_test(NAME stacktrace_test_from_exception_none COMMAND stacktrace_test_from_exception_none)
+add_dependencies(tests stacktrace_test_from_exception_none)
 
 add_executable(stacktrace_test_thread_safety_checking
   thread_safety_checking.cpp test_impl.cpp)

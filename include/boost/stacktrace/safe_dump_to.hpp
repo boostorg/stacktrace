@@ -15,7 +15,7 @@
 #   pragma once
 #endif
 
-// #include <cstddef>
+#include <cstddef>
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>

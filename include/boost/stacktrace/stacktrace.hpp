@@ -18,9 +18,9 @@
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
-// #include <iosfwd>
-// #include <string>
-// #include <vector>
+#include <iosfwd>
+#include <string>
+#include <vector>
 
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #   include <type_traits>

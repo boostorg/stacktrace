@@ -13,10 +13,10 @@
 #   pragma once
 #endif
 
-// #include <fstream>
-// #include <sstream>
-// #include <cstdint>
-// #include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include <cstdint>
+#include <cstdlib>
 
 namespace boost { namespace stacktrace { namespace detail {
 

@@ -4,6 +4,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+module;
+#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
 #include <boost/stacktrace/safe_dump_to.hpp>
@@ -376,3 +380,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 }}}  // namespace boost::stacktrace::impl
 
 #endif
+
+#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+module boost.BACKTRACE_IMPL_MODULE;
+#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)
