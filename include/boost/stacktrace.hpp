@@ -12,7 +12,7 @@
 #if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
-# pragma once
+#   pragma once
 #endif
 
 #include <boost/stacktrace/frame.hpp>
