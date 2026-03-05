@@ -46,12 +46,24 @@ target_link_libraries(main Boost::stacktrace)
 
 add_test(main main)
 
-    add_executable(boost_stacktrace_from_exception_module_usage ../../modules/usage_sample_from_exception.cpp)
-    target_link_libraries(boost_stacktrace_from_exception_module_usage PRIVATE Boost::stacktrace_from_exception)
-    add_test(NAME boost_stacktrace_from_exception_module_usage COMMAND boost_stacktrace_from_exception_module_usage)
-
 if (BOOST_USE_MODULES)
-    add_executable(boost_stacktrace_module_usage ../../modules/usage_sample.cpp)
+    add_executable(boost_stacktrace_module_usage ../../modules/samples/usage_sample.cpp)
     target_link_libraries(boost_stacktrace_module_usage PRIVATE Boost::stacktrace)
     add_test(NAME boost_stacktrace_module_usage COMMAND boost_stacktrace_module_usage)
+
+    add_executable(boost_stacktrace_from_exception_module_usage ../../modules/samples/usage_sample_from_exception.cpp)
+    target_link_libraries(boost_stacktrace_from_exception_module_usage PRIVATE Boost::stacktrace Boost::stacktrace_from_exception)
+    add_test(NAME boost_stacktrace_from_exception_module_usage COMMAND boost_stacktrace_from_exception_module_usage)
+
+    foreach(backend noop basic addr2line backtrace)
+      add_executable(boost_stacktrace_module_usage_${backend} ../../modules/samples/usage_sample.cpp)
+      target_link_libraries(boost_stacktrace_module_usage_${backend} PRIVATE Boost::stacktrace_${backend})
+      target_compile_definitions(boost_stacktrace_module_usage_${backend} PRIVATE STACKTRACE_MODULE=boost.stacktrace.${backend})
+      add_test(NAME boost_stacktrace_module_usage_${backend} COMMAND boost_stacktrace_module_usage_${backend})
+
+      add_executable(boost_stacktrace_from_exception_module_usage_${backend} ../../modules/samples/usage_sample_from_exception.cpp)
+      target_link_libraries(boost_stacktrace_from_exception_module_usage_${backend} PRIVATE Boost::stacktrace_${backend} Boost::stacktrace_from_exception)
+      target_compile_definitions(boost_stacktrace_from_exception_module_usage_${backend} PRIVATE STACKTRACE_MODULE=boost.stacktrace.${backend})
+      add_test(NAME boost_stacktrace_from_exception_module_usage_${backend} COMMAND boost_stacktrace_from_exception_module_usage_${backend})
+    endforeach()
 endif()

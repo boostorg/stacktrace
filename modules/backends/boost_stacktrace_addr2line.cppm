@@ -2,7 +2,10 @@ module;
 
 #include <boost/config.hpp>
 #include <boost/core/no_exceptions_support.hpp>
+#include <boost/core/demangle.hpp>
+#include <boost/core/noncopyable.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
+#include <boost/predef.h>
 
 #include <array>
 #include <iosfwd>
@@ -14,19 +17,17 @@ module;
 #include <sstream>
 #include <string>
 #include <type_traits>
-#include <exception>
-#include <cstdlib>
-#include <version>
-#include <utility>
 #include <cxxabi.h>
-#include <unistd.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 
-export module boost.BACKTRACE_IMPL_MODULE;
+export module boost.stacktrace.addr2line;
+
+import boost.stacktrace.dump;
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
 #endif
 
-#include <boost/stacktrace.hpp>
+#include <boost/stacktrace/stacktrace.hpp>
+#include <boost/stacktrace/this_thread.hpp>

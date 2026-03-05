@@ -4,13 +4,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-module;
-#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
-#include <boost/stacktrace/safe_dump_to.hpp>
 #include <windows.h>
 
 extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
@@ -158,7 +153,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #endif
 
 #include <boost/assert.hpp>
-#include <boost/stacktrace/safe_dump_to.hpp>
+#include <boost/config.hpp>
 
 #include <cstddef>
 #include <exception>
@@ -173,6 +168,10 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 #include <unistd.h>
 #endif
+
+// module boost.stacktrace.from_exception;
+
+import boost.stacktrace.dump;
 
 namespace {
 
@@ -339,7 +338,7 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
 
 }  // namespace __cxxabiv1
 
-namespace boost { namespace stacktrace { namespace impl {
+extern "C++" namespace boost { namespace stacktrace { namespace impl {
 
 BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
   if (!ref_capture_stacktraces_at_throw()) {
@@ -380,7 +379,3 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 }}}  // namespace boost::stacktrace::impl
 
 #endif
-
-#if defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-module boost.BACKTRACE_IMPL_MODULE;
-#endif // defined(BOOST_STACKTRACE_INTERFACE_UNIT)

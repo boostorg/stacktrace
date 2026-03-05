@@ -38,7 +38,7 @@ add_dependencies(tests stacktrace_test)
 
 add_executable(stacktrace_test_from_exception
   test_from_exception.cpp)
-target_link_libraries(stacktrace_test_from_exception Boost::stacktrace_from_exception Boost::core)
+target_link_libraries(stacktrace_test_from_exception Boost::stacktrace Boost::stacktrace_from_exception Boost::core)
 add_test(NAME stacktrace_test_from_exception COMMAND stacktrace_test_from_exception)
 add_dependencies(tests stacktrace_test_from_exception)
 

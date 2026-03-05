@@ -17,7 +17,6 @@
 
 #include <string>
 
-#include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
 #include <boost/stacktrace/detail/push_options.h>

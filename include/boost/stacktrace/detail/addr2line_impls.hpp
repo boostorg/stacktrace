@@ -8,6 +8,7 @@
 #define BOOST_STACKTRACE_DETAIL_ADDR2LINE_IMPLS_HPP
 
 #include <boost/config.hpp>
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif

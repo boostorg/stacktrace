@@ -1,15 +1,17 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <boost/config.hpp>
+
 #include <boost/stacktrace.hpp>
 
 namespace {
 
-__attribute__ ((__noinline__)) __attribute__((__visibility__("default"))) void foo() {
+BOOST_NOINLINE void foo() {
     throw std::logic_error{"Foo"};
 }
 
-__attribute__ ((__noinline__)) __attribute__((__visibility__("default"))) void bar() {
+BOOST_NOINLINE void bar() {
     foo();
 }
 

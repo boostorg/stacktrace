@@ -4,12 +4,12 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace.hpp>
-
 #include <iostream>
 #include <thread>
 
 #include <boost/core/lightweight_test.hpp>
+
+#include <boost/stacktrace.hpp>
 
 namespace boost { namespace stacktrace { namespace impl {
   void assert_no_pending_traces() noexcept;

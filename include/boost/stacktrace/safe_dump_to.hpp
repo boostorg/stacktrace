@@ -38,7 +38,9 @@ namespace boost { namespace stacktrace {
 /// @cond
 namespace detail {
 
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
     using native_frame_ptr_t = const void*;
+BOOST_STACKTRACE_END_MODULE_EXPORT
     enum helper{ max_frames_dump = 128 };
 
     BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, native_frame_ptr_t* out_frames);
@@ -50,6 +52,8 @@ namespace detail {
     BOOST_STACKTRACE_FUNCTION std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_count) noexcept;
 #endif
 
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 struct this_thread_frames { // struct is required to avoid warning about usage of inline+BOOST_NOINLINE
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) noexcept;
@@ -81,6 +85,8 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
         return boost::stacktrace::detail::dump(file, buffer, frames_count + 1);
     }
 };
+
+BOOST_STACKTRACE_END_MODULE_EXPORT
 
 } // namespace detail
 /// @endcond
@@ -212,23 +218,23 @@ BOOST_STACKTRACE_END_MODULE_EXPORT
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-#if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERNAL_BUILD_LIBS) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-#   if defined(BOOST_STACKTRACE_USE_NOOP)
-#       include <boost/stacktrace/detail/safe_dump_noop.ipp>
-#       include <boost/stacktrace/detail/collect_noop.ipp>
-#   else
-#       if defined(BOOST_WINDOWS)
-#           include <boost/stacktrace/detail/safe_dump_win.ipp>
-#       else
-#           include <boost/stacktrace/detail/safe_dump_posix.ipp>
-#       endif
-#       if defined(BOOST_WINDOWS) && !defined(BOOST_WINAPI_IS_MINGW) // MinGW does not provide RtlCaptureStackBackTrace. MinGW-w64 does.
-#           include <boost/stacktrace/detail/collect_msvc.ipp>
-#       else
-#           include <boost/stacktrace/detail/collect_unwind.ipp>
-#       endif
-#   endif
-#endif
+// #if !defined(BOOST_STACKTRACE_LINK)
+// #   if defined(BOOST_STACKTRACE_USE_NOOP)
+// #       include <boost/stacktrace/detail/safe_dump_noop.ipp>
+// #       include <boost/stacktrace/detail/collect_noop.ipp>
+// #   else
+// #       if defined(BOOST_WINDOWS)
+// #           include <boost/stacktrace/detail/safe_dump_win.ipp>
+// #       else
+// #           include <boost/stacktrace/detail/safe_dump_posix.ipp>
+// #       endif
+// #       if defined(BOOST_WINDOWS) && !defined(BOOST_WINAPI_IS_MINGW) // MinGW does not provide RtlCaptureStackBackTrace. MinGW-w64 does.
+// #           include <boost/stacktrace/detail/collect_msvc.ipp>
+// #       else
+// #           include <boost/stacktrace/detail/collect_unwind.ipp>
+// #       endif
+// #   endif
+// #endif
 
 #endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 

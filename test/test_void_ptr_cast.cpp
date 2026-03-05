@@ -6,7 +6,6 @@
 
 #include <boost/core/lightweight_test.hpp>
 
-#undef BOOST_USE_MODULES
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
 int foo1_func(int) { return 0; }

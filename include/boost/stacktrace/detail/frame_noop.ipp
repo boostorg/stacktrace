@@ -7,9 +7,8 @@
 #ifndef BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP
 #define BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP
 
-#include <boost/stacktrace/detail/config.hpp>
+#include <boost/config.hpp>
 
-#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -42,7 +41,5 @@ std::string to_string(const frame& /*f*/) {
 
 
 }} // namespace boost::stacktrace
-
-#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_FRAME_NOOP_IPP

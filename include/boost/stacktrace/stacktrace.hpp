@@ -27,7 +27,6 @@
 #endif
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
-#include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/frame.hpp>
 
@@ -61,10 +60,10 @@ namespace impl {
 
 #if defined(__GNUC__) && defined(__ELF__)
 
-BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+extern "C++" BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 const char* current_exception_stacktrace() noexcept;
 
-BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+extern "C++" BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 bool& ref_capture_stacktraces_at_throw() noexcept;
 
 #endif

@@ -18,7 +18,7 @@
 #include <iosfwd>
 #include <string>
 
-#include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
+// #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
 
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.h>
@@ -71,15 +71,15 @@ BOOST_STACKTRACE_END_MODULE_EXPORT
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-#if !defined(BOOST_STACKTRACE_LINK) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
-#   if defined(BOOST_STACKTRACE_USE_NOOP)
-#       include <boost/stacktrace/detail/frame_noop.ipp>
-#   elif defined(BOOST_MSVC) || defined(BOOST_STACKTRACE_USE_WINDBG) || defined(BOOST_STACKTRACE_USE_WINDBG_CACHED)
-#       include <boost/stacktrace/detail/frame_msvc.ipp>
-#   else
-#       include <boost/stacktrace/detail/frame_unwind.ipp>
-#   endif
-#endif
+// #if !defined(BOOST_STACKTRACE_LINK)
+// #   if defined(BOOST_STACKTRACE_USE_NOOP)
+// #       include <boost/stacktrace/detail/frame_noop.ipp>
+// #   elif defined(BOOST_MSVC) || defined(BOOST_STACKTRACE_USE_WINDBG) || defined(BOOST_STACKTRACE_USE_WINDBG_CACHED)
+// #       include <boost/stacktrace/detail/frame_msvc.ipp>
+// #   else
+// #       include <boost/stacktrace/detail/frame_unwind.ipp>
+// #   endif
+// #endif
 /// @endcond
 
 #endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)

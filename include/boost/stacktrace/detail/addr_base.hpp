@@ -7,8 +7,8 @@
 #ifndef BOOST_STACKTRACE_DETAIL_ADDR_BASE_HPP
 #define BOOST_STACKTRACE_DETAIL_ADDR_BASE_HPP
 
-#include <boost/stacktrace/detail/config.hpp>
-#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#include <boost/config.hpp>
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -86,7 +86,5 @@ inline uintptr_t get_own_proc_addr_base(const void* addr) {
 }
 
 }}} // namespace boost::stacktrace::detail
-
-#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_ADDR_BASE_HPP

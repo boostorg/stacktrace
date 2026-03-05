@@ -7,9 +7,7 @@
 #ifndef BOOST_STACKTRACE_DETAIL_COLLECT_UNWIND_IPP
 #define BOOST_STACKTRACE_DETAIL_COLLECT_UNWIND_IPP
 
-#include <boost/stacktrace/detail/config.hpp>
-
-#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#include <boost/config.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
@@ -105,7 +103,5 @@ std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::siz
 }}} // namespace boost::stacktrace::detail
 
 #undef BOOST_STACKTRACE_USE_LIBC_BACKTRACE_FUNCTION
-
-#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_COLLECT_UNWIND_IPP

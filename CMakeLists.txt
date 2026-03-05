@@ -6,28 +6,13 @@ cmake_minimum_required(VERSION 3.8...4.20)
 
 project(boost_stacktrace VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
-function(stacktrace_add_library suffix opt libs defs public_defs)
+function(stacktrace_add_library suffix opt libs defs add_module)
 
   if(NOT opt)
     return()
   endif()
 
   add_library(boost_stacktrace_${suffix})
-
-  if (BOOST_USE_MODULES)
-    target_sources(boost_stacktrace_${suffix}
-      PUBLIC
-        FILE_SET CXX_MODULES
-        BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
-        FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace_impl.cppm
-    )
-    target_compile_features(boost_stacktrace_${suffix} PUBLIC cxx_std_23)
-    target_compile_definitions(boost_stacktrace_${suffix} PUBLIC BOOST_USE_MODULES)
-  endif()
-  target_sources(boost_stacktrace_${suffix}
-    PRIVATE
-      ${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp
-  )
 
   add_library(Boost::stacktrace_${suffix} ALIAS boost_stacktrace_${suffix})
 
@@ -47,11 +32,31 @@ function(stacktrace_add_library suffix opt libs defs public_defs)
   target_compile_definitions(boost_stacktrace_${suffix}
     PUBLIC
       BOOST_STACKTRACE_NO_LIB
-      ${public_defs}
     PRIVATE
       BOOST_STACKTRACE_SOURCE
       ${defs}
   )
+
+  target_sources(boost_stacktrace_${suffix}
+    PRIVATE
+      ${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp
+  )
+  if (add_module)
+    target_sources(boost_stacktrace_${suffix}
+      PUBLIC
+        FILE_SET CXX_MODULES
+        BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
+        FILES ${CMAKE_CURRENT_LIST_DIR}/modules/backends/boost_stacktrace_${suffix}.cppm
+    )
+    target_compile_features(boost_stacktrace_${suffix} PUBLIC cxx_std_23)
+    target_compile_definitions(boost_stacktrace_${suffix}
+      PUBLIC
+        BOOST_USE_MODULES
+      INTERFACE
+        BOOST_STACKTRACE_BACKEND_MODULE=${suffix}
+    )
+  endif()
+
 
   if(BUILD_SHARED_LIBS)
     target_compile_definitions(boost_stacktrace_${suffix} PUBLIC BOOST_STACKTRACE_DYN_LINK)
@@ -67,26 +72,25 @@ endfunction()
 
 include(CheckCXXSourceCompiles)
 
-function(stacktrace_check var source incs libs defs)
+function(stacktrace_check var source incs libs)
 
   set(CMAKE_REQUIRED_INCLUDES "${incs}")
   list(APPEND CMAKE_REQUIRED_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/build")
   set(CMAKE_REQUIRED_LIBRARIES "${libs}")
-  set(CMAKE_REQUIRED_DEFINITIONS "${defs}")
   check_cxx_source_compiles("#include \"${source}\"" ${var})
   set(${var} ${${var}} PARENT_SCOPE)
 
 endfunction()
 
-stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace" "")
+stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace")
 
 set(_default_addr2line ON)
 if(WIN32 AND NOT CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
   set(_default_addr2line OFF)
 endif()
 
-stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG has_windbg.cpp "" "dbgeng;ole32" "")
-stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG_CACHED has_windbg_cached.cpp "${CMAKE_CURRENT_SOURCE_DIR}/../config/include" "dbgeng;ole32" "")
+stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG has_windbg.cpp "" "dbgeng;ole32")
+stacktrace_check(BOOST_STACKTRACE_HAS_WINDBG_CACHED has_windbg_cached.cpp "${CMAKE_CURRENT_SOURCE_DIR}/../config/include" "dbgeng;ole32")
 
 set(_default_from_exception ON)
 if (CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
@@ -114,12 +118,36 @@ message(STATUS "Boost.Stacktrace: "
   "from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION}"
 )
 
-stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "BOOST_STACKTRACE_USE_NOOP" "BACKTRACE_IMPL_MODULE=stacktrace.noop")
-stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "backtrace;${CMAKE_DL_LIBS}" "" "BACKTRACE_IMPL_MODULE=stacktrace.backtrace")
-stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "${CMAKE_DL_LIBS}" "" "BACKTRACE_IMPL_MODULE=stacktrace.addr2line")
-stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "${CMAKE_DL_LIBS}" "" "BACKTRACE_IMPL_MODULE=stacktrace.basic")
-stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1" "BACKTRACE_IMPL_MODULE=stacktrace.windbg")
-stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1" "BACKTRACE_IMPL_MODULE=stacktrace.windbg_cached")
+add_library(boost_stacktrace_dump)
+target_include_directories(boost_stacktrace_dump PRIVATE include)
+target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_USE_MODULES)
+target_link_libraries(boost_stacktrace_dump
+  PUBLIC
+    Boost::config
+    Boost::predef
+)
+target_sources(boost_stacktrace_dump
+  PUBLIC
+    FILE_SET CXX_MODULES
+    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
+    FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace_dump.cppm
+)
+target_sources(boost_stacktrace_dump
+  PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
+)
+if(BUILD_SHARED_LIBS)
+  target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_DYN_LINK)
+else()
+  target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_STATIC_LINK)
+endif()
+
+stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "BOOST_STACKTRACE_USE_NOOP" ${BOOST_USE_MODULES})
+stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
+stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
+stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
+stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1" ${BOOST_USE_MODULES})
+stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1" ${BOOST_USE_MODULES})
 
 # boost_stacktrace, default library
 
@@ -128,6 +156,7 @@ if(BOOST_USE_MODULES)
   target_sources(boost_stacktrace
     PUBLIC
       FILE_SET CXX_MODULES
+      BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
       FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace.cppm
   )
   set(__scope PUBLIC)
@@ -141,48 +170,27 @@ target_include_directories(boost_stacktrace ${__scope} include)
 add_library(Boost::stacktrace ALIAS boost_stacktrace)
 
 if(BOOST_STACKTRACE_ENABLE_WINDBG)
-
-  message(STATUS "Stacktrace backend: WINDBG")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_windbg)
-
+  set(__default_stacktrace_backend "windbg")
 elseif(BOOST_STACKTRACE_ENABLE_WINDBG_CACHED)
-
-  message(STATUS "Stacktrace backend: WINDBG_CACHED")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_windbg)
-
+  set(__default_stacktrace_backend "windbg_cached")
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
-
-  message(STATUS "Stacktrace backend: BACKTRACE")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_backtrace)
-  target_compile_definitions(boost_stacktrace ${__scope} BACKTRACE_DEFAULT_IMPL_MODULE=stacktrace.backtrace)
-
+  set(__default_stacktrace_backend "backtrace")
 elseif(BOOST_STACKTRACE_ENABLE_ADDR2LINE)
-
-  message(STATUS "Stacktrace backend: ADDR2LINE")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_addr2line)
-  target_compile_definitions(boost_stacktrace ${__scope} BACKTRACE_DEFAULT_IMPL_MODULE=stacktrace.addr2line)
-
+  set(__default_stacktrace_backend "addr2line")
 elseif(BOOST_STACKTRACE_ENABLE_BASIC)
-
-  message(STATUS "Stacktrace backend: BASIC")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_basic)
-  target_compile_definitions(boost_stacktrace ${__scope} BACKTRACE_DEFAULT_IMPL_MODULE=stacktrace.basic)
-
+  set(__default_stacktrace_backend "basic")
 elseif(BOOST_STACKTRACE_ENABLE_NOOP)
-
-  message(STATUS "Stacktrace backend: NOOP")
-  target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_noop)
-  target_compile_definitions(boost_stacktrace ${__scope} BACKTRACE_DEFAULT_IMPL_MODULE=stacktrace.noop)
-
+  set(__default_stacktrace_backend "noop")
+else()
+  message(FATAL "All backends are disabled")
 endif()
+
+message(STATUS "Boost.stacktrace default backend: ${__default_stacktrace_backend}")
+target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_${__default_stacktrace_backend})
+unset(__default_stacktrace_backend)
 
 # Boost::stacktrace_from_exception is never the default
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS}" "" "")
-if(BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION)
-  target_link_libraries(boost_stacktrace_from_exception PUBLIC Boost::stacktrace)
-endif()
-
-#
+stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};boost_stacktrace_dump" "" FALSE)
 
 if(BUILD_TESTING)
   add_subdirectory(test)

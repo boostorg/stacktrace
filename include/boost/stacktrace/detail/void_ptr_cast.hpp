@@ -8,8 +8,7 @@
 #ifndef BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 #define BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 
-#include <boost/stacktrace/detail/config.hpp>
-#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#include <boost/config.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
@@ -42,8 +41,6 @@ To void_ptr_cast(From* v) noexcept {
 
 
 }}} // boost::stacktrace::detail
-
-#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_DETAIL_VOID_PTR_CAST_HPP
 
