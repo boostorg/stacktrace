@@ -8,7 +8,6 @@
 #define BOOST_STACKTRACE_DETAIL_LIBBACKTRACE_IMPLS_HPP
 
 #include <boost/config.hpp>
-
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif

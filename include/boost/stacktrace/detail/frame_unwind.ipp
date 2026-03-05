@@ -8,7 +8,6 @@
 #define BOOST_STACKTRACE_DETAIL_FRAME_UNWIND_IPP
 
 #include <boost/config.hpp>
-
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
@@ -23,7 +22,7 @@
 
 #include <cstdio>
 
-#if  defined(BOOST_STACKTRACE_USE_BACKTRACE)
+#ifdef BOOST_STACKTRACE_USE_BACKTRACE
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>
 #elif defined(BOOST_STACKTRACE_USE_ADDR2LINE)
 #   include <boost/stacktrace/detail/addr2line_impls.hpp>

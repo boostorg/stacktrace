@@ -8,7 +8,6 @@
 #define BOOST_STACKTRACE_DETAIL_TO_HEX_ARRAY_HPP
 
 #include <boost/config.hpp>
-
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif

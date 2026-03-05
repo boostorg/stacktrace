@@ -8,7 +8,6 @@
 #define BOOST_STACKTRACE_DETAIL_SAFE_DUMP_NOOP_IPP
 
 #include <boost/config.hpp>
-
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
