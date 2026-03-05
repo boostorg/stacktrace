@@ -60,10 +60,16 @@ namespace impl {
 
 #if defined(__GNUC__) && defined(__ELF__)
 
-extern "C++" BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+#if defined(BOOST_USE_MODULES)
+extern "C++"
+#endif
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 const char* current_exception_stacktrace() noexcept;
 
-extern "C++" BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
+#if defined(BOOST_USE_MODULES)
+extern "C++"
+#endif
+BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 bool& ref_capture_stacktraces_at_throw() noexcept;
 
 #endif

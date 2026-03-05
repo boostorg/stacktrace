@@ -142,7 +142,7 @@ else()
   target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_STATIC_LINK)
 endif()
 
-stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "BOOST_STACKTRACE_USE_NOOP" ${BOOST_USE_MODULES})
+stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "" ${BOOST_USE_MODULES})
 stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
 stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
 stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
@@ -190,7 +190,7 @@ target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_${__default_
 unset(__default_stacktrace_backend)
 
 # Boost::stacktrace_from_exception is never the default
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "${CMAKE_DL_LIBS};boost_stacktrace_dump" "" FALSE)
+stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" FALSE)
 
 if(BUILD_TESTING)
   add_subdirectory(test)
