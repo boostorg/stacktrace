@@ -31,3 +31,6 @@ import boost.stacktrace.dump;
 
 #include <boost/stacktrace/stacktrace.hpp>
 #include <boost/stacktrace/this_thread.hpp>
+
+module :private;
+#include <boost/stacktrace/detail/frame_unwind.ipp>

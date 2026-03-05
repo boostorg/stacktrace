@@ -37,10 +37,6 @@ function(stacktrace_add_library suffix opt libs defs add_module)
       ${defs}
   )
 
-  target_sources(boost_stacktrace_${suffix}
-    PRIVATE
-      ${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp
-  )
   if (add_module)
     target_sources(boost_stacktrace_${suffix}
       PUBLIC
@@ -54,6 +50,11 @@ function(stacktrace_add_library suffix opt libs defs add_module)
         BOOST_USE_MODULES
       INTERFACE
         BOOST_STACKTRACE_BACKEND_MODULE=${suffix}
+    )
+  else()
+    target_sources(boost_stacktrace_${suffix}
+      PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp
     )
   endif()
 
@@ -125,10 +126,6 @@ target_link_libraries(boost_stacktrace_dump
     Boost::config
     Boost::predef
 )
-target_sources(boost_stacktrace_dump
-  PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
-)
 if(BOOST_USE_MODULES)
   target_sources(boost_stacktrace_dump
     PUBLIC
@@ -138,6 +135,11 @@ if(BOOST_USE_MODULES)
   )
   target_compile_features(boost_stacktrace_dump PUBLIC cxx_std_23)
   target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_USE_MODULES)
+else()
+  target_sources(boost_stacktrace_dump
+    PRIVATE
+      ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
+  )
 endif()
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_DYN_LINK)

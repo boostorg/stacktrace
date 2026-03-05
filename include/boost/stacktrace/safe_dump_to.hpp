@@ -218,23 +218,23 @@ BOOST_STACKTRACE_END_MODULE_EXPORT
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-// #if !defined(BOOST_STACKTRACE_LINK)
-// #   if defined(BOOST_STACKTRACE_USE_NOOP)
-// #       include <boost/stacktrace/detail/safe_dump_noop.ipp>
-// #       include <boost/stacktrace/detail/collect_noop.ipp>
-// #   else
-// #       if defined(BOOST_WINDOWS)
-// #           include <boost/stacktrace/detail/safe_dump_win.ipp>
-// #       else
-// #           include <boost/stacktrace/detail/safe_dump_posix.ipp>
-// #       endif
-// #       if defined(BOOST_WINDOWS) && !defined(BOOST_WINAPI_IS_MINGW) // MinGW does not provide RtlCaptureStackBackTrace. MinGW-w64 does.
-// #           include <boost/stacktrace/detail/collect_msvc.ipp>
-// #       else
-// #           include <boost/stacktrace/detail/collect_unwind.ipp>
-// #       endif
-// #   endif
-// #endif
+#if !defined(BOOST_STACKTRACE_LINK)
+#   if defined(BOOST_STACKTRACE_USE_NOOP)
+#       include <boost/stacktrace/detail/safe_dump_noop.ipp>
+#       include <boost/stacktrace/detail/collect_noop.ipp>
+#   else
+#       if defined(BOOST_WINDOWS)
+#           include <boost/stacktrace/detail/safe_dump_win.ipp>
+#       else
+#           include <boost/stacktrace/detail/safe_dump_posix.ipp>
+#       endif
+#       if defined(BOOST_WINDOWS) && !defined(BOOST_WINAPI_IS_MINGW) // MinGW does not provide RtlCaptureStackBackTrace. MinGW-w64 does.
+#           include <boost/stacktrace/detail/collect_msvc.ipp>
+#       else
+#           include <boost/stacktrace/detail/collect_unwind.ipp>
+#       endif
+#   endif
+#endif
 
 #endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 

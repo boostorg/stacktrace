@@ -44,7 +44,12 @@ add_subdirectory(../.. boostorg/stacktrace)
 add_executable(main main.cpp)
 target_link_libraries(main Boost::stacktrace)
 
-add_test(main main)
+add_executable(main_header_only main.cpp)
+target_include_directories(main_header_only PRIVATE ../../include)
+target_link_libraries(main_header_only PRIVATE Boost::core Boost::container_hash Boost::predef)
+
+add_test(NAME main COMMAND main)
+add_test(NAME main_header_only COMMAND main_header_only)
 
 if (BOOST_USE_MODULES)
     add_executable(boost_stacktrace_module_usage ../../modules/samples/usage_sample.cpp)

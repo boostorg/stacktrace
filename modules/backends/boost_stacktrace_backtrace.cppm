@@ -7,6 +7,8 @@ module;
 #include <boost/container_hash/hash_fwd.hpp>
 #include <boost/predef.h>
 
+#include <backtrace.h>
+
 #include <array>
 #include <iosfwd>
 #include <string>
@@ -20,6 +22,11 @@ module;
 #include <cxxabi.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
+#define BOOST_STACKTRACE_LINK
+
+#ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#endif
 
 export module boost.stacktrace.backtrace;
 
@@ -31,3 +38,8 @@ import boost.stacktrace.dump;
 
 #include <boost/stacktrace/stacktrace.hpp>
 #include <boost/stacktrace/this_thread.hpp>
+
+module :private;
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_USE_BACKTRACE
+#include <boost/stacktrace/detail/frame_unwind.ipp>

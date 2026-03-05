@@ -15,3 +15,8 @@ export module boost.stacktrace.noop;
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/stacktrace.hpp>
+
+module :private;
+#include <boost/stacktrace/detail/frame_noop.ipp>
+#include <boost/stacktrace/detail/safe_dump_noop.ipp>
+#include <boost/stacktrace/detail/collect_noop.ipp>
