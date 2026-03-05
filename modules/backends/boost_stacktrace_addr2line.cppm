@@ -20,6 +20,7 @@ module;
 #include <cxxabi.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
+#define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.addr2line;
 

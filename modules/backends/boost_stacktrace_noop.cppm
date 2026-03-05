@@ -6,6 +6,7 @@ module;
 #include <memory>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
+#define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.noop;
 
