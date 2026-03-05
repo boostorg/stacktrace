@@ -340,7 +340,7 @@ void __cxa_decrement_exception_refcount(void *thrown_object) throw() {
 
 }  // namespace __cxxabiv1
 
-extern "C++" namespace boost { namespace stacktrace { namespace impl {
+namespace boost { namespace stacktrace { namespace impl {
 
 BOOST_SYMBOL_EXPORT const char* current_exception_stacktrace() noexcept {
   if (!ref_capture_stacktraces_at_throw()) {
