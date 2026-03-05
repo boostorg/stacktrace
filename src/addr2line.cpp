@@ -4,7 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(BOOST_USE_MODULES)
 module;
+#endif
 
 #include <boost/core/demangle.hpp>
 #include <boost/predef.h>
@@ -30,10 +32,12 @@ module;
 #include <sys/wait.h>
 #include <signal.h>
 
+#if defined(BOOST_USE_MODULES)
 module boost.stacktrace.addr2line;
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
+#endif
 #endif
 
 #include <boost/stacktrace/detail/frame_unwind.ipp>

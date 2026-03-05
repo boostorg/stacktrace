@@ -169,9 +169,11 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #include <unistd.h>
 #endif
 
-// module boost.stacktrace.from_exception;
-
+#if defined(BOOST_USE_MODULES)
 import boost.stacktrace.dump;
+#else
+#include <boost/stacktrace/safe_dump_to.hpp>
+#endif
 
 namespace {
 

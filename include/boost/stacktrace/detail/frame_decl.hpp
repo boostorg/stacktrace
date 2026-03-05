@@ -17,6 +17,10 @@
 
 #include <string>
 
+#if !defined(BOOST_USE_MODULES)
+#include <boost/stacktrace/safe_dump_to.hpp>
+#endif
+
 #include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
 #include <boost/stacktrace/detail/push_options.h>

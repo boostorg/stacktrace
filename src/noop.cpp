@@ -4,7 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(BOOST_USE_MODULES)
 module;
+#endif
 
 #include <boost/config.hpp>
 
@@ -13,10 +15,12 @@ module;
 
 #include <string>
 
+#if defined(BOOST_USE_MODULES)
 module boost.stacktrace.noop;
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
+#endif
 #endif
 
 #include <boost/stacktrace/detail/frame_noop.ipp>

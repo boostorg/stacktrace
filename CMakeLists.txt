@@ -120,28 +120,34 @@ message(STATUS "Boost.Stacktrace: "
 
 add_library(boost_stacktrace_dump)
 target_include_directories(boost_stacktrace_dump PRIVATE include)
-target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_USE_MODULES)
 target_link_libraries(boost_stacktrace_dump
   PUBLIC
     Boost::config
     Boost::predef
 )
 target_sources(boost_stacktrace_dump
-  PUBLIC
-    FILE_SET CXX_MODULES
-    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
-    FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace_dump.cppm
-)
-target_sources(boost_stacktrace_dump
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
 )
+if(BOOST_USE_MODULES)
+  target_sources(boost_stacktrace_dump
+    PUBLIC
+      FILE_SET CXX_MODULES
+      BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
+      FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace_dump.cppm
+  )
+  target_compile_features(boost_stacktrace_dump PUBLIC cxx_std_23)
+  target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_USE_MODULES)
+endif()
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_DYN_LINK)
 else()
   target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_STACKTRACE_STATIC_LINK)
 endif()
 
+if(NOT BOOST_USE_MODULES)
+  set(BOOST_USE_MODULES OFF)
+endif()
 stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "" ${BOOST_USE_MODULES})
 stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
 stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" ${BOOST_USE_MODULES})
