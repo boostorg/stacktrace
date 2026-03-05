@@ -14,6 +14,5 @@ export module boost.stacktrace.dump;
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 module :private;
-
 #include <boost/stacktrace/detail/collect_unwind.ipp>
 #include <boost/stacktrace/detail/safe_dump_posix.ipp>
