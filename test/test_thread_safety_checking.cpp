@@ -52,9 +52,9 @@ int main() {
     t2.join();
     t3.join();
 
-    const auto elapsed = t - std::chrono::steady_clock::now();
+    const auto elapsed = std::chrono::steady_clock::now() - t;
     std::cout << "Elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(
         elapsed
-    ). count() << "ms";
+    ). count() << "ms\n";
     return boost::report_errors();
 }

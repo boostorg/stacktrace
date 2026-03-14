@@ -7,7 +7,6 @@
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 
 #include <boost/stacktrace.hpp>
-#include <stdexcept>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -106,8 +105,15 @@ void test_nested(bool print = true) {
 template <class Bt>
 void test_comparisons_base(Bt nst, Bt st) {
     Bt cst(st);
+#if defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wself-assign-overloaded"
+#endif
     st = st;
     cst = cst;
+#if defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
     BOOST_TEST(nst);
     BOOST_TEST(st);
 #if !defined(BOOST_MSVC) && !defined(BOOST_STACKTRACE_USE_WINDBG)
