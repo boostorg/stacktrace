@@ -7,6 +7,7 @@
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
 #include <windows.h>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
 #define _pCurrentException static_cast<PEXCEPTION_RECORD>(*__current_exception())

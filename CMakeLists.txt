@@ -106,8 +106,8 @@ stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
 stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "dbgeng;ole32" "_GNU_SOURCE=1")
-stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "dbgeng;ole32" "_GNU_SOURCE=1")
+stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "boost_stacktrace_dump;dbgeng;ole32" "_GNU_SOURCE=1")
+stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "boost_stacktrace_dump;dbgeng;ole32" "_GNU_SOURCE=1")
 
 # boost_stacktrace, default library
 
