@@ -6,7 +6,6 @@
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
-#include <boost/stacktrace/safe_dump_to.hpp>
 #include <windows.h>
 
 extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
@@ -154,7 +153,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #endif
 
 #include <boost/assert.hpp>
-#include <boost/stacktrace/safe_dump_to.hpp>
+#include <boost/config.hpp>
 
 #include <cstddef>
 #include <exception>
@@ -169,6 +168,8 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 #include <unistd.h>
 #endif
+
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace {
 
