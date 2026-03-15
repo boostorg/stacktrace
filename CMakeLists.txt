@@ -148,7 +148,6 @@ endif()
 
 message(STATUS "Boost.stacktrace default backend: ${__default_stacktrace_backend}")
 target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_${__default_stacktrace_backend})
-unset(__default_stacktrace_backend)
 
 # Boost::stacktrace_from_exception is never the default
 if(_enable_non_noop_backend)
@@ -159,3 +158,4 @@ endif()
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
+unset(__default_stacktrace_backend)

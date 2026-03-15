@@ -146,7 +146,7 @@ BOOST_NOINLINE BOOST_SYMBOL_VISIBLE void test_rethrow_nested() {
   } catch (...) {
     auto trace = stacktrace::from_current_exception();
     BOOST_TEST(trace);
-    std::cout << "Tarce in test_rethrow_nested(): " << trace << '\n';
+    std::cout << "Trace in test_rethrow_nested(): " << trace << '\n';
     BOOST_TEST(to_string(trace).find("in_test_throw_1") == std::string::npos);
 #if defined(BOOST_MSVC)
     BOOST_TEST(to_string(trace).find("in_test_throw_2") == std::string::npos);
