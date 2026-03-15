@@ -127,6 +127,7 @@ lib boost_stacktrace_backtrace
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-addr2line ( props * )
@@ -164,6 +165,7 @@ lib boost_stacktrace_addr2line
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-basic ( props * )
@@ -194,6 +196,7 @@ lib boost_stacktrace_basic
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-windbg ( props * )
@@ -224,6 +227,7 @@ lib boost_stacktrace_windbg
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-windbg-cached ( props * )
@@ -254,6 +258,7 @@ lib boost_stacktrace_windbg_cached
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-from-exception ( props * )
@@ -287,4 +292,5 @@ lib boost_stacktrace_from_exception
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
