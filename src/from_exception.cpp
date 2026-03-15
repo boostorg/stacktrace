@@ -4,6 +4,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_LINK
+
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
 #include <windows.h>
