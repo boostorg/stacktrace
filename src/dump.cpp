@@ -12,6 +12,8 @@
 #   define _GNU_SOURCE
 #endif
 
+#include <boost/config.hpp>
+
 #if defined(BOOST_WINDOWS)
 #    include <boost/stacktrace/detail/safe_dump_win.ipp>
 #else
