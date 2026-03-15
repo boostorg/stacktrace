@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.8...4.20)
 
 project(boost_stacktrace VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
-function(stacktrace_add_library suffix opt libs defs)
+function(stacktrace_add_library suffix opt public_libs libs defs)
 
   if(NOT opt)
     return()
@@ -26,6 +26,7 @@ function(stacktrace_add_library suffix opt libs defs)
       Boost::core
       Boost::predef
       Boost::winapi
+      ${public_libs}
     PRIVATE
       ${libs}
   )
@@ -112,14 +113,14 @@ if(BOOST_STACKTRACE_ENABLE_BACKTRACE OR
 endif()
 
 if(_enable_non_noop_backend)
-  stacktrace_add_library(dump ON "" "")
+  stacktrace_add_library(dump ON "" "" "")
 endif()
-stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
-stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "")
-stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} "boost_stacktrace_dump;dbgeng;ole32" "_GNU_SOURCE=1")
-stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} "boost_stacktrace_dump;dbgeng;ole32" "_GNU_SOURCE=1")
+stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "" "")
+stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} boost_stacktrace_dump "backtrace;${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} boost_stacktrace_dump "${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(basic ${BOOST_STACKTRACE_ENABLE_BASIC} boost_stacktrace_dump "${CMAKE_DL_LIBS}" "")
+stacktrace_add_library(windbg ${BOOST_STACKTRACE_ENABLE_WINDBG} boost_stacktrace_dump "dbgeng;ole32" "_GNU_SOURCE=1")
+stacktrace_add_library(windbg_cached ${BOOST_STACKTRACE_ENABLE_WINDBG_CACHED} boost_stacktrace_dump "dbgeng;ole32" "_GNU_SOURCE=1")
 
 # boost_stacktrace, default library
 
@@ -151,7 +152,7 @@ unset(__default_stacktrace_backend)
 
 # Boost::stacktrace_from_exception is never the default
 if(_enable_non_noop_backend)
-  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" FALSE)
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} boost_stacktrace_dump "${CMAKE_DL_LIBS}" "" FALSE)
   unset(_enable_non_noop_backend)
 endif()
 
