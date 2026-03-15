@@ -46,7 +46,7 @@ target_link_libraries(main Boost::stacktrace)
 
 add_executable(main_header_only main.cpp)
 target_include_directories(main_header_only PRIVATE ../../include)
-target_compile_definitions(main_header_only PRIVATE _GNU_SOURCE=1)
+target_compile_definitions(main_header_only PRIVATE "_GNU_SOURCE=1")
 target_link_libraries(main_header_only PRIVATE Boost::core Boost::container_hash Boost::predef Boost::winapi)
 
 add_test(NAME main COMMAND main)
