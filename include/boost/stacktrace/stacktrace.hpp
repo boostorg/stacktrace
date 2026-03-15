@@ -24,6 +24,7 @@
 #endif
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/frame.hpp>
 

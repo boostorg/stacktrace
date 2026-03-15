@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/frame.hpp>
+#include <boost/stacktrace/detail/frame_decl.hpp>
 
 #include <boost/core/demangle.hpp>
 #include <boost/core/noncopyable.hpp>
