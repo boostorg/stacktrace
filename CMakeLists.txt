@@ -1,4 +1,5 @@
 # Copyright 2020, 2021 Peter Dimov
+# Copyright 2026 Fedor Osetrov
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
@@ -101,7 +102,18 @@ message(STATUS "Boost.Stacktrace: "
   "from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION}"
 )
 
-stacktrace_add_library(dump ON "" "")
+if(BOOST_STACKTRACE_ENABLE_BACKTRACE OR
+   BOOST_STACKTRACE_ENABLE_ADDR2LINE OR
+   BOOST_STACKTRACE_ENABLE_BASIC OR
+   BOOST_STACKTRACE_ENABLE_WINDBG OR
+   BOOST_STACKTRACE_ENABLE_WINDBG_CACHED
+  )
+  set(_enable_non_noop_backend TRUE)
+endif()
+
+if(_enable_non_noop_backend)
+  stacktrace_add_library(dump ON "" "")
+endif()
 stacktrace_add_library(noop ${BOOST_STACKTRACE_ENABLE_NOOP} "" "")
 stacktrace_add_library(backtrace ${BOOST_STACKTRACE_ENABLE_BACKTRACE} "boost_stacktrace_dump;backtrace;${CMAKE_DL_LIBS}" "")
 stacktrace_add_library(addr2line ${BOOST_STACKTRACE_ENABLE_ADDR2LINE} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "")
@@ -138,7 +150,10 @@ target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_${__default_s
 unset(__default_stacktrace_backend)
 
 # Boost::stacktrace_from_exception is never the default
-stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" FALSE)
+if(_enable_non_noop_backend)
+  stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} "boost_stacktrace_dump;${CMAKE_DL_LIBS}" "" FALSE)
+  unset(_enable_non_noop_backend)
+endif()
 
 if(BUILD_TESTING)
   add_subdirectory(test)
