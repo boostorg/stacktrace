@@ -12,7 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/frame_decl.hpp>
+#include <boost/stacktrace/frame.hpp>
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
