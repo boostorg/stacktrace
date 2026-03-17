@@ -49,8 +49,8 @@ target_include_directories(stacktrace_main_header_only PRIVATE ../../include)
 target_compile_definitions(stacktrace_main_header_only PRIVATE "_GNU_SOURCE=1")
 target_link_libraries(stacktrace_main_header_only PRIVATE Boost::core Boost::container_hash Boost::predef Boost::winapi)
 
-add_test(NAME stacktrace_main COMMAND main)
-add_test(NAME stacktrace_main_header_only COMMAND main_header_only)
+add_test(NAME stacktrace_main COMMAND stacktrace_main)
+add_test(NAME stacktrace_main_header_only COMMAND stacktrace_main)
 
 if (BOOST_USE_MODULES)
     add_executable(boost_stacktrace_module_usage ../../modules/samples/usage_sample.cpp)
