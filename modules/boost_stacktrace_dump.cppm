@@ -10,8 +10,17 @@ module;
 #include <boost/config.hpp>
 #include <boost/predef.h>
 
+#include <fcntl.h>
+#include <unwind.h>
+#include <stdio.h>
+#include <sys/stat.h>
+
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK
+
+#ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#endif
 
 export module boost.stacktrace.dump;
 
