@@ -9,6 +9,10 @@
 
 #include <boost/stacktrace/detail/config.hpp>
 
+#if defined(BOOST_USE_MODULES) && !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+    import boost.stacktrace.dump;
+#endif
+
 #if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
