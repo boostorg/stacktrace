@@ -1,9 +1,17 @@
+// Copyright Antony Polukhin, 2025-2026.
+// Copyright Fedor Osetrov, 2025-2026.
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
 module;
 
 #include <boost/config.hpp>
 #include <boost/predef.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
+#define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.dump;
 
@@ -14,5 +22,15 @@ export module boost.stacktrace.dump;
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 module :private;
-#include <boost/stacktrace/detail/collect_unwind.ipp>
-#include <boost/stacktrace/detail/safe_dump_posix.ipp>
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#if defined(BOOST_WINDOWS)
+#    include <boost/stacktrace/detail/safe_dump_win.ipp>
+#else
+#    include <boost/stacktrace/detail/safe_dump_posix.ipp>
+#endif
+#if defined(BOOST_WINDOWS) && !defined(BOOST_WINAPI_IS_MINGW) // MinGW does not provide RtlCaptureStackBackTrace. MinGW-w64 does.
+#    include <boost/stacktrace/detail/collect_msvc.ipp>
+#else
+#    include <boost/stacktrace/detail/collect_unwind.ipp>
+#endif
+
