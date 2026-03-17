@@ -50,11 +50,7 @@ function(stacktrace_add_library suffix opt public_libs libs defs add_module)
   )
 
   if (add_module)
-    stacktrace_add_module(boost_stacktrace_${suffix} boost_stacktrace_${suffix})
-    target_compile_definitions(boost_stacktrace_${suffix}
-      INTERFACE
-        BOOST_STACKTRACE_BACKEND_MODULE=${suffix}
-    )
+    stacktrace_add_module(boost_stacktrace_${suffix})
   else()
     target_sources(boost_stacktrace_${suffix}
       PRIVATE
@@ -122,23 +118,6 @@ message(STATUS "Boost.Stacktrace: "
   "from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION}"
 )
 
-if(NOT BOOST_USE_MODULES)
-  set(BOOST_USE_MODULES OFF)
-endif()
-
-add_library(boost_stacktrace_dump)
-if(BOOST_USE_MODULES)
-  stacktrace_add_module(boost_stacktrace_dump boost_stacktrace_dump)
-  target_sources(boost_stacktrace_dump
-    PUBLIC
-      FILE_SET CXX_MODULES
-      BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
-      FILES ${CMAKE_CURRENT_LIST_DIR}/modules/boost_stacktrace_dump.cppm
-  )
-  target_compile_features(boost_stacktrace_dump PUBLIC cxx_std_23)
-  target_compile_definitions(boost_stacktrace_dump PUBLIC BOOST_USE_MODULES)
-endif()
-
 if(BOOST_STACKTRACE_ENABLE_BACKTRACE OR
    BOOST_STACKTRACE_ENABLE_ADDR2LINE OR
    BOOST_STACKTRACE_ENABLE_BASIC OR
@@ -148,6 +127,10 @@ if(BOOST_STACKTRACE_ENABLE_BACKTRACE OR
   set(_enable_non_noop_backend TRUE)
 else()
   set(_enable_non_noop_backend FALSE)
+endif()
+
+if(NOT BOOST_USE_MODULES)
+  set(BOOST_USE_MODULES OFF)
 endif()
 
 stacktrace_add_library(dump ${_enable_non_noop_backend} "" "" "" ${BOOST_USE_MODULES})
@@ -164,6 +147,12 @@ if(BOOST_USE_MODULES)
   add_library(boost_stacktrace)
   stacktrace_add_module(boost_stacktrace boost_stacktrace)
   set(__scope PUBLIC)
+
+  foreach(backend noop backtrace addr2line basic windbg windbg_cached)
+    if (TARGET boost_stacktrace_${backend})
+      target_compile_definitions(boost_stacktrace_${backend} INTERFACE BOOST_STACKTRACE_BACKEND_MODULE=${backend})
+    endif()
+  endforeach()
 else()
   add_library(boost_stacktrace INTERFACE)
   set(__scope INTERFACE)
