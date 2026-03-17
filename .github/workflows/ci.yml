@@ -27,7 +27,7 @@ jobs:
           - toolset: gcc-9
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
-            install: g++-9
+            install: [g++-9]
           - toolset: clang-15
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
@@ -56,7 +56,7 @@ jobs:
 
       - name: Install packages
         if: matrix.install
-        run: sudo apt install ${{matrix.install}}
+        run: sudo apt install -y ${{join(matrix.install, ' ')}}
 
       - name: Setup Boost
         run: |
