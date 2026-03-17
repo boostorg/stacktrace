@@ -41,15 +41,16 @@ endforeach()
 enable_testing()
 add_subdirectory(../.. boostorg/stacktrace)
 
-add_executable(main main.cpp)
-target_link_libraries(main Boost::stacktrace)
+add_executable(stacktrace_main main.cpp)
+target_link_libraries(stacktrace_main Boost::stacktrace)
 
-add_executable(main_header_only main.cpp)
-target_include_directories(main_header_only PRIVATE ../../include)
-target_link_libraries(main_header_only PRIVATE Boost::core Boost::container_hash Boost::predef)
+add_executable(stacktrace_main_header_only main.cpp)
+target_include_directories(stacktrace_main_header_only PRIVATE ../../include)
+target_compile_definitions(stacktrace_main_header_only PRIVATE "_GNU_SOURCE=1")
+target_link_libraries(stacktrace_main_header_only PRIVATE Boost::core Boost::container_hash Boost::predef Boost::winapi)
 
-add_test(NAME main COMMAND main)
-add_test(NAME main_header_only COMMAND main_header_only)
+add_test(NAME stacktrace_main COMMAND main)
+add_test(NAME stacktrace_main_header_only COMMAND main_header_only)
 
 if (BOOST_USE_MODULES)
     add_executable(boost_stacktrace_module_usage ../../modules/samples/usage_sample.cpp)

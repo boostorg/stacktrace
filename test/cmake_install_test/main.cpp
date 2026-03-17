@@ -13,6 +13,6 @@ int main()
     try {
         throw 42;
     } catch (...) {
-        std::cout << "From current excption:\n" << boost::stacktrace::stacktrace::from_current_exception() << std::endl;
+        std::cout << "From current exception:\n" << boost::stacktrace::stacktrace::from_current_exception() << std::endl;
     }
 }
