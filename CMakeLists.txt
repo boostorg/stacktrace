@@ -181,6 +181,7 @@ message(STATUS "Boost.stacktrace default backend: ${__default_stacktrace_backend
 target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_${__default_stacktrace_backend})
 unset(__default_stacktrace_backend)
 
+# Boost::stacktrace_from_exception is never the default
 if(_enable_non_noop_backend)
   stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} Boost::stacktrace_dump "${CMAKE_DL_LIBS}" "" FALSE)
   unset(_enable_non_noop_backend)
