@@ -82,6 +82,16 @@ jobs:
           ./bootstrap.sh
           ./b2 -d0 headers
           ./b2 -j4 variant=debug tools/inspect
+      
+      - name: Build libbacktrace
+        if: ${{matrix.toolset == 'clang-19'}}
+        run: |
+          # libc++ do not have bundled libbacktrace implementation
+          git clone --depth=1 https://github.com/ianlancetaylor/libbacktrace.git
+          cd libbacktrace
+          CC=clang-19 OBJCOPY=/usr/bin/llvm-objcopy NM=/usr/bin/llvm-nm ./configure --prefix="$HOME/.local" --with-system-libunwind
+          make -j"$(nproc)"
+          make install
 
       - name: Run modules tests without 'import std;'
         if: ${{matrix.toolset == 'clang-19'}}
@@ -93,7 +103,9 @@ jobs:
                 -DBOOST_USE_MODULES=1 \
                 -DBUILD_TESTING=1 \
                 -DCMAKE_CXX_STANDARD=20 \
-                -DCMAKE_CXX_COMPILER=${{matrix.compiler}}
+                -DCMAKE_CXX_COMPILER=${{matrix.compiler}} \
+                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I$HOME/.local" \
+                -DCMAKE_EXE_LINKER_FLAGS="-L${HOME}/.local"
           cmake --build build_module
           ctest --test-dir build_module -VV
           rm -rf build_module
