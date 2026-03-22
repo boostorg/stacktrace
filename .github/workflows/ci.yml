@@ -89,13 +89,15 @@ jobs:
           # libc++ do not have bundled libbacktrace implementation
           git clone --depth=1 https://github.com/ianlancetaylor/libbacktrace.git
           cd libbacktrace
-          CC=clang-19 OBJCOPY=/usr/bin/llvm-objcopy NM=/usr/bin/llvm-nm ./configure --prefix="$HOME/.local" --with-system-libunwind
+          CC=clang-19 OBJCOPY=/usr/bin/llvm-objcopy NM=/usr/bin/llvm-nm \
+            ./configure --prefix="$HOME/.local" --with-system-libunwind
           make -j"$(nproc)"
           make install
 
       - name: Run modules tests without 'import std;'
         if: ${{matrix.toolset == 'clang-19'}}
         run: |
+          pwd
           cd ../boost-root/libs/$LIBRARY
           cmake -S test/cmake_subdir_test \
                 -B build_module \
@@ -104,8 +106,8 @@ jobs:
                 -DBUILD_TESTING=1 \
                 -DCMAKE_CXX_STANDARD=20 \
                 -DCMAKE_CXX_COMPILER=${{matrix.compiler}} \
-                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I$HOME/.local" \
-                -DCMAKE_EXE_LINKER_FLAGS="-L${HOME}/.local"
+                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I/home/runner/.local" \
+                -DCMAKE_EXE_LINKER_FLAGS="-L/home/runner/.local"
           cmake --build build_module
           ctest --test-dir build_module -VV
           rm -rf build_module
