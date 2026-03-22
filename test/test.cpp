@@ -4,9 +4,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace/stacktrace_fwd.hpp>
-
-#include <boost/stacktrace.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -17,6 +14,8 @@
 #include <boost/functional/hash.hpp>
 
 #include "test_impl.hpp"
+
+#include <boost/stacktrace.hpp>
 
 using boost::stacktrace::stacktrace;
 using boost::stacktrace::frame;
