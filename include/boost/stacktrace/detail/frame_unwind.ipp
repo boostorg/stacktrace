@@ -20,7 +20,9 @@
 #include <boost/stacktrace/detail/addr_base.hpp>
 #include <boost/core/demangle.hpp>
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <cstdio>
+#endif
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>

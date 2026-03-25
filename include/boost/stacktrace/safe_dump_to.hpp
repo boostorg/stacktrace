@@ -19,7 +19,9 @@
 #   pragma once
 #endif
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <cstddef>
+#endif
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>

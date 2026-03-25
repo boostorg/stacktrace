@@ -12,8 +12,10 @@
 #   pragma once
 #endif
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <array>
 #include <cstddef>  // std::size_t
+#endif
 
 namespace boost { namespace stacktrace { namespace detail {
 

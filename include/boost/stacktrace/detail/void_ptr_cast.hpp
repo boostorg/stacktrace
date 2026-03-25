@@ -13,7 +13,9 @@
 #   pragma once
 #endif
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <type_traits>
+#endif
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ * 100 + __GNUC_MINOR__ > 301)
 #   pragma GCC system_header

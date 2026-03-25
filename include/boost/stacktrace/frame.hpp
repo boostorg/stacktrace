@@ -15,8 +15,10 @@
 #   pragma once
 #endif
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <iosfwd>
 #include <string>
+#endif
 
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.h>

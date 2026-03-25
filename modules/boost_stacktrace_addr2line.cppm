@@ -14,6 +14,7 @@ module;
 #include <boost/container_hash/hash_fwd.hpp>
 #include <boost/predef.h>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <array>
 #include <iosfwd>
 #include <string>
@@ -25,11 +26,16 @@ module;
 #include <string>
 #include <type_traits>
 #include <cxxabi.h>
+#endif
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.addr2line;
+
+#if defined(BOOST_STACKTRACE_USE_STD_MODULE)
+import std;
+#endif
 
 import boost.stacktrace.dump;
 

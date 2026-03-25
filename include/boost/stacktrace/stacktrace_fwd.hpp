@@ -11,8 +11,10 @@
 
 #if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
+#ifndef BOOST_STACKTRACE_USE_STD_MODULE
 #include <cstddef>
 #include <memory>
+#endif
 
 /// @file stacktrace_fwd.hpp This header contains only forward declarations of
 /// boost::stacktrace::frame, boost::stacktrace::basic_stacktrace, boost::stacktrace::stacktrace
