@@ -12,14 +12,16 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/safe_dump_to.hpp>
-
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/noncopyable.hpp>
 
 #include <boost/winapi/get_current_process.hpp>
 #include <boost/winapi/file_management.hpp>
 #include <boost/winapi/handles.hpp>
 #include <boost/winapi/access_rights.hpp>
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

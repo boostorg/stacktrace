@@ -14,17 +14,12 @@ module;
 #include <boost/container_hash/hash_fwd.hpp>
 #include <boost/predef.h>
 
-#include <array>
-#include <iosfwd>
-#include <string>
-#include <algorithm>
 #include <vector>
-#include <memory>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <type_traits>
 #include <cxxabi.h>
+
+#include <dlfcn.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK

@@ -12,6 +12,7 @@
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <cstdio>
 #include <cstdint>
 #include <memory>
@@ -27,6 +28,7 @@
 #include <psapi.h>
 #undef WIN32_LEAN_AND_MEAN
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 namespace boost { namespace stacktrace { namespace detail {
   inline std::uintptr_t get_own_proc_addr_base(const void* addr) {
