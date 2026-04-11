@@ -8,6 +8,7 @@
 module;
 
 #include <boost/config.hpp>
+#include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
 #if !defined(BOOST_STACKTRACE_USE_STD_MODULE)

@@ -7,7 +7,7 @@
 #ifndef BOOST_STACKTRACE_FRAME_HPP
 #define BOOST_STACKTRACE_FRAME_HPP
 
-#include <boost/stacktrace/detail/stacktrace_config.hpp>
+#include <boost/stacktrace/detail/backend_config.hpp>
 
 #if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
@@ -15,10 +15,10 @@
 #   pragma once
 #endif
 
-#ifndef BOOST_STACKTRACE_USE_STD_MODULE
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <iosfwd>
 #include <string>
-#endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.h>

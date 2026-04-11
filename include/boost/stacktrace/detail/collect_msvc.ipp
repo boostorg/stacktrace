@@ -12,9 +12,11 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/safe_dump_to.hpp>
-
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/winapi/stack_backtrace.hpp>
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

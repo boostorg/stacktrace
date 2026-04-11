@@ -12,18 +12,21 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/addr_base.hpp>
-#include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/stacktrace/detail/to_dec_array.hpp>
-#include <boost/stacktrace/detail/try_dec_convert.hpp>
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/demangle.hpp>
+
 #include <cstdio>
 #include <cstring>
 
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
+#include <boost/stacktrace/detail/addr_base.hpp>
+#include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <boost/stacktrace/detail/to_dec_array.hpp>
+#include <boost/stacktrace/detail/try_dec_convert.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

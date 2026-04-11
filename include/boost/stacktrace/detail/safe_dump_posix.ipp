@@ -12,12 +12,13 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/safe_dump_to.hpp>
-
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <unistd.h>     // ::write
 #include <fcntl.h>      // ::open
 #include <sys/stat.h>   // S_IWUSR and friends
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

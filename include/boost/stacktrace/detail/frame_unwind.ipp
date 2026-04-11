@@ -12,17 +12,20 @@
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#include <boost/core/demangle.hpp>
+
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
+#include <cstdio>
+#endif // !defined(BOOST_STACKTRACE_USE_STD_MODULE)
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #include <boost/stacktrace/frame.hpp>
 
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/location_from_symbol.hpp>
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/addr_base.hpp>
-#include <boost/core/demangle.hpp>
-
-#ifndef BOOST_STACKTRACE_USE_STD_MODULE
-#include <cstdio>
-#endif
 
 #ifdef BOOST_STACKTRACE_USE_BACKTRACE
 #   include <boost/stacktrace/detail/libbacktrace_impls.hpp>

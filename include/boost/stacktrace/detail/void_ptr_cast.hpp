@@ -13,9 +13,9 @@
 #   pragma once
 #endif
 
-#ifndef BOOST_STACKTRACE_USE_STD_MODULE
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <type_traits>
-#endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ * 100 + __GNUC_MINOR__ > 301)
 #   pragma GCC system_header
@@ -24,7 +24,7 @@
 namespace boost { namespace stacktrace { namespace detail {
 
 // GCC warns when reinterpret_cast between function pointer and object pointer occur.
-// This functionsuppress the warnings and ensures that such casts are safe.
+// This function suppress the warnings and ensures that such casts are safe.
 template <class To, class From>
 To void_ptr_cast(From* v) noexcept {
     static_assert(
