@@ -7,7 +7,7 @@
 #ifndef BOOST_STACKTRACE_STACKTRACE_HPP
 #define BOOST_STACKTRACE_STACKTRACE_HPP
 
-#include <boost/stacktrace/detail/stacktrace_config.hpp>
+#include <boost/stacktrace/detail/backend_config.hpp>
 
 #if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
