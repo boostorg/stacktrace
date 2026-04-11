@@ -19,11 +19,13 @@
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <cstddef>
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #include <boost/stacktrace/detail/push_options.h>
 

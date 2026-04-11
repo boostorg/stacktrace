@@ -15,6 +15,7 @@
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
@@ -25,6 +26,7 @@
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #   include <type_traits>
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
