@@ -29,6 +29,7 @@ lib dl ;
 lib gcc_s ;
 lib Dbgeng ;
 lib ole32 ;
+lib ucrt ;
 
 local LIBBACKTRACE_PATH = [ modules.peek : LIBBACKTRACE_PATH ] ;
 lib backtrace
@@ -263,6 +264,7 @@ lib boost_stacktrace_from_exception
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <target-os>windows:<library>ucrt
 
     # Enable build when explicitly requested, or by default, when on x86
     <conditional>@build-stacktrace-from-exception
