@@ -25,7 +25,6 @@ winapi
 
 describe
 mp11
-static_assert
 throw_exception
 optional
 type_traits
