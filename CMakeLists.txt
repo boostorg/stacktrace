@@ -117,7 +117,7 @@ if(BOOST_STACKTRACE_ENABLE_WINDBG)
 
 elseif(BOOST_STACKTRACE_ENABLE_WINDBG_CACHED)
 
-  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg)
+  target_link_libraries(boost_stacktrace INTERFACE Boost::stacktrace_windbg_cached)
 
 elseif(BOOST_STACKTRACE_ENABLE_BACKTRACE)
 
