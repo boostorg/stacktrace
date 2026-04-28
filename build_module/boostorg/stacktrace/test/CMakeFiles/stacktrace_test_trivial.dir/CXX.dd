@@ -1,5 +1,0 @@
-ninja_dyndep_version = 1.0
-build boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_trivial.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/boost.stacktrace.backtrace.pcm
-
-build boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_impl.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/boost.stacktrace.backtrace.pcm
-

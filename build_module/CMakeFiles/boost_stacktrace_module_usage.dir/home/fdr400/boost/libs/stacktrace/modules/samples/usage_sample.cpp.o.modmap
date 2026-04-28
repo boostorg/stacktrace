@@ -1,4 +1,0 @@
--fmodule-file=boost.stacktrace=boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/boost.stacktrace.pcm
--fmodule-file=boost.stacktrace.backtrace=boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/boost.stacktrace.backtrace.pcm
--fmodule-file=boost.stacktrace.dump=boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/boost.stacktrace.dump.pcm
--fmodule-file=std=CMakeFiles/__cmake_cxx26.dir/std.pcm

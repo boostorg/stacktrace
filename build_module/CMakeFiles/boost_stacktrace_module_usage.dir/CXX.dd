@@ -1,3 +1,0 @@
-ninja_dyndep_version = 1.0
-build CMakeFiles/boost_stacktrace_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/boost.stacktrace.pcm
-

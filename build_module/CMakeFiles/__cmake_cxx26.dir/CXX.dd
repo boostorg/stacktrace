@@ -1,7 +1,0 @@
-ninja_dyndep_version = 1.0
-build CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o | CMakeFiles/__cmake_cxx26.dir/std.pcm: dyndep
-  restat = 1
-
-build CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o | CMakeFiles/__cmake_cxx26.dir/std.compat.pcm: dyndep | CMakeFiles/__cmake_cxx26.dir/std.pcm
-  restat = 1
-

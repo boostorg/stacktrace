@@ -1,4 +1,0 @@
-ninja_dyndep_version = 1.0
-build boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/modules/boost_stacktrace_noop.cppm.o | boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/boost.stacktrace.noop.pcm: dyndep | CMakeFiles/__cmake_cxx26.dir/std.pcm
-  restat = 1
-

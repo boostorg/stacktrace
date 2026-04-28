@@ -1,9 +1,0 @@
-{
-  "revision": 0,
-  "rules": [
-    {
-      "primary-output": "boostorg/stacktrace/test/CMakeFiles/stacktrace_test_num_conv.dir/test_num_conv.cpp.o"
-    }
-  ],
-  "version": 1
-}
