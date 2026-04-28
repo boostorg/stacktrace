@@ -106,8 +106,8 @@ jobs:
                 -DBUILD_TESTING=1 \
                 -DCMAKE_CXX_STANDARD=20 \
                 -DCMAKE_CXX_COMPILER=${{matrix.compiler}} \
-                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I/home/runner/.local/include" \
-                -DCMAKE_EXE_LINKER_FLAGS="-L/home/runner/.local"
+                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I$HOME.local/include" \
+                -DCMAKE_EXE_LINKER_FLAGS="-L$HOME.local"
           cmake --build build_module
           ctest --test-dir build_module -VV
           rm -rf build_module
