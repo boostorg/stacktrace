@@ -1,0 +1,21 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/modules/boost_stacktrace.cppm.o",
+      "provides": [
+        {
+          "is-interface": true,
+          "logical-name": "boost.stacktrace",
+          "source-path": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace.cppm"
+        }
+      ],
+      "requires": [
+        {
+          "logical-name": "boost.stacktrace.backtrace"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,3 @@
+ninja_dyndep_version = 1.0
+build boostorg/stacktrace/CMakeFiles/boost_stacktrace_from_exception.dir/src/from_exception.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/boost.stacktrace.dump.pcm
+

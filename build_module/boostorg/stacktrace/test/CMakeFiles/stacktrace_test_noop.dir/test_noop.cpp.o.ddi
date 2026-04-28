@@ -1,0 +1,14 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_noop.cpp.o",
+      "requires": [
+        {
+          "logical-name": "boost.stacktrace.noop"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

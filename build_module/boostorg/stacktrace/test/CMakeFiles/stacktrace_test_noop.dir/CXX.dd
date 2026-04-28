@@ -1,0 +1,5 @@
+ninja_dyndep_version = 1.0
+build boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_noop.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/boost.stacktrace.noop.pcm
+
+build boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_impl.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/boost.stacktrace.noop.pcm
+

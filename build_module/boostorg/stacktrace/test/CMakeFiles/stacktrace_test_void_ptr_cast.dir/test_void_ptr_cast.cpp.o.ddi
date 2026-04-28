@@ -1,0 +1,9 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/test/CMakeFiles/stacktrace_test_void_ptr_cast.dir/test_void_ptr_cast.cpp.o"
+    }
+  ],
+  "version": 1
+}

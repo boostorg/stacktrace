@@ -1,0 +1,24 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/CMakeFiles/boost_stacktrace_addr2line.dir/modules/boost_stacktrace_addr2line.cppm.o",
+      "provides": [
+        {
+          "is-interface": true,
+          "logical-name": "boost.stacktrace.addr2line",
+          "source-path": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_addr2line.cppm"
+        }
+      ],
+      "requires": [
+        {
+          "logical-name": "std"
+        },
+        {
+          "logical-name": "boost.stacktrace.dump"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

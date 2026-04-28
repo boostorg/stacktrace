@@ -1,0 +1,14 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "CMakeFiles/boost_stacktrace_from_exception_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o",
+      "requires": [
+        {
+          "logical-name": "boost.stacktrace.addr2line"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

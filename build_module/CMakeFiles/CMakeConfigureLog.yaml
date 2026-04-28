@@ -1,0 +1,1311 @@
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:12 (find_program)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_UNAME"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "uname"
+    candidate_directories:
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/local/go/bin/uname"
+      - "/home/fdr400/.fzf/bin/uname"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/uname"
+      - "/usr/local/sbin/uname"
+      - "/usr/local/bin/uname"
+      - "/usr/sbin/uname"
+    found: "/usr/bin/uname"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:7 (project)"
+    message: |
+      The system is: Linux - 6.8.0-90-generic - x86_64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeNinjaFindMake.cmake:5 (find_program)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_MAKE_PROGRAM"
+    description: "Program used to build from build.ninja files."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ninja-build"
+      - "ninja"
+      - "samu"
+    candidate_directories:
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/local/go/bin/ninja-build"
+      - "/usr/local/go/bin/ninja"
+      - "/usr/local/go/bin/samu"
+      - "/home/fdr400/.fzf/bin/ninja-build"
+      - "/home/fdr400/.fzf/bin/ninja"
+      - "/home/fdr400/.fzf/bin/samu"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/ninja-build"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/ninja"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/samu"
+      - "/usr/local/sbin/ninja-build"
+      - "/usr/local/sbin/ninja"
+      - "/usr/local/sbin/samu"
+      - "/usr/local/bin/ninja-build"
+      - "/usr/local/bin/ninja"
+      - "/usr/local/bin/samu"
+      - "/usr/sbin/ninja-build"
+      - "/usr/sbin/ninja"
+      - "/usr/sbin/samu"
+      - "/usr/bin/ninja-build"
+    found: "/usr/bin/ninja"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompiler.cmake:115 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:71 (_cmake_find_compiler_path)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "clang++-19"
+    candidate_directories:
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/local/go/bin/clang++-19"
+      - "/home/fdr400/.fzf/bin/clang++-19"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/clang++-19"
+      - "/usr/local/sbin/clang++-19"
+      - "/usr/local/bin/clang++-19"
+      - "/usr/sbin/clang++-19"
+    found: "/usr/bin/clang++-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:462 (find_file)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:500 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/usr/share/cmake-4.2/Modules/"
+    found: "/usr/share/cmake-4.2/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:7 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /usr/bin/clang++-19 
+      Build flags: -stdlib=libc++
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is Clang, found in:
+        /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/4.2.3/CompilerIdCXX/a.out
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ar-19"
+      - "llvm-ar"
+      - "ar-19"
+      - "ar"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-ar-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_RANLIB"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ranlib-19"
+      - "llvm-ranlib"
+      - "ranlib-19"
+      - "ranlib"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-ranlib-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_STRIP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-strip-19"
+      - "llvm-strip"
+      - "strip-19"
+      - "strip"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-strip-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ld.lld-19"
+      - "ld.lld"
+      - "ld-19"
+      - "ld"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/ld.lld-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_NM"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-nm-19"
+      - "llvm-nm"
+      - "nm-19"
+      - "nm"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-nm-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJDUMP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-objdump-19"
+      - "llvm-objdump"
+      - "objdump-19"
+      - "objdump"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-objdump-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJCOPY"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-objcopy-19"
+      - "llvm-objcopy"
+      - "objcopy-19"
+      - "objcopy"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-objcopy-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_READELF"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-readelf-19"
+      - "llvm-readelf"
+      - "readelf-19"
+      - "readelf"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-readelf-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_DLLTOOL"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-dlltool-19"
+      - "llvm-dlltool"
+      - "dlltool-19"
+      - "dlltool"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-dlltool-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_ADDR2LINE"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-addr2line-19"
+      - "llvm-addr2line"
+      - "addr2line-19"
+      - "addr2line"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    found: "/usr/bin/llvm-addr2line-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_TAPI"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "tapi-19"
+      - "tapi"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/bin/tapi-19"
+      - "/usr/local/go/bin/tapi-19"
+      - "/home/fdr400/.fzf/bin/tapi-19"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/tapi-19"
+      - "/usr/local/sbin/tapi-19"
+      - "/usr/local/bin/tapi-19"
+      - "/usr/sbin/tapi-19"
+      - "/sbin/tapi-19"
+      - "/bin/tapi-19"
+      - "/usr/games/tapi-19"
+      - "/usr/local/games/tapi-19"
+      - "/snap/bin/tapi-19"
+      - "/usr/bin/tapi"
+      - "/usr/local/go/bin/tapi"
+      - "/home/fdr400/.fzf/bin/tapi"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/tapi"
+      - "/usr/local/sbin/tapi"
+      - "/usr/local/bin/tapi"
+      - "/usr/sbin/tapi"
+      - "/sbin/tapi"
+      - "/bin/tapi"
+      - "/usr/games/tapi"
+      - "/usr/local/games/tapi"
+      - "/snap/bin/tapi"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:26 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_AR"
+    description: "LLVM archiver"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ar-19.1"
+      - "llvm-ar-19"
+      - "llvm-ar19"
+      - "llvm-ar"
+    candidate_directories:
+      - "/usr/lib/llvm-19/bin/"
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/lib/llvm-19/bin/llvm-ar-19.1"
+      - "/usr/bin/llvm-ar-19.1"
+      - "/usr/local/go/bin/llvm-ar-19.1"
+      - "/home/fdr400/.fzf/bin/llvm-ar-19.1"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/llvm-ar-19.1"
+      - "/usr/local/sbin/llvm-ar-19.1"
+      - "/usr/local/bin/llvm-ar-19.1"
+      - "/usr/sbin/llvm-ar-19.1"
+      - "/sbin/llvm-ar-19.1"
+      - "/bin/llvm-ar-19.1"
+      - "/usr/games/llvm-ar-19.1"
+      - "/usr/local/games/llvm-ar-19.1"
+      - "/snap/bin/llvm-ar-19.1"
+      - "/usr/lib/llvm-19/bin/llvm-ar-19"
+    found: "/usr/bin/llvm-ar-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:38 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_RANLIB"
+    description: "Generate index for LLVM archive"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ranlib-19.1"
+      - "llvm-ranlib-19"
+      - "llvm-ranlib19"
+      - "llvm-ranlib"
+    candidate_directories:
+      - "/usr/lib/llvm-19/bin/"
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/lib/llvm-19/bin/llvm-ranlib-19.1"
+      - "/usr/bin/llvm-ranlib-19.1"
+      - "/usr/local/go/bin/llvm-ranlib-19.1"
+      - "/home/fdr400/.fzf/bin/llvm-ranlib-19.1"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/llvm-ranlib-19.1"
+      - "/usr/local/sbin/llvm-ranlib-19.1"
+      - "/usr/local/bin/llvm-ranlib-19.1"
+      - "/usr/sbin/llvm-ranlib-19.1"
+      - "/sbin/llvm-ranlib-19.1"
+      - "/bin/llvm-ranlib-19.1"
+      - "/usr/games/llvm-ranlib-19.1"
+      - "/usr/local/games/llvm-ranlib-19.1"
+      - "/snap/bin/llvm-ranlib-19.1"
+      - "/usr/lib/llvm-19/bin/llvm-ranlib-19"
+    found: "/usr/bin/llvm-ranlib-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:50 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS"
+    description: "`clang-scan-deps` dependency scanner"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "clang-scan-deps-19.1"
+      - "clang-scan-deps-19"
+      - "clang-scan-deps19"
+      - "clang-scan-deps"
+    candidate_directories:
+      - "/usr/lib/llvm-19/bin/"
+      - "/usr/bin/"
+      - "/usr/local/go/bin/"
+      - "/home/fdr400/.fzf/bin/"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+    searched_directories:
+      - "/usr/lib/llvm-19/bin/clang-scan-deps-19.1"
+      - "/usr/bin/clang-scan-deps-19.1"
+      - "/usr/local/go/bin/clang-scan-deps-19.1"
+      - "/home/fdr400/.fzf/bin/clang-scan-deps-19.1"
+      - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli/clang-scan-deps-19.1"
+      - "/usr/local/sbin/clang-scan-deps-19.1"
+      - "/usr/local/bin/clang-scan-deps-19.1"
+      - "/usr/sbin/clang-scan-deps-19.1"
+      - "/sbin/clang-scan-deps-19.1"
+      - "/bin/clang-scan-deps-19.1"
+      - "/usr/games/clang-scan-deps-19.1"
+      - "/usr/local/games/clang-scan-deps-19.1"
+      - "/snap/bin/clang-scan-deps-19.1"
+      - "/usr/lib/llvm-19/bin/clang-scan-deps-19"
+    found: "/usr/bin/clang-scan-deps-19"
+    search_context:
+      ENV{PATH}:
+        - "/usr/local/go/bin"
+        - "/home/fdr400/.fzf/bin"
+        - "/home/fdr400/.vscode-server/cli/servers/Stable-e7fb5e96c0730b9deb70b33781f98e2f35975036/server/bin/remote-cli"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:7 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK"
+      binary: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-19"
+      CMAKE_CXX_FLAGS: "-stdlib=libc++"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: "-fuse-ld=lld"
+      CMAKE_EXPERIMENTAL_CXX_IMPORT_STD: "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_28c96
+        [1/2] /usr/bin/clang++-19   -stdlib=libc++  -std=gnu++26   -v -MD -MT CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
+        Ubuntu clang version 19.1.7 (++20250804090312+cd708029e0b2-1~exp1~20250804210325.79)
+        Target: x86_64-pc-linux-gnu
+        Thread model: posix
+        InstalledDir: /usr/lib/llvm-19/bin
+        Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13
+        Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13
+        Candidate multilib: .;@m64
+        Selected multilib: .;@m64
+         (in-process)
+         "/usr/lib/llvm-19/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK -v -fcoverage-compilation-dir=/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK -resource-dir /usr/lib/llvm-19/lib/clang/19 -dependency-file CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/llvm-19/bin/../include/c++/v1 -internal-isystem /usr/lib/llvm-19/lib/clang/19/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/13/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -std=gnu++26 -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fno-implicit-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
+        clang -cc1 version 19.1.7 based upon LLVM 19.1.7 default target x86_64-pc-linux-gnu
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/13/../../../../x86_64-linux-gnu/include"
+        ignoring nonexistent directory "/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/lib/llvm-19/bin/../include/c++/v1
+         /usr/lib/llvm-19/lib/clang/19/include
+         /usr/local/include
+         /usr/include/x86_64-linux-gnu
+         /usr/include
+        End of search list.
+        [2/2] : && /usr/bin/clang++-19 -stdlib=libc++ -fuse-ld=lld -v -Wl,-v CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_28c96   && :
+        Ubuntu clang version 19.1.7 (++20250804090312+cd708029e0b2-1~exp1~20250804210325.79)
+        Target: x86_64-pc-linux-gnu
+        Thread model: posix
+        InstalledDir: /usr/lib/llvm-19/bin
+        Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13
+        Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13
+        Candidate multilib: .;@m64
+        Selected multilib: .;@m64
+         "/usr/lib/llvm-19/bin/ld.lld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_28c96 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/13 -L/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/usr/lib/llvm-19/bin/../lib -L/lib -L/usr/lib -v CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/13/crtendS.o /lib/x86_64-linux-gnu/crtn.o
+        Ubuntu LLD 19.1.7 (compatible with GNU linkers)
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:217 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:7 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/lib/llvm-19/bin/../include/c++/v1]
+          add: [/usr/lib/llvm-19/lib/clang/19/include]
+          add: [/usr/local/include]
+          add: [/usr/include/x86_64-linux-gnu]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/lib/llvm-19/bin/../include/c++/v1] ==> [/usr/lib/llvm-19/include/c++/v1]
+        collapse include dir [/usr/lib/llvm-19/lib/clang/19/include] ==> [/usr/lib/llvm-19/lib/clang/19/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/lib/llvm-19/include/c++/v1;/usr/lib/llvm-19/lib/clang/19/include;/usr/local/include;/usr/include/x86_64-linux-gnu;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:7 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
+        ignore line: [Change Dir: '/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK']
+        ignore line: []
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_28c96]
+        ignore line: [[1/2] /usr/bin/clang++-19   -stdlib=libc++  -std=gnu++26   -v -MD -MT CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Ubuntu clang version 19.1.7 (++20250804090312+cd708029e0b2-1~exp1~20250804210325.79)]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/lib/llvm-19/bin]
+        ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13]
+        ignore line: [Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13]
+        ignore line: [Candidate multilib: .]
+        ignore line: [@m64]
+        ignore line: [Selected multilib: .]
+        ignore line: [@m64]
+        ignore line: [ (in-process)]
+        ignore line: [ "/usr/lib/llvm-19/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK -v -fcoverage-compilation-dir=/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-idYCBK -resource-dir /usr/lib/llvm-19/lib/clang/19 -dependency-file CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/llvm-19/bin/../include/c++/v1 -internal-isystem /usr/lib/llvm-19/lib/clang/19/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/13/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -std=gnu++26 -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fno-implicit-modules -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang -cc1 version 19.1.7 based upon LLVM 19.1.7 default target x86_64-pc-linux-gnu]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/13/../../../../x86_64-linux-gnu/include"]
+        ignore line: [ignoring nonexistent directory "/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/lib/llvm-19/bin/../include/c++/v1]
+        ignore line: [ /usr/lib/llvm-19/lib/clang/19/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /usr/include/x86_64-linux-gnu]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [[2/2] : && /usr/bin/clang++-19 -stdlib=libc++ -fuse-ld=lld -v -Wl,-v CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_28c96   && :]
+        ignore line: [Ubuntu clang version 19.1.7 (++20250804090312+cd708029e0b2-1~exp1~20250804210325.79)]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/lib/llvm-19/bin]
+        ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13]
+        ignore line: [Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/13]
+        ignore line: [Candidate multilib: .]
+        ignore line: [@m64]
+        ignore line: [Selected multilib: .]
+        ignore line: [@m64]
+        link line: [ "/usr/lib/llvm-19/bin/ld.lld" -z relro --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_28c96 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/13 -L/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 -L/usr/lib/llvm-19/bin/../lib -L/lib -L/usr/lib -v CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/13/crtendS.o /lib/x86_64-linux-gnu/crtn.o]
+          arg [/usr/lib/llvm-19/bin/ld.lld] ==> ignore
+          arg [-zrelro] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-pie] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_28c96] ==> ignore
+          arg [/lib/x86_64-linux-gnu/Scrt1.o] ==> obj [/lib/x86_64-linux-gnu/Scrt1.o]
+          arg [/lib/x86_64-linux-gnu/crti.o] ==> obj [/lib/x86_64-linux-gnu/crti.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/13] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/13]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib64]
+          arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/usr/lib/llvm-19/bin/../lib] ==> dir [/usr/lib/llvm-19/bin/../lib]
+          arg [-L/lib] ==> dir [/lib]
+          arg [-L/usr/lib] ==> dir [/usr/lib]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_28c96.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-lc++] ==> lib [c++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/13/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/13/crtendS.o]
+          arg [/lib/x86_64-linux-gnu/crtn.o] ==> obj [/lib/x86_64-linux-gnu/crtn.o]
+        linker tool for 'CXX': /usr/lib/llvm-19/bin/ld.lld
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/13] ==> [/usr/lib/gcc/x86_64-linux-gnu/13]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/13/../../../../lib64] ==> [/usr/lib64]
+        collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/usr/lib/llvm-19/bin/../lib] ==> [/usr/lib/llvm-19/lib]
+        collapse library dir [/lib] ==> [/lib]
+        collapse library dir [/usr/lib] ==> [/usr/lib]
+        implicit libs: [c++;m;gcc_s;gcc;c;gcc_s;gcc]
+        implicit objs: [/lib/x86_64-linux-gnu/Scrt1.o;/lib/x86_64-linux-gnu/crti.o;/usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o;/usr/lib/gcc/x86_64-linux-gnu/13/crtendS.o;/lib/x86_64-linux-gnu/crtn.o]
+        implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/13;/usr/lib64;/lib/x86_64-linux-gnu;/lib64;/usr/lib/x86_64-linux-gnu;/usr/lib/llvm-19/lib;/lib;/usr/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:7 (project)"
+    message: |
+      Running the CXX compiler's linker: "/usr/lib/llvm-19/bin/ld.lld" "-v"
+      Ubuntu LLD 19.1.7 (compatible with GNU linkers)
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/usr/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake:103 (cmake_check_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:86 (check_cxx_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:91 (stacktrace_check)"
+    checks:
+      - "Performing Test BOOST_STACKTRACE_HAS_BACKTRACE"
+    directories:
+      source: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-Arlxzb"
+      binary: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-Arlxzb"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-19"
+      CMAKE_CXX_FLAGS: "-stdlib=libc++"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "-fuse-ld=lld"
+      CMAKE_EXPERIMENTAL_CXX_IMPORT_STD: "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+    buildResult:
+      variable: "BOOST_STACKTRACE_HAS_BACKTRACE"
+      cached: true
+      stdout: |
+        Change Dir: '/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-Arlxzb'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_d3af4
+        [1/4] "/usr/bin/clang-scan-deps-19" -format=p1689 -- /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_BACKTRACE -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -x c++ /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-Arlxzb/src.cxx -c -o CMakeFiles/cmTC_d3af4.dir/src.cxx.o -resource-dir "/usr/lib/llvm-19/lib/clang/19" -MT CMakeFiles/cmTC_d3af4.dir/src.cxx.o.ddi -MD -MF CMakeFiles/cmTC_d3af4.dir/src.cxx.o.ddi.d > CMakeFiles/cmTC_d3af4.dir/src.cxx.o.ddi.tmp && mv CMakeFiles/cmTC_d3af4.dir/src.cxx.o.ddi.tmp CMakeFiles/cmTC_d3af4.dir/src.cxx.o.ddi
+        [2/4] /usr/bin/cmake -E cmake_ninja_dyndep --tdi=CMakeFiles/cmTC_d3af4.dir/CXXDependInfo.json --lang=CXX --modmapfmt=clang --dd=CMakeFiles/cmTC_d3af4.dir/CXX.dd @CMakeFiles/cmTC_d3af4.dir/CXX.dd.rsp
+        [3/4] /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_BACKTRACE -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -MD -MT CMakeFiles/cmTC_d3af4.dir/src.cxx.o -MF CMakeFiles/cmTC_d3af4.dir/src.cxx.o.d @CMakeFiles/cmTC_d3af4.dir/src.cxx.o.modmap -o CMakeFiles/cmTC_d3af4.dir/src.cxx.o -c /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-Arlxzb/src.cxx
+        [4/4] : && /usr/bin/clang++-19 -stdlib=libc++ -fuse-ld=lld CMakeFiles/cmTC_d3af4.dir/src.cxx.o -o cmTC_d3af4  -lbacktrace && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/usr/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake:103 (cmake_check_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:86 (check_cxx_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:98 (stacktrace_check)"
+    checks:
+      - "Performing Test BOOST_STACKTRACE_HAS_WINDBG"
+    directories:
+      source: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo"
+      binary: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-19"
+      CMAKE_CXX_FLAGS: "-stdlib=libc++"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "-fuse-ld=lld"
+      CMAKE_EXPERIMENTAL_CXX_IMPORT_STD: "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+    buildResult:
+      variable: "BOOST_STACKTRACE_HAS_WINDBG"
+      cached: true
+      stdout: |
+        Change Dir: '/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_ca309
+        [1/4] "/usr/bin/clang-scan-deps-19" -format=p1689 -- /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_WINDBG -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -x c++ /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo/src.cxx -c -o CMakeFiles/cmTC_ca309.dir/src.cxx.o -resource-dir "/usr/lib/llvm-19/lib/clang/19" -MT CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi -MD -MF CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.d > CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.tmp && mv CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.tmp CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi
+        FAILED: [code=1] CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi 
+        "/usr/bin/clang-scan-deps-19" -format=p1689 -- /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_WINDBG -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -x c++ /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo/src.cxx -c -o CMakeFiles/cmTC_ca309.dir/src.cxx.o -resource-dir "/usr/lib/llvm-19/lib/clang/19" -MT CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi -MD -MF CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.d > CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.tmp && mv CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi.tmp CMakeFiles/cmTC_ca309.dir/src.cxx.o.ddi
+        Error while scanning dependencies for /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo/src.cxx:
+        In file included from /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-dmv6Bo/src.cxx:1:
+        /home/fdr400/boost/libs/stacktrace/build/has_windbg.cpp:8:10: fatal error: 'windows.h' file not found
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/usr/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake:103 (cmake_check_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:86 (check_cxx_source_compiles)"
+      - "/home/fdr400/boost/libs/stacktrace/CMakeLists.txt:99 (stacktrace_check)"
+    checks:
+      - "Performing Test BOOST_STACKTRACE_HAS_WINDBG_CACHED"
+    directories:
+      source: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i"
+      binary: "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-19"
+      CMAKE_CXX_FLAGS: "-stdlib=libc++"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: "-fuse-ld=lld"
+      CMAKE_EXPERIMENTAL_CXX_IMPORT_STD: "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+    buildResult:
+      variable: "BOOST_STACKTRACE_HAS_WINDBG_CACHED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_9597f
+        [1/4] "/usr/bin/clang-scan-deps-19" -format=p1689 -- /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_WINDBG_CACHED -I/home/fdr400/boost/libs/stacktrace/../config/include -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -x c++ /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i/src.cxx -c -o CMakeFiles/cmTC_9597f.dir/src.cxx.o -resource-dir "/usr/lib/llvm-19/lib/clang/19" -MT CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi -MD -MF CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.d > CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.tmp && mv CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.tmp CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi
+        FAILED: [code=1] CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi 
+        "/usr/bin/clang-scan-deps-19" -format=p1689 -- /usr/bin/clang++-19 -DBOOST_STACKTRACE_HAS_WINDBG_CACHED -I/home/fdr400/boost/libs/stacktrace/../config/include -I/home/fdr400/boost/libs/stacktrace/build -stdlib=libc++  -std=gnu++26 -x c++ /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i/src.cxx -c -o CMakeFiles/cmTC_9597f.dir/src.cxx.o -resource-dir "/usr/lib/llvm-19/lib/clang/19" -MT CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi -MD -MF CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.d > CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.tmp && mv CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi.tmp CMakeFiles/cmTC_9597f.dir/src.cxx.o.ddi
+        Error while scanning dependencies for /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i/src.cxx:
+        In file included from /home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/CMakeScratch/TryCompile-fK4G1i/src.cxx:1:
+        /home/fdr400/boost/libs/stacktrace/build/has_windbg_cached.cpp:11:10: fatal error: 'windows.h' file not found
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+...

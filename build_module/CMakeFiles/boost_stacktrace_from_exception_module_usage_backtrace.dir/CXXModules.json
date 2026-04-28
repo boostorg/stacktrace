@@ -1,0 +1,42 @@
+{
+	"modules" : {},
+	"references" : 
+	{
+		"boost.stacktrace.backtrace" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/boost.stacktrace.backtrace.pcm"
+		},
+		"boost.stacktrace.dump" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/boost.stacktrace.dump.pcm"
+		},
+		"std" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "CMakeFiles/__cmake_cxx26.dir/std.pcm"
+		},
+		"std.compat" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "CMakeFiles/__cmake_cxx26.dir/std.compat.pcm"
+		}
+	},
+	"usages" : 
+	{
+		"boost.stacktrace.backtrace" : 
+		[
+			"boost.stacktrace.dump",
+			"std"
+		],
+		"boost.stacktrace.dump" : 
+		[
+			"std"
+		],
+		"std.compat" : 
+		[
+			"std"
+		]
+	}
+}

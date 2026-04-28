@@ -1,0 +1,9 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "CMakeFiles/stacktrace_main_header_only.dir/main.cpp.o"
+    }
+  ],
+  "version": 1
+}

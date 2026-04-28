@@ -1,0 +1,3 @@
+ninja_dyndep_version = 1.0
+build boostorg/stacktrace/test/CMakeFiles/stacktrace_test_void_ptr_cast.dir/test_void_ptr_cast.cpp.o: dyndep
+

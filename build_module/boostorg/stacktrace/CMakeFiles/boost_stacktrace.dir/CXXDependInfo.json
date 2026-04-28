@@ -1,0 +1,49 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "Clang",
+	"compiler-simulate-id" : "",
+	"config" : "Release",
+	"cxx-modules" : 
+	{
+		"boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/modules/boost_stacktrace.cppm.o" : 
+		{
+			"bmi-only" : false,
+			"destination" : null,
+			"name" : "CXX_MODULES",
+			"relative-directory" : "",
+			"source" : "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace.cppm",
+			"type" : "CXX_MODULES",
+			"visibility" : "PUBLIC"
+		}
+	},
+	"database-info" : null,
+	"dir-cur-bld" : "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace",
+	"dir-cur-src" : "/home/fdr400/boost/libs/stacktrace",
+	"dir-top-bld" : "/home/fdr400/boost/libs/stacktrace/build_module",
+	"dir-top-src" : "/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"/home/fdr400/boost/libs/stacktrace/include",
+		"/home/fdr400/boost/libs/config/include",
+		"/home/fdr400/boost/libs/container_hash/include",
+		"/home/fdr400/boost/libs/describe/include",
+		"/home/fdr400/boost/libs/mp11/include",
+		"/home/fdr400/boost/libs/core/include",
+		"/home/fdr400/boost/libs/assert/include",
+		"/home/fdr400/boost/libs/throw_exception/include",
+		"/home/fdr400/boost/libs/predef/include",
+		"/home/fdr400/boost/libs/winapi/include"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : 
+	[
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir",
+		"/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx26.dir",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir"
+	],
+	"module-dir" : "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir",
+	"sources" : {}
+}

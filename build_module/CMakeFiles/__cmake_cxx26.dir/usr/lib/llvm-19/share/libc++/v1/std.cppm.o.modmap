@@ -1,0 +1,2 @@
+-x c++-module
+-fmodule-output=CMakeFiles/__cmake_cxx26.dir/std.pcm

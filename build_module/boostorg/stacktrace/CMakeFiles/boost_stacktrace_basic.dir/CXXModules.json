@@ -1,0 +1,49 @@
+{
+	"modules" : 
+	{
+		"boost.stacktrace.basic" : 
+		{
+			"bmi" : "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_basic.dir/boost.stacktrace.basic.pcm",
+			"is-private" : false
+		}
+	},
+	"references" : 
+	{
+		"boost.stacktrace.basic" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "boostorg/stacktrace/CMakeFiles/boost_stacktrace_basic.dir/boost.stacktrace.basic.pcm"
+		},
+		"boost.stacktrace.dump" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/boost.stacktrace.dump.pcm"
+		},
+		"std" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "CMakeFiles/__cmake_cxx26.dir/std.pcm"
+		},
+		"std.compat" : 
+		{
+			"lookup-method" : "by-name",
+			"path" : "CMakeFiles/__cmake_cxx26.dir/std.compat.pcm"
+		}
+	},
+	"usages" : 
+	{
+		"boost.stacktrace.basic" : 
+		[
+			"boost.stacktrace.dump",
+			"std"
+		],
+		"boost.stacktrace.dump" : 
+		[
+			"std"
+		],
+		"std.compat" : 
+		[
+			"std"
+		]
+	}
+}

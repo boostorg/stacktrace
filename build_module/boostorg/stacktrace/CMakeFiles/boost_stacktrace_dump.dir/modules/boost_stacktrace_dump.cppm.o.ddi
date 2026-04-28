@@ -1,0 +1,21 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/modules/boost_stacktrace_dump.cppm.o",
+      "provides": [
+        {
+          "is-interface": true,
+          "logical-name": "boost.stacktrace.dump",
+          "source-path": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_dump.cppm"
+        }
+      ],
+      "requires": [
+        {
+          "logical-name": "std"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

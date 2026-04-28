@@ -1,0 +1,14 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "CMakeFiles/boost_stacktrace_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o",
+      "requires": [
+        {
+          "logical-name": "boost.stacktrace.noop"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

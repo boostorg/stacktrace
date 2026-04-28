@@ -1,0 +1,45 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "Clang",
+	"compiler-simulate-id" : "",
+	"config" : "Release",
+	"cxx-modules" : 
+	{
+		"CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o" : 
+		{
+			"bmi-only" : false,
+			"destination" : null,
+			"name" : "std",
+			"relative-directory" : "",
+			"source" : "/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm",
+			"type" : "CXX_MODULES",
+			"visibility" : "PUBLIC"
+		},
+		"CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o" : 
+		{
+			"bmi-only" : false,
+			"destination" : null,
+			"name" : "std",
+			"relative-directory" : "",
+			"source" : "/usr/lib/llvm-19/share/libc++/v1/std.cppm",
+			"type" : "CXX_MODULES",
+			"visibility" : "PUBLIC"
+		}
+	},
+	"database-info" : null,
+	"dir-cur-bld" : "/home/fdr400/boost/libs/stacktrace/build_module",
+	"dir-cur-src" : "/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test",
+	"dir-top-bld" : "/home/fdr400/boost/libs/stacktrace/build_module",
+	"dir-top-src" : "/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"/usr/lib/llvm-19/bin/../lib/../share/libc++/v1"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx23.dir",
+	"sources" : {}
+}

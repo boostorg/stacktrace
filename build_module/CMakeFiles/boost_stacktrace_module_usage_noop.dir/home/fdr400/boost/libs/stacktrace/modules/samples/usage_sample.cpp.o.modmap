@@ -1,0 +1,2 @@
+-fmodule-file=boost.stacktrace.noop=boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/boost.stacktrace.noop.pcm
+-fmodule-file=std=CMakeFiles/__cmake_cxx26.dir/std.pcm

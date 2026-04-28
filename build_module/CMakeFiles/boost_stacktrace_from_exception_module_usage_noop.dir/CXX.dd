@@ -1,0 +1,3 @@
+ninja_dyndep_version = 1.0
+build CMakeFiles/boost_stacktrace_from_exception_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o: dyndep | boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/boost.stacktrace.noop.pcm
+

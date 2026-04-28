@@ -1,0 +1,4 @@
+-x c++-module
+-fmodule-output=boostorg/stacktrace/CMakeFiles/boost_stacktrace_addr2line.dir/boost.stacktrace.addr2line.pcm
+-fmodule-file=std=CMakeFiles/__cmake_cxx26.dir/std.pcm
+-fmodule-file=boost.stacktrace.dump=boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/boost.stacktrace.dump.pcm

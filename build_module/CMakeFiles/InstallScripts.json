@@ -1,0 +1,31 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/fdr400/boost/libs/stacktrace/build_module/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/assert/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/assert/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/config/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/container_hash/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/container_hash/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/core/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/core/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/core/test/swap/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/predef/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/winapi/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/describe/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/describe/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/mp11/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/mp11/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/static_assert/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/static_assert/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/static_assert/example/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/throw_exception/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/throw_exception/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/optional/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/optional/test/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/type_traits/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/cmake_install.cmake",
+		"/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

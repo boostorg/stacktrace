@@ -1,0 +1,14 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "boostorg/stacktrace/CMakeFiles/boost_stacktrace_from_exception.dir/src/from_exception.cpp.o",
+      "requires": [
+        {
+          "logical-name": "boost.stacktrace.dump"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

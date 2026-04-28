@@ -1,0 +1,37 @@
+{
+    "editor.formatOnSave": false,
+    "clangd.arguments": [
+        "--header-insertion=never",
+        "--background-index",
+        "--clang-tidy",
+        "--log=verbose",
+        "--pretty",
+        "-j=24",
+        "--compile-commands-dir=${workspaceFolder}/build_module"
+    ],
+    "workbench.editor.enablePreview": false,
+    "files.insertFinalNewline": true,
+    "editor.minimap.showSlider": "mouseover",
+    "files.autoSave": "onWindowChange",
+    "files.autoSaveDelay": 5000,
+    "files.autoSaveWorkspaceFilesOnly": true,
+    "telemetry.editStats.enabled": false,
+    "telemetry.feedback.enabled": false,
+    "clangd.onConfigChanged": "prompt",
+    "git.autofetch": true,
+    "lldb.verboseLogging": true,
+    "remote.SSH.remoteServerListenOnSocket": true,
+    "clangd.path": "clangd-19",
+    "python.languageServer": "Pylance",
+    "vim.visualstar": true,
+    "chat.mcp.autostart": "never",
+    "chat.agent.enabled": false,
+    "chat.disableAIFeatures": true,
+    "editor.fontFamily": "JetBrains Mono, monospace",
+    "editor.quickSuggestions": {
+        "comments": "off",
+        "strings": "off"
+    },
+    "terminal.integrated.suggest.enabled": false,
+    "terminal.integrated.fontLigatures.enabled": false
+}

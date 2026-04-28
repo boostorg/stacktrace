@@ -1,0 +1,224 @@
+[
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -I/usr/lib/llvm-19/bin/../lib/../share/libc++/v1 -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics -Wno-reserved-module-identifier @CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o.modmap -o CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o -c /usr/lib/llvm-19/share/libc++/v1/std.cppm",
+  "file": "/usr/lib/llvm-19/share/libc++/v1/std.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -I/usr/lib/llvm-19/bin/../lib/../share/libc++/v1 -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics -Wno-reserved-module-identifier @CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o.modmap -o CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o -c /usr/lib/llvm-19/share/libc++/v1/std.compat.cppm",
+  "file": "/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx23.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -I/usr/lib/llvm-19/bin/../lib/../share/libc++/v1 -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics -Wno-reserved-module-identifier @CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o.modmap -o CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o -c /usr/lib/llvm-19/share/libc++/v1/std.cppm",
+  "file": "/usr/lib/llvm-19/share/libc++/v1/std.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -I/usr/lib/llvm-19/bin/../lib/../share/libc++/v1 -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics -Wno-reserved-module-identifier @CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o.modmap -o CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o -c /usr/lib/llvm-19/share/libc++/v1/std.compat.cppm",
+  "file": "/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/__cmake_cxx26.dir/usr/lib/llvm-19/share/libc++/v1/std.compat.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/stacktrace_main.dir/main.cpp.o.modmap -o CMakeFiles/stacktrace_main.dir/main.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test/main.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test/main.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/stacktrace_main.dir/main.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -D_GNU_SOURCE=1 -I/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test/../../include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/stacktrace_main_header_only.dir/main.cpp.o.modmap -o CMakeFiles/stacktrace_main_header_only.dir/main.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test/main.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/cmake_subdir_test/main.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/stacktrace_main_header_only.dir/main.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o.modmap -o CMakeFiles/boost_stacktrace_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_from_exception_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o.modmap -o CMakeFiles/boost_stacktrace_from_exception_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_from_exception_module_usage.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=noop -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.noop -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o.modmap -o CMakeFiles/boost_stacktrace_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=noop -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.noop -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_from_exception_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o.modmap -o CMakeFiles/boost_stacktrace_from_exception_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_from_exception_module_usage_noop.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=basic -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.basic -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o.modmap -o CMakeFiles/boost_stacktrace_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=basic -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.basic -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_from_exception_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o.modmap -o CMakeFiles/boost_stacktrace_from_exception_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_from_exception_module_usage_basic.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=addr2line -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.addr2line -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o.modmap -o CMakeFiles/boost_stacktrace_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=addr2line -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.addr2line -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_from_exception_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o.modmap -o CMakeFiles/boost_stacktrace_from_exception_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_from_exception_module_usage_addr2line.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.backtrace -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o.modmap -o CMakeFiles/boost_stacktrace_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -DSTACKTRACE_MODULE=boost.stacktrace.backtrace -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @CMakeFiles/boost_stacktrace_from_exception_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o.modmap -o CMakeFiles/boost_stacktrace_from_exception_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/CMakeFiles/boost_stacktrace_from_exception_module_usage_backtrace.dir/home/fdr400/boost/libs/stacktrace/modules/samples/usage_sample_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/modules/boost_stacktrace_dump.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/modules/boost_stacktrace_dump.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_dump.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_dump.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_dump.dir/modules/boost_stacktrace_dump.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/modules/boost_stacktrace_noop.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/modules/boost_stacktrace_noop.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_noop.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_noop.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_noop.dir/modules/boost_stacktrace_noop.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/modules/boost_stacktrace_backtrace.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/modules/boost_stacktrace_backtrace.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_backtrace.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_backtrace.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_backtrace.dir/modules/boost_stacktrace_backtrace.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_addr2line.dir/modules/boost_stacktrace_addr2line.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_addr2line.dir/modules/boost_stacktrace_addr2line.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_addr2line.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_addr2line.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_addr2line.dir/modules/boost_stacktrace_addr2line.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_basic.dir/modules/boost_stacktrace_basic.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_basic.dir/modules/boost_stacktrace_basic.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_basic.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace_basic.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_basic.dir/modules/boost_stacktrace_basic.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_STACKTRACE_USE_STD_MODULE -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/modules/boost_stacktrace.cppm.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/modules/boost_stacktrace.cppm.o -c /home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace.cppm",
+  "file": "/home/fdr400/boost/libs/stacktrace/modules/boost_stacktrace.cppm",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace.dir/modules/boost_stacktrace.cppm.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/CMakeFiles/boost_stacktrace_from_exception.dir/src/from_exception.cpp.o.modmap -o boostorg/stacktrace/CMakeFiles/boost_stacktrace_from_exception.dir/src/from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/src/from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/src/from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/CMakeFiles/boost_stacktrace_from_exception.dir/src/from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_num_conv.dir/test_num_conv.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_num_conv.dir/test_num_conv.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_num_conv.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_num_conv.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_num_conv.dir/test_num_conv.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_void_ptr_cast.dir/test_void_ptr_cast.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_void_ptr_cast.dir/test_void_ptr_cast.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_void_ptr_cast.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_void_ptr_cast.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_void_ptr_cast.dir/test_void_ptr_cast.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=noop -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_noop.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_noop.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_noop.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_noop.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_noop.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=noop -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_impl.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_impl.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_noop.dir/test_impl.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_trivial.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_trivial.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_trivial.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_trivial.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_trivial.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_impl.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_impl.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_trivial.dir/test_impl.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test_impl.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test_impl.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test.dir/test_impl.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -I/home/fdr400/boost/libs/optional/include -I/home/fdr400/boost/libs/type_traits/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_thread_safety_checking.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_thread_safety_checking.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_thread_safety_checking.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_thread_safety_checking.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_thread_safety_checking.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -I/home/fdr400/boost/libs/optional/include -I/home/fdr400/boost/libs/type_traits/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_impl.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_impl.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_thread_safety_checking.dir/test_impl.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception_none.dir/test_from_exception_none.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception_none.dir/test_from_exception_none.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_from_exception_none.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_from_exception_none.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception_none.dir/test_from_exception_none.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception.dir/test_from_exception.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception.dir/test_from_exception.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_from_exception.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_from_exception.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_from_exception.dir/test_from_exception.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_torture.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_torture.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_torture.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_torture.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_torture.cpp.o"
+},
+{
+  "directory": "/home/fdr400/boost/libs/stacktrace/build_module",
+  "command": "/usr/bin/clang++-19 -DBOOST_STACKTRACE_BACKEND_MODULE=backtrace -DBOOST_STACKTRACE_NO_LIB -DBOOST_STACKTRACE_STATIC_LINK -DBOOST_USE_MODULES -I/home/fdr400/boost/libs/stacktrace/include -I/home/fdr400/boost/libs/config/include -I/home/fdr400/boost/libs/container_hash/include -I/home/fdr400/boost/libs/describe/include -I/home/fdr400/boost/libs/mp11/include -I/home/fdr400/boost/libs/core/include -I/home/fdr400/boost/libs/assert/include -I/home/fdr400/boost/libs/throw_exception/include -I/home/fdr400/boost/libs/predef/include -I/home/fdr400/boost/libs/winapi/include -stdlib=libc++ -O3 -DNDEBUG -std=gnu++26 -fcolor-diagnostics @boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_impl.cpp.o.modmap -o boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_impl.cpp.o -c /home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "file": "/home/fdr400/boost/libs/stacktrace/test/test_impl.cpp",
+  "output": "/home/fdr400/boost/libs/stacktrace/build_module/boostorg/stacktrace/test/CMakeFiles/stacktrace_test_torture.dir/test_impl.cpp.o"
+}
+]
