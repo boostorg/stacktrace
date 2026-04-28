@@ -4,13 +4,13 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <array>
 #include <boost/stacktrace/detail/to_dec_array.hpp>
 #include <boost/stacktrace/detail/to_hex_array.hpp>
 #include <boost/stacktrace/detail/try_dec_convert.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 #include <string>
-#include <iostream>
 
 
 void test_to_hex_array() {

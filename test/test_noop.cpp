@@ -6,15 +6,11 @@
 
 #include "test_impl.hpp"
 
-#include <boost/stacktrace.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <stdexcept>
 
-
-#include <boost/functional/hash.hpp>
+#include <boost/stacktrace.hpp>
 
 using boost::stacktrace::stacktrace;
-using boost::stacktrace::frame;
 
 void test_deeply_nested_namespaces() {
     BOOST_TEST(return_from_nested_namespaces().size() == 0);

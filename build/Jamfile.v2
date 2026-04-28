@@ -65,6 +65,17 @@ explicit WinDbg ;
 mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
+lib boost_stacktrace_dump
+  : # sources
+    ../src/dump.cpp
+  : # requirements
+    <warnings>all
+    <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
+  : # default build
+  : # usage-requirements
+    <define>BOOST_STACKTRACE_NO_LIB=1
+  ;
+
 rule build-stacktrace-noop ( props * )
 {
     local enabled = [ property.select <boost.stacktrace.noop> : $(props) ] ;
@@ -109,6 +120,7 @@ lib boost_stacktrace_backtrace
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <library>boost_stacktrace_dump
     <library>backtrace
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-backtrace
@@ -116,6 +128,7 @@ lib boost_stacktrace_backtrace
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-addr2line ( props * )
@@ -146,12 +159,14 @@ lib boost_stacktrace_addr2line
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <library>boost_stacktrace_dump
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-addr2line
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-basic ( props * )
@@ -175,12 +190,14 @@ lib boost_stacktrace_basic
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <library>boost_stacktrace_dump
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-basic
   : # default build
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-windbg ( props * )
@@ -203,6 +220,7 @@ lib boost_stacktrace_windbg
     ../src/windbg.cpp
   : # requirements
     <warnings>all
+    <library>boost_stacktrace_dump
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg
@@ -210,6 +228,7 @@ lib boost_stacktrace_windbg
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-windbg-cached ( props * )
@@ -232,6 +251,7 @@ lib boost_stacktrace_windbg_cached
     ../src/windbg_cached.cpp
   : # requirements
     <warnings>all
+    <library>boost_stacktrace_dump
     <library>Dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg-cached
@@ -239,6 +259,7 @@ lib boost_stacktrace_windbg_cached
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;
 
 rule build-stacktrace-from-exception ( props * )
@@ -264,6 +285,7 @@ lib boost_stacktrace_from_exception
   : # requirements
     <warnings>all
     <target-os>linux:<library>dl
+    <library>boost_stacktrace_dump
     <target-os>windows:<library>ucrt
 
     # Enable build when explicitly requested, or by default, when on x86
@@ -272,4 +294,5 @@ lib boost_stacktrace_from_exception
   : # usage-requirements
     #<link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <define>BOOST_STACKTRACE_NO_LIB=1
+    <library>boost_stacktrace_dump
   ;

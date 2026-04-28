@@ -15,8 +15,6 @@
 #include <iosfwd>
 #include <string>
 
-#include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t
-
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/detail/push_options.h>
 
@@ -64,7 +62,7 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 
 #include <boost/stacktrace/detail/pop_options.h>
 
-#ifndef BOOST_STACKTRACE_LINK
+#if !defined(BOOST_STACKTRACE_LINK)
 #   if defined(BOOST_STACKTRACE_USE_NOOP)
 #       include <boost/stacktrace/detail/frame_noop.ipp>
 #   elif defined(BOOST_MSVC) || defined(BOOST_STACKTRACE_USE_WINDBG) || defined(BOOST_STACKTRACE_USE_WINDBG_CACHED)

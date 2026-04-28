@@ -12,7 +12,6 @@
 #   pragma once
 #endif
 
-#include <iosfwd>
 #include <string>
 
 #include <boost/stacktrace/safe_dump_to.hpp> // boost::stacktrace::detail::native_frame_ptr_t

@@ -4,12 +4,12 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_USE_WINDBG_CACHED
+#define BOOST_STACKTRACE_LINK
+
 #ifndef _GNU_SOURCE
 #   define _GNU_SOURCE
 #endif
 
-#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
-#define BOOST_STACKTRACE_LINK
-#define BOOST_STACKTRACE_USE_WINDBG_CACHED
 #include <boost/stacktrace/detail/frame_msvc.ipp>
-#include <boost/stacktrace/safe_dump_to.hpp>

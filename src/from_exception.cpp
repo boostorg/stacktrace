@@ -4,10 +4,13 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_LINK
+
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
-#include <boost/stacktrace/safe_dump_to.hpp>
 #include <windows.h>
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 extern "C" void** __cdecl __current_exception(); // exported from vcruntime.dll
 #define _pCurrentException static_cast<PEXCEPTION_RECORD>(*__current_exception())
@@ -154,7 +157,7 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 #endif
 
 #include <boost/assert.hpp>
-#include <boost/stacktrace/safe_dump_to.hpp>
+#include <boost/config.hpp>
 
 #include <cstddef>
 #include <exception>
@@ -169,6 +172,8 @@ BOOST_SYMBOL_EXPORT void assert_no_pending_traces() noexcept {
 
 #include <unistd.h>
 #endif
+
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace {
 
