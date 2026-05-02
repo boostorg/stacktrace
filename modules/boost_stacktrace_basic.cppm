@@ -7,6 +7,10 @@
 
 module;
 
+#ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#endif
+
 #include <boost/config.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/core/demangle.hpp>

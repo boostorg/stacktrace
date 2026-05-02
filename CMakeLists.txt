@@ -11,8 +11,8 @@ function(stacktrace_add_module name import_std)
   target_sources(${name}
     PUBLIC
       FILE_SET CXX_MODULES
-      BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/modules
-      FILES ${CMAKE_CURRENT_LIST_DIR}/modules/${name}.cppm
+      BASE_DIRS "${CMAKE_CURRENT_LIST_DIR}/modules"
+      FILES "${CMAKE_CURRENT_LIST_DIR}/modules/${name}.cppm"
   )
   target_compile_definitions(${name} PUBLIC BOOST_USE_MODULES)
 
@@ -60,7 +60,7 @@ function(stacktrace_add_library suffix opt public_libs libs defs add_module impo
   else()
     target_sources(boost_stacktrace_${suffix}
       PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp
+        "${CMAKE_CURRENT_LIST_DIR}/src/${suffix}.cpp"
     )
   endif()
 
@@ -200,8 +200,8 @@ target_link_libraries(boost_stacktrace ${__scope} Boost::stacktrace_${__default_
 # Boost::stacktrace_from_exception is never the default
 if(_enable_non_noop_backend)
   stacktrace_add_library(from_exception ${BOOST_STACKTRACE_ENABLE_FROM_EXCEPTION} Boost::stacktrace_dump "${CMAKE_DL_LIBS}" "" FALSE FALSE)
-  unset(_enable_non_noop_backend)
 endif()
+unset(_enable_non_noop_backend)
 
 if(BUILD_TESTING)
   add_subdirectory(test)

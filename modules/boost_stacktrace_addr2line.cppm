@@ -7,6 +7,10 @@
 
 module;
 
+#ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#endif
+
 #include <boost/config.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/core/demangle.hpp>
@@ -20,6 +24,10 @@ module;
 #include <sstream>
 #include <cxxabi.h>
 #endif
+
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
 
 #include <dlfcn.h>
 
@@ -42,4 +50,6 @@ import boost.stacktrace.dump;
 #include <boost/stacktrace/this_thread.hpp>
 
 module :private;
+#define BOOST_STACKTRACE_INTERNAL_BUILD_LIBS
+#define BOOST_STACKTRACE_USE_ADDR2LINE
 #include <boost/stacktrace/detail/frame_unwind.ipp>
