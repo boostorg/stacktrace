@@ -16,7 +16,7 @@ namespace {
 
 BOOST_NOINLINE void foo() {
     std::map<int, int> m;
-    m.at(1);
+    std::ignore = m.at(1);
 }
 
 BOOST_NOINLINE void bar() {
