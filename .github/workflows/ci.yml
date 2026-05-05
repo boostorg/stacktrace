@@ -27,10 +27,21 @@ jobs:
           - toolset: gcc-9
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
-            install: g++-9
+            install: [g++-9]
           - toolset: clang-15
             cxxstd: "03,11,14,17,2a"
             os: ubuntu-22.04
+          - toolset: clang-19
+            compiler: clang++-19
+            cxxstd: "20"
+            os: ubuntu-24.04
+            install: &cxx19
+              - clang-19
+              - llvm-19
+              - libclang-rt-19-dev
+              - libc++-19-dev
+              - libc++abi-19-dev
+              - clang-tools-19
           # TODO: fix and uncomment
           #- toolset: clang
           #  cxxstd: "03,11,14,17,2a"
@@ -45,7 +56,7 @@ jobs:
 
       - name: Install packages
         if: matrix.install
-        run: sudo apt install ${{matrix.install}}
+        run: sudo apt install -y ${{join(matrix.install, ' ')}}
 
       - name: Setup Boost
         run: |
@@ -71,6 +82,35 @@ jobs:
           ./bootstrap.sh
           ./b2 -d0 headers
           ./b2 -j4 variant=debug tools/inspect
+      
+      - name: Build libbacktrace
+        if: ${{matrix.toolset == 'clang-19'}}
+        run: |
+          # libc++ do not have bundled libbacktrace implementation
+          git clone --depth=1 https://github.com/ianlancetaylor/libbacktrace.git
+          cd libbacktrace
+          CC=clang-19 OBJCOPY=/usr/bin/llvm-objcopy NM=/usr/bin/llvm-nm \
+            ./configure --prefix="$HOME/.local" --with-system-libunwind
+          make -j"$(nproc)"
+          make install
+
+      - name: Run modules tests without 'import std;'
+        if: ${{matrix.toolset == 'clang-19'}}
+        run: |
+          pwd
+          cd ../boost-root/libs/$LIBRARY
+          cmake -S test/cmake_subdir_test \
+                -B build_module \
+                -GNinja \
+                -DBOOST_USE_MODULES=1 \
+                -DBUILD_TESTING=1 \
+                -DCMAKE_CXX_STANDARD=20 \
+                -DCMAKE_CXX_COMPILER=${{matrix.compiler}} \
+                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I$HOME/.local/include" \
+                -DCMAKE_EXE_LINKER_FLAGS="-L$HOME/.local"
+          cmake --build build_module
+          ctest --test-dir build_module -VV
+          rm -rf build_module
 
       - name: Run tests
         run: |
@@ -205,11 +245,14 @@ jobs:
 
       - name: Use library with add_subdirectory
         run: |
-          cd ../boost-root/libs/$LIBRARY/test/cmake_subdir_test
-          mkdir __build__ && cd __build__
-          cmake -DBUILD_SHARED_LIBS=${{matrix.shared}} ..
-          cmake --build .
-          ctest --output-on-failure --no-tests=error
+          cd ../boost-root/libs/$LIBRARY
+          cmake -S test/cmake_subdir_test -B __build__ \
+            -GNinja \
+            -DBUILD_SHARED_LIBS=${{matrix.shared}}
+
+          cmake --build __build__
+          ctest --test-dir __build__ --output-on-failure --no-tests=error
+          rm -rf __build__
 
   posix-cmake-install:
     strategy:

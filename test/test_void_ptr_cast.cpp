@@ -4,9 +4,9 @@
 // (See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/stacktrace/detail/void_ptr_cast.hpp>
-
 #include <boost/core/lightweight_test.hpp>
+
+#include <boost/stacktrace/detail/void_ptr_cast.hpp>
 
 int foo1_func(int) { return 0; }
 void foo2_func(int, int, ...) {}

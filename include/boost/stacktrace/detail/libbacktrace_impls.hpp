@@ -12,9 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/detail/to_hex_array.hpp>
-#include <boost/stacktrace/detail/to_dec_array.hpp>
-#include <boost/stacktrace/detail/location_from_symbol.hpp>
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/demangle.hpp>
 
 #ifdef BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE
@@ -22,6 +20,11 @@
 #else
 #   include <backtrace.h>
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
+#include <boost/stacktrace/detail/to_hex_array.hpp>
+#include <boost/stacktrace/detail/to_dec_array.hpp>
+#include <boost/stacktrace/detail/location_from_symbol.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

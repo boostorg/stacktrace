@@ -6,9 +6,9 @@
 
 // See https://github.com/boostorg/stacktrace/issues/116
 
-#include <boost/stacktrace/stacktrace.hpp>
-
 #include <iostream>
+
+#include <boost/stacktrace/stacktrace.hpp>
 
 int main() {
   std::cout << boost::stacktrace::stacktrace() << std::endl;

@@ -12,8 +12,7 @@
 #   pragma once
 #endif
 
-#include <boost/stacktrace/safe_dump_to.hpp>
-
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 // On iOS 32-bit ARM architecture _Unwind_Backtrace function doesn't exist, symbol is undefined.
 // Forcing libc backtrace() function usage.
 #include <boost/predef.h>
@@ -28,10 +27,13 @@
 #include <unwind.h>
 #endif
 #include <cstdio>
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #if !defined(_GNU_SOURCE) && !defined(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED) && !defined(BOOST_WINDOWS)
 #error "Boost.Stacktrace requires `_Unwind_Backtrace` function. Define `_GNU_SOURCE` macro or `BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED` if _Unwind_Backtrace is available without `_GNU_SOURCE`."
 #endif
+
+#include <boost/stacktrace/safe_dump_to.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 

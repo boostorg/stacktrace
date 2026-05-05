@@ -12,8 +12,10 @@
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <array>
 #include <type_traits>
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 namespace boost { namespace stacktrace { namespace detail {
 

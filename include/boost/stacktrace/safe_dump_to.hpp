@@ -7,16 +7,25 @@
 #ifndef BOOST_STACKTRACE_SAFE_DUMP_TO_HPP
 #define BOOST_STACKTRACE_SAFE_DUMP_TO_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/config.hpp>
+
+#if defined(BOOST_USE_MODULES) && !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+    import boost.stacktrace.dump;
+#endif
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <cstddef>
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #include <boost/stacktrace/detail/push_options.h>
 
@@ -35,7 +44,9 @@ namespace boost { namespace stacktrace {
 /// @cond
 namespace detail {
 
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
     using native_frame_ptr_t = const void*;
+BOOST_STACKTRACE_END_MODULE_EXPORT
     enum helper{ max_frames_dump = 128 };
 
     BOOST_STACKTRACE_FUNCTION std::size_t from_dump(const char* filename, native_frame_ptr_t* out_frames);
@@ -47,6 +58,8 @@ namespace detail {
     BOOST_STACKTRACE_FUNCTION std::size_t dump(int fd, const native_frame_ptr_t* frames, std::size_t frames_count) noexcept;
 #endif
 
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 struct this_thread_frames { // struct is required to avoid warning about usage of inline+BOOST_NOINLINE
     BOOST_NOINLINE BOOST_STACKTRACE_FUNCTION static std::size_t collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) noexcept;
@@ -79,8 +92,12 @@ struct this_thread_frames { // struct is required to avoid warning about usage o
     }
 };
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 } // namespace detail
 /// @endcond
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 /// @brief Stores current function call sequence into the memory.
 ///
@@ -199,6 +216,8 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 
 }} // namespace boost::stacktrace
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 #ifdef BOOST_INTEL
 #   pragma warning(pop)
 #endif
@@ -222,5 +241,7 @@ BOOST_FORCEINLINE std::size_t safe_dump_to(std::size_t skip, std::size_t max_dep
 #       endif
 #   endif
 #endif
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_SAFE_DUMP_TO_HPP

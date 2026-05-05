@@ -7,11 +7,15 @@
 #ifndef BOOST_STACKTRACE_STACKTRACE_HPP
 #define BOOST_STACKTRACE_STACKTRACE_HPP
 
-#include <boost/config.hpp>
+#include <boost/stacktrace/detail/backend_config.hpp>
+
+#if !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #   pragma once
 #endif
 
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
@@ -22,9 +26,9 @@
 #ifndef BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #   include <type_traits>
 #endif
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #include <boost/stacktrace/stacktrace_fwd.hpp>
-#include <boost/stacktrace/safe_dump_to.hpp>
 #include <boost/stacktrace/detail/frame_decl.hpp>
 #include <boost/stacktrace/frame.hpp>
 
@@ -58,15 +62,23 @@ namespace impl {
 
 #if defined(__GNUC__) && defined(__ELF__)
 
+#if defined(BOOST_USE_MODULES)
+extern "C++"
+#endif
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 const char* current_exception_stacktrace() noexcept;
 
+#if defined(BOOST_USE_MODULES)
+extern "C++"
+#endif
 BOOST_NOINLINE BOOST_SYMBOL_VISIBLE __attribute__((weak))
 bool& ref_capture_stacktraces_at_throw() noexcept;
 
 #endif
 
 } // namespace impl
+
+BOOST_STACKTRACE_BEGIN_MODULE_EXPORT
 
 /// Class that on construction copies minimal information about call stack into its internals and provides access to that information.
 /// @tparam Allocator Allocator to use during stack capture.
@@ -482,10 +494,14 @@ std::basic_ostream<CharT, TraitsT>& operator<<(std::basic_ostream<CharT, TraitsT
 /// This is the typedef to use unless you'd like to provide a specific allocator to boost::stacktrace::basic_stacktrace.
 typedef basic_stacktrace<> stacktrace;
 
+BOOST_STACKTRACE_END_MODULE_EXPORT
+
 }} // namespace boost::stacktrace
 
 #ifdef BOOST_INTEL
 #   pragma warning(pop)
 #endif
+
+#endif // !defined(BOOST_USE_MODULES) || defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #endif // BOOST_STACKTRACE_STACKTRACE_HPP
