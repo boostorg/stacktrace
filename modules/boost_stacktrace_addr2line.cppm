@@ -18,18 +18,12 @@ module;
 #include <boost/container_hash/hash_fwd.hpp>
 #include <boost/predef.h>
 
-<<<<<<< HEAD
 #if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
-=======
->>>>>>> develop
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <cxxabi.h>
-<<<<<<< HEAD
 #endif
-=======
->>>>>>> develop
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -42,13 +36,10 @@ module;
 
 export module boost.stacktrace.addr2line;
 
-<<<<<<< HEAD
 #if defined(BOOST_STACKTRACE_USE_STD_MODULE)
 import std;
 #endif
 
-=======
->>>>>>> develop
 import boost.stacktrace.dump;
 
 #ifdef __clang__
