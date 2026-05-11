@@ -18,10 +18,12 @@ module;
 #include <boost/container_hash/hash_fwd.hpp>
 #include <boost/predef.h>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <cxxabi.h>
+#endif
 
 #include <dlfcn.h>
 
@@ -29,6 +31,10 @@ module;
 #define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.basic;
+
+#if defined(BOOST_STACKTRACE_USE_STD_MODULE)
+import std;
+#endif
 
 import boost.stacktrace.dump;
 

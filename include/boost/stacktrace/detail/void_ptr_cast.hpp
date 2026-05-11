@@ -13,9 +13,9 @@
 #   pragma once
 #endif
 
-#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <type_traits>
-#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ * 100 + __GNUC_MINOR__ > 301)
 #   pragma GCC system_header

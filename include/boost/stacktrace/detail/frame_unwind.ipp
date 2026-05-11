@@ -15,7 +15,9 @@
 #if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/demangle.hpp>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <cstdio>
+#endif // !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 
 #include <boost/stacktrace/frame.hpp>

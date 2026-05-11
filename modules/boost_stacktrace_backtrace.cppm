@@ -20,10 +20,12 @@ module;
 
 #include <backtrace.h>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <cxxabi.h>
+#endif
 
 #include <dlfcn.h>
 
@@ -31,6 +33,10 @@ module;
 #define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.backtrace;
+
+#if defined(BOOST_STACKTRACE_USE_STD_MODULE)
+import std;
+#endif
 
 import boost.stacktrace.dump;
 

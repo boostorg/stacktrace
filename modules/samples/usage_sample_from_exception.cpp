@@ -6,7 +6,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
-#include <stdexcept>
+#include <map>
 
 #include <boost/config.hpp>
 
@@ -15,7 +15,8 @@
 namespace {
 
 BOOST_NOINLINE void foo() {
-    throw std::logic_error{"Foo"};
+    std::map<int, int> m;
+    std::ignore = m.at(1);
 }
 
 BOOST_NOINLINE void bar() {

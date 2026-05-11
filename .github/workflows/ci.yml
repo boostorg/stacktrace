@@ -94,10 +94,28 @@ jobs:
           make -j"$(nproc)"
           make install
 
+      - name: Run modules tests
+        if: ${{matrix.toolset == 'clang-19'}}
+        run: |
+          cd ../boost-root/libs/$LIBRARY
+          cmake -S test/cmake_subdir_test \
+                -B build_module \
+                -GNinja \
+                -DBOOST_USE_MODULES=1 \
+                -DBUILD_TESTING=1 \
+                -DCMAKE_CXX_STANDARD=23 \
+                -DCMAKE_CXX_COMPILER=${{matrix.compiler}} \
+                -DCMAKE_CXX_FLAGS="-stdlib=libc++ -I$HOME/.local/include" \
+                -DCMAKE_EXE_LINKER_FLAGS="-L$HOME/.local" \
+                -DCMAKE_CXX_MODULE_STD=ON \
+                -DCMAKE_EXPERIMENTAL_CXX_IMPORT_STD=0e5b6991-d74f-4b3d-a41c-cf096e0b2508
+          cmake --build build_module
+          ctest --test-dir build_module -VV
+          rm -rf build_module
+
       - name: Run modules tests without 'import std;'
         if: ${{matrix.toolset == 'clang-19'}}
         run: |
-          pwd
           cd ../boost-root/libs/$LIBRARY
           cmake -S test/cmake_subdir_test \
                 -B build_module \

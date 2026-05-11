@@ -15,9 +15,9 @@
 #   pragma once
 #endif
 
-#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#if !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <string>
-#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+#endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 #if !defined(BOOST_USE_MODULES)
 #include <boost/stacktrace/safe_dump_to.hpp>

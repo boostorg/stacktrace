@@ -14,15 +14,22 @@ module;
 #include <boost/config.hpp>
 #include <boost/predef.h>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
+#include <stdio.h>
+#endif
+
 #include <fcntl.h>
 #include <unwind.h>
-#include <stdio.h>
 #include <sys/stat.h>
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.dump;
+
+#if defined(BOOST_STACKTRACE_USE_STD_MODULE)
+import std;
+#endif
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"

@@ -11,13 +11,19 @@ module;
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/container_hash/hash_fwd.hpp>
 
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <vector>
 #include <memory>
+#endif
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK
 
 export module boost.stacktrace.noop;
+
+#if defined(BOOST_STACKTRACE_USE_STD_MODULE)
+import std;
+#endif
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"

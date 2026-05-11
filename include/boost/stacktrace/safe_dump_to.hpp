@@ -20,7 +20,10 @@
 #endif
 
 #if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
+
+#if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <cstddef>
+#endif // !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 #if defined(BOOST_WINDOWS)
 #include <boost/winapi/config.hpp>
