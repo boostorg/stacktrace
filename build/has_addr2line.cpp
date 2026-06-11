@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 
+// pick up "user.hpp" with the required defines such as BOOST_STACKTRACE_ADDR2LINE_LOCATION
 #include <boost/config.hpp>
 #include <unwind.h>
 #include <sys/types.h>
