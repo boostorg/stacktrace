@@ -49,14 +49,20 @@ inline void libbacktrace_syminfo_callback(void *data, uintptr_t pc, const char *
 
 inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
     pc_data& d = *static_cast<pc_data*>(data);
+    int return_value = 0;
     if (d.filename && filename) {
         *d.filename = filename;
+        return_value = 1;
     }
     if (d.function && function) {
         *d.function = function;
+        return_value = 1;
     }
     d.line = static_cast<std::size_t>(lineno);
-    return 0;
+    if (d.line) {
+        return_value = 1;
+    }
+    return return_value;
 }
 
 inline void libbacktrace_error_callback(void* /*data*/, const char* /*msg*/, int /*errnum*/) noexcept {
