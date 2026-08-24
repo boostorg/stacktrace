@@ -85,7 +85,7 @@ void test_nested(bool print = true) {
 
     BOOST_TEST(ss1.str().find(" 1# ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" 1# ") != std::string::npos);
-    
+
     BOOST_TEST(ss1.str().find(" in ") != std::string::npos);
     BOOST_TEST(ss2.str().find(" in ") != std::string::npos);
 
@@ -212,7 +212,7 @@ void test_frame() {
         BOOST_TEST(fv);
         if (i > 1 && i < min_size - 3) {       // Begin ...and end of the trace may match, skipping
             BOOST_TEST(st[i] != fv);
-            
+
 #if !(defined(BOOST_STACKTRACE_TEST_NO_DEBUG_AT_ALL) && defined(BOOST_MSVC))
             // MSVC can not get function name withhout debug symbols even if it is exported
             BOOST_TEST(st[i].name() != fv.name());
@@ -276,7 +276,7 @@ std::size_t get_file_size(const char* file_name) {
     return static_cast<std::size_t>(file_size);
 }
 
-uintptr_t get_address_from_frame(const std::string& frame) {
+std::uintptr_t get_address_from_frame(const std::string& frame) {
     std::size_t address = 0;
     std::string hex_address;
     std::size_t pos = frame.find("0x");
@@ -284,7 +284,7 @@ uintptr_t get_address_from_frame(const std::string& frame) {
     if (pos != std::string::npos) {
         // Extract the hex address substring
         hex_address = frame.substr(pos + 2); // Skip "0x"
-        
+
         // Convert hex string to std::size_t
         std::stringstream ss;
         ss << std::hex << hex_address;
@@ -295,7 +295,7 @@ uintptr_t get_address_from_frame(const std::string& frame) {
 }
 
 void test_relative_virtual_address(const char* file_path)
-{   
+{
     const auto frame = to_string(boost::stacktrace::stacktrace(0, 1).as_vector().front());
 
     // Skip the test if the frame does not contain an address
