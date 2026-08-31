@@ -262,7 +262,7 @@ public:
                     nullptr,
                     &base
                 ));
-                
+
                 if (res) {
                     name[0] = '\0';
                     size = 0;
@@ -303,7 +303,7 @@ public:
                 }
                 else if (res && size > 1) {
                     module_name->assign(name, size - 1);
-                }                
+                }
             }
         }
 
@@ -402,8 +402,8 @@ public:
             res += to_hex_array(addr).data();
 #else
             // Get own base address
-            const uintptr_t base_addr = get_own_proc_addr_base(addr);
-            res += to_hex_array(reinterpret_cast<uintptr_t>(addr) - base_addr).data();
+            const std::uintptr_t base_addr = get_own_proc_addr_base(addr);
+            res += to_hex_array(reinterpret_cast<std::uintptr_t>(addr) - base_addr).data();
 #endif
         }
 

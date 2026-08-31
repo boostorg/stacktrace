@@ -15,25 +15,26 @@
 #if !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 #include <fstream>
 #include <sstream>
-#include <cstdint>
-#include <cstdlib>
+#include <cstdint>      // std::uintptr_t
+#include <stdexcept>
+#include <string>
 #endif // !defined(BOOST_STACKTRACE_INTERFACE_UNIT) && !defined(BOOST_STACKTRACE_USE_STD_MODULE)
 
 namespace boost { namespace stacktrace { namespace detail {
 
 struct mapping_entry_t {
-    uintptr_t start = 0;
-    uintptr_t end = 0;
-    uintptr_t offset_from_base = 0;
+    std::uintptr_t start = 0;
+    std::uintptr_t end = 0;
+    std::uintptr_t offset_from_base = 0;
 
     inline bool contains_addr(const void* addr) const {
-        uintptr_t addr_uint = reinterpret_cast<uintptr_t>(addr);
+        std::uintptr_t addr_uint = reinterpret_cast<std::uintptr_t>(addr);
         return addr_uint >= start && addr_uint < end;
     }
 };
 
-inline uintptr_t hex_str_to_int(const std::string& str) {
-    uintptr_t out;
+inline std::uintptr_t hex_str_to_int(const std::string& str) {
+    std::uintptr_t out;
     std::stringstream ss;
     ss << std::hex << str;
     ss >> out;
@@ -70,12 +71,12 @@ inline mapping_entry_t parse_proc_maps_line(const std::string& line) {
         mapping.end = hex_str_to_int(mapping_end_str);
         mapping.offset_from_base = hex_str_to_int(offset_from_base_str);
         return mapping;
-    } catch(std::invalid_argument& e) {
+    } catch(const std::invalid_argument& e) {
         return mapping_entry_t{};
     }
 }
 
-inline uintptr_t get_own_proc_addr_base(const void* addr) {
+inline std::uintptr_t get_own_proc_addr_base(const void* addr) {
     std::ifstream maps_file("/proc/self/maps");
     for (std::string line; std::getline(maps_file, line); ) {
         const mapping_entry_t mapping = parse_proc_maps_line(line);

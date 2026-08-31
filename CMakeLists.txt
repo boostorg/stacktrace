@@ -3,7 +3,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.8...4.20)
+cmake_minimum_required(VERSION 3.8...4.4)
 
 project(boost_stacktrace VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
@@ -11,14 +11,14 @@ function(stacktrace_add_module name import_std)
   target_sources(${name}
     PUBLIC
       FILE_SET CXX_MODULES
-      BASE_DIRS "${CMAKE_CURRENT_LIST_DIR}/modules"
-      FILES "${CMAKE_CURRENT_LIST_DIR}/modules/${name}.cppm"
+        BASE_DIRS modules
+        FILES "modules/${name}.cppm"
   )
   target_compile_definitions(${name} PUBLIC BOOST_USE_MODULES)
 
   if(${import_std})
     target_compile_features(${name} PUBLIC cxx_std_23)
-    target_compile_definitions(${name} PRIVATE BOOST_STACKTRACE_USE_STD_MODULE)
+    target_compile_definitions(${name} PUBLIC BOOST_STACKTRACE_USE_STD_MODULE)
   else()
     target_compile_features(${name} PUBLIC cxx_std_20)
   endif()

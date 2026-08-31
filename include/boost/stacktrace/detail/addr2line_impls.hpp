@@ -12,11 +12,12 @@
 #   pragma once
 #endif
 
+#include <cstring>  // std::strchr
+#include <cstdio>   // fclose, fdopen, dup2
+
 #if !defined(BOOST_STACKTRACE_INTERFACE_UNIT)
 #include <boost/core/demangle.hpp>
 
-#include <cstdio>
-#include <cstring>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -163,11 +164,11 @@ inline std::string addr2line(const char* flag, const void* addr) {
 }
 
 inline std::string source_location(const void* addr, bool position_independent) {
-    uintptr_t addr_base = 0;
+    std::uintptr_t addr_base = 0;
     if (position_independent) {
         addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
     }
-    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(addr) - addr_base);
     std::string source_line = boost::stacktrace::detail::addr2line("-Cpe", reinterpret_cast<const void*>(offset));
     if (source_line.empty() || source_line[0] == '?') {
         return "";
@@ -210,11 +211,11 @@ template <class Base> class to_string_impl_base;
 typedef to_string_impl_base<to_string_using_addr2line> to_string_impl;
 
 inline std::string name(const void* addr, bool position_independent) {
-    uintptr_t addr_base = 0;
+    std::uintptr_t addr_base = 0;
     if(position_independent){
         addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
     }
-    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(addr) - addr_base);
     std::string res = boost::stacktrace::detail::addr2line("-fe", offset);
     res = res.substr(0, res.find_last_of('\n'));
     res = boost::core::demangle(res.c_str());
@@ -237,11 +238,11 @@ inline std::string name_impl(const void* addr) {
 
 inline std::string source_file(const void* addr, bool position_independent) {
     std::string res;
-    uintptr_t addr_base = 0;
+    std::uintptr_t addr_base = 0;
     if(position_independent){
         addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
     }
-    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(addr) - addr_base);
     res = boost::stacktrace::detail::addr2line("-e", offset);
     res = res.substr(0, res.find_last_of(':'));
     if (res == "??") {
@@ -253,11 +254,11 @@ inline std::string source_file(const void* addr, bool position_independent) {
 
 inline std::size_t source_line(const void* addr, bool position_independent) {
     std::size_t line_num = 0;
-    uintptr_t addr_base = 0;
+    std::uintptr_t addr_base = 0;
     if(position_independent){
         addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
     }
-    const void* offset = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(addr) - addr_base);
+    const void* offset = reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(addr) - addr_base);
     std::string res = boost::stacktrace::detail::addr2line("-e", offset);
     const std::size_t last = res.find_last_of(':');
     if (last == std::string::npos) {
