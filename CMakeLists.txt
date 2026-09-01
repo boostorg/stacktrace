@@ -88,7 +88,7 @@ function(stacktrace_check var source incs libs)
 
 endfunction()
 
-stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace")
+stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace;${CMAKE_DL_LIBS}")
 
 set(_default_addr2line ON)
 if(WIN32 AND NOT CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
