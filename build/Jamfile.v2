@@ -27,7 +27,7 @@ project
 
 lib dl ;
 lib gcc_s ;
-lib Dbgeng ;
+lib dbgeng ;
 lib ole32 ;
 lib ucrt ;
 
@@ -59,10 +59,10 @@ explicit libbacktrace ;
 mp-run-simple has_addr2line.cpp : : : : addr2line ;
 explicit addr2line ;
 
-mp-run-simple has_windbg.cpp : : : <library>Dbgeng <library>ole32 : WinDbg ;
+mp-run-simple has_windbg.cpp : : : <library>dbgeng <library>ole32 : WinDbg ;
 explicit WinDbg ;
 
-mp-run-simple has_windbg_cached.cpp : : : <library>Dbgeng <library>ole32 : WinDbgCached ;
+mp-run-simple has_windbg_cached.cpp : : : <library>dbgeng <library>ole32 : WinDbgCached ;
 explicit WinDbgCached ;
 
 lib boost_stacktrace_dump
@@ -221,7 +221,7 @@ lib boost_stacktrace_windbg
   : # requirements
     <warnings>all
     <library>boost_stacktrace_dump
-    <library>Dbgeng <library>ole32
+    <library>dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg
   : # default build
@@ -252,7 +252,7 @@ lib boost_stacktrace_windbg_cached
   : # requirements
     <warnings>all
     <library>boost_stacktrace_dump
-    <library>Dbgeng <library>ole32
+    <library>dbgeng <library>ole32
     <link>shared:<define>BOOST_STACKTRACE_DYN_LINK=1
     <conditional>@build-stacktrace-windbg-cached
   : # default build
