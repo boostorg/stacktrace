@@ -88,7 +88,9 @@ function(stacktrace_check var source incs libs)
 
 endfunction()
 
-stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "" "backtrace")
+get_target_property(boost_config_includes Boost::config INTERFACE_INCLUDE_DIRECTORIES)
+stacktrace_check(BOOST_STACKTRACE_HAS_BACKTRACE has_backtrace.cpp "${boost_config_includes}" "backtrace")
+unset(boost_config_includes)
 
 set(_default_addr2line ON)
 if(WIN32 AND NOT CMAKE_CXX_PLATFORM_ID MATCHES "Cygwin")
