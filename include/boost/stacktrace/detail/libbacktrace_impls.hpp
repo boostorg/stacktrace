@@ -35,7 +35,7 @@ struct pc_data {
     std::size_t line;
 };
 
-inline void libbacktrace_syminfo_callback(void *data, uintptr_t /*pc*/, const char *symname, uintptr_t /*symval*/, uintptr_t /*symsize*/) {
+inline void libbacktrace_syminfo_callback(void *data, std::uintptr_t /*pc*/, const char *symname, std::uintptr_t /*symval*/, std::uintptr_t /*symsize*/) {
     pc_data& d = *static_cast<pc_data*>(data);
     if (d.function && symname) {
         *d.function = symname;
@@ -43,11 +43,11 @@ inline void libbacktrace_syminfo_callback(void *data, uintptr_t /*pc*/, const ch
 }
 
 // Old versions of libbacktrace have different signature for the callback
-inline void libbacktrace_syminfo_callback(void *data, uintptr_t pc, const char *symname, uintptr_t symval) {
+inline void libbacktrace_syminfo_callback(void *data, std::uintptr_t pc, const char *symname, std::uintptr_t symval) {
     boost::stacktrace::detail::libbacktrace_syminfo_callback(data, pc, symname, symval, 0);
 }
 
-inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
+inline int libbacktrace_full_callback(void *data, std::uintptr_t /*pc*/, const char *filename, int lineno, const char *function) {
     pc_data& d = *static_cast<pc_data*>(data);
     if (d.filename && filename) {
         *d.filename = filename;
@@ -129,15 +129,15 @@ struct to_string_using_backtrace {
         if (state) {
             ::backtrace_pcinfo(
                 state,
-                reinterpret_cast<uintptr_t>(addr),
+                reinterpret_cast<std::uintptr_t>(addr),
                 boost::stacktrace::detail::libbacktrace_full_callback,
                 boost::stacktrace::detail::libbacktrace_error_callback,
                 &data
-            ) 
+            )
             ||
             ::backtrace_syminfo(
                 state,
-                reinterpret_cast<uintptr_t>(addr),
+                reinterpret_cast<std::uintptr_t>(addr),
                 boost::stacktrace::detail::libbacktrace_syminfo_callback,
                 boost::stacktrace::detail::libbacktrace_error_callback,
                 &data
@@ -176,7 +176,7 @@ inline std::string name_impl(const void* addr) {
     if (state) {
         ::backtrace_pcinfo(
             state,
-            reinterpret_cast<uintptr_t>(addr),
+            reinterpret_cast<std::uintptr_t>(addr),
             boost::stacktrace::detail::libbacktrace_full_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data
@@ -184,7 +184,7 @@ inline std::string name_impl(const void* addr) {
         ||
         ::backtrace_syminfo(
             state,
-            reinterpret_cast<uintptr_t>(addr),
+            reinterpret_cast<std::uintptr_t>(addr),
             boost::stacktrace::detail::libbacktrace_syminfo_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data
@@ -213,7 +213,7 @@ std::string frame::source_file() const {
     if (state) {
         ::backtrace_pcinfo(
             state,
-            reinterpret_cast<uintptr_t>(addr_),
+            reinterpret_cast<std::uintptr_t>(addr_),
             boost::stacktrace::detail::libbacktrace_full_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data
@@ -235,7 +235,7 @@ std::size_t frame::source_line() const {
     if (state) {
         ::backtrace_pcinfo(
             state,
-            reinterpret_cast<uintptr_t>(addr_),
+            reinterpret_cast<std::uintptr_t>(addr_),
             boost::stacktrace::detail::libbacktrace_full_callback,
             boost::stacktrace::detail::libbacktrace_error_callback,
             &data

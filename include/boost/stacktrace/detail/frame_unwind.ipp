@@ -50,7 +50,7 @@ public:
             Base::res = to_hex_array(addr).data();
 #else
             const auto addr_base = boost::stacktrace::detail::get_own_proc_addr_base(addr);
-            Base::res = to_hex_array(reinterpret_cast<uintptr_t>(addr) - addr_base).data();
+            Base::res = to_hex_array(reinterpret_cast<std::uintptr_t>(addr) - addr_base).data();
 #endif
         }
 

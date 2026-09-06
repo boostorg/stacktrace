@@ -15,12 +15,16 @@ module;
 #include <boost/predef.h>
 
 #if !defined(BOOST_STACKTRACE_USE_STD_MODULE)
-#include <stdio.h>
+#include <cstdio>
+#include <cstdint> // std::uintptr_t
 #endif
 
 #include <fcntl.h>
-#include <unwind.h>
 #include <sys/stat.h>
+
+#if !defined(BOOST_WINDOWS)
+#   include <unwind.h>
+#endif
 
 #define BOOST_STACKTRACE_INTERFACE_UNIT
 #define BOOST_STACKTRACE_LINK
