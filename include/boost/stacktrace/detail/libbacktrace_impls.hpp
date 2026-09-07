@@ -59,9 +59,6 @@ inline int libbacktrace_full_callback(void *data, uintptr_t /*pc*/, const char *
         return_value = 1;
     }
     d.line = static_cast<std::size_t>(lineno);
-    if (d.line) {
-        return_value = 1;
-    }
     return return_value;
 }
 
